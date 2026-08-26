@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Domain assumed as https://www.smv-advies.nl to match this project's
+  intended production domain. Update every <loc> if that changes before
+  going live.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://www.smv-advies.nl/</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.smv-advies.nl/pakketten</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.smv-advies.nl/energie-indicatie</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.smv-advies.nl/over</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.smv-advies.nl/werkwijze</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.smv-advies.nl/cases</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.smv-advies.nl/blog</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.smv-advies.nl/blog/dakisolatie-voor-uw-bedrijfspand</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.smv-advies.nl/blog/eia-isde-sde-subsidies</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.smv-advies.nl/blog/warmtepomp-in-het-mkb</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.smv-advies.nl/blog/led-verlichting-snelste-stap</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.smv-advies.nl/blog/verborgen-energieverspillers</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.smv-advies.nl/faq</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.smv-advies.nl/contact</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.smv-advies.nl/privacy</loc>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.smv-advies.nl/voorwaarden</loc>
+    <priority>0.3</priority>
+  </url>
+</urlset>
+

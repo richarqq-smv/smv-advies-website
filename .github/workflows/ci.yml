@@ -1,0 +1,24 @@
+name: CI
+
+# Build/lint validation only — no deployment step. This intentionally
+# needs no secrets, so it's safe to run before any hosting is set up.
+# The actual Porkbun deployment step gets added here once hosting is
+# purchased and its requirements (upload method, credentials) are known.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
