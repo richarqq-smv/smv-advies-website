@@ -1,12 +1,11 @@
 /**
  * Google Analytics (GA4) loader, gated on cookie consent.
  *
- * GA_MEASUREMENT_ID is deliberately a placeholder — the client will
- * create the real GA4 property and provide the ID once the site is live.
- * loadAnalytics() no-ops until it's replaced, so no script is ever
- * injected and no ID (fake or otherwise) is ever sent anywhere.
+ * loadAnalytics() is only ever called from CookieBanner after consent is
+ * either already stored as 'accepted' or just given — the gtag.js script
+ * is never injected before that, so no measurement happens pre-consent.
  */
-export const GA_MEASUREMENT_ID = 'REPLACE_WITH_GA_MEASUREMENT_ID'
+export const GA_MEASUREMENT_ID = 'G-CE0DFH59Z9'
 
 let loaded = false
 
