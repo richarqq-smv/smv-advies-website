@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { setLastSeo } from './seoRegistry'
 
 const SITE_NAME = 'SMV Advies'
 
@@ -34,6 +35,8 @@ function setCanonical(href) {
  * would otherwise leak into the next one.
  */
 export function Seo({ title, description, noindex = false }) {
+  setLastSeo({ title, description, noindex })
+
   useEffect(() => {
     const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME
     const canonicalUrl = `${window.location.origin}${window.location.pathname}`
