@@ -5,6 +5,8 @@ import { Container } from '../components/ui/Container'
 import { Reveal } from '../components/ui/Reveal'
 import { ClosingCta } from '../components/home/ClosingCta'
 import { FAQ_CATEGORIES } from '../data/faqs'
+import { getBreadcrumbSchema, getFaqSchema } from '../lib/structuredData'
+import { ROUTES } from '../lib/routes'
 
 export default function Faq() {
   return (
@@ -12,6 +14,10 @@ export default function Faq() {
       <Seo
         title="Veelgestelde vragen"
         description="Antwoorden op wat ondernemers willen weten over verduurzamingsadvies bij SMV Advies."
+        structuredData={[
+          getBreadcrumbSchema([{ name: 'Veelgestelde vragen', path: ROUTES.faq }]),
+          getFaqSchema(FAQ_CATEGORIES),
+        ]}
       />
 
       <PageHero

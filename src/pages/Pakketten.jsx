@@ -7,6 +7,8 @@ import { PricingCard } from '../components/home/PricingCard'
 import { ComparisonTable } from '../components/pakketten/ComparisonTable'
 import { DecisionCta } from '../components/pakketten/DecisionCta'
 import { PACKAGES } from '../data/packages'
+import { getBreadcrumbSchema } from '../lib/structuredData'
+import { ROUTES } from '../lib/routes'
 
 export default function Pakketten() {
   return (
@@ -14,12 +16,13 @@ export default function Pakketten() {
       <Seo
         title="Pakketten"
         description="Drie pakketten, één doel: een toekomstbestendig bedrijfspand. Van een snelle QuickScan tot volledige begeleiding van A tot Z."
+        structuredData={[getBreadcrumbSchema([{ name: 'Pakketten', path: ROUTES.pakketten }])]}
       />
 
       <PageHero
         eyebrow="Diensten & pakketten"
         title="Drie manieren om te beginnen"
-        description="Van een snelle indicatie op afstand tot volledige ontzorging van A tot Z. Kies het pakket dat past bij uw pand, uw doelen en uw budget — geen abonnement, geen kleine lettertjes."
+        description="Van een snelle indicatie op afstand tot volledige ontzorging van A tot Z. Kies het pakket dat past bij uw pand, uw doelen en uw budget — geen abonnement, geen kleine lettertjes. Denk aan dakisolatie, een warmtepomp, zonnepanelen of LED-verlichting, inclusief een check op subsidies zoals EIA en ISDE."
       />
 
       <Section tone="white" noTopPadding>

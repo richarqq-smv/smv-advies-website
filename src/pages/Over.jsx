@@ -3,6 +3,8 @@ import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { ClosingCta } from '../components/home/ClosingCta'
+import { getBreadcrumbSchema } from '../lib/structuredData'
+import { ROUTES } from '../lib/routes'
 
 export default function Over() {
   return (
@@ -10,6 +12,7 @@ export default function Over() {
       <Seo
         title="Over ons"
         description="SMV Advies helpt mkb-ondernemers in de Hoeksche Waard om hun bedrijfspand stap voor stap te verduurzamen."
+        structuredData={[getBreadcrumbSchema([{ name: 'Over ons', path: ROUTES.over }])]}
       />
 
       <PageHero

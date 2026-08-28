@@ -6,6 +6,8 @@ import { Container } from '../components/ui/Container'
 import { SectionHeading } from '../components/ui/SectionHeading'
 import { HowItWorks } from '../components/home/HowItWorks'
 import { ClosingCta } from '../components/home/ClosingCta'
+import { getBreadcrumbSchema } from '../lib/structuredData'
+import { ROUTES } from '../lib/routes'
 
 const WAT_U_KRIJGT = [
   {
@@ -36,6 +38,7 @@ export default function Werkwijze() {
       <Seo
         title="Werkwijze"
         description="Van eerste kennismaking tot concreet resultaat: een vast, transparant traject bij SMV Advies."
+        structuredData={[getBreadcrumbSchema([{ name: 'Werkwijze', path: ROUTES.werkwijze }])]}
       />
 
       <PageHero

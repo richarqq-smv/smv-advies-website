@@ -4,6 +4,8 @@ import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
 import { COMPANY } from '../data/company'
+import { getBreadcrumbSchema } from '../lib/structuredData'
+import { ROUTES } from '../lib/routes'
 
 export default function Contact() {
   return (
@@ -11,6 +13,7 @@ export default function Contact() {
       <Seo
         title="Contact"
         description="Neem rechtstreeks contact op met SMV Advies — per e-mail of telefoon."
+        structuredData={[getBreadcrumbSchema([{ name: 'Contact', path: ROUTES.contact }])]}
       />
       <Section>
         <Container className="max-w-2xl text-center">

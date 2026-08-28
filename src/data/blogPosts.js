@@ -16,6 +16,7 @@ export const BLOG_POSTS = [
     excerpt:
       'Het dak is vaak de grootste warmteverliezer van een bedrijfspand. Hoe u kansen herkent, wat het oplevert en waar u op moet letten.',
     date: '18 juli 2026',
+    isoDate: '2026-07-18',
     readTime: '5 min',
     bodyAvailable: true,
     sections: [
@@ -101,6 +102,7 @@ export const BLOG_POSTS = [
     excerpt:
       'Subsidies kunnen de terugverdientijd van maatregelen fors verkorten. Een overzicht van de belangrijkste regelingen en wanneer ze van toepassing zijn.',
     date: '4 juli 2026',
+    isoDate: '2026-07-04',
     readTime: '6 min',
     bodyAvailable: true,
     sections: [
@@ -174,6 +176,7 @@ export const BLOG_POSTS = [
     excerpt:
       'Een warmtepomp is duurzaam, maar alleen slim als uw pand er klaar voor is. Lees wanneer het werkt en wat u vooraf moet regelen.',
     date: '20 juni 2026',
+    isoDate: '2026-06-20',
     readTime: '5 min',
     bodyAvailable: true,
     sections: [
@@ -244,6 +247,7 @@ export const BLOG_POSTS = [
     title: 'LED-verlichting: de snelste verduurzamingsstap die er is',
     excerpt: 'Verlichting is zichtbaar, meetbaar en snel terug te verdienen. Waarom LED voor veel bedrijven de ideale eerste stap is.',
     date: '5 juni 2026',
+    isoDate: '2026-06-05',
     readTime: '4 min',
     bodyAvailable: true,
     sections: [
@@ -307,6 +311,7 @@ export const BLOG_POSTS = [
     title: 'Verborgen energieverspillers in uw bedrijfspand',
     excerpt: 'Soms zijn het de onopvallende dingen die jaarlijks veel kosten. Vijf verspillers die in een QuickScan vaak boven water komen.',
     date: '22 mei 2026',
+    isoDate: '2026-05-22',
     readTime: '5 min',
     bodyAvailable: true,
     sections: [

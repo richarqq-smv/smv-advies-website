@@ -6,6 +6,7 @@ import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
 import { getBlogPostBySlug } from '../data/blogPosts'
+import { getBreadcrumbSchema, getBlogPostingSchema } from '../lib/structuredData'
 import { ROUTES } from '../lib/routes'
 import NotFound from './NotFound'
 
@@ -79,7 +80,17 @@ export default function BlogPost() {
 
   return (
     <>
-      <Seo title={post.title} description={post.excerpt} />
+      <Seo
+        title={post.title}
+        description={post.excerpt}
+        structuredData={[
+          getBreadcrumbSchema([
+            { name: 'Blog', path: ROUTES.blog },
+            { name: post.title, path: ROUTES.blogPost(post.slug) },
+          ]),
+          getBlogPostingSchema(post),
+        ]}
+      />
 
       <Section tone="white">
         <Container className="max-w-2xl">

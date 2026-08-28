@@ -5,6 +5,8 @@ import { Container } from '../components/ui/Container'
 import { CaseDetailCard } from '../components/cases/CaseDetailCard'
 import { ClosingCta } from '../components/home/ClosingCta'
 import { CASES_DETAILED } from '../data/casesDetailed'
+import { getBreadcrumbSchema } from '../lib/structuredData'
+import { ROUTES } from '../lib/routes'
 
 export default function Cases() {
   return (
@@ -12,6 +14,7 @@ export default function Cases() {
       <Seo
         title="Cases"
         description="Voor- en na-situaties van mkb-bedrijfspanden in de Hoeksche Waard, van QuickScan tot uitvoering."
+        structuredData={[getBreadcrumbSchema([{ name: 'Cases', path: ROUTES.cases }])]}
       />
 
       <PageHero

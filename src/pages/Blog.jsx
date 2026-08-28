@@ -4,6 +4,8 @@ import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { BlogCard } from '../components/blog/BlogCard'
 import { BLOG_POSTS } from '../data/blogPosts'
+import { getBreadcrumbSchema } from '../lib/structuredData'
+import { ROUTES } from '../lib/routes'
 
 export default function Blog() {
   return (
@@ -11,6 +13,7 @@ export default function Blog() {
       <Seo
         title="Blog"
         description="Praktische kennis voor verduurzaming van uw bedrijfspand: isolatie, subsidies, installaties en verborgen energieverbruik."
+        structuredData={[getBreadcrumbSchema([{ name: 'Blog', path: ROUTES.blog }])]}
       />
 
       <PageHero

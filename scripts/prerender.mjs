@@ -76,7 +76,20 @@ function buildHead(template, url, seo) {
     /<meta property="og:locale" content="nl_NL" \/>/,
     `<meta property="og:locale" content="nl_NL" />\n    <meta property="og:url" content="${canonical}" />\n    <link rel="canonical" href="${canonical}" />`,
   )
+  if (seo?.structuredData?.length) {
+    const scripts = seo.structuredData
+      .map((block) => `<script type="application/ld+json">${escapeForInlineScript(JSON.stringify(block))}</script>`)
+      .join('\n    ')
+    html = html.replace('</head>', `    ${scripts}\n  </head>`)
+  }
   return html
+}
+
+// Standard safeguard for embedding JSON inside an inline <script> tag: a
+// literal "</" in a string value could otherwise be read by the HTML
+// parser as closing the script early.
+function escapeForInlineScript(json) {
+  return json.replace(/</g, '\\u003c')
 }
 
 async function main() {
