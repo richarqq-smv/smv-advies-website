@@ -2,6 +2,22 @@
 <html lang="nl">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // Consent Mode v2 default — must run unconditionally on every page
+      // load, before the Google tag itself (which loads only after the
+      // cookiebanner's "Accepteren", see src/lib/analytics.js). This is
+      // the one and only place 'consent','default' is declared.
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        dataLayer.push(arguments)
+      }
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+      })
+    </script>
     <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="/favicon.png" sizes="any" />
     <link rel="apple-touch-icon" href="/favicon-180.png" />
