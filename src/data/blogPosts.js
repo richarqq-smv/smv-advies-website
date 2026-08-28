@@ -85,7 +85,9 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Het dak is voor veel bedrijfspanden de plek waar de grootste en snelst terugverdiende winst te behalen valt, zeker wanneer er toch al onderhoud aan de dakbedekking op de planning staat. De enige manier om te weten of dat ook voor uw pand geldt, is het daadwerkelijk laten doorrekenen.',
+          'Het dak is voor veel bedrijfspanden de plek waar de grootste en snelst terugverdiende winst te behalen valt, zeker wanneer er toch al onderhoud aan de dakbedekking op de planning staat. De enige manier om te weten of dat ook voor uw pand geldt, is het daadwerkelijk laten doorrekenen — bekijk hoe zo’n traject er bij ons uitziet in onze ',
+          { text: 'werkwijze', to: ROUTES.werkwijze },
+          '.',
         ],
       },
     ],
@@ -153,7 +155,11 @@ export const BLOG_POSTS = [
       {
         type: 'callout',
         title: 'Wij nemen dit voor u door',
-        text: 'Vanaf het Premium Pakket voeren we standaard een subsidie-check uit en adviseren we over de regelingen die op uw situatie van toepassing zijn. Bij het Gold Pakket helpen we ook met de daadwerkelijke aanvraag bij het RVO.',
+        text: [
+          'Vanaf het Premium Pakket voeren we standaard een subsidie-check uit en adviseren we over de regelingen die op uw situatie van toepassing zijn. Bij het Gold Pakket helpen we ook met de daadwerkelijke aanvraag bij het RVO. Twijfelt u welke regelingen voor uw pand van toepassing zijn? ',
+          { text: 'Neem gerust contact met ons op', to: ROUTES.contact },
+          '.',
+        ],
       },
       { type: 'h2', text: 'Conclusie' },
       {
