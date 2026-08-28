@@ -88,10 +88,15 @@ async function main() {
       '<div id="root"></div>',
       `<div id="root">${appHtml}</div>`,
     )
-    const outDir = path.join(distDir, url)
-    await mkdir(outDir, { recursive: true })
-    await writeFile(path.join(outDir, 'index.html'), pageHtml, 'utf-8')
-    console.log(`prerendered ${url} -> dist${url}/index.html`)
+    // A flat "<route>.html" file, not "<route>/index.html" — GitHub Pages
+    // resolves an extensionless request straight to a matching .html file,
+    // but redirects (301, to add a trailing slash) when the only match is
+    // a directory's index.html. That redirect meant the exact requested
+    // URL never actually returned 200 itself, which was the whole point.
+    const outPath = path.join(distDir, `${url}.html`)
+    await mkdir(path.dirname(outPath), { recursive: true })
+    await writeFile(outPath, pageHtml, 'utf-8')
+    console.log(`prerendered ${url} -> dist${url}.html`)
   }
 
   await rm(ssrDir, { recursive: true, force: true })
