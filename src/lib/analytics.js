@@ -21,7 +21,6 @@ export function loadAnalytics() {
   const script = document.createElement('script')
   script.async = true
   script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`
-  document.head.appendChild(script)
 
   window.dataLayer = window.dataLayer || []
   function gtag(...args) {
@@ -29,8 +28,15 @@ export function loadAnalytics() {
   }
   window.gtag = gtag
 
-  gtag('consent', 'update', { analytics_storage: 'granted' })
+  // Dispatch the consent update (and js/config) only once gtag.js has
+  // actually loaded — queuing them immediately after appendChild races
+  // with the dynamically-injected script's own load/init, which is why
+  // Tag Assistant never saw the update take effect.
+  script.onload = function () {
+    gtag('consent', 'update', { analytics_storage: 'granted' })
+    gtag('js', new Date())
+    gtag('config', GA_MEASUREMENT_ID)
+  }
 
-  gtag('js', new Date())
-  gtag('config', GA_MEASUREMENT_ID)
+  document.head.appendChild(script)
 }
