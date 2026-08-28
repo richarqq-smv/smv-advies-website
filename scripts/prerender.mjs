@@ -1,13 +1,15 @@
 // Runs after both `vite build` (client, -> dist/) and
 // `vite build --ssr src/entry-server.jsx --outDir dist-ssr` (server bundle).
-// For each known route, server-renders the exact same App/route tree the
-// browser would, and writes it as a real dist/<route>/index.html file, so
-// GitHub Pages — a static host with no rewrite rules — has an actual file
-// to serve (with a real 200) for every route, not just "/". The dist-ssr/
-// server bundle is deleted at the end so it never reaches the deployed site.
+// For each known route — including "/" — server-renders the exact same
+// App/route tree the browser would, and writes it as a real static file, so
+// GitHub Pages — a static host with no rewrite rules — has actual content
+// to serve (with a real 200) for every route. The dist-ssr/ server bundle
+// is deleted at the end so it never reaches the deployed site.
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import { ROUTES as ROUTE_PATHS } from '../src/lib/routes.js'
+import { BLOG_POSTS } from '../src/data/blogPosts.js'
 
 const rootDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const distDir = path.join(rootDir, 'dist')
@@ -17,24 +19,23 @@ const ssrEntry = path.join(ssrDir, 'entry-server.js')
 const SITE_ORIGIN = 'https://smv-advies.nl'
 const SITE_NAME = 'SMV Advies'
 
-// Every route in App.jsx except "/" — the homepage already builds and
-// serves correctly as dist/index.html and is left untouched.
+// Derived from src/lib/routes.js and src/data/blogPosts.js instead of a
+// hand-maintained duplicate list, so a route added there is automatically
+// prerendered here too — this is what keeps prerendering stable across
+// future builds instead of silently missing a new page.
 const ROUTES = [
-  '/pakketten',
-  '/energie-indicatie',
-  '/over',
-  '/werkwijze',
-  '/cases',
-  '/blog',
-  '/blog/dakisolatie-voor-uw-bedrijfspand',
-  '/blog/eia-isde-sde-subsidies',
-  '/blog/warmtepomp-in-het-mkb',
-  '/blog/led-verlichting-snelste-stap',
-  '/blog/verborgen-energieverspillers',
-  '/faq',
-  '/contact',
-  '/privacy',
-  '/voorwaarden',
+  ROUTE_PATHS.home,
+  ROUTE_PATHS.pakketten,
+  ROUTE_PATHS.energieIndicatie,
+  ROUTE_PATHS.over,
+  ROUTE_PATHS.werkwijze,
+  ROUTE_PATHS.cases,
+  ROUTE_PATHS.blog,
+  ...BLOG_POSTS.map((post) => ROUTE_PATHS.blogPost(post.slug)),
+  ROUTE_PATHS.faq,
+  ROUTE_PATHS.contact,
+  ROUTE_PATHS.privacy,
+  ROUTE_PATHS.voorwaarden,
 ]
 
 function escapeHtml(str) {
@@ -93,10 +94,12 @@ async function main() {
     // but redirects (301, to add a trailing slash) when the only match is
     // a directory's index.html. That redirect meant the exact requested
     // URL never actually returned 200 itself, which was the whole point.
-    const outPath = path.join(distDir, `${url}.html`)
+    // "/" is the one exception: it must overwrite dist/index.html itself
+    // (the file GitHub Pages actually serves for the root), not "dist/.html".
+    const outPath = url === '/' ? path.join(distDir, 'index.html') : path.join(distDir, `${url}.html`)
     await mkdir(path.dirname(outPath), { recursive: true })
     await writeFile(outPath, pageHtml, 'utf-8')
-    console.log(`prerendered ${url} -> dist${url}.html`)
+    console.log(`prerendered ${url} -> ${path.relative(rootDir, outPath).replace(/\\/g, '/')}`)
   }
 
   await rm(ssrDir, { recursive: true, force: true })

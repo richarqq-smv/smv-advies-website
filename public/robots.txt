@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.smv-advies.nl/sitemap.xml
+Sitemap: https://smv-advies.nl/sitemap.xml
