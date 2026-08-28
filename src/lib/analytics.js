@@ -1,42 +1,23 @@
 /**
- * Google Analytics (GA4) loader, gated on cookie consent.
+ * Google Analytics (GA4) consent grant.
+ *
+ * gtag.js itself loads unconditionally on every page load as a static tag
+ * in index.html — see the comment there for why (a dynamically-injected
+ * script via document.createElement was proven, through an isolated A/B
+ * test, to silently break gtag.js's internal consent/measurement
+ * processing, even though the script itself loaded and ran fine). The
+ * 'consent','default' declared there keeps analytics_storage denied, so
+ * no cookie is set and no hit is sent, until this runs.
  *
  * loadAnalytics() is only ever called from CookieBanner after consent is
- * either already stored as 'accepted' or just given — the gtag.js script
- * is never injected before that, so no measurement happens pre-consent.
- *
- * Consent Mode v2's 'default' (denied baseline) is declared unconditionally
- * in index.html, on every page load, before this ever runs — see the inline
- * script in <head>. This only ever needs to send the 'update' grant, since
- * this site uses GA4 only (no Ads/remarketing).
+ * either already stored as 'accepted' or just given — it only needs to
+ * grant analytics_storage; 'js'/'config' already ran in index.html.
  */
-export const GA_MEASUREMENT_ID = 'G-CE0DFH59Z9'
-
-let loaded = false
+let granted = false
 
 export function loadAnalytics() {
-  if (loaded || !GA_MEASUREMENT_ID || GA_MEASUREMENT_ID.startsWith('REPLACE_WITH_')) return
-  loaded = true
+  if (granted || typeof window.gtag !== 'function') return
+  granted = true
 
-  const script = document.createElement('script')
-  script.async = true
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`
-
-  window.dataLayer = window.dataLayer || []
-  function gtag(...args) {
-    window.dataLayer.push(args)
-  }
-  window.gtag = gtag
-
-  // Dispatch the consent update (and js/config) only once gtag.js has
-  // actually loaded — queuing them immediately after appendChild races
-  // with the dynamically-injected script's own load/init, which is why
-  // Tag Assistant never saw the update take effect.
-  script.onload = function () {
-    gtag('consent', 'update', { analytics_storage: 'granted' })
-    gtag('js', new Date())
-    gtag('config', GA_MEASUREMENT_ID)
-  }
-
-  document.head.appendChild(script)
+  window.gtag('consent', 'update', { analytics_storage: 'granted' })
 }

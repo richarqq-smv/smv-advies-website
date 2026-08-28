@@ -18,6 +18,21 @@
         analytics_storage: 'denied',
       })
     </script>
+    <!--
+      Static gtag.js tag, per Google's own documented pattern. Loading it
+      unconditionally (rather than via dynamic document.createElement,
+      which was proven — via an isolated A/B test — to silently break
+      gtag.js's internal consent/measurement processing even though the
+      script itself loads and runs) is what makes Consent Mode actually
+      work. The denied default above means no cookie is set and no hit is
+      sent until src/lib/analytics.js sends 'consent','update' after the
+      visitor clicks "Accepteren".
+    -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CE0DFH59Z9"></script>
+    <script>
+      gtag('js', new Date())
+      gtag('config', 'G-CE0DFH59Z9')
+    </script>
     <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="/favicon.png" sizes="any" />
     <link rel="apple-touch-icon" href="/favicon-180.png" />
