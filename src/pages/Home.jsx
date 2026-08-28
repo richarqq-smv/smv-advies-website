@@ -13,7 +13,7 @@ export default function Home() {
     <>
       <Seo
         title="Verduurzamingsadvies voor het mkb"
-        description="SMV Advies brengt in een heldere rapportage in kaart hoe uw bedrijfspand energiezuiniger, comfortabeler en toekomstbestendig wordt. Onafhankelijk advies voor mkb-bedrijfspanden in de Hoeksche Waard."
+        description="Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in de Hoeksche Waard: heldere rapportage, concrete maatregelen en een subsidiecheck."
       />
 
       <Hero />
