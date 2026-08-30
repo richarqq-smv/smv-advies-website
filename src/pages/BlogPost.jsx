@@ -13,15 +13,25 @@ import NotFound from './NotFound'
 const LINK_CLASSNAME = 'font-medium text-accent underline underline-offset-2 hover:text-secondary'
 
 function renderParts(parts) {
-  return parts.map((part, index) =>
-    typeof part === 'string' ? (
-      <span key={index}>{part}</span>
-    ) : (
+  return parts.map((part, index) => {
+    if (typeof part === 'string') {
+      return <span key={index}>{part}</span>
+    }
+    // External source links use `href` (opens in a new tab); internal
+    // cross-links use `to`, as every existing article already does.
+    if (part.href) {
+      return (
+        <a key={index} href={part.href} target="_blank" rel="noopener noreferrer" className={LINK_CLASSNAME}>
+          {part.text}
+        </a>
+      )
+    }
+    return (
       <Link key={index} to={part.to} className={LINK_CLASSNAME}>
         {part.text}
       </Link>
-    ),
-  )
+    )
+  })
 }
 
 function renderSection(section, index) {

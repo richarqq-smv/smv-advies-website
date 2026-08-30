@@ -10,6 +10,205 @@ import { ROUTES } from '../lib/routes.js'
  */
 export const BLOG_POSTS = [
   {
+    slug: 'netcongestie-hoeksche-waard',
+    category: 'Energienet',
+    title: 'Netcongestie in de Hoeksche Waard: wat betekent dit voor uw bedrijfspand?',
+    excerpt:
+      'Het stroomnet in de Hoeksche Waard zit vol. Wat betekent netcongestie concreet voor uw bedrijfspand, en wat kunt u er zelf aan doen?',
+    date: '20 augustus 2026',
+    isoDate: '2026-08-20',
+    readTime: '7 min',
+    bodyAvailable: true,
+    sections: [
+      {
+        type: 'p',
+        parts: [
+          'Het stroomnet in de Hoeksche Waard zit vol. Voor ondernemers die willen verduurzamen, elektrificeren of uitbreiden roept dat een directe vraag op: kan dat nog wel? Dit artikel legt uit wat netcongestie precies betekent, wat de actuele situatie in de regio is, en wat u er als eigenaar van een bedrijfspand zelf aan kunt doen.',
+        ],
+      },
+      { type: 'h2', text: 'Wat is netcongestie precies?' },
+      {
+        type: 'p',
+        parts: [
+          'Netcongestie ontstaat wanneer de vraag naar transport van elektriciteit op een bepaald moment groter is dan het elektriciteitsnet aankan. Dat kan spelen bij afname (het verbruiken van stroom) én bij teruglevering (bijvoorbeeld het invoeden van stroom uit zonnepanelen). Zodra een deel van het net vol zit, moet de netbeheerder — in de Hoeksche Waard is dat Stedin — nieuwe of zwaardere aanvragen voor transportcapaciteit tijdelijk op een wachtlijst zetten.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'Belangrijk om te weten: netcongestie raakt in de eerste plaats nieuwe of zwaardere aansluitingen. Een bestaande aansluiting die al werkt, blijft gewoon werken — congestie betekent niet dat de stroom bij u wordt afgesloten.',
+        ],
+      },
+      { type: 'h2', text: 'De situatie in de Hoeksche Waard' },
+      {
+        type: 'p',
+        parts: [
+          'Netbeheerder Stedin meldde in februari 2024 congestie voor teruglevering, en in december 2024 ook voor afname door grootverbruikers (aansluitingen groter dan 3×80 ampère) in het gebied ',
+          { text: 'Hoeksche Waard en Zuidelijk Dordrecht', to: ROUTES.werkgebied },
+          '. Die situatie werd destijds ook formeel gemeld bij de Autoriteit Consument & Markt, als onderdeel van een bredere melding voor vrijwel heel Zuid-Holland.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'Er wordt wel gewerkt aan uitbreiding. In 2025 is een nieuw, circa 13 kilometer lang middenspanningstracé tussen Klaaswaal en Puttershoek in gebruik genomen, met een capaciteit die ongeveer gelijkstaat aan het verbruik van 8.000 huishoudens. Dat tracé gaf twaalf bedrijven die op de wachtlijst stonden alsnog een aansluiting. Daarnaast bereiden Stedin en landelijk netbeheerder TenneT, samen met de gemeente, de bouw voor van een nieuw ',
+          {
+            text: 'hoogspanningsstation in de Hoeksche Waard',
+            href: 'https://www.stedin.net/over-stedin/wat-doet-stedin/projecten-in-uw-regio/hoogspanningsstation-hoeksche-waard',
+          },
+          '. De gemeente nam in 2026 een principebesluit over de voorkeurslocatie; de bouw is voorzien voor 2028-2029, met oplevering rond 2030-2031. Dat station moet structureel meer transportcapaciteit voor de regio opleveren — een oplossing voor de langere termijn, niet voor morgen.',
+        ],
+      },
+      { type: 'h2', text: 'Wat betekent dit voor uw bedrijfspand?' },
+      {
+        type: 'p',
+        parts: [
+          'Of en hoe u netcongestie merkt, hangt sterk af van uw situatie. Er is een belangrijk onderscheid tussen afname (stroom verbruiken) en teruglevering (stroom terugleveren, bijvoorbeeld met zonnepanelen), en tussen grootverbruik (doorgaans aansluitingen groter dan 3×80 ampère) en kleinverbruik (de meeste kleinere bedrijfspanden).',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'Tot voor kort raakte de wachtlijst voor nieuwe of zwaardere aansluitingen vooral grootverbruikers. Vanaf 1 juli 2026 geldt deze wachtlijst in de Hoeksche Waard ook voor kleinverbruikers — dus ook voor kleinere bedrijfspanden die een nieuwe aansluiting willen of hun bestaande aansluiting willen verzwaren.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'Heeft u nu al een werkende aansluiting en wilt u die niet uitbreiden? Dan verandert er in de praktijk weinig. Wilt u wél een nieuwe aansluiting, een zwaardere aansluiting, of extra teruglevercapaciteit — bijvoorbeeld voor een groter zonnepanelenveld — dan is een langere wachttijd op dit moment reëel. Hoe dit precies voor uw pand uitpakt, is altijd afhankelijk van uw specifieke aansluiting en de actuele netcapaciteit op dat moment.',
+        ],
+      },
+      { type: 'h2', text: 'Kunt u nog verduurzamen ondanks netcongestie?' },
+      {
+        type: 'p',
+        parts: [
+          'Ja, voor de meeste maatregelen wel — maar niet elke maatregel wordt op dezelfde manier geraakt.',
+        ],
+      },
+      {
+        type: 'ul',
+        items: [
+          [
+            'Maatregelen die alleen uw verbruik verlagen, zoals ',
+            { text: 'dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
+            ' en ',
+            { text: 'LED-verlichting', to: ROUTES.blogPost('led-verlichting-snelste-stap') },
+            ', raken de netcapaciteit niet negatief — integendeel, ze verkleinen juist de kans dat u tegen een grens aanloopt.',
+          ],
+          [
+            'Een ',
+            { text: 'warmtepomp', to: ROUTES.blogPost('warmtepomp-in-het-mkb') },
+            ' vraagt meer capaciteit van uw aansluiting; of dat een probleem is, hangt af van uw huidige aansluiting en of u die moet verzwaren.',
+          ],
+          'Zonnepanelen die u vooral zelf gebruikt lopen minder snel tegen congestie aan dan een systeem dat is bedoeld om fors terug te leveren aan het net.',
+          'Laadpalen voor elektrische voertuigen vragen, net als een warmtepomp, extra capaciteit — vooral bij meerdere laadpunten tegelijk.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'De enige manier om dit voor uw eigen pand zeker te weten, is uw huidige aansluiting en verbruiksprofiel laten doorrekenen — en zo nodig bij Stedin navragen wat er nog mogelijk is voordat u investeert.',
+        ],
+      },
+      { type: 'h2', text: 'Wat u zelf kunt doen' },
+      {
+        type: 'p',
+        parts: [
+          'RVO onderscheidt voor bedrijven in een congestiegebied meerdere oplossingsrichtingen. Geen ervan is een garantie op extra capaciteit — het zijn manieren om de ruimte die er wél is, beter te benutten.',
+        ],
+      },
+      { type: 'h3', text: 'Energiebesparing' },
+      {
+        type: 'p',
+        parts: [
+          'De eerste en goedkoopste stap is vaak simpelweg minder piekvraag creëren: isolatie, efficiëntere apparatuur en LED-verlichting verlagen uw maximale vermogen en geven zo vaker ruimte binnen uw bestaande aansluiting.',
+        ],
+      },
+      { type: 'h3', text: 'Energiesturing' },
+      {
+        type: 'p',
+        parts: [
+          'Met een energiebeheersysteem stuurt u het verbruik van bijvoorbeeld laadpalen of productieprocessen actief bij: apparatuur gaat aan op momenten dat er ruimte is, en uit op piekmomenten. Dit vraagt inzicht in uw verbruik en werkt vooral als uw bedrijfsproces daadwerkelijk flexibel is.',
+        ],
+      },
+      { type: 'h3', text: 'Batterijopslag' },
+      {
+        type: 'p',
+        parts: [
+          'Een batterij slaat overtollige elektriciteit — bijvoorbeeld van eigen zonnepanelen — op voor later gebruik, en kan tijdelijk extra vermogen leveren bovenop uw aansluiting. Dat helpt in specifieke situaties, maar is geen automatische oplossing voor iedereen: het vraagt ruimte, brandveiligheidseisen en een investering die per situatie fors kan verschillen.',
+        ],
+      },
+      { type: 'h3', text: 'Capaciteitsbeperkend contract' },
+      {
+        type: 'p',
+        parts: [
+          'Met dit type contract spreekt u met de netbeheerder af dat u op aangegeven piekmomenten tijdelijk minder stroom afneemt of teruglevert, in ruil voor een vergoeding. Dit is vooral interessant als uw bedrijfsproces op die momenten daadwerkelijk kan worden bijgestuurd. Het is geen garantie dat er extra capaciteit vrijkomt, maar een manier om bestaande restruimte beter te benutten.',
+        ],
+      },
+      { type: 'h3', text: 'Samenwerken met andere bedrijven' },
+      {
+        type: 'p',
+        parts: [
+          'Op een bedrijventerrein kan het lonen om samen met buurbedrijven capaciteit te delen — bijvoorbeeld via cable pooling (één aansluiting voor meerdere opwekbronnen) of een gezamenlijk contract, ook wel een energiehub genoemd. Dit soort collectieve oplossingen staat nog volop in ontwikkeling en vraagt afstemming met meerdere partijen, maar kan juist op een bedrijventerrein in de Hoeksche Waard kansrijk zijn. RVO beschrijft deze en andere opties, met praktijkvoorbeelden en indicatieve kosten, in het ',
+          {
+            text: 'factsheet over oplossingen bij netcongestie',
+            href: 'https://www.rvo.nl/sites/default/files/2024-07/Factsheets-oplossingen-netcongestie-bedrijven-versie-2.pdf',
+          },
+          '.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'Overweegt u een investering zoals een batterij of energiebeheersysteem? Kijk ook naar de mogelijke fiscale voordelen in ons overzicht van ',
+          { text: 'EIA, ISDE en SDE++', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Wanneer neemt u contact op met Stedin?' },
+      {
+        type: 'p',
+        parts: [
+          'Twijfelt u of uw postcode te maken heeft met congestie? Stedin biedt een ',
+          {
+            text: 'congestiechecker',
+            href: 'https://www.stedin.net/zakelijk/energietransitie/beschikbare-netcapaciteit/congestie',
+          },
+          ' waarmee u dat kunt nagaan. Neem in ieder geval vroeg contact op met Stedin zodra u concrete plannen heeft voor een nieuwe aansluiting, een zwaardere aansluiting, of een grotere teruglevercapaciteit — hoe eerder u dit weet, hoe beter u uw planning daarop kunt afstemmen.',
+        ],
+      },
+      { type: 'h2', text: 'Wat SMV Advies wel en niet voor u kan betekenen' },
+      {
+        type: 'p',
+        parts: [
+          'SMV Advies kan helpen om het energiegebruik en de verduurzamingsmogelijkheden van uw bedrijfspand in kaart te brengen en maatregelen te beoordelen. SMV kan echter geen netcapaciteit toewijzen of een aansluiting bij Stedin regelen — dat is en blijft aan de netbeheerder.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'Wat wij wél doen: in een ',
+          { text: 'QuickScan of Premium-analyse', to: ROUTES.pakketten },
+          ' meenemen wat uw huidige aansluiting toelaat, en samen met u bepalen welke maatregelen, in welke volgorde, het meeste opleveren binnen die grenzen. Hoe dat traject eruitziet, leest u in onze ',
+          { text: 'werkwijze', to: ROUTES.werkwijze },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Conclusie' },
+      {
+        type: 'p',
+        parts: [
+          'Netcongestie is geen reden om verduurzaming helemaal te laten liggen, maar wel een reden om slimmer te plannen: begin met de maatregelen die uw verbruik verlagen, denk vroeg na over uw aansluiting bij grotere stappen, en vraag tijdig bij Stedin na wat er mogelijk is. Zo voorkomt u vertraging op het moment dat u juist wilt doorpakken.',
+        ],
+      },
+    ],
+    cta: {
+      label: 'Start de gratis energie-indicatie',
+      to: ROUTES.energieIndicatie,
+      text: 'Wilt u weten waar de grootste kansen liggen voor uw pand, rekening houdend met uw huidige aansluiting? Onze gratis energie-indicatie geeft een eerste beeld.',
+    },
+  },
+  {
     slug: 'dakisolatie-voor-uw-bedrijfspand',
     category: 'Isolatie',
     title: 'Dakisolatie voor uw bedrijfspand: waar het echt verschil maakt',
