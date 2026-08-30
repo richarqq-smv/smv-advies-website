@@ -10,6 +10,166 @@ import { ROUTES } from '../lib/routes.js'
  */
 export const BLOG_POSTS = [
   {
+    slug: 'energielabel-c-verplicht-bedrijfspand',
+    category: 'Wetgeving',
+    title: 'Energielabel C verplicht voor uw bedrijfspand: wat betekent dit?',
+    excerpt:
+      'Sinds 2023 moet een kantoorpand minimaal energielabel C hebben, anders geldt een gebruiksverbod. Ontdek of dit voor uw bedrijfspand geldt.',
+    date: '30 augustus 2026',
+    isoDate: '2026-08-30',
+    readTime: '7 min',
+    bodyAvailable: true,
+    sections: [
+      {
+        type: 'p',
+        parts: [
+          'Sinds 1 januari 2023 moet een kantoorpand minimaal energielabel C hebben. Voldoet uw pand daar niet aan, dan mag het niet langer als kantoor worden gebruikt. In dit artikel leest u wat de verplichting precies inhoudt, voor welke panden dit geldt, welke uitzonderingen er zijn, en wat u kunt doen als uw bedrijfspand nog niet aan de eisen voldoet.',
+        ],
+      },
+      { type: 'h2', text: 'Wat is de energielabel C-verplichting?' },
+      {
+        type: 'p',
+        parts: [
+          'Een energielabel geeft aan hoe energiezuinig een gebouw is. Voor kantoorgebouwen geldt sinds 1 januari 2023 een minimum: energielabel C, wat neerkomt op een maximaal primair fossiel energiegebruik van 225 kWh per vierkante meter per jaar. Deze eis staat in het ',
+          { text: 'Besluit bouwwerken leefomgeving', href: 'https://wetten.overheid.nl/BWBR0041297/' },
+          '. Kantoorgebouwen met een lager label — D tot en met G — voldoen niet aan de eis.',
+        ],
+      },
+      { type: 'h2', text: 'Voor welke bedrijfspanden geldt energielabel C?' },
+      {
+        type: 'p',
+        parts: [
+          'De verplichting geldt voor gebouwen met een kantoorfunctie, en alleen wanneer aan twee voorwaarden tegelijk wordt voldaan: de kantoorfunctie beslaat minimaal 100 vierkante meter gebruiksoppervlak, én de kantoorfunctie is minimaal de helft van de totale gebruiksoppervlakte van het gebouw. Zit uw kantoor in een pand met bijvoorbeeld ook een werkplaats of showroom? Dan telt alleen het kantoordeel mee, en bepaalt de verhouding tot het totale pand of de verplichting van toepassing is.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'Heeft u meerdere kleinere kantoorunits in hetzelfde gebouw? Voor de grens van 100 vierkante meter worden die units bij elkaar opgeteld — de verplichting kan dus niet worden omzeild door een kantoor in meerdere kleine ruimtes te verdelen.',
+        ],
+      },
+      { type: 'h2', text: 'Welke uitzonderingen zijn er?' },
+      {
+        type: 'p',
+        parts: [
+          { text: 'Het Informatiepunt Leefomgeving', href: 'https://iplo.nl/thema/energiebesparing/energielabel-verplichting-kantoren/uitzonderingssituaties/' },
+          ' noemt een aantal situaties waarin de verplichting niet geldt:',
+        ],
+      },
+      {
+        type: 'ul',
+        items: [
+          'De kantoorfunctie beslaat minder dan de helft van het totale gebouw.',
+          'De totale kantoor- en nevenoppervlakte is kleiner dan 100 vierkante meter.',
+          'Het pand is een rijks-, provinciaal of gemeentelijk monument.',
+          'U gebruikt het pand maximaal twee jaar als kantoor, bijvoorbeeld tijdens een verbouwing of transformatie.',
+          'Het pand is verworven met het oog op onteigening.',
+          'Het pand wordt niet verwarmd of gekoeld voor mensen.',
+          'Het pand wordt gebruikt voor religieuze samenkomsten.',
+          'Alle nog mogelijke energiebesparende maatregelen hebben een terugverdientijd van meer dan 10 jaar (de hardheidsclausule).',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'Twijfelt u of een van deze uitzonderingen op uw pand van toepassing is? De daadwerkelijke gebruikssituatie is daarbij leidend, niet alleen de registratie in de Basisregistratie Adressen en Gebouwen (BAG).',
+        ],
+      },
+      { type: 'h2', text: 'Wat gebeurt er als uw pand niet aan de verplichting voldoet?' },
+      {
+        type: 'p',
+        parts: [
+          'Voldoet uw kantoorpand niet aan de eis, dan mag het volgens de regelgeving niet langer als kantoor worden gebruikt of in gebruik worden genomen — een gebruiksverbod. Toezicht en handhaving liggen doorgaans bij de gemeente, eventueel via een omgevingsdienst. Zij bepalen per situatie welke vervolgstappen worden gezet wanneer een pand na controle nog steeds niet voldoet.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'Dit artikel gaat uitsluitend uit van wat ',
+          { text: 'RVO', href: 'https://www.rvo.nl/onderwerpen/wetten-en-regels-gebouwen/energielabel-c-kantoren' },
+          ' en het Informatiepunt Leefomgeving hierover vermelden. Voor de exacte gevolgen in uw specifieke situatie is contact met uw gemeente de meest betrouwbare bron.',
+        ],
+      },
+      { type: 'h2', text: 'Hoe weet u of uw bedrijfspand aan de eisen voldoet?' },
+      {
+        type: 'p',
+        parts: [
+          'Het eenvoudigste startpunt is uw huidige energielabel: staat dat op A, B of C, dan voldoet uw pand al. Heeft u geen geldig label, of staat het op D of lager, dan is een vervolgstap nodig. Het helpt om daarbij drie dingen uit elkaar te houden.',
+        ],
+      },
+      {
+        type: 'ul',
+        items: [
+          'Energielabel: het officiële, geregistreerde label van uw gebouw. Dit wordt vastgesteld door een erkend energieadviseur en geregistreerd bij RVO — SMV Advies stelt zelf geen officieel energielabel vast.',
+          'Verduurzamingsadvies: in kaart brengen welke maatregelen voor úw pand haalbaar en zinvol zijn, en in welke volgorde. Dit is wél waar SMV Advies in adviseert.',
+          'Uitvoering: de maatregelen daadwerkelijk laten aanbrengen door een installateur of aannemer.',
+        ],
+      },
+      { type: 'h2', text: 'Welke maatregelen kunnen helpen richting energielabel C?' },
+      {
+        type: 'p',
+        parts: [
+          'Welke maatregelen het meeste bijdragen, verschilt sterk per pand. Maatregelen die vaker een rol spelen zijn onder meer:',
+        ],
+      },
+      {
+        type: 'ul',
+        items: [
+          [
+            { text: 'Dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
+            ' en gevelisolatie, die het energieverbruik voor verwarming structureel verlagen.',
+          ],
+          [
+            { text: 'LED-verlichting', to: ROUTES.blogPost('led-verlichting-snelste-stap') },
+            ' met aanwezigheidsdetectie, wat vooral het elektriciteitsverbruik omlaag brengt.',
+          ],
+          [
+            'Een ',
+            { text: 'warmtepomp', to: ROUTES.blogPost('warmtepomp-in-het-mkb') },
+            ' of een hybride variant, als het pand daar geschikt voor is.',
+          ],
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'Geen van deze maatregelen garandeert op zichzelf een label C — of dat het geval is, hangt af van de huidige staat van uw pand, de combinatie van maatregelen en hoe deze door een erkend energieadviseur worden doorgerekend.',
+        ],
+      },
+      { type: 'h2', text: 'Wat kan SMV Advies voor u betekenen?' },
+      {
+        type: 'p',
+        parts: [
+          'SMV Advies adviseert onafhankelijk over verduurzaming van bedrijfspanden in de Hoeksche Waard, zonder zelf maatregelen te verkopen of uit te voeren. Concreet betekent dat voor de energielabel C-verplichting: wij brengen in kaart welke maatregelen voor uw pand kansrijk zijn en in welke volgorde die het meeste opleveren. Wij stellen zelf geen officieel energielabel vast en regelen de verplichting niet namens u — dat blijft aan een erkend energieadviseur en, waar nodig, uw gemeente.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'Een QuickScan via onze ',
+          { text: 'pakketten', to: ROUTES.pakketten },
+          ' is een logische eerste stap om te bepalen waar uw pand nu staat, ook als u nog niet zeker weet of de verplichting op u van toepassing is. Bekijk ook onze ',
+          { text: 'werkwijze', to: ROUTES.werkwijze },
+          ' voor hoe zo’n traject eruitziet, of ',
+          { text: 'werkgebied', to: ROUTES.werkgebied },
+          ' voor de regio waarin wij actief zijn.',
+        ],
+      },
+      { type: 'h2', text: 'Conclusie' },
+      {
+        type: 'p',
+        parts: [
+          'De energielabel C-verplichting is voor veel kantoorpanden al een aantal jaren van kracht, maar niet ieder bedrijfspand valt eronder — en wie er wel onder valt, heeft vaak meerdere routes om te voldoen. De eerste stap is simpel: weten waar uw pand nu staat, en wat daarna het meest voor de hand ligt.',
+        ],
+      },
+    ],
+    cta: {
+      label: 'Start de gratis energie-indicatie',
+      to: ROUTES.energieIndicatie,
+      text: 'Wilt u weten waar uw bedrijfspand nu staat, en welke stappen relevant zijn richting energielabel C? Onze gratis energie-indicatie geeft een eerste beeld.',
+    },
+  },
+  {
     slug: 'netcongestie-hoeksche-waard',
     category: 'Energienet',
     title: 'Netcongestie in de Hoeksche Waard: wat betekent dit voor uw bedrijfspand?',
