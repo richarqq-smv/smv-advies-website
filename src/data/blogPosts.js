@@ -399,6 +399,18 @@ export const BLOG_POSTS = [
           'De beste timing voor dakisolatie is vaak geen los project, maar het moment waarop de dakbedekking toch al aan vervanging toe is. Bij een plat dak met bitumen of EPDM staat die vervanging na verloop van tijd sowieso op de planning — en dat is het natuurlijke moment om isolatie mee te nemen. De meerkosten ten opzichte van alleen een nieuwe dakbedekking zijn dan relatief beperkt, terwijl het isolatie-effect voor jaren vaststaat.',
         ],
       },
+      {
+        type: 'p',
+        parts: [
+          'Welke isolatiewaarde daarbij verplicht is, hangt af van de omvang van de werkzaamheden. Vervangt u alleen de isolatielaag van het dak, dan geldt een minimale Rc-waarde van 2,1 m²K/W (Bbl artikel 5.20 lid 2). Wordt de renovatie ingrijpender — meer dan een kwart van de gebouwschil wordt vernieuwd — dan gelden de eisen die ook voor nieuwbouw gelden (Bbl artikel 5.20 lid 4); voor het dak van een utiliteitsgebouw is dat een Rc-waarde van minimaal 6,3 m²K/W (Bbl artikel 4.152). Welke situatie op uw pand van toepassing is, hangt af van de precieze omvang en aard van de werkzaamheden — uw uitvoerende partij kan dit voor uw project beoordelen.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'Vanuit verduurzamingsoogpunt kan het interessant zijn om bij een toch al geplande dakvervanging verder te kijken dan het wettelijke minimum, en de isolatiekeuze in samenhang met de rest van de dakopbouw te bekijken. Of dat voor uw pand financieel aantrekkelijk is, hangt af van de concrete situatie — dat is geen vaste regel, maar een afweging per project.',
+        ],
+      },
       { type: 'h2', text: 'Wat het oplevert, naast een lagere energierekening' },
       {
         type: 'p',
@@ -415,7 +427,8 @@ export const BLOG_POSTS = [
           'Thermische bruggen: aansluitingen bij dakranden, lichtkoepels en doorvoeren blijven vaak de zwakke plekken, ook ná isolatie.',
           'Dampopen of dampdicht: de juiste opbouw voorkomt vochtproblemen in de dakconstructie — een detail voor een gespecialiseerde dakdekker.',
           'Draagvermogen van de bestaande constructie: extra isolatie en eventuele ballast wegen mee, met name bij oudere hallen.',
-          'Bouwregelgeving: zodra een substantieel deel van het dakoppervlak wordt vernieuwd, gelden er vanuit de bouwregelgeving minimale isolatiewaarden. Uw uitvoerende partij moet hier rekening mee houden.',
+          'Bouwregelgeving: bij gedeeltelijke vervanging van de dakisolatie geldt een minimale Rc-waarde van 2,1 m²K/W; bij een ingrijpende renovatie (meer dan een kwart van de gebouwschil) gelden de nieuwbouweisen, voor een utiliteitsgebouw Rc ≥ 6,3 m²K/W (Bbl art. 5.20 en 4.152). Uw uitvoerende partij kan beoordelen welke eis voor uw specifieke project geldt.',
+          'Toekomstplannen voor zonnepanelen: overweegt u op termijn zonnepanelen op het dak? Dan is het de moeite waard om de dakopbouw en de isolatiewerkzaamheden in samenhang te bekijken, zodat werkzaamheden niet onnodig dubbel worden uitgevoerd.',
         ],
       },
       { type: 'h2', text: 'Subsidie en terugverdientijd' },
