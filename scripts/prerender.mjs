@@ -77,8 +77,14 @@ function buildHead(template, url, seo) {
     `<meta property="og:locale" content="nl_NL" />\n    <meta property="og:url" content="${canonical}" />\n    <link rel="canonical" href="${canonical}" />`,
   )
   if (seo?.structuredData?.length) {
+    // data-seo-ld matches the attribute Seo.jsx looks for on hydration to
+    // remove these prerendered blocks before adding its own — without it,
+    // the client-side copy is added alongside instead of replacing them.
     const scripts = seo.structuredData
-      .map((block) => `<script type="application/ld+json">${escapeForInlineScript(JSON.stringify(block))}</script>`)
+      .map(
+        (block) =>
+          `<script type="application/ld+json" data-seo-ld="true">${escapeForInlineScript(JSON.stringify(block))}</script>`,
+      )
       .join('\n    ')
     html = html.replace('</head>', `    ${scripts}\n  </head>`)
   }
