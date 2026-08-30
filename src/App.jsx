@@ -11,6 +11,7 @@ const Pakketten = lazy(() => import('./pages/Pakketten'))
 const EnergieIndicatie = lazy(() => import('./pages/EnergieIndicatie'))
 const Over = lazy(() => import('./pages/Over'))
 const Werkwijze = lazy(() => import('./pages/Werkwijze'))
+const Werkgebied = lazy(() => import('./pages/Werkgebied'))
 const Cases = lazy(() => import('./pages/Cases'))
 const Blog = lazy(() => import('./pages/Blog'))
 const BlogPost = lazy(() => import('./pages/BlogPost'))
@@ -39,6 +40,7 @@ export default function App() {
           <Route path={ROUTES.energieIndicatie} element={<EnergieIndicatie />} />
           <Route path={ROUTES.over} element={<Over />} />
           <Route path={ROUTES.werkwijze} element={<Werkwijze />} />
+          <Route path={ROUTES.werkgebied} element={<Werkgebied />} />
           <Route path={ROUTES.cases} element={<Cases />} />
           <Route path={ROUTES.blog} element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />

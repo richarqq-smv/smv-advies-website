@@ -29,6 +29,7 @@ const ROUTES = [
   ROUTE_PATHS.energieIndicatie,
   ROUTE_PATHS.over,
   ROUTE_PATHS.werkwijze,
+  ROUTE_PATHS.werkgebied,
   ROUTE_PATHS.cases,
   ROUTE_PATHS.blog,
   ...BLOG_POSTS.map((post) => ROUTE_PATHS.blogPost(post.slug)),

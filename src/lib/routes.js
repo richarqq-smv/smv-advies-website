@@ -9,6 +9,7 @@ export const ROUTES = {
   energieIndicatie: '/energie-indicatie',
   over: '/over',
   werkwijze: '/werkwijze',
+  werkgebied: '/werkgebied',
   cases: '/cases',
   blog: '/blog',
   blogPost: (slug) => `/blog/${slug}`,
