@@ -403,7 +403,9 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Een beter geïsoleerd dak merkt u het hele jaar: minder warmteverlies in de winter, maar ook minder hitteopbouw in de zomer — vooral in kantoren en winkels vaak het verschil tussen een prettig en een onwerkbaar binnenklimaat. Voor personeel en klanten is dat comfortverschil in de praktijk net zo waardevol als de besparing op de energierekening.',
+          'Een beter geïsoleerd dak merkt u het hele jaar: minder warmteverlies in de winter, maar ook minder hitteopbouw in de zomer — vooral in kantoren en winkels vaak het verschil tussen een prettig en een onwerkbaar binnenklimaat. Voor personeel en klanten is dat comfortverschil in de praktijk net zo waardevol als de besparing op de energierekening. Bekijk in onze ',
+          { text: 'cases', to: ROUTES.cases },
+          ' vergelijkbare voorbeelden uit de praktijk.',
         ],
       },
       { type: 'h2', text: 'Waar u op moet letten' },
@@ -428,7 +430,9 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Qua terugverdientijd hoort dakisolatie vaak bij de maatregelen met de kortste terugverdientijd van alle bouwkundige ingrepen, juist omdat de meerkosten bij een toch al geplande dakvervanging beperkt zijn. De exacte terugverdientijd hangt af van uw huidige situatie, het type dak en de energieprijzen — iets wat we in een QuickScan concreet voor uw pand berekenen.',
+          'Qua terugverdientijd hoort dakisolatie vaak bij de maatregelen met de kortste terugverdientijd van alle bouwkundige ingrepen, juist omdat de meerkosten bij een toch al geplande dakvervanging beperkt zijn. De exacte terugverdientijd hangt af van uw huidige situatie, het type dak en de energieprijzen — iets wat we in een ',
+          { text: 'QuickScan', to: ROUTES.pakketten },
+          ' concreet voor uw pand berekenen.',
         ],
       },
       {
@@ -477,14 +481,18 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'De EIA is geen subsidie in de vorm van een uitkering, maar een fiscaal voordeel: u mag een percentage van het investeringsbedrag extra aftrekken van de winst, bovenop de normale afschrijving. Dat levert alleen voordeel op als de investering ook daadwerkelijk op de jaarlijkse Energielijst van RVO staat — een lijst met technische maatregelen die per jaar wordt vastgesteld. De aanvraag moet vrijwel altijd binnen een paar maanden na het aangaan van de investeringsverplichting worden gedaan, dus vóórdat u definitief tekent bij een leverancier of installateur.',
+          'De EIA is geen subsidie in de vorm van een uitkering, maar een fiscaal voordeel: u mag een percentage van het investeringsbedrag extra aftrekken van de winst, bovenop de normale afschrijving. Dat levert alleen voordeel op als de investering ook daadwerkelijk op de jaarlijkse Energielijst van RVO staat — een lijst met technische maatregelen die per jaar wordt vastgesteld. De aanvraag moet vrijwel altijd binnen een paar maanden na het aangaan van de investeringsverplichting worden gedaan, dus vóórdat u definitief tekent bij een leverancier of installateur. Ook ',
+          { text: 'LED-verlichting', to: ROUTES.blogPost('led-verlichting-snelste-stap') },
+          ' kan, afhankelijk van het type en de toepassing, op deze lijst staan.',
         ],
       },
       { type: 'h2', text: 'ISDE — Investeringssubsidie duurzame energie en energiebesparing' },
       {
         type: 'p',
         parts: [
-          'De ISDE is wél een directe subsidie-uitkering, geen belastingaftrek. Voor mkb-bedrijfspanden is deze regeling met name relevant voor warmtepompen. Voor zakelijke zonnepanelen is de ISDE inmiddels afgeschaft — daar resteren voor zonnepanelen vooral fiscale voordelen zoals de EIA en de kleinschaligheidsinvesteringsaftrek (KIA). Voor warmtepompen geldt de ISDE nog wel, met een subsidiebedrag dat afhangt van het vermogen en type installatie.',
+          'De ISDE is wél een directe subsidie-uitkering, geen belastingaftrek. Voor mkb-bedrijfspanden is deze regeling met name relevant voor ',
+          { text: 'warmtepompen', to: ROUTES.blogPost('warmtepomp-in-het-mkb') },
+          '. Voor zakelijke zonnepanelen is de ISDE inmiddels afgeschaft — daar resteren voor zonnepanelen vooral fiscale voordelen zoals de EIA en de kleinschaligheidsinvesteringsaftrek (KIA). Voor warmtepompen geldt de ISDE nog wel, met een subsidiebedrag dat afhangt van het vermogen en type installatie.',
         ],
       },
       { type: 'h2', text: 'SDE++ — Stimulering Duurzame Energieproductie en Klimaattransitie' },
@@ -596,7 +604,9 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Een warmtepomp is voor veel bedrijfspanden een goede stap, maar het rendement staat of valt met de staat van het pand en de beschikbare aansluitcapaciteit. Een gedegen doorrekening vooraf voorkomt dat u investeert in een installatie die onder haar mogelijkheden blijft presteren.',
+          'Een warmtepomp is voor veel bedrijfspanden een goede stap, maar het rendement staat of valt met de staat van het pand en de beschikbare aansluitcapaciteit. Een gedegen doorrekening vooraf voorkomt dat u investeert in een installatie die onder haar mogelijkheden blijft presteren. Onze ',
+          { text: 'pakketten', to: ROUTES.pakketten },
+          ' bieden zo’n doorrekening, van een eerste QuickScan tot een volledige analyse.',
         ],
       },
     ],
@@ -642,7 +652,9 @@ export const BLOG_POSTS = [
         parts: [
           'De terugverdientijd van LED hangt sterk af van het aantal branduren: een bedrijfshal die lange dagen draait, verdient de investering doorgaans sneller terug dan een kantoor met beperkte openingstijden. Afhankelijk van het type armatuur en de toepassing kan LED-verlichting daarnaast in aanmerking komen voor de EIA — zie ons overzicht van ',
           { text: 'EIA, ISDE en SDE++', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
-          '.',
+          '. Bekijk in onze ',
+          { text: 'cases', to: ROUTES.cases },
+          ' een voorbeeld van wat dat in de praktijk oplevert.',
         ],
       },
       { type: 'h2', text: 'Waar u op moet letten' },
@@ -729,13 +741,19 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'De meeste bedrijfspanden hebben één energiemeter voor het hele pand. Zonder uitsplitsing per functie — verlichting, verwarming, productieapparatuur — ziet u alleen de totale rekening, niet waar het verbruik precies vandaan komt. Dat maakt het lastig om zelf te bepalen waar de winst zit.',
+          'De meeste bedrijfspanden hebben één energiemeter voor het hele pand. Zonder uitsplitsing per functie — verlichting, verwarming, productieapparatuur — ziet u alleen de totale rekening, niet waar het verbruik precies vandaan komt. Dat maakt het lastig om zelf te bepalen waar de winst zit. Bekijk in onze ',
+          { text: 'cases', to: ROUTES.cases },
+          ' een voorbeeld waarin dit concreet naar boven kwam.',
         ],
       },
       {
         type: 'callout',
         title: 'De eerste stap is inzicht',
-        text: 'Een QuickScan brengt deze verspillers concreet in kaart voor uw eigen pand, inclusief een inschatting van wat oplossen ervan oplevert.',
+        text: [
+          'Een ',
+          { text: 'QuickScan', to: ROUTES.pakketten },
+          ' brengt deze verspillers concreet in kaart voor uw eigen pand, inclusief een inschatting van wat oplossen ervan oplevert.',
+        ],
       },
       { type: 'h2', text: 'Conclusie' },
       {

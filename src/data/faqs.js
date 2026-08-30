@@ -1,7 +1,16 @@
+import { ROUTES } from '../lib/routes'
+
 /**
  * Verbatim from the client's existing published FAQ (verified during the
  * site analysis), grouped into categories for scannability — the
  * original showed these as one flat list. No answers were reworded.
+ *
+ * `answerParts`, where present, is what Faq.jsx renders instead of
+ * `answer` — the same text split around one internal link. `answer`
+ * itself is left untouched and unused for rendering in that case,
+ * because getFaqSchema() reads `answer` verbatim as the FAQPage
+ * schema's plain-text Answer — splitting it into parts there would
+ * corrupt the structured data.
  */
 export const FAQ_CATEGORIES = [
   {
@@ -66,6 +75,11 @@ export const FAQ_CATEGORIES = [
         question: 'Helpen jullie met subsidies zoals EIA en ISDE?',
         answer:
           'Ja. Vanaf het Premium Pakket voeren we een subsidie-check uit en adviseren we over in aanmerking komende regelingen zoals de EIA, ISDE en SDE++. Bij opdracht kunnen we ook meehelpen met de aanvraag bij het RVO.',
+        answerParts: [
+          'Ja. Vanaf het Premium Pakket voeren we een subsidie-check uit en adviseren we over in aanmerking komende regelingen zoals ',
+          { text: 'de EIA, ISDE en SDE++', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
+          '. Bij opdracht kunnen we ook meehelpen met de aanvraag bij het RVO.',
+        ],
       },
       {
         // Corrected to match the tool's actual behavior: the previous

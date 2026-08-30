@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
@@ -7,6 +8,21 @@ import { ClosingCta } from '../components/home/ClosingCta'
 import { FAQ_CATEGORIES } from '../data/faqs'
 import { getBreadcrumbSchema, getFaqSchema } from '../lib/structuredData'
 import { ROUTES } from '../lib/routes'
+
+// Renders `answerParts` (used by the one FAQ item that has an internal
+// link) — `answer` itself stays a plain string everywhere, including for
+// that item, since getFaqSchema() reads it verbatim for the FAQPage schema.
+function renderAnswer(parts) {
+  return parts.map((part, index) =>
+    typeof part === 'string' ? (
+      <span key={index}>{part}</span>
+    ) : (
+      <Link key={index} to={part.to} className="font-medium text-accent underline underline-offset-2 hover:text-secondary">
+        {part.text}
+      </Link>
+    ),
+  )
+}
 
 export default function Faq() {
   return (
@@ -36,7 +52,9 @@ export default function Faq() {
                   {group.items.map((item, itemIndex) => (
                     <Reveal key={item.question} delay={(groupIndex * 3 + itemIndex) * 40} className="py-5">
                       <h3 className="text-base font-semibold text-primary">{item.question}</h3>
-                      <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{item.answer}</p>
+                      <p className="mt-2 text-sm leading-relaxed text-foreground-muted">
+                        {item.answerParts ? renderAnswer(item.answerParts) : item.answer}
+                      </p>
                     </Reveal>
                   ))}
                 </div>
