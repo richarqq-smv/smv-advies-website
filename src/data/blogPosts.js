@@ -10,6 +10,87 @@ import { ROUTES } from '../lib/routes.js'
  */
 export const BLOG_POSTS = [
   {
+    slug: 'zonnepanelen-op-uw-bedrijfspand',
+    category: 'Installaties',
+    title: 'Zonnepanelen op uw bedrijfspand: waar u rekening mee moet houden',
+    excerpt:
+      'Voordat u zonnepanelen laat plaatsen op uw bedrijfspand, spelen vergunning, de aflopende salderingsregeling, netcongestie en de fiscale kant allemaal een rol. Een overzicht van de belangrijkste aandachtspunten.',
+    date: '31 augustus 2026',
+    isoDate: '2026-08-31',
+    readTime: '6 min',
+    bodyAvailable: true,
+    sections: [
+      {
+        type: 'p',
+        parts: [
+          'Zonnepanelen zijn voor veel bedrijfspanden een voor de hand liggende stap, maar de praktische voorbereiding wordt vaak onderschat. Vergunningsvoorwaarden, de aankomende wijziging in de salderingsregeling, de mogelijke rol van netcongestie en de vraag of uw dak de investering aankan, spelen allemaal mee vóórdat u een offerte aanvraagt. Dit artikel zet de belangrijkste aandachtspunten op een rij.',
+        ],
+      },
+      { type: 'h2', text: 'Vergunningsvrij plaatsen: wanneer wel, wanneer niet' },
+      {
+        type: 'p',
+        parts: [
+          'In de meeste gevallen mag u zonnepanelen op het dak van uw bedrijfspand vergunningsvrij plaatsen, ongeacht wat het omgevingsplan voor de rest van het gebouw voorschrijft. Er gelden wel voorwaarden. Op een monument — gemeentelijk, provinciaal of rijksmonument — is vergunningsvrij plaatsen niet mogelijk. Ligt uw pand in een rijksbeschermd stads- of dorpsgezicht, dan mag u panelen alleen vergunningsvrij plaatsen op een achterdakvlak dat niet naar een openbaar toegankelijk gebied is gekeerd. Bij een plat dak geldt bovendien dat het paneel minimaal even ver van de dakrand moet blijven als het paneel hoog is. Kan uw situatie niet aan deze voorwaarden voldoen, dan is alsnog een omgevingsvergunning nodig. Omdat de precieze situatie van uw pand bepalend is, is dit iets om vooraf te laten beoordelen — bijvoorbeeld via het Omgevingsloket of uw gemeente.',
+        ],
+      },
+      { type: 'h2', text: 'Saldering stopt per 2027: wat betekent dit voor teruglevering?' },
+      {
+        type: 'p',
+        parts: [
+          'De salderingsregeling — het wegstrepen van teruggeleverde stroom tegen uw eigen verbruik — geldt voor huishoudens en kleine bedrijven en stopt per 1 januari 2027. Tot en met 31 december 2026 kunt u nog gebruikmaken van de huidige regeling. Daarna krijgt u voor alle teruggeleverde stroom een vergoeding van uw energieleverancier; deze vergoeding moet tot 2030 minimaal 50% van het kale leveringstarief bedragen. Deze wijziging is door de Rijksoverheid bevestigd voor kleinverbruikers. Heeft u een bedrijfspand met een grootverbruikersaansluiting, dan is de situatie mogelijk anders geregeld — vraag dit na bij uw energieleverancier.',
+        ],
+      },
+      { type: 'h2', text: 'Netcongestie en teruglevering: wanneer speelt dit voor u?' },
+      {
+        type: 'p',
+        parts: [
+          'Teruglevering van stroom — bijvoorbeeld via zonnepanelen — vraagt net als afname transportcapaciteit op het elektriciteitsnet. Is die capaciteit op uw locatie beperkt, dan kan een aanvraag voor een nieuwe of zwaardere aansluiting te maken krijgen met een wachtlijst. Of en hoe dit voor uw pand speelt, hangt sterk af van uw locatie en de omvang van uw teruglevering. Voor de actuele situatie in de Hoeksche Waard leest u meer in ',
+          { text: 'ons artikel over netcongestie in de Hoeksche Waard', to: ROUTES.blogPost('netcongestie-hoeksche-waard') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Fiscaal voordeel: waar zonnepanelen in het subsidielandschap passen' },
+      {
+        type: 'p',
+        parts: [
+          'Voor zakelijke zonnepanelen is de investeringssubsidie (ISDE) niet meer beschikbaar; deze is afgeschaft. Wat resteert, is met name een fiscaal voordeel via de energie-investeringsaftrek (EIA), mits uw installatie voldoet aan de voorwaarden op de jaarlijkse Energielijst. Dat is een fiscale aftrek, geen directe subsidie-uitkering — een onderscheid dat in de praktijk nogal eens door elkaar loopt. Voor de volledige uitleg van EIA, ISDE, SDE++ en de kleinschaligheidsinvesteringsaftrek (KIA), en hoe deze regelingen zich tot elkaar verhouden, verwijzen we naar ',
+          { text: 'ons overzicht van EIA, ISDE, SDE++ en KIA', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Technische aandachtspunten bij een plat bedrijfsdak' },
+      {
+        type: 'p',
+        parts: [
+          'Een bedrijfsdak moet het gewicht van zonnepanelen, bevestigingsmateriaal en eventuele ballast kunnen dragen. Of dat het geval is, is een vraag voor een constructeur of uw installateur — dat is maatwerk per dak. Ook de staat van de dakbedekking zelf is relevant: panelen op een dak dat binnen afzienbare tijd toch vervangen of geïsoleerd moet worden, betekent in de praktijk vaak dubbel werk. Overweegt u naast zonnepanelen ook dakisolatie, dan is het de moeite waard om beide in samenhang te plannen. Meer over de bouwkundige kant van dakwerkzaamheden leest u in ',
+          { text: 'ons artikel over dakisolatie voor uw bedrijfspand', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Wat SMV Advies voor u kan betekenen' },
+      {
+        type: 'callout',
+        text: [
+          'SMV Advies verkoopt geen zonnepanelen of installaties. Dat betekent dat we onafhankelijk kunnen meedenken over de vraag óf, wanneer en hoe zonnepanelen passen binnen het totale verduurzamingsplan voor uw pand. Twijfelt u waar u het beste kunt beginnen? ',
+          { text: 'Neem gerust contact met ons op', to: ROUTES.contact },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Conclusie' },
+      {
+        type: 'p',
+        parts: [
+          'Zonnepanelen op een bedrijfspand raken meteen aan meerdere dossiers tegelijk: vergunning, het aflopen van de salderingsregeling, mogelijke netcongestie en de fiscale kant. Geen van die onderdelen is voor elk pand hetzelfde, en de details wijzigen regelmatig. De kern is dat u deze punten vroeg in het traject in kaart brengt, vóórdat u een investering vastlegt.',
+        ],
+      },
+    ],
+    cta: {
+      label: 'Start de gratis energie-indicatie',
+      to: ROUTES.energieIndicatie,
+      text: 'Overweegt u zonnepanelen op uw bedrijfspand? Onze gratis energie-indicatie geeft in een paar minuten een eerste beeld van waar de meeste winst te behalen valt.',
+    },
+  },
+  {
     slug: 'energielabel-c-verplicht-bedrijfspand',
     category: 'Wetgeving',
     title: 'Energielabel C verplicht voor uw bedrijfspand: wat betekent dit?',
