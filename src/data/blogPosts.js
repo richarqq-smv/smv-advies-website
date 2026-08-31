@@ -481,22 +481,22 @@ export const BLOG_POSTS = [
       'Subsidies kunnen de terugverdientijd van maatregelen fors verkorten. Een overzicht van de belangrijkste regelingen en wanneer ze van toepassing zijn.',
     date: '4 juli 2026',
     isoDate: '2026-07-04',
-    readTime: '6 min',
+    readTime: '8 min',
     bodyAvailable: true,
     sections: [
       {
         type: 'p',
         parts: [
-          'Subsidies en fiscale regelingen kunnen de terugverdientijd van een verduurzamingsmaatregel flink verkorten, maar het landschap van EIA, ISDE en SDE++ is voor de meeste ondernemers verwarrend. Dit artikel legt de drie belangrijkste regelingen op hoofdlijnen uit. Percentages, drempelbedragen en voorwaarden wijzigen jaarlijks, dus controleer de actuele voorwaarden altijd bij RVO.nl of vraag het ons na.',
+          'Subsidies en fiscale regelingen kunnen de terugverdientijd van een verduurzamingsmaatregel flink verkorten, maar het landschap van EIA, ISDE, SDE++ en KIA is voor de meeste ondernemers verwarrend. Dit artikel legt de belangrijkste regelingen op hoofdlijnen uit, inclusief de vraag of u ze kunt combineren. Percentages, drempelbedragen en voorwaarden wijzigen jaarlijks, dus controleer de actuele voorwaarden altijd bij RVO.nl of vraag het ons na.',
         ],
       },
       { type: 'h2', text: 'EIA — Energie-investeringsaftrek' },
       {
         type: 'p',
         parts: [
-          'De EIA is geen subsidie in de vorm van een uitkering, maar een fiscaal voordeel: u mag een percentage van het investeringsbedrag extra aftrekken van de winst, bovenop de normale afschrijving. Dat levert alleen voordeel op als de investering ook daadwerkelijk op de jaarlijkse Energielijst van RVO staat — een lijst met technische maatregelen die per jaar wordt vastgesteld. De aanvraag moet vrijwel altijd binnen een paar maanden na het aangaan van de investeringsverplichting worden gedaan, dus vóórdat u definitief tekent bij een leverancier of installateur. Ook ',
+          'De EIA is geen subsidie in de vorm van een uitkering, maar een fiscaal voordeel: u mag een percentage van het investeringsbedrag extra aftrekken van de winst, bovenop de normale afschrijving. In 2026 bedraagt dit percentage 40%, met een minimum van € 2.500 per bedrijfsmiddel. Dat levert alleen voordeel op als de investering ook daadwerkelijk op de jaarlijkse Energielijst van RVO staat — een lijst met technische maatregelen die per jaar wordt vastgesteld. De melding bij RVO moet binnen 3 maanden na het aangaan van de investeringsverplichting worden gedaan, dus vóórdat u definitief tekent bij een leverancier of installateur. Ook ',
           { text: 'LED-verlichting', to: ROUTES.blogPost('led-verlichting-snelste-stap') },
-          ' kan, afhankelijk van het type en de toepassing, op deze lijst staan.',
+          ' kan, afhankelijk van het type en de toepassing, op deze lijst staan. De EIA is bovendien te combineren met de kleinschaligheidsinvesteringsaftrek (KIA, zie verderop).',
         ],
       },
       { type: 'h2', text: 'ISDE — Investeringssubsidie duurzame energie en energiebesparing' },
@@ -505,7 +505,7 @@ export const BLOG_POSTS = [
         parts: [
           'De ISDE is wél een directe subsidie-uitkering, geen belastingaftrek. Voor mkb-bedrijfspanden is deze regeling met name relevant voor ',
           { text: 'warmtepompen', to: ROUTES.blogPost('warmtepomp-in-het-mkb') },
-          '. Voor zakelijke zonnepanelen is de ISDE inmiddels afgeschaft — daar resteren voor zonnepanelen vooral fiscale voordelen zoals de EIA en de kleinschaligheidsinvesteringsaftrek (KIA). Voor warmtepompen geldt de ISDE nog wel, met een subsidiebedrag dat afhangt van het vermogen en type installatie.',
+          ', en daarnaast voor zonneboilers en kleinschalige windturbines. Isolatiemaatregelen komen voor zakelijke gebruikers niet in aanmerking voor de ISDE. Voor zakelijke zonnepanelen is de ISDE inmiddels afgeschaft — daar resteren voor zonnepanelen vooral fiscale voordelen zoals de EIA en de kleinschaligheidsinvesteringsaftrek (KIA). Voor warmtepompen geldt de ISDE nog wel, met een subsidiebedrag dat afhangt van het vermogen en type installatie; voor warmtepompen tot 70 kW geldt sinds 2024 een minimaal energielabel A++. Belangrijk: u vraagt de subsidie aan vóórdat u akkoord geeft op de offerte van de installateur, niet achteraf.',
         ],
       },
       { type: 'h2', text: 'SDE++ — Stimulering Duurzame Energieproductie en Klimaattransitie' },
@@ -515,11 +515,70 @@ export const BLOG_POSTS = [
           'De SDE++ is primair bedoeld voor grootschalige of energie-intensieve investeringen die een aanzienlijke CO₂-reductie opleveren, en kent een aanvraagproces dat is toegesneden op dat soort projecten. Voor een individueel mkb-bedrijfspand van bescheiden omvang is deze regeling meestal minder relevant. Zodra het gaat om een grotere installatie, bijvoorbeeld een omvangrijk warmtepompsysteem of een groot zonnepanelenveld, kan het de moeite waard zijn om te laten checken of de SDE++ alsnog in beeld komt.',
         ],
       },
+      { type: 'h2', text: 'KIA — kleinschaligheidsinvesteringsaftrek naast EIA' },
+      {
+        type: 'p',
+        parts: [
+          'Naast de EIA bestaat de kleinschaligheidsinvesteringsaftrek (KIA): een algemene fiscale aftrek voor bedrijfsinvesteringen, niet specifiek gericht op verduurzaming. Het aftrekpercentage hangt af van uw totale investeringsbedrag in een jaar en loopt in 2026 op tot 28% in de laagste schijf, met een aflopend voordeel bij hogere investeringsbedragen. Volgens de Belastingdienst is de KIA te combineren met de EIA. Omdat de exacte schijven en drempelbedragen jaarlijks worden vastgesteld en de KIA breder is dan alleen verduurzaming, raden we aan de actuele bedragen bij de Belastingdienst te checken of dit met uw boekhouder te bespreken.',
+        ],
+      },
+      { type: 'h2', text: 'Kunt u deze regelingen combineren?' },
+      {
+        type: 'p',
+        parts: [
+          'EIA en KIA zijn volgens de Belastingdienst te combineren. Voor de combinatie van EIA met ISDE of met SDE++ op dezelfde investering geeft de officiële informatie geen eenduidig antwoord — controleer daarom vóór aanvraag altijd de actuele voorwaarden voor samenloop bij RVO, of laat dit voor uw specifieke situatie nagaan.',
+        ],
+      },
+      {
+        type: 'table',
+        headers: ['Regeling', 'Type', 'Voor wie', 'Waarvoor', 'Aandachtspunt'],
+        rows: [
+          [
+            'EIA',
+            'Fiscale aftrek',
+            'Ondernemers (IB/Vpb-plichtig)',
+            'Bedrijfsmiddelen op de jaarlijkse Energielijst',
+            'Meld binnen 3 maanden na de investeringsverplichting, vóór ondertekening',
+          ],
+          [
+            'ISDE (zakelijk)',
+            'Directe subsidie',
+            'Zakelijke gebruikers',
+            'Warmtepomp, zonneboiler, kleinschalige windturbine — geen isolatie',
+            'Vraag aan vóórdat u akkoord geeft op de offerte',
+          ],
+          [
+            'SDE++',
+            'Exploitatiesubsidie',
+            'Bedrijven/non-profits met doorgaans een grootverbruikersaansluiting',
+            'Grootschalige duurzame energieproductie of CO₂-reductie',
+            'Meestal niet relevant voor een individueel mkb-bedrijfspand van bescheiden omvang',
+          ],
+          [
+            'KIA',
+            'Fiscale aftrek (algemeen)',
+            'Ondernemers met bedrijfsinvesteringen',
+            'Bedrijfsmiddelen in het algemeen',
+            'Percentage hangt af van totale jaarinvestering; combineerbaar met EIA',
+          ],
+        ],
+      },
+      { type: 'h2', text: 'Welke regeling past bij welke maatregel?' },
+      {
+        type: 'p',
+        parts: [
+          'Welke regeling relevant is, hangt sterk af van de maatregel zelf. ',
+          { text: 'Dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
+          ' komt voor zakelijke gebruikers niet in aanmerking voor de ISDE, maar kan onder voorwaarden in aanmerking komen voor de EIA als de precieze uitvoering op de Energielijst staat. Datzelfde geldt voor maatregelen die u neemt om te voldoen aan de ',
+          { text: 'energielabel C-verplichting', to: ROUTES.blogPost('energielabel-c-verplicht-bedrijfspand') },
+          ': die kunnen soms óók op de Energielijst staan, maar dat is geen automatisme — de exacte technische omschrijving is bepalend. Voor een warmtepomp is doorgaans de ISDE het eerste aanknopingspunt; of de EIA daarnaast van toepassing kan zijn op dezelfde investering, hangt af van de actuele samenloopvoorwaarden (zie hierboven).',
+        ],
+      },
       { type: 'h2', text: 'Subsidie voor het advies zelf: de SVM-regeling' },
       {
         type: 'p',
         parts: [
-          'Minder bekend, maar voor de eerste stap juist relevant: er bestaat een regeling gericht op het verduurzamingsadvies zelf, de Subsidieregeling Verduurzaming MKB (SVM), die een deel van de advieskosten kan vergoeden tot een bedrag van enkele duizenden euro’s. De precieze voorwaarden en het openstaande budget wisselen, dus vraag ons gerust of uw traject hiervoor in aanmerking komt.',
+          'Minder bekend, maar voor de eerste stap juist relevant: er bestaat een regeling gericht op het verduurzamingsadvies zelf, de Subsidieregeling Verduurzaming MKB (SVM), die een deel van de advieskosten kan vergoeden. De precieze voorwaarden en het openstaande budget wisselen, dus vraag ons gerust of uw traject hiervoor in aanmerking komt.',
         ],
       },
       { type: 'h2', text: 'Praktisch: wanneer en hoe combineren' },
@@ -545,7 +604,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'EIA, ISDE en SDE++ zijn geen keuzemenu waar u zomaar één regeling uit pikt: welke van toepassing is, hangt af van het type maatregel, de schaal van de investering en het moment waarop u aanvraagt. De grootste winst zit vaak niet in het kennen van de regelingen zelf, maar in het op tijd checken vóórdat u een investering vastlegt.',
+          'EIA, ISDE, SDE++ en KIA zijn geen keuzemenu waar u zomaar één regeling uit pikt: welke van toepassing zijn, hangt af van het type maatregel, de schaal van de investering en het moment waarop u aanvraagt — en soms is meer dan één regeling tegelijk relevant. De grootste winst zit vaak niet in het kennen van de regelingen zelf, maar in het op tijd checken vóórdat u een investering vastlegt.',
         ],
       },
     ],

@@ -65,6 +65,33 @@ function renderSection(section, index) {
           ))}
         </ul>
       )
+    case 'table':
+      return (
+        <div key={index} className="mt-6 overflow-x-auto rounded-lg border border-border">
+          <table className="w-full min-w-[640px] border-collapse text-left text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted">
+                {section.headers.map((header, headerIndex) => (
+                  <th key={headerIndex} scope="col" className="px-4 py-3 font-semibold text-primary">
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {section.rows.map((row, rowIndex) => (
+                <tr key={rowIndex} className="border-b border-border last:border-b-0">
+                  {row.map((cell, cellIndex) => (
+                    <td key={cellIndex} className="px-4 py-3 align-top text-foreground-muted">
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )
     case 'callout':
       return (
         <div key={index} className="mt-6 flex items-start gap-3 rounded-lg bg-muted px-5 py-4">
