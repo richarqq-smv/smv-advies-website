@@ -10,6 +10,73 @@ import { ROUTES } from '../lib/routes.js'
  */
 export const BLOG_POSTS = [
   {
+    slug: 'laadpalen-op-uw-bedrijfsterrein',
+    category: 'Installaties',
+    title: 'Laadpalen op uw bedrijfsterrein: waar u rekening mee moet houden',
+    excerpt:
+      'Laadpalen voor elektrische bedrijfsauto’s zijn een logische verduurzamingsstap, maar de subsidiemogelijkheden zijn recent veranderd en de netcapaciteit speelt een grotere rol dan u misschien verwacht. Een overzicht van de belangrijkste aandachtspunten.',
+    date: '1 september 2026',
+    isoDate: '2026-09-01',
+    readTime: '5 min',
+    bodyAvailable: true,
+    sections: [
+      {
+        type: 'p',
+        parts: [
+          'Laadpalen voor elektrische bedrijfsauto’s zijn voor veel bedrijfspanden een logische verduurzamingsstap. Toch is de voorbereiding meer dan alleen een leverancier bellen: vergunning, de actuele subsidiemogelijkheden en de beschikbare netcapaciteit spelen allemaal een rol vóórdat u een laadpaal laat plaatsen. Dit artikel zet de belangrijkste aandachtspunten op een rij.',
+        ],
+      },
+      { type: 'h2', text: 'Vergunning: meestal geen probleem, maar niet altijd' },
+      {
+        type: 'p',
+        parts: [
+          'Een laadpaal op eigen terrein is in de meeste gevallen vergunningsvrij te plaatsen. Er gelden wel uitzonderingen: bij een monument of een beschermd stads- of dorpsgezicht kan dit anders liggen. Ook een groter laadplein met meerdere laadpunten, of een bijzondere situatie op uw terrein, kan een andere beoordeling vereisen. Omdat dit sterk van uw specifieke situatie afhangt, is het verstandig om bij twijfel vooraf te checken bij uw gemeente of via het Omgevingsloket.',
+        ],
+      },
+      { type: 'h2', text: 'Subsidie en fiscaal voordeel: wat is er nog, wat niet meer' },
+      {
+        type: 'p',
+        parts: [
+          'Het subsidielandschap voor laadinfrastructuur is de afgelopen jaren veranderd. De Subsidieregeling Emissieloze Bedrijfsauto’s (SEBA) is definitief gesloten sinds 31 december 2024, 12.00 uur — en die regeling ging bovendien over de aanschaf van de bedrijfsauto zelf, niet over de laadinfrastructuur. Ook via de Milieu-investeringsaftrek en Willekeurige afschrijving milieu-investeringen (MIA/Vamil) is een laadpunt in 2026 niet meer aftrekbaar; laadpunten staan niet meer op de Milieulijst. Wat resteert, is de Subsidieregeling Private Laadinfrastructuur bij bedrijven (SPRILA): een directe subsidie voor ondernemers met een KVK-inschrijving die laadinfrastructuur plaatsen op eigen of gehuurd, niet-openbaar toegankelijk terrein. SPRILA kan zowel de aanschaf als de installatie van AC- of DC-laadstations en stationaire batterijsystemen ondersteunen, en geldt voor zowel lichte als zware voertuigen. Het bevestigde minimumbedrag is € 2.500 subsidie per locatie; de aanvraagperiode voor 2026 loopt van 20 januari 09.00 uur tot 18 december 12.00 uur. Daarnaast blijft de kleinschaligheidsinvesteringsaftrek (KIA) een generieke fiscale route die voor bedrijfsinvesteringen kan gelden — dat is een fiscale aftrek, geen directe subsidie-uitkering. Voor de volledige uitleg van KIA en de andere fiscale en subsidieregelingen verwijzen we naar ',
+          { text: 'ons overzicht van EIA, ISDE, SDE++ en KIA', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Netcongestie en meerdere laadpunten tegelijk' },
+      {
+        type: 'p',
+        parts: [
+          'Eén laadpaal vraagt doorgaans weinig extra capaciteit, maar meerdere laadpunten tegelijk kunnen gezamenlijk een aanzienlijk deel van uw aansluiting vragen. Daardoor kan laadinfrastructuur relevant zijn voor de beschikbare capaciteit op het elektriciteitsnet. Netbewust laden — het verdelen van laadvermogen binnen de grenzen van de beschikbare netcapaciteit — kan hierbij helpen. Dit speelt des te meer als u laadinfrastructuur combineert met andere capaciteit-vragende maatregelen, zoals ',
+          { text: 'zonnepanelen', to: ROUTES.blogPost('zonnepanelen-op-uw-bedrijfspand') },
+          '. Voor de volledige achtergrond bij netcongestie leest u ',
+          { text: 'ons artikel over netcongestie in de Hoeksche Waard', to: ROUTES.blogPost('netcongestie-hoeksche-waard') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Wat SMV Advies voor u kan betekenen' },
+      {
+        type: 'callout',
+        text: [
+          'SMV Advies verkoopt geen laadpalen of installaties. Dat betekent dat we onafhankelijk kunnen meedenken over de vraag óf, wanneer en hoe laadinfrastructuur past binnen het totale verduurzamingsplan van uw bedrijfspand. Twijfelt u waar u het beste kunt beginnen? ',
+          { text: 'Neem gerust contact met ons op', to: ROUTES.contact },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Conclusie' },
+      {
+        type: 'p',
+        parts: [
+          'Laadpalen op een bedrijfsterrein vragen om meer voorbereiding dan alleen de keuze voor een leverancier. Vergunning, de actuele subsidie- en fiscale mogelijkheden, en de beschikbare netcapaciteit — inclusief de manier waarop meerdere laadpunten worden aangestuurd — zijn drie zaken die u vroeg in het traject in kaart moet brengen.',
+        ],
+      },
+    ],
+    cta: {
+      label: 'Start de gratis energie-indicatie',
+      to: ROUTES.energieIndicatie,
+      text: 'Overweegt u laadpalen op uw bedrijfsterrein? Onze gratis energie-indicatie geeft in een paar minuten een eerste beeld van waar de meeste winst te behalen valt.',
+    },
+  },
+  {
     slug: 'zonnepanelen-op-uw-bedrijfspand',
     category: 'Installaties',
     title: 'Zonnepanelen op uw bedrijfspand: waar u rekening mee moet houden',
