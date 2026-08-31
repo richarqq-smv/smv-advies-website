@@ -592,7 +592,9 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Naast het pand zelf speelt ook het elektriciteitsnet een rol. Een warmtepomp (en al helemaal in combinatie met zonnepanelen of laadpalen) vraagt meer capaciteit van uw aansluiting. In delen van Zuid-Holland speelt netcongestie inmiddels een rol bij het aanvragen of uitbreiden van een aansluiting — iets wat we vroeg in het traject meenemen, zodat dit niet pas bij de uitvoering als verrassing naar voren komt.',
+          'Naast het pand zelf speelt ook het elektriciteitsnet een rol. Een warmtepomp (en al helemaal in combinatie met zonnepanelen of laadpalen) vraagt meer capaciteit van uw aansluiting. Is een zwaardere aansluiting nodig, dan kan die aanvraag terechtkomen op een wachtlijst als er in uw gebied netcongestie speelt — in de Hoeksche Waard is dat sinds kort ook voor kleinere aansluitingen het geval. Wat dit precies betekent en wat u eraan kunt doen, leest u in ons artikel over ',
+          { text: 'netcongestie in de Hoeksche Waard', to: ROUTES.blogPost('netcongestie-hoeksche-waard') },
+          '. Neem dit vroeg in het traject mee, zodat het niet pas bij de uitvoering als verrassing naar voren komt.',
         ],
       },
       { type: 'h2', text: 'Kosten en subsidie' },
