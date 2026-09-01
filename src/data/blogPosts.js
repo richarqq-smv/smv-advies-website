@@ -10,6 +10,91 @@ import { ROUTES } from '../lib/routes.js'
  */
 export const BLOG_POSTS = [
   {
+    slug: 'energiebesparingsplicht-voor-uw-bedrijfspand',
+    category: 'Wetgeving',
+    title: 'Energiebesparingsplicht voor uw bedrijfspand: wat moet u weten?',
+    excerpt:
+      'Vanaf een bepaald energieverbruik moet uw bedrijfspand energiebesparende maatregelen nemen — een verplichting die voor veel meer bedrijfspanden geldt dan alleen kantoren. Wat de energiebesparingsplicht inhoudt en wat dit voor uw pand kan betekenen.',
+    date: '3 september 2026',
+    isoDate: '2026-09-03',
+    readTime: '6 min',
+    bodyAvailable: true,
+    sections: [
+      {
+        type: 'p',
+        parts: [
+          'Niet alleen kantoorpanden hebben te maken met een wettelijke verduurzamingsverplichting. Veel meer bedrijfspanden — van winkels tot bedrijfshallen — vallen onder de energiebesparingsplicht: een verplichting om energiebesparende maatregelen te nemen zodra het energieverbruik boven een bepaalde grens komt. Dit artikel legt uit wat deze plicht inhoudt, voor wie die geldt en wat er van u wordt verwacht.',
+        ],
+      },
+      { type: 'h2', text: 'Wat is de energiebesparingsplicht?' },
+      {
+        type: 'p',
+        parts: [
+          'De energiebesparingsplicht verplicht bedrijven en instellingen om alle energiebesparende maatregelen te treffen met een terugverdientijd van ten hoogste 5 jaar. De grondslag hiervoor ligt in artikel 5.15 van het Besluit activiteiten leefomgeving (Bal) en, voor gebouweigenaren, artikel 3.84 van het Besluit bouwwerken leefomgeving (Bbl). Om te bepalen welke maatregelen concreet worden verwacht, zijn er per sector Erkende Maatregelenlijsten (EML) opgesteld: overzichten van energiebesparende maatregelen die binnen die terugverdientijd rendabel worden geacht.',
+        ],
+      },
+      { type: 'h2', text: 'Vanaf welk energieverbruik geldt dit voor uw pand?' },
+      {
+        type: 'p',
+        parts: [
+          'De energiebesparingsplicht geldt zodra een locatie jaarlijks meer dan 50.000 kWh elektriciteit of 25.000 m³ aardgas(-equivalent) verbruikt. Gebruikt uw bedrijfspand minder, dan valt u buiten deze verplichting. Voor de grootste verbruikers — vanaf 10 miljoen kWh elektriciteit of 170.000 m³ aardgas(-equivalent) per jaar — geldt in een aantal sectoren bovendien een onderzoeksplicht: een verplicht, uitgebreider onderzoek naar energiebesparingsmogelijkheden in het eigen proces.',
+        ],
+      },
+      { type: 'h2', text: 'Welke maatregelen worden verwacht?' },
+      {
+        type: 'p',
+        parts: [
+          'Welke maatregelen precies worden verwacht, hangt af van de Erkende Maatregelenlijst van uw sector. In de praktijk bestaan deze lijsten uit maatregelen die zich doorgaans binnen enkele jaren terugverdienen, zoals verlichting, isolatie of verwarmingsinstallaties — zie voor voorbeelden hiervan ook onze artikelen over ',
+          { text: 'LED-verlichting', to: ROUTES.blogPost('led-verlichting-snelste-stap') },
+          ', ',
+          { text: 'dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
+          ' en ',
+          { text: 'de warmtepomp', to: ROUTES.blogPost('warmtepomp-in-het-mkb') },
+          '. Welke maatregelen voor uw sector en pand concreet gelden, verschilt per situatie en vraagt om de sectorspecifieke lijst te raadplegen. Neemt u een maatregel, dan is het ook de moeite waard te checken of deze in aanmerking komt voor een fiscaal voordeel — zie ons overzicht van ',
+          { text: 'EIA, ISDE, SDE++ en KIA', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Rapporteren via de informatieplicht' },
+      {
+        type: 'p',
+        parts: [
+          'Valt uw bedrijfspand onder de energiebesparingsplicht, dan moet u dit eens in de 4 jaar rapporteren via het eLoket van Mijn RVO: welke erkende maatregelen u al heeft genomen, en eventueel welke nog niet. Toezicht op de energiebesparingsplicht en de informatieplicht ligt doorgaans bij de gemeente of een omgevingsdienst.',
+        ],
+      },
+      { type: 'h2', text: 'Hoe verhoudt dit zich tot de energielabel C-verplichting?' },
+      {
+        type: 'p',
+        parts: [
+          'De energiebesparingsplicht is een andere verplichting dan de ',
+          { text: 'energielabel C-verplichting', to: ROUTES.blogPost('energielabel-c-verplicht-bedrijfspand') },
+          ' voor kantoorpanden, al kunnen beide voor hetzelfde pand relevant zijn. De energielabel C-verplichting geldt specifiek voor kantoorfunctie vanaf een bepaalde omvang; de energiebesparingsplicht geldt breder, voor vrijwel elk bedrijfspand boven de genoemde verbruiksgrens, ongeacht het type gebruik.',
+        ],
+      },
+      { type: 'h2', text: 'Wat SMV Advies voor u kan betekenen' },
+      {
+        type: 'callout',
+        text: [
+          'SMV Advies is geen omgevingsdienst en beoordeelt niet namens de overheid of uw pand aan de energiebesparingsplicht voldoet. Wel kunnen we onafhankelijk in kaart brengen welke verduurzamingsmaatregelen voor uw pand relevant zijn en hoe die zich verhouden tot dit soort verplichtingen. Twijfelt u of dit voor uw pand speelt? ',
+          { text: 'Neem gerust contact met ons op', to: ROUTES.contact },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Conclusie' },
+      {
+        type: 'p',
+        parts: [
+          'De energiebesparingsplicht geldt voor veel meer bedrijfspanden dan alleen kantoren, en wordt in de praktijk niet altijd nageleefd — vaak simpelweg omdat ondernemers niet weten dat de plicht voor hun pand geldt. Controleer of uw jaarlijkse verbruik boven de drempel van 50.000 kWh elektriciteit of 25.000 m³ aardgas ligt, en breng in kaart welke maatregelen voor uw sector gelden.',
+        ],
+      },
+    ],
+    cta: {
+      label: 'Start de gratis energie-indicatie',
+      to: ROUTES.energieIndicatie,
+      text: 'Overweegt u te onderzoeken welke energiebesparende maatregelen voor uw bedrijfspand relevant zijn? Onze gratis energie-indicatie geeft in een paar minuten een eerste beeld van waar de meeste winst te behalen valt.',
+    },
+  },
+  {
     slug: 'batterijopslag-voor-uw-bedrijfspand',
     category: 'Installaties',
     title: 'Batterijopslag voor uw bedrijfspand: wanneer is dit relevant?',
