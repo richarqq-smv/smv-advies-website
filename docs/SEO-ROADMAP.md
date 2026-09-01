@@ -1,6 +1,6 @@
 # SMV Advies — SEO Roadmap
 
-> Dit document is het permanente projectgeheugen voor het SEO-traject van smv-advies.nl. Elke toekomstige sessie die aan SEO/content werkt, moet dit document eerst lezen (samen met `docs/SEO-CONTENT-MAP.md`) voordat er onderzoek of implementatie plaatsvindt. Laatst bijgewerkt: Fase 14 (2026-09-01), op basis van commit `b959d43`.
+> Dit document is het permanente projectgeheugen voor het SEO-traject van smv-advies.nl. Elke toekomstige sessie die aan SEO/content werkt, moet dit document eerst lezen (samen met `docs/SEO-CONTENT-MAP.md`) voordat er onderzoek of implementatie plaatsvindt. Laatst bijgewerkt: Fase 15 (2026-09-01), op basis van commit `969680a` (fase 14) + fase 15's interne-linkwijziging.
 
 ## Projectdoel
 
@@ -26,7 +26,8 @@ SMV Advies is een onafhankelijke verduurzamingsadviseur voor mkb-bedrijfspanden 
 | 11 | Batterijopslag voor uw bedrijfspand | `/blog/batterijopslag-voor-uw-bedrijfspand` | 2026-09-02 | Installaties | `4717d21` | Batterijopslag als zelfstandig onderwerp; EIA-code 251118 en de SPRILA-batterijvoorwaarde (alleen icm laadinfra) correct uitgelegd |
 | 12 | Energiebesparingsplicht voor uw bedrijfspand | `/blog/energiebesparingsplicht-voor-uw-bedrijfspand` | 2026-09-03 | Wetgeving | `924f1d0` | Bredere wettelijke verplichting dan energielabel-C (geldt voor vrijwel elk bedrijfspand ≥ drempel, niet alleen kantoren) |
 | 13 | Ventilatie in uw bedrijfspand | `/blog/ventilatie-in-uw-bedrijfspand` | 2026-09-04 | Installaties | `b959d43` | Ventilatie als zelfstandige wettelijke eis + fiscale invalshoek (EIA voor WTW/CO2-sturing), losstaand van dakisolatie |
-| 14 | SEO-projectgeheugen (dit document + content map) | n.v.t. (documentatie, geen nieuwe URL) | 2026-09-01 (sessiedatum) | n.v.t. | *(dit commit)* | Persistente projectcontext zodat toekomstige sessies niet opnieuw hoeven te worden gebrieft |
+| 14 | SEO-projectgeheugen (roadmap + content map) | n.v.t. (documentatie, geen nieuwe URL) | 2026-09-01 (sessiedatum) | n.v.t. | `969680a` | Persistente projectcontext zodat toekomstige sessies niet opnieuw hoeven te worden gebrieft |
+| 15 | Interne linkstrategie: ontbrekende inkomende links toegevoegd | n.v.t. (bestaande artikelen gewijzigd, geen nieuwe URL) | 2026-09-01 (sessiedatum) | n.v.t. | *(dit commit)* | P1-item uit de roadmap uitgevoerd: link vanuit `netcongestie-hoeksche-waard` naar `batterijopslag-voor-uw-bedrijfspand`, en vanuit `verborgen-energieverspillers` naar `ventilatie-in-uw-bedrijfspand`. Search Console-toegang gecontroleerd en niet beschikbaar — geen data verzonnen, doorgegaan met eerstvolgende prioriteit. |
 
 **Eerdere fases (vóór fase 9, uit git history, ter context)**: de eerste vijf blogartikelen (energielabel-C, netcongestie, dakisolatie, EIA/ISDE/SDE++, warmtepomp, LED, verborgen energieverspillers) en de technische SEO-basis (prerendering, sitemap, structured data, GA4/Consent Mode) zijn in eerdere, niet meer als "Fase N" genummerde sessies gebouwd. Zie git log voor het volledige verloop; de belangrijkste commits zijn `f90060e` (initial commit) t/m `9253087` (laatste inhoudelijke verdieping vóór fase 9).
 
@@ -99,14 +100,14 @@ Onderstaande is opgebouwd uit de daadwerkelijke `ROUTES.blogPost(...)`-links in 
 | Laadpalen | EIA/ISDE/SDE++, zonnepanelen, netcongestie |
 | Zonnepanelen | netcongestie, EIA/ISDE/SDE++, dakisolatie |
 | Energielabel-C | dakisolatie, LED, warmtepomp |
-| Netcongestie | dakisolatie, LED, warmtepomp, EIA/ISDE/SDE++ (+ externe link naar Stedin's congestiechecker) |
+| Netcongestie | dakisolatie, LED, warmtepomp, EIA/ISDE/SDE++, batterijopslag (+ externe link naar Stedin's congestiechecker) |
 | Dakisolatie | EIA/ISDE/SDE++, warmtepomp (+ link naar `/cases`) |
 | EIA/ISDE/SDE++ | LED, warmtepomp, dakisolatie, energielabel-C (+ link naar `/contact`) |
 | Warmtepomp | dakisolatie, netcongestie, EIA/ISDE/SDE++ |
 | LED | EIA/ISDE/SDE++, verborgen energieverspillers (+ link naar `/cases`) |
-| Verborgen energieverspillers | LED, dakisolatie |
+| Verborgen energieverspillers | LED, dakisolatie, ventilatie |
 
-**Belangrijkste bevinding — ontbrekende inkomende links**: `batterijopslag-voor-uw-bedrijfspand` en `ventilatie-in-uw-bedrijfspand` hebben momenteel **geen enkele inkomende link** vanuit een ander artikel (ze linken alleen naar buiten). Dit is een concrete, feitelijk vastgestelde kans voor een toekomstige "interne linking"-fase: bijvoorbeeld vanuit `netcongestie-hoeksche-waard` (dat al een eigen H3 "Batterijopslag" heeft) naar het batterijopslag-artikel, en vanuit `verborgen-energieverspillers` (dat ventilatie al noemt) naar het ventilatie-artikel. **Dit is nog niet uitgevoerd** — het zou een wijziging aan bestaande artikelen vereisen, wat buiten de scope van fase 14 valt.
+**Update (fase 15) — ontbrekende inkomende links opgelost**: `batterijopslag-voor-uw-bedrijfspand` en `ventilatie-in-uw-bedrijfspand` hadden na fase 14 geen enkele inkomende link vanuit een ander artikel. In fase 15 is dit verholpen: de bestaande H3 "Batterijopslag" in `netcongestie-hoeksche-waard` linkt nu naar het batterijopslag-artikel, en de ventilatie-passage in `verborgen-energieverspillers` linkt nu naar het ventilatie-artikel. Beide artikelen hebben nu minimaal 1 inkomende link.
 
 **EIA/ISDE/SDE++-artikel is de sterkste hub**: 9 van de 11 andere artikelen linken hier naartoe. Dit bevestigt dat het pillar-artikel zijn functie goed vervult.
 
@@ -148,8 +149,8 @@ Deze roadmap is nadrukkelijk **niet** een oproep tot eindeloos nieuwe blogartike
 
 | # | Richting | Doel | Waarom | Afhankelijkheden | Prioriteit | Wanneer |
 |---|---|---|---|---|---|---|
-| 1 | Interne linking bijwerken | Batterijopslag en ventilatie een inkomende link geven vanuit netcongestie resp. verborgen-energieverspillers | Concreet vastgestelde lacune (zie "Interne linkstrategie") | Wijziging aan bestaande artikelen — vereist expliciete goedkeuring | **P1** | Kortetermijn, lage inspanning |
-| 2 | Search Console-analyse | Zodra data beschikbaar is: impressies, CTR, posities, zoekopdrachten per pagina analyseren | Data-gedreven prioritering is veel betrouwbaarder dan verder gokken op content gaps | Toegang tot Search Console (nu niet beschikbaar — zie sectie hieronder) | **P1**, zodra data er is | Zo snel mogelijk na voldoende indexatie/verkeer |
+| 1 | ~~Interne linking bijwerken~~ | ~~Batterijopslag en ventilatie een inkomende link geven vanuit netcongestie resp. verborgen-energieverspillers~~ | Concreet vastgestelde lacune (zie "Interne linkstrategie") | — | **Afgerond in fase 15** | Uitgevoerd op 2026-09-01 |
+| 2 | Search Console-analyse | Zodra data beschikbaar is: impressies, CTR, posities, zoekopdrachten per pagina analyseren | Data-gedreven prioritering is veel betrouwbaarder dan verder gokken op content gaps | Toegang tot Search Console (nog steeds niet beschikbaar per fase 15 — opnieuw gecontroleerd, geen connector gevonden) | **P1**, zodra data er is | Zo snel mogelijk na voldoende indexatie/verkeer |
 | 3 | Contentoptimalisatie bestaande artikelen | Oudere artikelen (energielabel-C, netcongestie, dakisolatie, EIA-subsidies, warmtepomp, LED, verborgen-energieverspillers) herzien op actualiteit van cijfers/regelgeving | Feiten uit eerdere fases kunnen na verloop van tijd verouderen (subsidiebedragen, drempels, wetsartikelen) | Primaire bronverificatie per artikel | **P2** | Periodiek, bijv. ieder kwartaal of bij bekende wetswijziging |
 | 4 | Verdere content gaps | Zie tabel "Content gaps" hierboven | Nog niet alle relevante zoekintenties zijn gedekt | Nieuwe primaire bronverificatie per onderwerp | **P2/P3** afhankelijk van onderwerp | Na Search Console-inzicht, niet blind doorgaan |
 | 5 | Commerciële/conversie-SEO | De paden content → `/energie-indicatie` → `/contact` optimaliseren (zie "Commercieel pad"-sectie in de content map) | Meer content zonder conversieverbetering levert minder waarde op dan gerichte funnel-optimalisatie | Geen technische blokkade; vraagt wel bewuste, losse goedkeuring omdat het bestaande pagina's raakt | **P2** | Nadat er voldoende verkeersdata is om knelpunten te identificeren |
@@ -172,3 +173,7 @@ Deze roadmap is nadrukkelijk **niet** een oproep tot eindeloos nieuwe blogartike
 11. Werk dit document (en `SEO-CONTENT-MAP.md`) bij ná iedere afgeronde SEO-fase — nieuw artikel, nieuwe interne link, gewijzigde prioriteit.
 12. Verzin geen feiten — cijfers, bedragen, drempels, jaartallen en wettelijke verwijzingen moeten primair verifieerbaar zijn of worden weggelaten/algemeen geformuleerd.
 13. Stop bij materiële onzekerheid (tegenstrijdige primaire bronnen, een claim die niet te verifiëren is) in plaats van te gokken — meld dit expliciet in het eindrapport in plaats van door te schrijven.
+
+## Eerstvolgende prioriteit (bijgewerkt na fase 15)
+
+Met de fase 15-linkfix afgerond, is de eerstvolgende hoogste prioriteit **Search Console-analyse zodra toegang beschikbaar komt** (P1, maar geblokkeerd totdat een sessie daadwerkelijke toegang heeft — niet simuleren). Zolang die toegang er niet is, zijn de volgende beschikbare P2-acties de meest logische keuzes voor een volgende fase, in aflopende volgorde van eenvoud: (a) contentoptimalisatie van de oudere artikelen op actualiteit, (b) een technische SEO-audit (performance/Core Web Vitals, nooit eerder gemeten), (c) een expliciet goedgekeurd nieuw contentartikel uit de "Content gaps"-tabel in `SEO-CONTENT-MAP.md` (gevelisolatie/glasisolatie heeft de hoogste prioriteit binnen die tabel). Geen van deze is dwingend "de volgende blogpost" — controleer eerst opnieuw of Search Console-toegang inmiddels beschikbaar is vóórdat een van deze P2-routes wordt gekozen.

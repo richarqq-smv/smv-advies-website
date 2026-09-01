@@ -678,7 +678,9 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Een batterij slaat overtollige elektriciteit — bijvoorbeeld van eigen zonnepanelen — op voor later gebruik, en kan tijdelijk extra vermogen leveren bovenop uw aansluiting. Dat helpt in specifieke situaties, maar is geen automatische oplossing voor iedereen: het vraagt ruimte, brandveiligheidseisen en een investering die per situatie fors kan verschillen.',
+          'Een batterij slaat overtollige elektriciteit — bijvoorbeeld van eigen zonnepanelen — op voor later gebruik, en kan tijdelijk extra vermogen leveren bovenop uw aansluiting. Dat helpt in specifieke situaties, maar is geen automatische oplossing voor iedereen: het vraagt ruimte, brandveiligheidseisen en een investering die per situatie fors kan verschillen. Wanneer dit voor uw pand relevant kan worden, en welke fiscale en subsidiemogelijkheden daarbij spelen, leest u in ons artikel over ',
+          { text: 'batterijopslag voor uw bedrijfspand', to: ROUTES.blogPost('batterijopslag-voor-uw-bedrijfspand') },
+          '.',
         ],
       },
       { type: 'h3', text: 'Capaciteitsbeperkend contract' },
@@ -1184,7 +1186,9 @@ export const BLOG_POSTS = [
         parts: [
           'Een te hoog ingestelde thermostaat, verwarming en ventilatie die niet op elkaar zijn afgestemd, of deuren die bij laden en lossen structureel openstaan: dit soort dagelijkse gewoontes kost meer dan de meeste ondernemers verwachten. Het raakt ook aan de bouwkundige schil van het pand — zie ons artikel over ',
           { text: 'dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
-          ' voor de grotere, structurele kant hiervan.',
+          ' voor de grotere, structurele kant hiervan, en ons artikel over ',
+          { text: 'ventilatie in uw bedrijfspand', to: ROUTES.blogPost('ventilatie-in-uw-bedrijfspand') },
+          ' voor de wettelijke eisen en besparingsmogelijkheden bij ventilatie specifiek.',
         ],
       },
       { type: 'h2', text: '5. Verouderde, verkeerd gedimensioneerde installaties' },

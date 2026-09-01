@@ -13,7 +13,7 @@
 - **Primaire zoekintentie**: "wat zijn de ventilatie-eisen voor een bedrijfspand, en waar zit besparing"
 - **Belangrijkste onderwerpen**: Bbl-ventilatie-eis (2,12 dm³/s per persoon, art. 3.67 lid 2), energieverspilling door verouderde/slecht afgestelde ventilatie, warmteterugwinning (WTW) en CO2-sturing als EIA-relevante maatregelen, relatie met de energiebesparingsplicht.
 - **Uitgaande interne links**: dakisolatie, EIA/ISDE/SDE++, energiebesparingsplicht.
-- **Inkomende links**: **geen** (nog geen ander artikel linkt hierheen — zie roadmap P1-aanbeveling).
+- **Inkomende links**: verborgen-energieverspillers (toegevoegd in fase 15).
 - **Mogelijke vervolgartikelen**: gevelisolatie (aanvullende bouwkundige schil-content); geen dringende noodzaak.
 - **Cannibalisatierisico**: laag — eigen wettelijke grondslag (Bbl-ventilatie-eis) los van dakisolatie (Bbl-isolatie-eis) en van de energiebesparingsplicht (andere, bredere regeling).
 
@@ -39,7 +39,7 @@
 - **Primaire zoekintentie**: "wanneer is een batterij op mijn bedrijfspand de moeite waard, en welke subsidie/fiscaal voordeel is er"
 - **Belangrijkste onderwerpen**: relevantie bij eigen opwek + saldering-2027, EIA-Energielijstcode 251118 (accu ≥5kW/≥15kWh, gekoppeld aan opwek >15kW piek), SPRILA-batterijvoorwaarde (uitsluitend icm nieuwe laadinfrastructuur, ≥70% ontlading naar laadstations, min. € 25.000), vergunning/brandveiligheid op hoofdlijnen.
 - **Uitgaande interne links**: zonnepanelen, netcongestie, EIA/ISDE/SDE++, laadpalen.
-- **Inkomende links**: **geen** (zie roadmap P1-aanbeveling — netcongestie heeft al een eigen "Batterijopslag"-subsectie die hierheen zou kunnen linken).
+- **Inkomende links**: netcongestie (toegevoegd in fase 15, via de bestaande "Batterijopslag"-subsectie).
 - **Mogelijke vervolgartikelen**: geen directe noodzaak; eventueel een toekomstige update als SPRILA-voorwaarden wijzigen.
 - **Cannibalisatierisico**: laag t.o.v. de bestaande, kortere H3 "Batterijopslag" in het netcongestie-artikel (die blijft functioneel/algemeen; dit artikel behandelt relevantie + regelgeving, geen herhaling van de mechaniek).
 
@@ -90,9 +90,9 @@
 - **Contentcluster**: Energie-infrastructuur
 - **Primaire zoekintentie**: "netcongestie Hoeksche Waard bedrijfspand"
 - **Belangrijkste onderwerpen**: mechaniek van netcongestie (afname vs. teruglevering, grootverbruik vs. kleinverbruik), regionale tijdlijn (Stedin, kabeltracé Klaaswaal–Puttershoek, wachtlijst kleinverbruikers vanaf 1 juli 2026), batterijopslag als gedeeltelijke oplossing (eigen H3, functioneel/algemeen), wanneer contact opnemen met Stedin.
-- **Uitgaande interne links**: dakisolatie, LED, warmtepomp, EIA/ISDE/SDE++ (+ externe link naar Stedin's congestiechecker; + niet-blog links naar `/pakketten` en `/werkwijze`).
+- **Uitgaande interne links**: dakisolatie, LED, warmtepomp, EIA/ISDE/SDE++, batterijopslag (toegevoegd in fase 15, via de bestaande "Batterijopslag"-subsectie) (+ externe link naar Stedin's congestiechecker; + niet-blog links naar `/pakketten` en `/werkwijze`).
 - **Inkomende links**: batterijopslag, laadpalen, zonnepanelen, warmtepomp.
-- **Mogelijke vervolgartikelen**: overweeg een link vanuit dit artikel naar het batterijopslag-artikel (zie roadmap P1).
+- **Mogelijke vervolgartikelen**: geen — de link naar batterijopslag is inmiddels toegevoegd (fase 15).
 - **Cannibalisatierisico**: dit is het **enige** artikel dat de netcongestie-mechaniek en de Hoeksche Waard-tijdlijn volledig mag uitleggen — alle andere artikelen mogen alleen kort verwijzen.
 
 ### 8. Dakisolatie voor uw bedrijfspand: waar het echt verschil maakt
@@ -155,10 +155,10 @@
 - **Contentcluster**: Inzicht (listicle-stijl)
 - **Primaire zoekintentie**: "verborgen energieverspillers bedrijfspand"
 - **Belangrijkste onderwerpen**: vijf verspillers — (1) persluchtlekken, (2) verlichting die onnodig blijft branden, (3) sluimerverbruik buiten werktijd, (4) slecht afgestelde verwarming/ventilatie (bewust kort, verwijst naar dakisolatie), (5) verouderde/verkeerd gedimensioneerde installaties (cv-ketel/compressor) — plus een slotsectie over het ontbreken van sub-metering per functie (`/cases`-link).
-- **Uitgaande interne links**: LED, dakisolatie (+ link naar `/cases`).
+- **Uitgaande interne links**: LED, dakisolatie, ventilatie (toegevoegd in fase 15) (+ link naar `/cases`).
 - **Inkomende links**: LED.
 - **Mogelijke vervolgartikelen**: geen — dit is zelf al een lichte hub/listicle.
-- **Cannibalisatierisico**: laag; let op dat de ventilatie-vermelding hier bewust kort blijft nu er een dedicated ventilatie-artikel bestaat — een toekomstige fase zou hier een link naar `ventilatie-in-uw-bedrijfspand` kunnen toevoegen (zie roadmap P1).
+- **Cannibalisatierisico**: laag; de ventilatie-vermelding blijft bewust kort en verwijst nu naar het dedicated ventilatie-artikel in plaats van het te herhalen.
 
 ## Contentcluster-overzicht
 
@@ -167,10 +167,10 @@
 | Wetgeving | Energielabel C, Energiebesparingsplicht | Goed afgebakend, geen onderlinge overlap | Mogelijk: sectorspecifieke Erkende Maatregelenlijsten-verdieping | Laag — alleen bij concrete zoekvraag |
 | Installaties | Zonnepanelen, Laadpalen, Batterijopslag, Ventilatie, Warmtepomp | Breed gedekt, sterke onderlinge verwijzingen | Gevelisolatie/glasisolatie als losse maatregel | Midden |
 | Subsidies/fiscaliteit | EIA/ISDE/SDE++/KIA (pillar) | Zeer sterk, hoogste aantal inkomende links | Geen — bewust single-source-of-truth houden | N.v.t. (bewaken, niet uitbreiden) |
-| Energie-infrastructuur | Netcongestie | Sterk, regionaal onderbouwd | Interne link naar batterijopslag ontbreekt nog | **Hoog** (link toevoegen, geen nieuw artikel) |
+| Energie-infrastructuur | Netcongestie | Sterk, regionaal onderbouwd; link naar batterijopslag toegevoegd (fase 15) | Geen open gap | — |
 | Isolatie | Dakisolatie | Sterk, meest gelinkte content-artikel | Gevelisolatie/vloerisolatie als aanvulling | Midden |
 | Efficiëntie | LED | Compact en effectief | Geen concrete gap | Laag |
-| Inzicht | Verborgen energieverspillers | Functioneert goed als listicle-hub | Link naar ventilatie-artikel ontbreekt nog | Midden (link toevoegen) |
+| Inzicht | Verborgen energieverspillers | Functioneert goed als listicle-hub; link naar ventilatie-artikel toegevoegd (fase 15) | Geen open gap | — |
 
 ## Commercieel pad
 
@@ -211,6 +211,6 @@ Voor toekomstige SEO-acties, te beoordelen op: SEO-potentieel, commerciële waar
 
 | Prioriteit | Betekenis | Voorbeelden uit deze inventarisatie |
 |---|---|---|
-| **P1** | Hoog — concreet vastgesteld, lage inspanning, laag risico | Interne link batterijopslag ← netcongestie; interne link ventilatie ← verborgen-energieverspillers; Search Console-analyse zodra beschikbaar |
+| **P1** | Hoog — concreet vastgesteld, lage inspanning, laag risico | ~~Interne link batterijopslag ← netcongestie; interne link ventilatie ← verborgen-energieverspillers~~ (afgerond, fase 15); Search Console-analyse zodra beschikbaar (nog steeds niet beschikbaar) |
 | **P2** | Midden — waardevol maar vraagt meer onderzoek/afweging vóór uitvoering | Contentoptimalisatie bestaande artikelen; gevelisolatie-artikel; technische SEO-audit; conversie-optimalisatie |
 | **P3** | Laag — pas relevant na P1/P2, of afhankelijk van data die nu ontbreekt | Nieuwe lokale pagina's; autoriteit/backlinks; airconditioning/vloerisolatie-content |
