@@ -10,6 +10,80 @@ import { ROUTES } from '../lib/routes.js'
  */
 export const BLOG_POSTS = [
   {
+    slug: 'ventilatie-in-uw-bedrijfspand',
+    category: 'Installaties',
+    title: 'Ventilatie in uw bedrijfspand: wettelijke eisen en besparingsmogelijkheden',
+    excerpt:
+      'Ventilatie is wettelijk verplicht in vrijwel elk bedrijfspand, maar wordt zelden als verduurzamingsmaatregel gezien. Wat de eisen aan ventilatie inhouden, en waar de belangrijkste besparingsmogelijkheden zitten.',
+    date: '4 september 2026',
+    isoDate: '2026-09-04',
+    readTime: '6 min',
+    bodyAvailable: true,
+    sections: [
+      {
+        type: 'p',
+        parts: [
+          'Ventilatie krijgt in verduurzamingsplannen vaak weinig aandacht, terwijl het zowel een wettelijke verplichting is als een plek waar veel energie verloren gaat. Dit artikel legt uit wat de ventilatie-eisen voor een bedrijfspand inhouden, waar de grootste besparingsmogelijkheden zitten, en hoe dit zich verhoudt tot andere verplichtingen.',
+        ],
+      },
+      { type: 'h2', text: 'Ventilatie is een wettelijke eis, geen keuze' },
+      {
+        type: 'p',
+        parts: [
+          'Vrijwel elk bestaand bedrijfspand moet voldoen aan een minimale ventilatie-eis uit het Besluit bouwwerken leefomgeving (Bbl). Voor kantoor- en industriefuncties geldt een minimale ventilatiecapaciteit van 2,12 dm³/s per persoon (artikel 3.67, lid 2 Bbl). Deze voorziening moet voorkomen dat de binnenlucht een kwaliteit krijgt die nadelig is voor de gezondheid. Een ventilatiesysteem hoort dan ook niet incidenteel te worden uitgezet, en vraagt structureel onderhoud om goed te blijven functioneren.',
+        ],
+      },
+      { type: 'h2', text: 'Waar ventilatie energie verspilt' },
+      {
+        type: 'p',
+        parts: [
+          'Verouderde of slecht afgestelde ventilatie is een van de minder zichtbare energieverspillers in een bedrijfspand: systemen die onnodig doordraaien buiten werktijd, ventilatoren die niet zijn afgestemd op de werkelijke bezetting, of luchtbehandeling die geen rekening houdt met de opgewekte warmte in het pand. Dit raakt ook aan de bouwkundige schil — zie ons artikel over ',
+          { text: 'dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
+          ' voor de grotere, structurele kant daarvan.',
+        ],
+      },
+      { type: 'h2', text: 'Warmteterugwinning en CO2-sturing: waar dit relevant wordt' },
+      {
+        type: 'p',
+        parts: [
+          'Twee ontwikkelingen maken ventilatie inmiddels ook fiscaal interessant. Luchtbehandelingskasten met warmteterugwinning halen warmte uit de afgevoerde lucht terug, en CO2-gestuurde ventilatie past het ventilatiedebiet aan op de daadwerkelijke bezetting in plaats van continu op een vast niveau te draaien. Beide type maatregelen kunnen, mits ze aan de specifieke technische eisen op de jaarlijkse Energielijst voldoen, in aanmerking komen voor de energie-investeringsaftrek (EIA). Voor de volledige uitleg van de EIA en andere fiscale en subsidieregelingen verwijzen we naar ons overzicht van ',
+          { text: 'EIA, ISDE, SDE++ en KIA', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Ventilatie en de energiebesparingsplicht' },
+      {
+        type: 'p',
+        parts: [
+          'Ventilatiemaatregelen met een terugverdientijd van vijf jaar of minder kunnen ook onderdeel zijn van de energiebesparingsplicht die voor veel bedrijfspanden geldt. Meer over deze bredere verplichting — voor wie die geldt en wat er van u wordt verwacht — leest u in ons artikel over ',
+          { text: 'de energiebesparingsplicht', to: ROUTES.blogPost('energiebesparingsplicht-voor-uw-bedrijfspand') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Wat SMV Advies voor u kan betekenen' },
+      {
+        type: 'callout',
+        text: [
+          'SMV Advies verkoopt geen ventilatiesystemen of installaties. Dat betekent dat we onafhankelijk kunnen meedenken over de vraag of uw ventilatie voldoet aan de geldende eisen en waar energiebesparing mogelijk is, als onderdeel van het bredere verduurzamingsplan voor uw pand. Twijfelt u waar u het beste kunt beginnen? ',
+          { text: 'Neem gerust contact met ons op', to: ROUTES.contact },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Conclusie' },
+      {
+        type: 'p',
+        parts: [
+          'Ventilatie is geen bijzaak: het is een wettelijke eis en tegelijk een veelvoorkomende bron van onnodig energieverbruik. Controleer of uw systeem nog aansluit op het daadwerkelijke gebruik van uw pand, en breng in kaart of warmteterugwinning, CO2-sturing of andere maatregelen voor uw situatie relevant zijn.',
+        ],
+      },
+    ],
+    cta: {
+      label: 'Start de gratis energie-indicatie',
+      to: ROUTES.energieIndicatie,
+      text: 'Benieuwd welke maatregelen voor uw bedrijfspand het meest relevant zijn? Met onze gratis energie-indicatie krijgt u snel een eerste beeld van waar de grootste kansen liggen.',
+    },
+  },
+  {
     slug: 'energiebesparingsplicht-voor-uw-bedrijfspand',
     category: 'Wetgeving',
     title: 'Energiebesparingsplicht voor uw bedrijfspand: wat moet u weten?',
