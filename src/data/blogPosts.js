@@ -10,6 +10,82 @@ import { ROUTES } from '../lib/routes.js'
  */
 export const BLOG_POSTS = [
   {
+    slug: 'batterijopslag-voor-uw-bedrijfspand',
+    category: 'Installaties',
+    title: 'Batterijopslag voor uw bedrijfspand: wanneer is dit relevant?',
+    excerpt:
+      'Een batterij kan zelf opgewekte stroom bruikbaar maken op het moment dat u die nodig heeft, maar is niet voor elk bedrijfspand een logische stap. Wanneer het relevant wordt, en via welke route dit fiscaal of met subsidie kan worden ondersteund.',
+    date: '2 september 2026',
+    isoDate: '2026-09-02',
+    readTime: '5 min',
+    bodyAvailable: true,
+    sections: [
+      {
+        type: 'p',
+        parts: [
+          'Batterijopslag kan voor sommige bedrijfspanden interessant zijn, vooral in combinatie met eigen opwek van zonnestroom en/of laadinfrastructuur voor elektrische voertuigen. Of dit voor uw pand relevant is, verschilt sterk per situatie. Ook de fiscale en subsidiemogelijkheden hangen af van de precieze toepassing.',
+        ],
+      },
+      { type: 'h2', text: 'Wanneer wordt een batterij relevant?' },
+      {
+        type: 'p',
+        parts: [
+          'Een batterij wordt vooral interessant wanneer u zelf elektriciteit opwekt, bijvoorbeeld met zonnepanelen, en die stroom niet altijd op het moment van opwekken kunt gebruiken. Met het vervallen van de salderingsregeling per 1 januari 2027 kan het aantrekkelijker worden om meer van uw eigen opgewekte stroom zelf te benutten in plaats van terug te leveren — meer hierover leest u in ons artikel over ',
+          { text: 'zonnepanelen op uw bedrijfspand', to: ROUTES.blogPost('zonnepanelen-op-uw-bedrijfspand') },
+          '. Ook in combinatie met laadinfrastructuur kan een batterij een rol spelen, bijvoorbeeld om pieken in het laadvermogen op te vangen. De algemene werking van een batterij en de rol daarvan bij netcapaciteit hebben we al toegelicht in ons artikel over ',
+          { text: 'netcongestie in de Hoeksche Waard', to: ROUTES.blogPost('netcongestie-hoeksche-waard') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Fiscaal voordeel via de EIA' },
+      {
+        type: 'p',
+        parts: [
+          'Onder bepaalde voorwaarden kan een batterij in aanmerking komen voor de energie-investeringsaftrek (EIA). Op de Energielijst 2026 staat hiervoor een specifieke code (251118): een accu voor stationaire opslag van elektrische energie, met een vermogen van ten minste 5 kW en een opslagcapaciteit van ten minste 15 kWh. De accu moet gekoppeld zijn aan een installatie voor zelfopwekking van duurzame energie met een opgesteld piekvermogen van meer dan 15 kW, en beide moeten dezelfde aansluiting op het elektriciteitsnet hebben. Een accu met vloeibaar lood-zuur of een accu van een (intern) transportmiddel komt niet in aanmerking. Voor de volledige uitleg van de EIA en de andere fiscale en subsidieregelingen verwijzen we naar ',
+          { text: 'ons overzicht van EIA, ISDE, SDE++ en KIA', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'SPRILA: subsidie, maar met een belangrijke voorwaarde' },
+      {
+        type: 'p',
+        parts: [
+          'Naast de EIA bestaat er met de Subsidieregeling Private Laadinfrastructuur bij bedrijven (SPRILA) ook een route die een batterij kan ondersteunen — maar niet zomaar. SPRILA subsidieert een stationaire batterij alleen wanneer die wordt aangelegd in combinatie met nieuwe laadinfrastructuur. Een losstaande batterij, bijvoorbeeld uitsluitend voor de opslag van zonnestroom, komt niet in aanmerking. Daarnaast moet minimaal 70% van de door de batterij ontladen energie aantoonbaar naar de laadstations gaan. De subsidie voor de combinatie van een batterij met nieuwe laadinfrastructuur bedraagt minimaal € 25.000. Meer over SPRILA en de voorwaarden voor laadinfrastructuur zelf leest u in ons artikel over ',
+          { text: 'laadpalen op uw bedrijfsterrein', to: ROUTES.blogPost('laadpalen-op-uw-bedrijfsterrein') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Vergunning en brandveiligheid: laat dit vooraf beoordelen' },
+      {
+        type: 'p',
+        parts: [
+          'Batterijopslag is niet alleen een financiële en technische afweging. Ook de locatie, de veiligheid en de concrete uitvoering moeten worden beoordeeld — denk aan de richtlijn PGS 37-1, die relevant is voor de brandveiligheid van batterijopslagsystemen. Omdat dit sterk afhangt van de omvang en opstelling van de installatie, is het verstandig dit vooraf te bespreken met uw gemeente en, waar nodig, de brandweer of een bevoegde adviseur.',
+        ],
+      },
+      { type: 'h2', text: 'Wat SMV Advies voor u kan betekenen' },
+      {
+        type: 'callout',
+        text: [
+          'SMV Advies verkoopt geen zonnepanelen, batterijen of installaties. Dat betekent dat we onafhankelijk kunnen meedenken over de vraag of batterijopslag voor uw bedrijfspand logisch is, en hoe dit past binnen uw bredere verduurzamingsplan. Twijfelt u waar u het beste kunt beginnen? ',
+          { text: 'Neem gerust contact met ons op', to: ROUTES.contact },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Conclusie' },
+      {
+        type: 'p',
+        parts: [
+          'Batterijopslag is niet automatisch voor ieder bedrijfspand interessant. Eigen opwek en de aankomende verandering rond saldering kunnen aanleiding zijn om de optie te onderzoeken. De EIA kan onder specifieke voorwaarden een fiscaal voordeel bieden, terwijl SPRILA nadrukkelijk is gekoppeld aan nieuwe laadinfrastructuur en dus geen algemene subsidie is voor een losse batterij. Laat vergunning en veiligheid vooraf beoordelen, vóórdat u een investering vastlegt.',
+        ],
+      },
+    ],
+    cta: {
+      label: 'Start de gratis energie-indicatie',
+      to: ROUTES.energieIndicatie,
+      text: 'Overweegt u batterijopslag voor uw bedrijfspand? Onze gratis energie-indicatie geeft in een paar minuten een eerste beeld van waar de meeste winst te behalen valt.',
+    },
+  },
+  {
     slug: 'laadpalen-op-uw-bedrijfsterrein',
     category: 'Installaties',
     title: 'Laadpalen op uw bedrijfsterrein: waar u rekening mee moet houden',
