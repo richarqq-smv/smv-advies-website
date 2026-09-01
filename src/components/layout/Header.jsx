@@ -12,7 +12,13 @@ export function Header({ onMenuOpen }) {
     <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
       <Container className="flex h-16 items-center justify-between lg:h-[72px]">
         <NavLink to={ROUTES.home} aria-label="SMV Advies, terug naar home">
-          <img src="/logo.png" alt="SMV Advies" className="h-11 w-auto lg:h-12" />
+          <img
+            src="/logo-header.png"
+            alt="SMV Advies"
+            width="199"
+            height="112"
+            className="h-11 w-auto lg:h-12"
+          />
         </NavLink>
 
         <nav className="hidden items-center gap-1 lg:flex">
