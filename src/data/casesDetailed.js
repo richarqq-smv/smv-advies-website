@@ -8,6 +8,14 @@ import { ROUTES } from '../lib/routes.js'
  * links to the existing blog articles covering measures this case
  * actually names in `na`/`resultaat` — added editorially, not part of
  * the client's original case text.
+ *
+ * `imageLabel` is shown to every visitor via `ImagePlaceholder` (it's both
+ * the visible caption and the a11y label) — it deliberately just names the
+ * subject, with no "nog te plaatsen"/"volgt nog" production-status wording,
+ * so the placeholder reads as a considered design choice rather than an
+ * unfinished page. Real photography is still needed for all three cases
+ * (see docs/COMMERCIAL-REVIEW.md for the detailed shot list) — swap
+ * `<ImagePlaceholder>` for a real `<img>` once it's available.
  */
 export const CASES_DETAILED = [
   {
@@ -38,7 +46,7 @@ export const CASES_DETAILED = [
       'Verwachte besparing: 58% op de energierekening',
     ],
     resultaat: 'Verwachte besparing van € 10.700 per jaar. Terugverdientijd met subsidies onder de 7 jaar.',
-    imageLabel: 'Foto: kantoorpand Oud-Beijerland (voor/na) - nog te plaatsen',
+    imageLabel: 'Kantoorpand Oud-Beijerland — voor en na verduurzaming',
   },
   {
     id: 'metaalbewerking-hoeksche-waard',
@@ -64,7 +72,7 @@ export const CASES_DETAILED = [
       'Subsidie ISDE aangevraagd en toegekend',
     ],
     resultaat: 'Begeleiding bij 3 offertes, keuze voor lokale installateur. Gasverbruik gehalveerd.',
-    imageLabel: 'Foto: metaalbewerkingsbedrijf Hoeksche Waard (voor/na) - nog te plaatsen',
+    imageLabel: 'Metaalbewerkingsbedrijf Hoeksche Waard — voor en na verduurzaming',
   },
   {
     id: 'winkel-showroompand',
@@ -84,6 +92,6 @@ export const CASES_DETAILED = [
       'Prioritering voor 2 jaar',
     ],
     resultaat: 'Snelle winst met LED: 35% lagere lichtrekening. Duidelijk pad voor vervolgstappen.',
-    imageLabel: 'Foto: winkel- en showroompand (voor/na) - nog te plaatsen',
+    imageLabel: 'Winkel- en showroompand — voor en na verduurzaming',
   },
 ]

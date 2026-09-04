@@ -4,9 +4,16 @@ import { cn } from '../../lib/cn'
 /**
  * Stand-in for photography that doesn't exist yet. Marked up as an image
  * (role="img" + aria-label) so screen readers get the same "there is a
- * picture here" signal a real <img alt="..."> would give, and carries a
- * small visible caption so reviewers can see exactly what needs shooting
- * and where. Swap for a real <img> once photography is available.
+ * picture here" signal a real <img alt="..."> would give.
+ *
+ * `label` deliberately only names the subject (e.g. "Kantoorpand
+ * Oud-Beijerland — voor en na verduurzaming") — it must never carry
+ * production-status wording like "nog te plaatsen"/"volgt nog", since it's
+ * shown to every visitor, not just reviewers. A visitor should read this as
+ * a considered design choice, not as evidence the page is unfinished. The
+ * actual shot list for reviewers lives in docs/COMMERCIAL-REVIEW.md and in
+ * code comments next to each usage. Swap for a real <img> once photography
+ * is available.
  */
 export function ImagePlaceholder({ label, aspect = 'aspect-[4/3]', className }) {
   return (
