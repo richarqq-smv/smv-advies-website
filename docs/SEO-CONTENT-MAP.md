@@ -26,7 +26,7 @@
 - **Primaire zoekintentie**: "geldt de energiebesparingsplicht voor mijn bedrijfspand"
 - **Belangrijkste onderwerpen**: wettelijke grondslag (art. 5.15 Bal / art. 3.84 Bbl), verbruiksdrempel (50.000 kWh / 25.000 m³), onderzoeksplicht voor grootverbruikers (10 miljoen kWh / 170.000 m³), Erkende Maatregelenlijsten, informatieplicht (4-jaarlijks via Mijn RVO), onderscheid met energielabel-C.
 - **Uitgaande interne links**: LED, dakisolatie, warmtepomp, EIA/ISDE/SDE++, energielabel-C.
-- **Inkomende links**: ventilatie.
+- **Inkomende links**: ventilatie, LED (fase 17).
 - **Mogelijke vervolgartikelen**: eventuele losse verdieping van sectorspecifieke Erkende Maatregelenlijsten, alleen indien concrete zoekvraag blijkt.
 - **Cannibalisatierisico**: laag met energielabel-C (bewust als aparte, bredere verplichting gepositioneerd); functioneert als hub die drie maatregel-artikelen (LED, dakisolatie, warmtepomp) samenbrengt zonder ze te herhalen.
 
@@ -52,7 +52,7 @@
 - **Primaire zoekintentie**: "laadpalen bedrijfsterrein vergunning en subsidie"
 - **Belangrijkste onderwerpen**: vergunningsvrij plaatsen (met voorzichtige formulering, geen harde kW-/aantalsdrempels), SEBA-sluiting (31-12-2024), laadpunten niet meer op de Milieulijst (MIA/Vamil), SPRILA als huidige route, netcongestie bij meerdere laadpunten.
 - **Uitgaande interne links**: EIA/ISDE/SDE++, zonnepanelen, netcongestie.
-- **Inkomende links**: batterijopslag.
+- **Inkomende links**: batterijopslag, netcongestie, warmtepomp (fase 17).
 - **Mogelijke vervolgartikelen**: geen directe noodzaak.
 - **Cannibalisatierisico**: laag.
 
@@ -65,7 +65,7 @@
 - **Primaire zoekintentie**: "wat moet ik weten voordat ik zonnepanelen op mijn bedrijfspand laat plaatsen"
 - **Belangrijkste onderwerpen**: vergunningsvrij plaatsen (IPLO: monument-uitzondering, beschermd stads-/dorpsgezicht, plat-dak-dakrandregel), salderingsregeling stopt per 1-1-2027 (Rijksoverheid, min. 50% vergoeding tot 2030), netcongestie bij teruglevering, EIA/ISDE-status voor zakelijke zonnepanelen, technische aandachtspunten plat dak.
 - **Uitgaande interne links**: netcongestie, EIA/ISDE/SDE++, dakisolatie.
-- **Inkomende links**: batterijopslag, laadpalen.
+- **Inkomende links**: batterijopslag, laadpalen, netcongestie, warmtepomp (fase 17).
 - **Mogelijke vervolgartikelen**: geen directe noodzaak.
 - **Cannibalisatierisico**: laag — dit is het enige artikel dat de salderingswijziging volledig uitlegt; andere artikelen mogen alleen kort verwijzen.
 
@@ -90,10 +90,10 @@
 - **Contentcluster**: Energie-infrastructuur
 - **Primaire zoekintentie**: "netcongestie Hoeksche Waard bedrijfspand"
 - **Belangrijkste onderwerpen**: mechaniek van netcongestie (afname vs. teruglevering, grootverbruik vs. kleinverbruik), regionale tijdlijn (Stedin, kabeltracé Klaaswaal–Puttershoek, wachtlijst kleinverbruikers vanaf 1 juli 2026), batterijopslag als gedeeltelijke oplossing (eigen H3, functioneel/algemeen), wanneer contact opnemen met Stedin.
-- **Uitgaande interne links**: dakisolatie, LED, warmtepomp, EIA/ISDE/SDE++, batterijopslag (toegevoegd in fase 15, via de bestaande "Batterijopslag"-subsectie) (+ externe link naar Stedin's congestiechecker; + niet-blog links naar `/pakketten` en `/werkwijze`).
+- **Uitgaande interne links**: dakisolatie, LED, warmtepomp, EIA/ISDE/SDE++, batterijopslag (fase 15), zonnepanelen, laadpalen (fase 17 — beide waren al bij naam genoemd in de bulletlijst maar nog niet gelinkt) (+ externe link naar Stedin's congestiechecker; + niet-blog links naar `/pakketten` en `/werkwijze`).
 - **Inkomende links**: batterijopslag, laadpalen, zonnepanelen, warmtepomp.
-- **Mogelijke vervolgartikelen**: geen — de link naar batterijopslag is inmiddels toegevoegd (fase 15).
-- **Cannibalisatierisico**: dit is het **enige** artikel dat de netcongestie-mechaniek en de Hoeksche Waard-tijdlijn volledig mag uitleggen — alle andere artikelen mogen alleen kort verwijzen.
+- **Mogelijke vervolgartikelen**: geen — alle bekende content gaps voor dit artikel zijn inmiddels gelinkt.
+- **Cannibalisatierisico**: dit is het **enige** artikel dat de netcongestie-mechaniek en de Hoeksche Waard-tijdlijn volledig mag uitleggen — alle andere artikelen mogen alleen kort verwijzen. De "1 juli 2026"-wachtlijstwijziging is in fase 17 opnieuw primair geverifieerd en nog steeds correct.
 
 ### 8. Dakisolatie voor uw bedrijfspand: waar het echt verschil maakt
 - **URL**: `/blog/dakisolatie-voor-uw-bedrijfspand`
@@ -104,7 +104,7 @@
 - **Primaire zoekintentie**: "dakisolatie bedrijfspand rendabiliteit en regelgeving"
 - **Belangrijkste onderwerpen**: warmteverlies via het dak, isoleren tijdens regulier onderhoud, Bbl Rc-waarde-eisen (art. 5.20 lid 2/4, art. 4.152), comfortvoordelen, aandachtspunten (thermische bruggen, dampopen/dampdicht, draagvermogen), afstemming met toekomstige zonnepanelen, EIA-relevantie.
 - **Uitgaande interne links**: EIA/ISDE/SDE++, warmtepomp (+ link naar `/cases`).
-- **Inkomende links**: ventilatie, energiebesparingsplicht, zonnepanelen, energielabel-C, netcongestie, warmtepomp, verborgen-energieverspillers, EIA/ISDE/SDE++ — **sterkst gelinkte artikel na het subsidie-artikel** (8 inkomende links).
+- **Inkomende links**: ventilatie, energiebesparingsplicht, zonnepanelen, energielabel-C, netcongestie, warmtepomp, verborgen-energieverspillers, EIA/ISDE/SDE++, LED (fase 17) — **sterkst gelinkte artikel na het subsidie-artikel** (9 inkomende links).
 - **Mogelijke vervolgartikelen**: gevelisolatie/glasisolatie als natuurlijke aanvulling (zie roadmap content gaps).
 - **Cannibalisatierisico**: dit is het enige artikel dat de Bbl-Rc-waarde-eisen voor de gebouwschil mag uitleggen.
 
@@ -129,8 +129,8 @@
 - **Contentcluster**: Installaties
 - **Primaire zoekintentie**: "warmtepomp mkb bedrijfspand geschiktheid"
 - **Belangrijkste onderwerpen**: geschiktheidscriteria, isolatieniveau als voorwaarde (verwijst naar dakisolatie), elektrische aansluiting en netcongestie, kosten en subsidie (ISDE/EIA).
-- **Uitgaande interne links**: dakisolatie, netcongestie, EIA/ISDE/SDE++.
-- **Inkomende links**: energiebesparingsplicht, energielabel-C, netcongestie, dakisolatie, EIA/ISDE/SDE++.
+- **Uitgaande interne links**: dakisolatie, netcongestie, EIA/ISDE/SDE++, zonnepanelen, laadpalen (fase 17 — beide waren al bij naam genoemd in "De elektrische aansluiting" maar nog niet gelinkt).
+- **Inkomende links**: energiebesparingsplicht, energielabel-C, netcongestie, dakisolatie, EIA/ISDE/SDE++, LED (fase 17).
 - **Mogelijke vervolgartikelen**: geen directe noodzaak.
 - **Cannibalisatierisico**: laag.
 
@@ -142,7 +142,7 @@
 - **Contentcluster**: Efficiëntie
 - **Primaire zoekintentie**: "LED-verlichting bedrijfspand snelle besparing"
 - **Belangrijkste onderwerpen**: terugverdientijd i.r.t. branduren, EIA-relevantie, aandachtspunten (kleurweergave, bedrading/dimbaarheid, aanwezigheidsdetectie/daglichtsturing).
-- **Uitgaande interne links**: EIA/ISDE/SDE++, verborgen energieverspillers (+ link naar `/cases`).
+- **Uitgaande interne links**: EIA/ISDE/SDE++, verborgen energieverspillers, dakisolatie, warmtepomp (fase 17 — beide al bij naam genoemd in de intro maar nog niet gelinkt), energiebesparingsplicht (fase 17 — nieuwe, wederzijdse link, want dat artikel citeert LED al als voorbeeldmaatregel) (+ link naar `/cases`).
 - **Inkomende links**: energiebesparingsplicht, energielabel-C, netcongestie, EIA/ISDE/SDE++, verborgen-energieverspillers.
 - **Mogelijke vervolgartikelen**: geen.
 - **Cannibalisatierisico**: laag.

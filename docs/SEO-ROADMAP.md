@@ -1,6 +1,6 @@
 # SMV Advies — SEO Roadmap
 
-> Dit document is het permanente projectgeheugen voor het SEO-traject van smv-advies.nl. Elke toekomstige sessie die aan SEO/content werkt, moet dit document eerst lezen (samen met `docs/SEO-CONTENT-MAP.md`) voordat er onderzoek of implementatie plaatsvindt. Laatst bijgewerkt: Fase 16 (2026-09-01), op basis van commit `0c03d46`.
+> Dit document is het permanente projectgeheugen voor het SEO-traject van smv-advies.nl. Elke toekomstige sessie die aan SEO/content werkt, moet dit document eerst lezen (samen met `docs/SEO-CONTENT-MAP.md`) voordat er onderzoek of implementatie plaatsvindt. Laatst bijgewerkt: Fase 17 (2026-09-01), op basis van commit `edd79e3`.
 
 ## Projectdoel
 
@@ -29,6 +29,7 @@ SMV Advies is een onafhankelijke verduurzamingsadviseur voor mkb-bedrijfspanden 
 | 14 | SEO-projectgeheugen (roadmap + content map) | n.v.t. (documentatie, geen nieuwe URL) | 2026-09-01 (sessiedatum) | n.v.t. | `969680a` | Persistente projectcontext zodat toekomstige sessies niet opnieuw hoeven te worden gebrieft |
 | 15 | Interne linkstrategie: ontbrekende inkomende links toegevoegd | n.v.t. (bestaande artikelen gewijzigd, geen nieuwe URL) | 2026-09-01 (sessiedatum) | n.v.t. | `ce084f7` | P1-item uit de roadmap uitgevoerd: link vanuit `netcongestie-hoeksche-waard` naar `batterijopslag-voor-uw-bedrijfspand`, en vanuit `verborgen-energieverspillers` naar `ventilatie-in-uw-bedrijfspand`. Search Console-toegang gecontroleerd en niet beschikbaar — geen data verzonnen, doorgegaan met eerstvolgende prioriteit. |
 | 16 | Technische SEO-/performance-audit | n.v.t. (site-brede technische wijziging, geen nieuwe URL) | 2026-09-01 (sessiedatum) | n.v.t. | `0c03d46` | Roadmap-item #7 uitgevoerd: eerste formele technische audit (Core Web Vitals-relevante checks, title/meta/canonical/H1-uniekheid over alle 24 routes, indexeerbaarheid, orphan-pages, structured data). Eén concreet, bevestigd probleem gevonden en verholpen (zie "Technische SEO-status" hieronder); overige onderzochte punten waren al in orde en zijn ongewijzigd gelaten. |
+| 17 | Contentoptimalisatie bestaande artikelen (interne links) | `netcongestie-hoeksche-waard`, `warmtepomp-in-het-mkb`, `led-verlichting-snelste-stap` (bestaande artikelen gewijzigd, geen nieuwe URL) | 2026-09-01 (sessiedatum) | n.v.t. | `edd79e3` | Roadmap-item #3 (gedeeltelijk) uitgevoerd: audit van alle 12 artikelen op actualiteit/dunheid/ontbrekende links wees uit dat drie oudere artikelen (geschreven vóórdat zonnepanelen, laadpalen en energiebesparingsplicht als losse artikelen bestonden) die onderwerpen bij naam noemden zonder te linken. Geen inhoudelijke feiten bleken verouderd (netcongestie's "1 juli 2026"-wachtlijstfeit opnieuw primair geverifieerd en nog steeds correct). Zie "Contentoptimalisatie — fase 17" hieronder voor details. |
 
 **Eerdere fases (vóór fase 9, uit git history, ter context)**: de eerste vijf blogartikelen (energielabel-C, netcongestie, dakisolatie, EIA/ISDE/SDE++, warmtepomp, LED, verborgen energieverspillers) en de technische SEO-basis (prerendering, sitemap, structured data, GA4/Consent Mode) zijn in eerdere, niet meer als "Fase N" genummerde sessies gebouwd. Zie git log voor het volledige verloop; de belangrijkste commits zijn `f90060e` (initial commit) t/m `9253087` (laatste inhoudelijke verdieping vóór fase 9).
 
@@ -87,6 +88,16 @@ Onderwerpen waarbij toekomstige artikelen expliciet moeten afbakenen tegen besta
 - **Energielabel-C vs. energiebesparingsplicht** — bewust als twee afzonderlijke artikelen behandeld omdat de wettelijke grondslag, doelgroep (alleen kantoorfunctie vs. vrijwel elk bedrijfspand) en drempels verschillen. Toekomstige content moet dit onderscheid niet laten vervagen.
 - **ISDE zakelijk vs. particulier** — belangrijke valkuil, al één keer aangetroffen (Fase 13): sommige ISDE-maatregelen (zoals de ventilatie-subsidie sinds 2026) gelden uitsluitend voor woningeigenaren, niet voor zakelijke gebruikers. Elke nieuwe ISDE-claim moet expliciet op de RVO-pagina "zakelijke gebruikers" worden gecontroleerd, niet op de algemene of particuliere ISDE-pagina.
 
+## Contentoptimalisatie — fase 17
+
+Volledige audit van alle 12 artikelen op actualiteit, dunheid, titel/meta-kwaliteit, ontbrekende links en cannibalisatierisico. Bevindingen en acties:
+
+- **`netcongestie-hoeksche-waard`**: de "1 juli 2026"-wachtlijstwijziging voor kleinverbruikers is opnieuw gecontroleerd bij meerdere bronnen (incl. Stedin en Vakcentrum) en blijft correct — geen inhoudelijke wijziging nodig. Wel gevonden: de bulletlijst "Kunt u nog verduurzamen ondanks netcongestie?" noemde zonnepanelen en laadpalen bij naam zonder te linken (beide dedicated artikelen bestonden nog niet toen dit artikel op 2026-08-20 werd geschreven). **Opgelost**: beide nu gelinkt.
+- **`warmtepomp-in-het-mkb`**: de subsidieparagraaf ("Kosten en subsidie") is inhoudelijk nog correct (ISDE voor zakelijke warmtepompen bestaat nog, EIA kan van toepassing zijn) en blijft bewust kort — verdere uitleg hoort in het subsidie-artikel. Wel gevonden: de paragraaf "De elektrische aansluiting" noemde zonnepanelen en laadpalen bij naam zonder te linken (zelfde oorzaak: geschreven vóór die artikelen bestonden). **Opgelost**: beide nu gelinkt.
+- **`led-verlichting-snelste-stap`**: het dunste/oudste artikel (4 min, 2026-06-05). Introparagraaf noemde "isolatie" en "een warmtepomp" zonder te linken. **Opgelost**: beide nu gelinkt. Daarnaast een nieuwe, natuurlijke link toegevoegd naar `energiebesparingsplicht-voor-uw-bedrijfspand` (dat artikel citeert LED al als voorbeeld van een Erkende-Maatregelenlijst-maatregel; dit maakt de verwijzing wederzijds).
+- **Overige 9 artikelen**: gecontroleerd, geen concrete, onderbouwde reden gevonden voor wijziging op dit moment. Title/meta/H1 van alle 12 artikelen zijn al bevestigd uniek en aanwezig (fase 16-audit). Geen titel/meta-wijzigingen doorgevoerd — er was geen concrete onderbouwing dat de bestaande titels onderpresteren (geen Search Console-data beschikbaar om dat te toetsen).
+- **Geen wijziging aan structured data, CTA's, of bestaande, inhoudelijk correcte tekst** — alleen internal-linking, puur additief.
+
 ## Interne linkstrategie
 
 Onderstaande is opgebouwd uit de daadwerkelijke `ROUTES.blogPost(...)`-links in `src/data/blogPosts.js` (gecontroleerd per artikel, niet geschat).
@@ -101,11 +112,11 @@ Onderstaande is opgebouwd uit de daadwerkelijke `ROUTES.blogPost(...)`-links in 
 | Laadpalen | EIA/ISDE/SDE++, zonnepanelen, netcongestie |
 | Zonnepanelen | netcongestie, EIA/ISDE/SDE++, dakisolatie |
 | Energielabel-C | dakisolatie, LED, warmtepomp |
-| Netcongestie | dakisolatie, LED, warmtepomp, EIA/ISDE/SDE++, batterijopslag (+ externe link naar Stedin's congestiechecker) |
+| Netcongestie | dakisolatie, LED, warmtepomp, EIA/ISDE/SDE++, batterijopslag, zonnepanelen, laadpalen (fase 17) (+ externe link naar Stedin's congestiechecker) |
 | Dakisolatie | EIA/ISDE/SDE++, warmtepomp (+ link naar `/cases`) |
 | EIA/ISDE/SDE++ | LED, warmtepomp, dakisolatie, energielabel-C (+ link naar `/contact`) |
-| Warmtepomp | dakisolatie, netcongestie, EIA/ISDE/SDE++ |
-| LED | EIA/ISDE/SDE++, verborgen energieverspillers (+ link naar `/cases`) |
+| Warmtepomp | dakisolatie, netcongestie, EIA/ISDE/SDE++, zonnepanelen, laadpalen (fase 17) |
+| LED | EIA/ISDE/SDE++, verborgen energieverspillers, dakisolatie, warmtepomp, energiebesparingsplicht (fase 17) (+ link naar `/cases`) |
 | Verborgen energieverspillers | LED, dakisolatie, ventilatie |
 
 **Update (fase 15) — ontbrekende inkomende links opgelost**: `batterijopslag-voor-uw-bedrijfspand` en `ventilatie-in-uw-bedrijfspand` hadden na fase 14 geen enkele inkomende link vanuit een ander artikel. In fase 15 is dit verholpen: de bestaande H3 "Batterijopslag" in `netcongestie-hoeksche-waard` linkt nu naar het batterijopslag-artikel, en de ventilatie-passage in `verborgen-energieverspillers` linkt nu naar het ventilatie-artikel. Beide artikelen hebben nu minimaal 1 inkomende link.
@@ -158,7 +169,7 @@ Deze roadmap is nadrukkelijk **niet** een oproep tot eindeloos nieuwe blogartike
 |---|---|---|---|---|---|---|
 | 1 | ~~Interne linking bijwerken~~ | ~~Batterijopslag en ventilatie een inkomende link geven vanuit netcongestie resp. verborgen-energieverspillers~~ | Concreet vastgestelde lacune (zie "Interne linkstrategie") | — | **Afgerond in fase 15** | Uitgevoerd op 2026-09-01 |
 | 2 | Search Console-analyse | Zodra data beschikbaar is: impressies, CTR, posities, zoekopdrachten per pagina analyseren | Data-gedreven prioritering is veel betrouwbaarder dan verder gokken op content gaps | Toegang tot Search Console (nog steeds niet beschikbaar per fase 15 — opnieuw gecontroleerd, geen connector gevonden) | **P1**, zodra data er is | Zo snel mogelijk na voldoende indexatie/verkeer |
-| 3 | Contentoptimalisatie bestaande artikelen | Oudere artikelen (energielabel-C, netcongestie, dakisolatie, EIA-subsidies, warmtepomp, LED, verborgen-energieverspillers) herzien op actualiteit van cijfers/regelgeving | Feiten uit eerdere fases kunnen na verloop van tijd verouderen (subsidiebedragen, drempels, wetsartikelen) | Primaire bronverificatie per artikel | **P2** | Periodiek, bijv. ieder kwartaal of bij bekende wetswijziging |
+| 3 | Contentoptimalisatie bestaande artikelen | Oudere artikelen herzien op actualiteit van cijfers/regelgeving en ontbrekende interne links | Feiten uit eerdere fases kunnen na verloop van tijd verouderen (subsidiebedragen, drempels, wetsartikelen) | Primaire bronverificatie per artikel | **Gedeeltelijk afgerond in fase 17** (interne links op netcongestie/warmtepomp/LED; overige 9 artikelen gecontroleerd, geen concrete wijziging nodig bevonden) | Periodiek herhalen, bijv. ieder kwartaal of bij bekende wetswijziging |
 | 4 | Verdere content gaps | Zie tabel "Content gaps" hierboven | Nog niet alle relevante zoekintenties zijn gedekt | Nieuwe primaire bronverificatie per onderwerp | **P2/P3** afhankelijk van onderwerp | Na Search Console-inzicht, niet blind doorgaan |
 | 5 | Commerciële/conversie-SEO | De paden content → `/energie-indicatie` → `/contact` optimaliseren (zie "Commercieel pad"-sectie in de content map) | Meer content zonder conversieverbetering levert minder waarde op dan gerichte funnel-optimalisatie | Geen technische blokkade; vraagt wel bewuste, losse goedkeuring omdat het bestaande pagina's raakt | **P2** | Nadat er voldoende verkeersdata is om knelpunten te identificeren |
 | 6 | Lokale SEO | Overwegen of een aparte, goed onderbouwde uitbreiding van lokale signalen (bijv. per-kern content, meer expliciete NAP-consistentie) waarde toevoegt naast de al bestaande `/werkgebied`-pagina | Werkgebied bestaat al en dekt de regio; verdere uitbreiding moet aantoonbare zoekintentie hebben, geen aanname | Zie "Lokale SEO"-sectie in `SEO-CONTENT-MAP.md` | **P3** | Alleen na concrete aanwijzing (bijv. Search Console-zoekwoorden per kern) |
@@ -181,11 +192,12 @@ Deze roadmap is nadrukkelijk **niet** een oproep tot eindeloos nieuwe blogartike
 12. Verzin geen feiten — cijfers, bedragen, drempels, jaartallen en wettelijke verwijzingen moeten primair verifieerbaar zijn of worden weggelaten/algemeen geformuleerd.
 13. Stop bij materiële onzekerheid (tegenstrijdige primaire bronnen, een claim die niet te verifiëren is) in plaats van te gokken — meld dit expliciet in het eindrapport in plaats van door te schrijven.
 
-## Eerstvolgende prioriteit (bijgewerkt na fase 16)
+## Eerstvolgende prioriteit (bijgewerkt na fase 17)
 
-Met zowel de fase 15-linkfix als de fase 16-technische-audit afgerond, is de eerstvolgende hoogste prioriteit nog steeds **Search Console-analyse zodra toegang beschikbaar komt** (P1, maar geblokkeerd totdat een sessie daadwerkelijke toegang heeft — niet simuleren; opnieuw gecontroleerd in fase 16, nog steeds geen connector gevonden). Zolang die toegang er niet is, zijn de volgende beschikbare P2-acties de meest logische keuzes voor een volgende fase:
-- (a) contentoptimalisatie van de oudere artikelen op actualiteit (nog niet uitgevoerd);
-- (b) een echte Core Web Vitals-meting (LCP/CLS/INP) zodra een sessie toegang heeft tot Lighthouse, PageSpeed Insights, of Search Console's CWV-rapport — de technische audit in fase 16 loste het enige concreet gevonden performance-probleem (oversized header-afbeelding) al op, maar exacte veldmetingen ontbreken nog;
-- (c) een expliciet goedgekeurd nieuw contentartikel uit de "Content gaps"-tabel in `SEO-CONTENT-MAP.md` (gevelisolatie/glasisolatie heeft de hoogste prioriteit binnen die tabel).
+Met fase 15 (linkfix), fase 16 (technische audit) en fase 17 (contentoptimalisatie: interne links op 3 oudere artikelen) afgerond, is de eerstvolgende hoogste prioriteit nog steeds **Search Console-analyse zodra toegang beschikbaar komt** (P1, geblokkeerd totdat een sessie daadwerkelijke toegang heeft — niet simuleren; opnieuw gecontroleerd in fase 17, nog steeds geen connector gevonden). Zolang die toegang er niet is, zijn de volgende beschikbare P2-acties de meest logische keuzes voor een volgende fase:
+- (a) de resterende 9 artikelen periodiek herbeoordelen op actualiteit wanneer bekend wordt dat onderliggende wet-/subsidieregelgeving wijzigt (geen concrete aanleiding op dit moment);
+- (b) een echte Core Web Vitals-meting (LCP/CLS/INP) zodra een sessie toegang heeft tot Lighthouse, PageSpeed Insights, of Search Console's CWV-rapport;
+- (c) een expliciet goedgekeurd nieuw contentartikel uit de "Content gaps"-tabel in `SEO-CONTENT-MAP.md` (gevelisolatie/glasisolatie heeft de hoogste prioriteit binnen die tabel);
+- (d) commerciële/conversie-SEO (roadmap-item #5): de `/cases`-pagina wordt nog maar vanuit 2 van de 12 artikelen gelinkt — een mogelijke, nog niet onderzochte kans.
 
 Geen van deze is dwingend "de volgende blogpost" — controleer eerst opnieuw of Search Console-toegang inmiddels beschikbaar is vóórdat een van deze P2-routes wordt gekozen.
