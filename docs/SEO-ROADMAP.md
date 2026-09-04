@@ -1,6 +1,6 @@
 # SMV Advies — SEO Roadmap
 
-> Dit document is het permanente projectgeheugen voor het SEO-traject van smv-advies.nl. Elke toekomstige sessie die aan SEO/content werkt, moet dit document eerst lezen (samen met `docs/SEO-CONTENT-MAP.md`) voordat er onderzoek of implementatie plaatsvindt. Laatst bijgewerkt: Fase 17 (2026-09-01), op basis van commit `edd79e3`.
+> Dit document is het permanente projectgeheugen voor het SEO-traject van smv-advies.nl. Elke toekomstige sessie die aan SEO/content werkt, moet dit document eerst lezen (samen met `docs/SEO-CONTENT-MAP.md`) voordat er onderzoek of implementatie plaatsvindt. Laatst bijgewerkt: Fase 18 (2026-09-01), op basis van commit `15481a0`.
 
 ## Projectdoel
 
@@ -30,6 +30,7 @@ SMV Advies is een onafhankelijke verduurzamingsadviseur voor mkb-bedrijfspanden 
 | 15 | Interne linkstrategie: ontbrekende inkomende links toegevoegd | n.v.t. (bestaande artikelen gewijzigd, geen nieuwe URL) | 2026-09-01 (sessiedatum) | n.v.t. | `ce084f7` | P1-item uit de roadmap uitgevoerd: link vanuit `netcongestie-hoeksche-waard` naar `batterijopslag-voor-uw-bedrijfspand`, en vanuit `verborgen-energieverspillers` naar `ventilatie-in-uw-bedrijfspand`. Search Console-toegang gecontroleerd en niet beschikbaar — geen data verzonnen, doorgegaan met eerstvolgende prioriteit. |
 | 16 | Technische SEO-/performance-audit | n.v.t. (site-brede technische wijziging, geen nieuwe URL) | 2026-09-01 (sessiedatum) | n.v.t. | `0c03d46` | Roadmap-item #7 uitgevoerd: eerste formele technische audit (Core Web Vitals-relevante checks, title/meta/canonical/H1-uniekheid over alle 24 routes, indexeerbaarheid, orphan-pages, structured data). Eén concreet, bevestigd probleem gevonden en verholpen (zie "Technische SEO-status" hieronder); overige onderzochte punten waren al in orde en zijn ongewijzigd gelaten. |
 | 17 | Contentoptimalisatie bestaande artikelen (interne links) | `netcongestie-hoeksche-waard`, `warmtepomp-in-het-mkb`, `led-verlichting-snelste-stap` (bestaande artikelen gewijzigd, geen nieuwe URL) | 2026-09-01 (sessiedatum) | n.v.t. | `edd79e3` | Roadmap-item #3 (gedeeltelijk) uitgevoerd: audit van alle 12 artikelen op actualiteit/dunheid/ontbrekende links wees uit dat drie oudere artikelen (geschreven vóórdat zonnepanelen, laadpalen en energiebesparingsplicht als losse artikelen bestonden) die onderwerpen bij naam noemden zonder te linken. Geen inhoudelijke feiten bleken verouderd (netcongestie's "1 juli 2026"-wachtlijstfeit opnieuw primair geverifieerd en nog steeds correct). Zie "Contentoptimalisatie — fase 17" hieronder voor details. |
+| 18 | Commerciële/conversie- en vertrouwensaudit | `/cases`, `/energie-indicatie`, homepage (bestaande pagina's gewijzigd, geen nieuwe URL) | 2026-09-01 (sessiedatum) | n.v.t. | `15481a0` | Roadmap-item #5 uitgevoerd: audit van homepage, energie-indicatie, contact, cases en sitestructuur op conversie-/vertrouwensknelpunten. Drie concrete, laag-risico fixes doorgevoerd (zie "Commerciële/conversie-audit — fase 18" hieronder). Belangrijkste niet-uitgevoerde bevindingen vereisen eigenaarsinput (echte foto's, KvK-nummer) of zijn een bewuste business-keuze (contactgegevens-gate in de energie-indicatietool) — expliciet gedocumenteerd, niet zelfstandig gewijzigd. |
 
 **Eerdere fases (vóór fase 9, uit git history, ter context)**: de eerste vijf blogartikelen (energielabel-C, netcongestie, dakisolatie, EIA/ISDE/SDE++, warmtepomp, LED, verborgen energieverspillers) en de technische SEO-basis (prerendering, sitemap, structured data, GA4/Consent Mode) zijn in eerdere, niet meer als "Fase N" genummerde sessies gebouwd. Zie git log voor het volledige verloop; de belangrijkste commits zijn `f90060e` (initial commit) t/m `9253087` (laatste inhoudelijke verdieping vóór fase 9).
 
@@ -97,6 +98,34 @@ Volledige audit van alle 12 artikelen op actualiteit, dunheid, titel/meta-kwalit
 - **`led-verlichting-snelste-stap`**: het dunste/oudste artikel (4 min, 2026-06-05). Introparagraaf noemde "isolatie" en "een warmtepomp" zonder te linken. **Opgelost**: beide nu gelinkt. Daarnaast een nieuwe, natuurlijke link toegevoegd naar `energiebesparingsplicht-voor-uw-bedrijfspand` (dat artikel citeert LED al als voorbeeld van een Erkende-Maatregelenlijst-maatregel; dit maakt de verwijzing wederzijds).
 - **Overige 9 artikelen**: gecontroleerd, geen concrete, onderbouwde reden gevonden voor wijziging op dit moment. Title/meta/H1 van alle 12 artikelen zijn al bevestigd uniek en aanwezig (fase 16-audit). Geen titel/meta-wijzigingen doorgevoerd — er was geen concrete onderbouwing dat de bestaande titels onderpresteren (geen Search Console-data beschikbaar om dat te toetsen).
 - **Geen wijziging aan structured data, CTA's, of bestaande, inhoudelijk correcte tekst** — alleen internal-linking, puur additief.
+
+## Commerciële/conversie-audit — fase 18
+
+Gerichte audit van homepage, `/energie-indicatie`, `/contact`, `/cases` en de sitestructuur op conversie- en vertrouwensknelpunten.
+
+**Bevindingen — homepage**: heldere, niet-overclaimende propositie (H1 "Uw bedrijfspand, toekomstbestendig", subline benoemt onafhankelijkheid en direct bruikbaar rapport), duidelijke primaire CTA (energie-indicatie) en secundaire CTA (pakketten), logische sectievolgorde (Hero → USP's → Pricing → Energie-CTA → Werkwijze → Regionaal → Cases → Closing CTA). Eén concreet gat gevonden: de cases-teaser op de homepage had geen link naar de volledige `/cases`-pagina — **opgelost**.
+
+**Bevindingen — energie-indicatie**: duidelijke verwachtingsmanagement ("Gratis indicatie · geen officieel energielabel", expliciete disclaimer dat het geen NTA 8800-meting is), concrete tijdsindicatie (5-7 minuten), stappenoverzicht. De pagina noemde dakisolatie, een warmtepomp en LED-verlichting zonder naar de bijbehorende artikelen te linken, terwijl bezoekers die via die content binnenkomen hier juist zouden willen doorlezen — **opgelost**.
+
+**Bevindingen — contact**: al laagdrempelig (directe mailto/tel-knoppen, geen verplicht formulier, volledige contactgegevens zichtbaar, expliciete reactietijd). Geen wijziging nodig.
+
+**Bevindingen — cases**: de content zelf (cijfers, voor/na-situaties) is bevestigd **verbatim overgenomen van de bestaande, eerder gepubliceerde cases van de klant** (zie code-comments in `cases.js`/`casesDetailed.js`) — dit is geen verzonnen content en is in deze fase niet aangepast. Twee concrete knelpunten gevonden:
+- Geen enkele case linkte naar de blogartikelen over de maatregelen die de case zelf noemt (dakisolatie, warmtepomp, zonnepanelen, LED, ISDE) — **opgelost** door een nieuw, apart `relatedArticles`-veld per case toe te voegen (uitdrukkelijk niet vermengd met de verbatim clienttekst).
+- Alle drie cases gebruiken nog een `ImagePlaceholder` in plaats van echte voor/na-foto's ("nog te plaatsen"). Dit is een **substantieel vertrouwens-/bewijsprobleem dat inhoud van de eigenaar vereist** — er is geen bestaande fotografie in de repository om te gebruiken, en er is dus bewust niets verzonnen of aangepast. Zie "Benodigde input van de eigenaar" hieronder.
+
+**Bevindingen — diensten/sitestructuur**: belangrijkste pagina's zijn maximaal 1-2 klikken bereikbaar vanuit navigatie of content; CTA's zijn consistent (vrijwel elk blogartikel en elke commerciële pagina eindigt met dezelfde twee routes: energie-indicatie en contact). Geen orphan pages (herbevestigd, zie fase 16).
+
+**Bevindingen — trust/autoriteit**: de site beantwoordt "waarom SMV Advies" (onafhankelijkheids-USP, herhaald op meerdere plekken), "wat krijgt de klant" (heldere pakketten-vergelijking, QuickScan/Premium/Gold) en "welk bewijs is er" (3 cases met concrete cijfers). Ontbrekend, en niet zelf in te vullen: KvK-nummer (`company.js` heeft `kvk: null`, al gedocumenteerd sinds fase 16), certificeringen, reviews — geen van deze bestaat in de repository en is dus terecht afwezig in plaats van verzonnen.
+
+**Doorgevoerde verbeteringen (fase 18)**:
+1. Elke case op `/cases` linkt nu naar de relevante blogartikelen (nieuw `relatedArticles`-veld, editorieel, los van de verbatim clienttekst).
+2. `/energie-indicatie` linkt nu naar de dakisolatie-, warmtepomp- en LED-artikelen.
+3. De homepage-cases-sectie heeft nu een "Bekijk alle cases"-link naar `/cases`.
+
+**Bewust niet uitgevoerd / vereist input van de eigenaar**:
+- **Echte voor/na-fotografie voor de 3 cases en de homepage-hero** — kan niet worden verzonnen; alle huidige afbeeldingen zijn `ImagePlaceholder`-componenten. Dit is het grootste resterende vertrouwens-/conversieknelpunt van de site.
+- **KvK-nummer** (`src/data/company.js`, `kvk: null`) — invullen zodra bekend, verschijnt dan automatisch overal waar het hoort (zie comment in dat bestand).
+- **De energie-indicatietool vraagt in stap 4 volledige contactgegevens (naam, bedrijfsnaam, e-mail, telefoon) vóórdat er enig resultaat wordt getoond.** Dit is een reële frictiedrempel voor een tool die wordt gepresenteerd als "gratis" en "vrijblijvend", maar het verwijderen van die drempel is een leadgenerator-/businessmodelbeslissing die niet zelfstandig door een SEO-fase mag worden genomen. Gemeld als aandachtspunt, niet gewijzigd.
 
 ## Interne linkstrategie
 
@@ -171,7 +200,7 @@ Deze roadmap is nadrukkelijk **niet** een oproep tot eindeloos nieuwe blogartike
 | 2 | Search Console-analyse | Zodra data beschikbaar is: impressies, CTR, posities, zoekopdrachten per pagina analyseren | Data-gedreven prioritering is veel betrouwbaarder dan verder gokken op content gaps | Toegang tot Search Console (nog steeds niet beschikbaar per fase 15 — opnieuw gecontroleerd, geen connector gevonden) | **P1**, zodra data er is | Zo snel mogelijk na voldoende indexatie/verkeer |
 | 3 | Contentoptimalisatie bestaande artikelen | Oudere artikelen herzien op actualiteit van cijfers/regelgeving en ontbrekende interne links | Feiten uit eerdere fases kunnen na verloop van tijd verouderen (subsidiebedragen, drempels, wetsartikelen) | Primaire bronverificatie per artikel | **Gedeeltelijk afgerond in fase 17** (interne links op netcongestie/warmtepomp/LED; overige 9 artikelen gecontroleerd, geen concrete wijziging nodig bevonden) | Periodiek herhalen, bijv. ieder kwartaal of bij bekende wetswijziging |
 | 4 | Verdere content gaps | Zie tabel "Content gaps" hierboven | Nog niet alle relevante zoekintenties zijn gedekt | Nieuwe primaire bronverificatie per onderwerp | **P2/P3** afhankelijk van onderwerp | Na Search Console-inzicht, niet blind doorgaan |
-| 5 | Commerciële/conversie-SEO | De paden content → `/energie-indicatie` → `/contact` optimaliseren (zie "Commercieel pad"-sectie in de content map) | Meer content zonder conversieverbetering levert minder waarde op dan gerichte funnel-optimalisatie | Geen technische blokkade; vraagt wel bewuste, losse goedkeuring omdat het bestaande pagina's raakt | **P2** | Nadat er voldoende verkeersdata is om knelpunten te identificeren |
+| 5 | ~~Commerciële/conversie-SEO~~ | ~~De paden content → `/energie-indicatie` → `/contact` optimaliseren~~ | Meer content zonder conversieverbetering levert minder waarde op dan gerichte funnel-optimalisatie | — | **Uitgevoerd in fase 18** (interne links); resterende bevindingen vereisen eigenaarsinput of een businessbeslissing (zie "Commerciële/conversie-audit — fase 18") | Uitgevoerd op 2026-09-01 |
 | 6 | Lokale SEO | Overwegen of een aparte, goed onderbouwde uitbreiding van lokale signalen (bijv. per-kern content, meer expliciete NAP-consistentie) waarde toevoegt naast de al bestaande `/werkgebied`-pagina | Werkgebied bestaat al en dekt de regio; verdere uitbreiding moet aantoonbare zoekintentie hebben, geen aanname | Zie "Lokale SEO"-sectie in `SEO-CONTENT-MAP.md` | **P3** | Alleen na concrete aanwijzing (bijv. Search Console-zoekwoorden per kern) |
 | 7 | ~~Technische SEO-audit~~ | ~~Performance/Core Web Vitals, en herbevestiging van prerendering/canonical/structured data op schaal (24+ routes)~~ | Nooit formeel gemeten; risico neemt toe naarmate het aantal routes groeit | — | **Afgerond in fase 16** | Uitgevoerd op 2026-09-01; opvolging (echte LCP/CLS/INP-meting via Lighthouse/Search Console) blijft openstaan zodra een sessie daar toegang toe heeft |
 | 8 | Autoriteit/backlinks | Nog niet onderzocht of geadresseerd | Buiten de huidige on-page/content-scope van dit project | Vereist aparte strategie en waarschijnlijk externe input (partnerschappen, lokale ondernemersverenigingen) | **P3** | Pas relevant nadat on-page/technische basis en conversie op orde zijn |
@@ -192,12 +221,18 @@ Deze roadmap is nadrukkelijk **niet** een oproep tot eindeloos nieuwe blogartike
 12. Verzin geen feiten — cijfers, bedragen, drempels, jaartallen en wettelijke verwijzingen moeten primair verifieerbaar zijn of worden weggelaten/algemeen geformuleerd.
 13. Stop bij materiële onzekerheid (tegenstrijdige primaire bronnen, een claim die niet te verifiëren is) in plaats van te gokken — meld dit expliciet in het eindrapport in plaats van door te schrijven.
 
-## Eerstvolgende prioriteit (bijgewerkt na fase 17)
+## Eerstvolgende prioriteit (bijgewerkt na fase 18)
 
-Met fase 15 (linkfix), fase 16 (technische audit) en fase 17 (contentoptimalisatie: interne links op 3 oudere artikelen) afgerond, is de eerstvolgende hoogste prioriteit nog steeds **Search Console-analyse zodra toegang beschikbaar komt** (P1, geblokkeerd totdat een sessie daadwerkelijke toegang heeft — niet simuleren; opnieuw gecontroleerd in fase 17, nog steeds geen connector gevonden). Zolang die toegang er niet is, zijn de volgende beschikbare P2-acties de meest logische keuzes voor een volgende fase:
-- (a) de resterende 9 artikelen periodiek herbeoordelen op actualiteit wanneer bekend wordt dat onderliggende wet-/subsidieregelgeving wijzigt (geen concrete aanleiding op dit moment);
-- (b) een echte Core Web Vitals-meting (LCP/CLS/INP) zodra een sessie toegang heeft tot Lighthouse, PageSpeed Insights, of Search Console's CWV-rapport;
-- (c) een expliciet goedgekeurd nieuw contentartikel uit de "Content gaps"-tabel in `SEO-CONTENT-MAP.md` (gevelisolatie/glasisolatie heeft de hoogste prioriteit binnen die tabel);
-- (d) commerciële/conversie-SEO (roadmap-item #5): de `/cases`-pagina wordt nog maar vanuit 2 van de 12 artikelen gelinkt — een mogelijke, nog niet onderzochte kans.
+Met fase 15 t/m 18 afgerond (interne links, technische audit, contentoptimalisatie, commerciële/conversie-audit), zijn vrijwel alle **zelfstandig uitvoerbare, low-risk SEO-/websiteverbeteringen die zonder aanvullende data of eigenaarsinput konden worden vastgesteld, nu doorgevoerd.** De eerstvolgende hoogste prioriteit blijft **Search Console-analyse zodra toegang beschikbaar komt** (P1, geblokkeerd — opnieuw gecontroleerd in fase 18, nog steeds geen connector gevonden). Zonder die data, of zonder de hieronder genoemde eigenaarsinput, is er op dit moment geen concrete, aantoonbare volgende technische of content-actie meer te identificeren zonder in gokken of cosmetische wijzigingen te vervallen.
 
-Geen van deze is dwingend "de volgende blogpost" — controleer eerst opnieuw of Search Console-toegang inmiddels beschikbaar is vóórdat een van deze P2-routes wordt gekozen.
+**Wat wél nog aanvullende input vereist (geen actie voor een toekomstige Claude-sessie zonder die input)**:
+- Echte voor/na-fotografie voor de 3 cases en de homepage-hero (grootste resterende vertrouwens-/conversieknelpunt, zie "Commerciële/conversie-audit — fase 18").
+- Het KvK-nummer (`src/data/company.js`).
+- Een besluit van de eigenaar over de contactgegevens-gate in de energie-indicatietool (stap 4 vraagt naam/bedrijfsnaam/e-mail/telefoon vóór enig resultaat) — een leadgenerator-/businessmodelkeuze, geen technische bug.
+
+**Resterende, niet-geblokkeerde P2/P3-opties** (alleen zinvol met een concrete aanleiding, niet als automatisme):
+- de resterende 9 artikelen periodiek herbeoordelen bij een bekende wet-/subsidiewijziging;
+- een echte Core Web Vitals-meting zodra Lighthouse/PSI/Search Console-toegang bestaat;
+- een expliciet goedgekeurd nieuw contentartikel uit de "Content gaps"-tabel in `SEO-CONTENT-MAP.md` (gevelisolatie/glasisolatie heeft de hoogste prioriteit).
+
+**Advies voor de eigenaar**: dit is een logisch pauzepunt in het zelfstandige SEO-traject. De volgende zinvolle stap is ofwel (1) Search Console koppelen zodat toekomstige fases datagedreven kunnen prioriteren, of (2) de drie owner-input-items hierboven aanleveren (met name de fotografie), waarna een fase die content direct kan verwerken.

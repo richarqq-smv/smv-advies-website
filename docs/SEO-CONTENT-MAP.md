@@ -180,9 +180,14 @@ Vastgesteld pad van content naar conversie, op basis van de daadwerkelijke `cta`
 2. **Content → `/contact`**: elk artikel bevat een `callout` met de onafhankelijkheidspositionering ("SMV verkoopt geen X") en een link naar `/contact` voor wie twijfelt. Dit is de directere, "spreek met iemand"-route.
 3. **Content → `/pakketten` / `/cases` / `/werkwijze`**: incidenteel gebruikt (bijv. dakisolatie en LED linken naar `/cases`; netcongestie linkt naar `/pakketten` en `/werkwijze`) als vertrouwens-/contextlaag vóór een beslissing.
 
-**Mogelijke zwakke plekken** (observatie, geen aanbevolen wijziging in deze fase):
-- Er is geen duidelijke tussenstap tussen "een blogartikel lezen" en "de energie-indicatie starten" voor bezoekers die nog niet klaar zijn voor een concrete actie — bijvoorbeeld een nieuwsbrief, download, of vergelijkbare laagdrempelige vervolgstap ontbreekt. Dit is een mogelijke toekomstige P2/P3-overweging, geen vastgestelde noodzaak.
-- Cases (`/cases`) worden slechts vanuit 2 van de 12 artikelen gelinkt, terwijl social proof doorgaans conversie ondersteunt — mogelijk onderbenut, maar dit is een aanname, geen data-gedreven conclusie (er is geen Search Console- of analytics-funnel-data geraadpleegd).
+**Update (fase 18)**: een gerichte commerciële/conversie-audit (zie `SEO-ROADMAP.md`, sectie "Commerciële/conversie-audit — fase 18") heeft de onderstaande, destijds als aanname genoteerde zwakke plek bevestigd en verholpen:
+- Elke case op `/cases` linkt nu naar de blogartikelen over de maatregelen die de case zelf noemt (nieuw `relatedArticles`-veld, los van de verbatim clienttekst).
+- `/energie-indicatie` linkt nu naar dakisolatie, warmtepomp en LED in plaats van deze alleen te noemen.
+- De homepage-cases-teaser heeft nu een link naar de volledige `/cases`-pagina.
+
+**Nog openstaande zwakke plek** (bevestigd tijdens de fase 18-audit, vereist eigenaarsinput, niet opgelost): alle 3 cases en de homepage-hero gebruiken nog een `ImagePlaceholder` in plaats van echte voor/na-fotografie. Dit is het grootste resterende bewijs-/vertrouwensprobleem van de commerciële funnel en kan niet zonder aangeleverde fotografie worden opgelost.
+
+**Overige observatie, nog niet onderzocht met data**: er is geen duidelijke tussenstap tussen "een blogartikel lezen" en "de energie-indicatie starten" voor bezoekers die nog niet klaar zijn voor een concrete actie. Dit blijft een aanname zonder Search Console- of analytics-funnel-data, geen vastgestelde noodzaak.
 
 ## Lokale SEO
 
