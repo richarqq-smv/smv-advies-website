@@ -1,6 +1,9 @@
+import { Link } from 'react-router-dom'
 import { ImagePlaceholder } from '../ui/ImagePlaceholder'
 import { Badge } from '../ui/Badge'
 import { Reveal } from '../ui/Reveal'
+
+const LINK_CLASSNAME = 'font-medium text-accent underline underline-offset-2 hover:text-secondary'
 
 export function CaseDetailCard({ item, delay = 0 }) {
   return (
@@ -42,6 +45,20 @@ export function CaseDetailCard({ item, delay = 0 }) {
         <p className="sm:col-span-2 mt-2 rounded-lg bg-accent/8 px-4 py-3.5 text-sm font-medium text-primary">
           {item.resultaat}
         </p>
+
+        {item.relatedArticles?.length ? (
+          <div className="sm:col-span-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-foreground-muted">
+            <span>Meer lezen:</span>
+            {item.relatedArticles.map((article, index) => (
+              <span key={article.to}>
+                <Link to={article.to} className={LINK_CLASSNAME}>
+                  {article.label}
+                </Link>
+                {index < item.relatedArticles.length - 1 ? ',' : ''}
+              </span>
+            ))}
+          </div>
+        ) : null}
       </div>
     </Reveal>
   )

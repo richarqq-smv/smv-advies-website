@@ -1,6 +1,13 @@
+import { ROUTES } from '../lib/routes.js'
+
 /**
  * Full case content, carried over verbatim from the client's existing
  * published cases (verified during the site analysis), not invented here.
+ *
+ * `relatedArticles` is the one addition on top of that verbatim content:
+ * links to the existing blog articles covering measures this case
+ * actually names in `na`/`resultaat` — added editorially, not part of
+ * the client's original case text.
  */
 export const CASES_DETAILED = [
   {
@@ -11,6 +18,11 @@ export const CASES_DETAILED = [
     title: 'Kantoorpand Oud-Beijerland',
     description:
       'Een kantoorpand uit 1986 met nauwelijks isolatie. We brachten de kansen in kaart en faseerden de maatregelen.',
+    relatedArticles: [
+      { label: 'Dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
+      { label: 'De warmtepomp in het mkb', to: ROUTES.blogPost('warmtepomp-in-het-mkb') },
+      { label: 'Zonnepanelen op uw bedrijfspand', to: ROUTES.blogPost('zonnepanelen-op-uw-bedrijfspand') },
+    ],
     voor: [
       'Energielabel G',
       'Dakisolatie afwezig',
@@ -35,6 +47,10 @@ export const CASES_DETAILED = [
     location: 'Hoeksche Waard',
     title: 'Metaalbewerkingsbedrijf Hoeksche Waard',
     description: 'Een bedrijfspand met hoge warmtevraag door productie. Volledige begeleiding van A tot Z.',
+    relatedArticles: [
+      { label: 'Zonnepanelen op uw bedrijfspand', to: ROUTES.blogPost('zonnepanelen-op-uw-bedrijfspand') },
+      { label: 'EIA, ISDE en SDE++', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
+    ],
     voor: [
       'Hoge gasrekening door verwarmde hal',
       'Verouderde luchtverwarming',
@@ -57,6 +73,10 @@ export const CASES_DETAILED = [
     location: 'Oud-Beijerland e.o.',
     title: 'Winkel- en showroompand',
     description: 'Een eigenaar die wilde weten waar hij het beste kon starten. De QuickScan gaf direct richting.',
+    relatedArticles: [
+      { label: 'LED-verlichting: de snelste verduurzamingsstap', to: ROUTES.blogPost('led-verlichting-snelste-stap') },
+      { label: 'Zonnepanelen op uw bedrijfspand', to: ROUTES.blogPost('zonnepanelen-op-uw-bedrijfspand') },
+    ],
     voor: ['Onbekend energieverbruik per functie', 'Verouderde verlichting (TL)', 'Hete showroom in de zomer'],
     na: [
       'LED-verlichting met aanwezigheidsdetectie',

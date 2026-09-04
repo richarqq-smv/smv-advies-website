@@ -1,8 +1,10 @@
 import { Section } from '../ui/Section'
 import { Container } from '../ui/Container'
 import { SectionHeading } from '../ui/SectionHeading'
+import { Button } from '../ui/Button'
 import { CaseCard } from './CaseCard'
 import { CASES } from '../../data/cases'
+import { ROUTES } from '../../lib/routes'
 
 export function CasesSection() {
   return (
@@ -18,6 +20,12 @@ export function CasesSection() {
           {CASES.map((item, index) => (
             <CaseCard key={item.id} item={item} delay={index * 80} />
           ))}
+        </div>
+
+        <div className="mt-10 text-center">
+          <Button to={ROUTES.cases} variant="outline">
+            Bekijk alle cases
+          </Button>
         </div>
       </Container>
     </Section>
