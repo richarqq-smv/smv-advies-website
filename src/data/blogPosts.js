@@ -643,8 +643,14 @@ export const BLOG_POSTS = [
             { text: 'warmtepomp', to: ROUTES.blogPost('warmtepomp-in-het-mkb') },
             ' vraagt meer capaciteit van uw aansluiting; of dat een probleem is, hangt af van uw huidige aansluiting en of u die moet verzwaren.',
           ],
-          'Zonnepanelen die u vooral zelf gebruikt lopen minder snel tegen congestie aan dan een systeem dat is bedoeld om fors terug te leveren aan het net.',
-          'Laadpalen voor elektrische voertuigen vragen, net als een warmtepomp, extra capaciteit — vooral bij meerdere laadpunten tegelijk.',
+          [
+            { text: 'Zonnepanelen', to: ROUTES.blogPost('zonnepanelen-op-uw-bedrijfspand') },
+            ' die u vooral zelf gebruikt lopen minder snel tegen congestie aan dan een systeem dat is bedoeld om fors terug te leveren aan het net.',
+          ],
+          [
+            { text: 'Laadpalen', to: ROUTES.blogPost('laadpalen-op-uw-bedrijfsterrein') },
+            ' voor elektrische voertuigen vragen, net als een warmtepomp, extra capaciteit — vooral bij meerdere laadpunten tegelijk.',
+          ],
         ],
       },
       {
@@ -1036,7 +1042,11 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Naast het pand zelf speelt ook het elektriciteitsnet een rol. Een warmtepomp (en al helemaal in combinatie met zonnepanelen of laadpalen) vraagt meer capaciteit van uw aansluiting. Is een zwaardere aansluiting nodig, dan kan die aanvraag terechtkomen op een wachtlijst als er in uw gebied netcongestie speelt — in de Hoeksche Waard is dat sinds kort ook voor kleinere aansluitingen het geval. Wat dit precies betekent en wat u eraan kunt doen, leest u in ons artikel over ',
+          'Naast het pand zelf speelt ook het elektriciteitsnet een rol. Een warmtepomp — en al helemaal in combinatie met ',
+          { text: 'zonnepanelen', to: ROUTES.blogPost('zonnepanelen-op-uw-bedrijfspand') },
+          ' of ',
+          { text: 'laadpalen', to: ROUTES.blogPost('laadpalen-op-uw-bedrijfsterrein') },
+          ' — vraagt meer capaciteit van uw aansluiting. Is een zwaardere aansluiting nodig, dan kan die aanvraag terechtkomen op een wachtlijst als er in uw gebied netcongestie speelt — in de Hoeksche Waard is dat sinds kort ook voor kleinere aansluitingen het geval. Wat dit precies betekent en wat u eraan kunt doen, leest u in ons artikel over ',
           { text: 'netcongestie in de Hoeksche Waard', to: ROUTES.blogPost('netcongestie-hoeksche-waard') },
           '. Neem dit vroeg in het traject mee, zodat het niet pas bij de uitvoering als verrassing naar voren komt.',
         ],
@@ -1088,7 +1098,11 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Van alle verduurzamingsmaatregelen is LED-verlichting meestal de laagdrempeligste: de investering is relatief beperkt, de uitvoering is snel, en het effect is direct zichtbaar op de energierekening. Voor veel ondernemers is dit dan ook de eerste stap, nog vóór grotere ingrepen zoals isolatie of een warmtepomp.',
+          'Van alle verduurzamingsmaatregelen is LED-verlichting meestal de laagdrempeligste: de investering is relatief beperkt, de uitvoering is snel, en het effect is direct zichtbaar op de energierekening. Voor veel ondernemers is dit dan ook de eerste stap, nog vóór grotere ingrepen zoals ',
+          { text: 'isolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
+          ' of ',
+          { text: 'een warmtepomp', to: ROUTES.blogPost('warmtepomp-in-het-mkb') },
+          '.',
         ],
       },
       { type: 'h2', text: 'Waarom oude verlichting zoveel kost' },
@@ -1111,6 +1125,8 @@ export const BLOG_POSTS = [
         parts: [
           'De terugverdientijd van LED hangt sterk af van het aantal branduren: een bedrijfshal die lange dagen draait, verdient de investering doorgaans sneller terug dan een kantoor met beperkte openingstijden. Afhankelijk van het type armatuur en de toepassing kan LED-verlichting daarnaast in aanmerking komen voor de EIA — zie ons overzicht van ',
           { text: 'EIA, ISDE en SDE++', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
+          '. Dit soort maatregelen met een korte terugverdientijd staat bovendien vaak op de Erkende Maatregelenlijst binnen de energiebesparingsplicht die voor veel bedrijfspanden geldt — meer hierover leest u in ons artikel over ',
+          { text: 'de energiebesparingsplicht', to: ROUTES.blogPost('energiebesparingsplicht-voor-uw-bedrijfspand') },
           '. Bekijk in onze ',
           { text: 'cases', to: ROUTES.cases },
           ' een voorbeeld van wat dat in de praktijk oplevert.',
