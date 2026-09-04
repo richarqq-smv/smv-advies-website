@@ -187,6 +187,8 @@ Vastgesteld pad van content naar conversie, op basis van de daadwerkelijke `cta`
 
 **Nog openstaande zwakke plek** (bevestigd tijdens de fase 18-audit, vereist eigenaarsinput, niet opgelost): alle 3 cases en de homepage-hero gebruiken nog een `ImagePlaceholder` in plaats van echte voor/na-fotografie. Dit is het grootste resterende bewijs-/vertrouwensprobleem van de commerciële funnel en kan niet zonder aangeleverde fotografie worden opgelost.
 
+**Update (fase 19)**: `/pakketten` — de belangrijkste DIENST-pagina — bleek dakisolatie, warmtepomp, zonnepanelen, LED-verlichting en EIA/ISDE alleen bij naam te noemen, en had geen enkele link naar `/cases`. Beide zijn opgelost (zie `SEO-ROADMAP.md`, sectie "Commerciële/conversie-audit — fase 19"). Het pad 3 hierboven is hiermee uitgebreid: `/pakketten` linkt nu zelf door naar 5 blogartikelen én naar `/cases`, waarmee het BLOG ⇄ DIENST ⇄ CASE ⇄ CTA-pad in beide richtingen doorloopbaar is.
+
 **Overige observatie, nog niet onderzocht met data**: er is geen duidelijke tussenstap tussen "een blogartikel lezen" en "de energie-indicatie starten" voor bezoekers die nog niet klaar zijn voor een concrete actie. Dit blijft een aanname zonder Search Console- of analytics-funnel-data, geen vastgestelde noodzaak.
 
 ## Lokale SEO
