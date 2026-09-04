@@ -1,6 +1,8 @@
 # SMV Advies — SEO Roadmap
 
-> Dit document is het permanente projectgeheugen voor het SEO-traject van smv-advies.nl. Elke toekomstige sessie die aan SEO/content werkt, moet dit document eerst lezen (samen met `docs/SEO-CONTENT-MAP.md`) voordat er onderzoek of implementatie plaatsvindt. Laatst bijgewerkt: Fase 19 (2026-09-04), op basis van commit `b22051c`.
+> Dit document is het permanente projectgeheugen voor het SEO-traject van smv-advies.nl. Elke toekomstige sessie die aan SEO/content werkt, moet dit document eerst lezen (samen met `docs/SEO-CONTENT-MAP.md`) voordat er onderzoek of implementatie plaatsvindt. Laatst bijgewerkt: **afsluiting actieve implementatiefase** (2026-09-04), op basis van commit `1d7b599`.
+>
+> **Status: de actieve SEO-implementatiefase is afgesloten na fase 19.** Zie "Projectstatus — actieve implementatie afgesloten" hieronder vóór je een nieuwe fase begint.
 
 ## Projectdoel
 
@@ -242,22 +244,32 @@ Deze roadmap is nadrukkelijk **niet** een oproep tot eindeloos nieuwe blogartike
 11. Werk dit document (en `SEO-CONTENT-MAP.md`) bij ná iedere afgeronde SEO-fase — nieuw artikel, nieuwe interne link, gewijzigde prioriteit.
 12. Verzin geen feiten — cijfers, bedragen, drempels, jaartallen en wettelijke verwijzingen moeten primair verifieerbaar zijn of worden weggelaten/algemeen geformuleerd.
 13. Stop bij materiële onzekerheid (tegenstrijdige primaire bronnen, een claim die niet te verifiëren is) in plaats van te gokken — meld dit expliciet in het eindrapport in plaats van door te schrijven.
+14. **De actieve implementatiefase is afgesloten (zie "Projectstatus — actieve implementatie afgesloten" hieronder).** Start geen nieuwe brede audit, nieuw blogartikel of cosmetische wijziging zonder één van de daar genoemde concrete triggers. Een verzoek om "verder te gaan met het SEO-project" zonder zo'n trigger betekent: git-status/roadmap op hoofdlijnen controleren en bevestigen dat er niets te doen is, niet opnieuw zoeken tot je iets vindt.
 
-## Eerstvolgende prioriteit (bijgewerkt na fase 19)
+## Projectstatus — actieve implementatie afgesloten (na fase 19)
 
-Met fase 15 t/m 19 afgerond (interne links, technische audit, contentoptimalisatie, en twee opeenvolgende commerciële/conversie-audits), zijn de **zelfstandig uitvoerbare, low-risk SEO-/websiteverbeteringen die zonder aanvullende data of eigenaarsinput konden worden vastgesteld, nu doorgevoerd.** Fase 19 heeft gericht gezocht naar iets dat fase 18 had gemist (de `/pakketten`-pagina) en vond daar één concreet, goed onderbouwd punt — maar verder geen nieuwe categorie van kansen. Dit bevestigt het beeld uit fase 18: de resterende ruimte voor verbetering zit niet meer in nog-niet-ontdekte interne links of teksten, maar in data (Search Console) of eigenaarsinput (fotografie, KvK, een businessbeslissing over de energie-indicatietool).
+**De actieve SEO-implementatiefase van dit project is na fase 19, op 2026-09-04, formeel afgesloten.** Fase 15 t/m 19 hebben achtereenvolgens interne linkstrategie, een technische SEO-/performance-audit, contentoptimalisatie van bestaande artikelen, en twee opeenvolgende commerciële/conversie-audits doorgevoerd. Fase 19 heeft daarbij gericht gezocht naar wat een eerdere fase (18) mogelijk had gemist en vond precies één concreet, goed onderbouwd punt (`/pakketten`) — geen nieuwe categorie kansen. Dat bevestigt dat de zelfstandig uitvoerbare, low-risk verbeteringen die zonder aanvullende data of eigenaarsinput konden worden vastgesteld, nu zijn doorgevoerd.
 
-**Expliciet antwoord op de vraag of SEO nu kan worden afgerond**: er zijn na fase 19 geen verdere zelfstandig uitvoerbare SEO-verbeteringen met duidelijke, aantoonbare meerwaarde meer geïdentificeerd. Nog een fase met dezelfde opzet ("voer een brede audit uit") zou naar verwachting geen nieuwe bevindingen meer opleveren zonder in cosmetische wijzigingen of giswerk te vervallen — dat is precies wat de opdracht van deze fase uitsluit. **Het is nu verstandiger om de actieve SEO-implementatiefase te beëindigen en over te gaan op monitoring**: zodra Search Console-toegang beschikbaar komt (P1, nog steeds geblokkeerd — opnieuw gecontroleerd, geen connector gevonden), kan data-gedreven prioritering (item #2/#4 in de roadmap) opnieuw concrete, onderbouwde vervolgstappen opleveren. Tot die tijd, of tot er eigenaarsinput binnenkomt, is er geen actie meer die deze roadmap zelfstandig kan voorschrijven zonder de expliciete "geen aannames, geen cosmetische wijzigingen"-grens van dit project te overschrijden.
+**Besluit**: er wordt vanaf nu **geen nieuwe brede audit, geen nieuw blogartikel en geen cosmetische wijziging** meer zelfstandig geïnitieerd. Verdere optimalisatie wordt **datagedreven**: op basis van Search Console, GA4/analytics, daadwerkelijke zoekopdrachten/impressies/CTR/rankings/conversies, nieuwe bedrijfsinformatie, of wijzigingen in wet- en regelgeving — niet op basis van een zoveelste zelfstandige "vind nog iets te verbeteren"-doorloop. Een sessie die alsnog op eigen initiatief een brede audit start zonder een van de hieronder genoemde concrete aanleidingen, herhaalt in feite fase 18/19 zonder nieuwe input en levert naar verwachting geen aantoonbare waarde meer op.
 
 **Wat wél nog aanvullende input vereist (geen actie voor een toekomstige Claude-sessie zonder die input)**:
-- Echte voor/na-fotografie voor de 3 cases en de homepage-hero (grootste resterende vertrouwens-/conversieknelpunt, zie "Commerciële/conversie-audit — fase 18").
-- Het KvK-nummer (`src/data/company.js`).
-- Een besluit van de eigenaar over de contactgegevens-gate in de energie-indicatietool (stap 4 vraagt naam/bedrijfsnaam/e-mail/telefoon vóór enig resultaat) — een leadgenerator-/businessmodelkeuze, geen technische bug.
-- Search Console-toegang, voor data-gedreven prioritering van een eventuele volgende contentfase.
+- Echte voor/na-fotografie voor de 3 cases en de homepage-hero (grootste resterende vertrouwens-/conversieknelpunt, zie "Commerciële/conversie-audit — fase 18"). Zonder aangeleverde fotografie kan dit niet worden opgelost — er bestaat geen bruikbaar beeldmateriaal in de repository en er wordt niets gefabriceerd.
+- Het KvK-nummer (`src/data/company.js`, `kvk: null`) — vult zichzelf overal in zodra bekend (zie code-comment in dat bestand); niet SEO-kritisch, wel relevant voor trust-signalen.
+- Een besluit van de eigenaar over de contactgegevens-gate in de energie-indicatietool (stap 4 vraagt naam/bedrijfsnaam/e-mail/telefoon vóór enig resultaat) — een leadgenerator-/businessmodelkeuze, geen technische bug; blijft bewust ongewijzigd tot de eigenaar hierover beslist.
+- Search Console-toegang/data — zonder deze data is er geen betrouwbare basis voor prioritering van een volgende contentronde; blijft bij elke fase opnieuw gecontroleerd (nog steeds geen connector gevonden per fase 19).
 
-**Resterende, niet-geblokkeerde P2/P3-opties** (alleen zinvol met een concrete aanleiding, niet als automatisme):
-- de resterende 9 artikelen periodiek herbeoordelen bij een bekende wet-/subsidiewijziging;
-- een echte Core Web Vitals-meting zodra Lighthouse/PSI/Search Console-toegang bestaat;
-- een expliciet goedgekeurd nieuw contentartikel uit de "Content gaps"-tabel in `SEO-CONTENT-MAP.md` (gevelisolatie/glasisolatie heeft de hoogste prioriteit).
+**Monitoring vanaf nu**: toekomstige verbeteringen moeten bij voorkeur zijn gebaseerd op Google Search Console (impressies, CTR, posities, zoekopdrachten), GA4/analytics (verkeer, conversies naar `/energie-indicatie` en `/contact`), nieuwe bedrijfsinformatie (KvK, fotografie, nieuwe cases), en wijzigingen in wet-/subsidieregelgeving die de bestaande artikelen raken.
+
+**Concrete triggers voor een volgende SEO-fase** (in plaats van een periodieke of automatische heraudit):
+1. Search Console-toegang komt beschikbaar → data-gedreven prioritering (roadmap-item #2/#4).
+2. Een meetbare, aanhoudende daling in organisch verkeer op een specifieke pagina.
+3. Pagina's met veel impressies maar een opvallend lage CTR (title/meta-descriptieprobleem) zodra die data bestaat.
+4. Rankings die net buiten pagina 1 vallen (positie ~11-20) voor een relevante zoekterm — quick-win-potentieel.
+5. Nieuwe of gewijzigde wet-/subsidieregelgeving die een bestaand artikel feitelijk incorrect maakt (bijv. een gewijzigd EIA/ISDE/SDE++-bedrag, een nieuwe energiebesparingsplicht-drempel).
+6. Een nieuwe, door SMV Advies zelf aangeleverde dienst.
+7. Nieuwe, echte cases/projecten met foto's en resultaten van de eigenaar.
+8. Eigenaarsinput op een van de vier bovenstaande openstaande punten (fotografie, KvK, contactgegevens-gate-besluit) komt binnen.
+
+**Resterende, expliciet niet-automatische P2/P3-opties** (alleen bij een van bovenstaande triggers, nooit als automatisme): de resterende 9 artikelen periodiek herbeoordelen bij een bekende wet-/subsidiewijziging; een echte Core Web Vitals-meting zodra Lighthouse/PSI/Search Console-toegang bestaat; een expliciet goedgekeurd nieuw contentartikel uit de "Content gaps"-tabel in `SEO-CONTENT-MAP.md` (gevelisolatie/glasisolatie heeft de hoogste prioriteit) — uitsluitend bij een aantoonbare zoekintentie/content gap, niet om het aantal artikelen te verhogen.
 
 **Advies voor de eigenaar**: dit is een logisch pauzepunt in het zelfstandige SEO-traject. De volgende zinvolle stap is ofwel (1) Search Console koppelen zodat toekomstige fases datagedreven kunnen prioriteren, of (2) de drie owner-input-items hierboven aanleveren (met name de fotografie), waarna een fase die content direct kan verwerken.
