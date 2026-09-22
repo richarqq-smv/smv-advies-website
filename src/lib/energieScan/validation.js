@@ -49,12 +49,20 @@ export function buildMissingToast(missing, singleTemplate, multipleMessage) {
   return null
 }
 
+// Ruime bovengrens (groter dan enig realistisch individueel mkb-bedrijfspand
+// in de Hoeksche Waard) — vangt tikfouten op (bijv. een extra nul) zonder
+// legitieme grote panden te blokkeren.
+const MAX_OPPERVLAKTE = 50000
+
 export function validateStep1(values) {
   const { errors, missing } = validateOptionFields(values, STEP1_OPTION_FIELDS)
 
   const opp = Number.parseFloat(values.oppervlakte)
   if (!opp || opp <= 0) {
     errors.oppervlakte = 'Vul een geldige oppervlakte in (in m²).'
+    missing.push('Gebruiksoppervlakte')
+  } else if (opp > MAX_OPPERVLAKTE) {
+    errors.oppervlakte = 'Vul een realistische oppervlakte in (max. 50.000 m²).'
     missing.push('Gebruiksoppervlakte')
   }
 

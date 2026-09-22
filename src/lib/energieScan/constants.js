@@ -30,11 +30,96 @@ export const GLAS_SCORE = { enkel: 8, dubbel: 32, hr: 58, hrpp: 82, triple: 98, 
 export const VERWARMING_SCORE = { oude_ketel: 8, hr_ketel: 34, hybride_wp: 62, volledige_wp: 96, stadsverwarming: 82, overig: 38 }
 export const BOUWJAAR_SCORE = { voor1980: 12, '1980-1995': 30, '1995-2005': 48, '2005-2015': 68, na2015: 90 }
 
-// Besparing in m3 gas per m2 (dak/gevel/vloer) of relatieve factor (glas), per huidige staat.
+// Besparing in m3 gas per m2 (dak/gevel/vloer/glas), per huidige staat.
+// GLAS_FACTOR is in dezelfde eenheid (m3 gas/m2/jaar) als de andere drie —
+// eerder hier "relatieve factor" genoemd, maar de berekening in
+// calculations.js behandelt hem identiek aan DAK/GEVEL/VLOER_FACTOR
+// (vermenigvuldigd met een m2-oppervlak, opgeteld bij de andere m3-besparingen).
 export const DAK_FACTOR = { geen: 11, matig: 9, redelijk: 6, goed: 2, onbekend: 8 }
 export const GEVEL_FACTOR = { geen: 8, matig: 6.5, redelijk: 5, goed: 1.5, onbekend: 6 }
 export const VLOER_FACTOR = { geen: 5.5, matig: 4.5, redelijk: 3, goed: 1, onbekend: 4 }
 export const GLAS_FACTOR = { enkel: 16, dubbel: 12, hr: 6, hrpp: 1, triple: 0, onbekend: 10 }
+
+/**
+ * Typische Rc-waardes (thermische weerstand, m²K/W) en U-waardes voor
+ * beglazing (W/m²K, het omgekeerde van Rc — warmtedoorgang i.p.v.
+ * -weerstand). Dit zijn algemene, stabiele bouwfysische richtwaarden die
+ * niet jaarlijks veranderen — in tegenstelling tot bijv. ISDE-
+ * subsidiedrempels, die wél jaarlijks wijzigen en apart tegen de meest
+ * recente RVO-bron gecontroleerd moeten worden, nooit tegen deze tabel.
+ *
+ * Herkomst: algemeen erkende bouwfysische richtwaarden voor Nederlandse
+ * bedrijfspanden/woningen, niet ontleend aan de brontool.
+ *
+ * Gebruikt om de kwalitatieve isolatie-/beglazingscategorieën die de
+ * gebruiker in stap 2 kiest (geen/matig/redelijk/goed, resp.
+ * enkel/dubbel/hr/hrpp/triple) te onderbouwen met een concrete Rc-/
+ * U-indicatie (zie RC_HINT_* / U_HINT_BEGLAZING hieronder) — vóór deze
+ * tabel had de gebruiker geen enkel houvast bij het kiezen van een
+ * subjectief label als "Matig" of "Redelijk".
+ *
+ * BELANGRIJK: de reeds geverifieerde besparingsmultipliers hierboven
+ * (ISOLATIE_FACTOR, DAK_FACTOR, GEVEL_FACTOR, VLOER_FACTOR, GLAS_FACTOR)
+ * zijn NIET herschreven op basis van deze Rc-waardes. Een volledige
+ * fysica-herberekening (Rc x oppervlak x graaddagen / rendement) zou een
+ * wezenlijk andere uitkomst geven dan de huidige, expliciet als
+ * "overgenomen uit de brontool, niet aanpassen zonder herverificatie"
+ * gemarkeerde multipliers — zonder toegang tot die brontool zou dat een
+ * ongeverifieerde koerswijziging zijn in plaats van een controle.
+ */
+export const RC_REFERENTIEWAARDEN = {
+  gevel: { ongeisoleerd: [0.2, 0.4], naIsolatie: [1.3, 1.5], nieuwbouwBeng: 4.7 },
+  dak: { ongeisoleerd: [0.15, 0.3], naIsolatie: [2.5, 6.0], nieuwbouwBeng: 4.7 },
+  vloer: { ongeisoleerd: [0.15, 0.2], naIsolatie: [2.5, 3.5], nieuwbouwBeng: 3.7 },
+  beglazing: {
+    enkel: 5.1,
+    dubbelOud: [2.8, 3.0],
+    hrpp: [1.1, 1.2],
+    triple: [0.6, 0.8],
+    nieuwbouwGemiddeld: 1.65,
+  },
+}
+
+/**
+ * Korte, gebruikersgerichte Rc-indicatie per keuze in stap 2, afgeleid van
+ * RC_REFERENTIEWAARDEN hierboven — getoond als hint onder elke optie
+ * (zie OptionGrid.jsx). "Matig"/"redelijk" liggen tussen de ongeïsoleerd-
+ * en na-isolatiewaarde in; daarvoor bestaat geen aparte bronwaarde, dus
+ * die worden als indicatieve bandbreedte weergegeven ("typisch",
+ * "richting") in plaats van als een foutief precieze waarde.
+ */
+export const RC_HINT_GEVEL = {
+  geen: 'Rc ≈ 0,2-0,4 — vergelijkbaar met een ongeïsoleerde spouwmuur',
+  matig: 'Rc typisch < 1,0 — merkbaar onder standaard na-isolatieniveau (1,3+)',
+  redelijk: 'Rc typisch 0,8-1,3 — richting standaard na-isolatieniveau',
+  goed: 'Rc ≈ 1,3-1,5 of hoger — standaard na-isolatieniveau',
+}
+
+export const RC_HINT_DAK = {
+  geen: 'Rc ≈ 0,15-0,3 — vergelijkbaar met een ongeïsoleerd dak',
+  matig: 'Rc typisch < 2,5 — merkbaar onder standaard na-isolatieniveau (2,5+)',
+  redelijk: 'Rc typisch 1,5-2,5 — richting standaard na-isolatieniveau',
+  goed: 'Rc ≈ 2,5-6,0 — standaard na-isolatieniveau',
+}
+
+export const RC_HINT_VLOER = {
+  geen: 'Rc ≈ 0,15-0,2 — vergelijkbaar met een ongeïsoleerde vloer',
+  matig: 'Rc typisch < 2,5 — merkbaar onder standaard na-isolatieniveau (2,5+)',
+  redelijk: 'Rc typisch 1,5-2,5 — richting standaard na-isolatieniveau',
+  goed: 'Rc ≈ 2,5-3,5 — standaard na-isolatieniveau',
+}
+
+// HR-glas (tussen verouderd dubbel en HR++) is een erkende Nederlandse
+// beglazingsklasse; het gangbare U-waardebereik komt niet uit de door de
+// gebruiker aangeleverde tabel maar is dezelfde soort algemene, stabiele
+// richtwaarde als de rest van deze sectie.
+export const U_HINT_BEGLAZING = {
+  enkel: 'U ≈ 5,1 — hoogste warmteverlies van alle glastypen',
+  dubbel: 'U ≈ 2,8-3,0 (verouderd dubbel glas)',
+  hr: 'U ≈ 1,6-2,0 (HR-glas, tussen verouderd dubbel en HR++)',
+  hrpp: 'U ≈ 1,1-1,2 — bij nieuwbouw-gemiddelde (≤ 1,65)',
+  triple: 'U ≈ 0,6-0,8 — ruim onder nieuwbouw-gemiddelde',
+}
 
 // Statusbanden voor de score, aflopend gesorteerd op minimumscore.
 export const SCORE_BANDS = [

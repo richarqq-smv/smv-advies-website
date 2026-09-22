@@ -83,13 +83,17 @@ export function geometrie(values) {
   const verd = Math.max(1, Number(values.verdiepingen))
   const footprint = values.oppervlakte / verd
   const zijde = Math.sqrt(footprint)
-  const vloerhoogte = 3.5
+  const vloerhoogte = 3.5 // aangenomen gemiddelde verdiepingshoogte voor bedrijfspanden — niet uitgevraagd
   const omtrek = 4 * zijde
   const gevelBruto = omtrek * verd * vloerhoogte
-  const gevelNetto = gevelBruto * 0.8
 
   const glasAandeel = values.pandtype === 'kantoor' || values.pandtype === 'winkel' ? 0.28 : 0.15
   const glasOppervlak = gevelBruto * glasAandeel
+  // Netto gevel = bruto gevel minus glasoppervlak, met hetzelfde glasAandeel
+  // als hieronder — eerder stond hier een vaste 0.8 los van glasAandeel,
+  // waardoor gevelNetto + glasOppervlak niet meer optelde tot gevelBruto
+  // (voor kantoor/winkel, glasAandeel 0.28: som kwam 8% boven gevelBruto uit).
+  const gevelNetto = gevelBruto * (1 - glasAandeel)
 
   return { dak: footprint, vloer: footprint, gevel: gevelNetto, glas: glasOppervlak }
 }

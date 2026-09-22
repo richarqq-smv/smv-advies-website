@@ -5,8 +5,13 @@ import { cn } from '../../lib/cn'
  * Pill-button single-select group. Replaces the source tool's
  * .option-grid / .opt-btn pattern with the same interaction (click to
  * select, one active at a time) in our own visual language.
+ *
+ * `hints` is an optional { [optionValue]: string } map (e.g. RC_HINT_GEVEL
+ * from lib/energieScan/constants) rendered as a small subtext under the
+ * matching option's label — grounds a subjective category ("Matig") with a
+ * concrete Rc-/U-waarde indication instead of leaving it a pure guess.
  */
-export function OptionGrid({ id, label, options, value, onChange, error }) {
+export function OptionGrid({ id, label, options, value, onChange, error, hints }) {
   const errorId = error ? `${id}-error` : undefined
 
   return (
@@ -25,6 +30,7 @@ export function OptionGrid({ id, label, options, value, onChange, error }) {
       >
         {options.map((option) => {
           const selected = value === option.value
+          const hint = hints?.[option.value]
           return (
             <button
               key={option.value}
@@ -38,7 +44,10 @@ export function OptionGrid({ id, label, options, value, onChange, error }) {
                   : 'border-border bg-white text-primary hover:border-primary/30',
               )}
             >
-              <span>{option.label}</span>
+              <span className="flex flex-col gap-0.5">
+                <span>{option.label}</span>
+                {hint ? <span className="text-xs font-normal text-foreground-muted">{hint}</span> : null}
+              </span>
               {selected ? <Check size={16} weight="bold" className="shrink-0 text-accent" /> : null}
             </button>
           )
