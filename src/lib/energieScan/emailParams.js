@@ -13,7 +13,18 @@ function formatMaatregelRegel(m, i, kort) {
   const investeringTekst = kort
     ? `investering vanaf ${euro(m.investeringLaag)}`
     : `investering ${euroRange(m.investeringLaag, m.investeringHoog)}`
-  return `${i + 1}. ${m.naam} — besparing ca. ${euro(m.besparingEuro)}/jaar, ${investeringTekst}, terugverdientijd ${jaren(m.terugverdientijd)}`
+  const besparingUnitsTekst = m.isElektrisch
+    ? `${Math.round(m.besparingKwh).toLocaleString('nl-NL')} kWh/jaar`
+    : `${Math.round(m.besparingM3).toLocaleString('nl-NL')} m³ gas/jaar`
+  // Zelfde vier gegevens als de maatregelkaart die de gebruiker tijdens het
+  // invullen ziet (MeasureCard.jsx: toelichting, investering,
+  // terugverdientijd, besparing in m³/kWh) plus de besparing in euro/jaar —
+  // eerder ontbraken toelichting en de fysieke besparingseenheid hier, dus
+  // was de mail een minder volledige samenvatting dan wat de tool toonde.
+  return (
+    `${i + 1}. ${m.naam} — besparing ca. ${euro(m.besparingEuro)}/jaar (${besparingUnitsTekst}), ` +
+    `${investeringTekst}, terugverdientijd ${jaren(m.terugverdientijd)}\n   ${m.toelichting}`
+  )
 }
 
 // Volledige lijst — voor de interne leadmail naar SMV Advies zelf.
@@ -49,7 +60,10 @@ export function buildEmailParams(values, result) {
     pand_type: LABELS.pandtype[values.pandtype] || values.pandtype,
     bouwjaar: LABELS.bouwjaar[values.bouwjaar] || values.bouwjaar,
     oppervlakte: `${values.oppervlakte} m²`,
-    verdiepingen: values.verdiepingen,
+    // Was voorheen de ruwe waarde (bijv. "3"), terwijl de tool zelf "3+"
+    // toont (VERDIEPINGEN_OPTIONS) — de mail liet dus de "+" weg die de
+    // gebruiker tijdens het invullen wél zag.
+    verdiepingen: LABELS.verdiepingen[values.verdiepingen] || values.verdiepingen,
     beglazing: LABELS.beglazing[values.beglazing] || values.beglazing,
     isolatie_gevel: LABELS.isolatie[values.isolatie_gevel] || values.isolatie_gevel,
     isolatie_dak: LABELS.isolatie[values.isolatie_dak] || values.isolatie_dak,

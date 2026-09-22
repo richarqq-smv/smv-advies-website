@@ -64,4 +64,5 @@ export const LABELS = {
   beglazing: labelLookup(BEGLAZING_OPTIONS),
   isolatie: labelLookup(ISOLATIE_OPTIONS),
   verwarming: labelLookup(VERWARMING_OPTIONS),
+  verdiepingen: labelLookup(VERDIEPINGEN_OPTIONS),
 }
