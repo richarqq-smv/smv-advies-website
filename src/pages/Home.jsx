@@ -1,11 +1,12 @@
 import { Seo } from '../components/seo/Seo'
 import { Hero } from '../components/home/Hero'
+import { ProblemRecognition } from '../components/home/ProblemRecognition'
 import { UspStrip } from '../components/home/UspStrip'
 import { PricingSection } from '../components/home/PricingSection'
 import { EnergieCta } from '../components/home/EnergieCta'
 import { HowItWorks } from '../components/home/HowItWorks'
 import { RegionalBand } from '../components/home/RegionalBand'
-import { CasesSection } from '../components/home/CasesSection'
+import { Independence } from '../components/home/Independence'
 import { ClosingCta } from '../components/home/ClosingCta'
 
 export default function Home() {
@@ -17,12 +18,13 @@ export default function Home() {
       />
 
       <Hero />
+      <ProblemRecognition />
       <UspStrip />
       <PricingSection />
       <EnergieCta />
       <HowItWorks />
       <RegionalBand />
-      <CasesSection />
+      <Independence />
       <ClosingCta />
     </>
   )

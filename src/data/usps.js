@@ -3,8 +3,8 @@ import { Buildings, Compass, FileText, MapPin } from '@phosphor-icons/react'
 export const USPS = [
   {
     icon: Compass,
-    title: '100% onafhankelijk',
-    description: 'Wij verkopen geen installaties of zonnepanelen. Ons advies is uitsluitend gericht op uw belang.',
+    title: 'Onafhankelijk advies',
+    description: 'Wij verkopen geen installaties of zonnepanelen. Ons advies is niet gekoppeld aan een leverancier.',
   },
   {
     icon: MapPin,
