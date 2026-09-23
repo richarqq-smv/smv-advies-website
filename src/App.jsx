@@ -19,6 +19,7 @@ const Faq = lazy(() => import('./pages/Faq'))
 const Contact = lazy(() => import('./pages/Contact'))
 const Privacy = lazy(() => import('./pages/Privacy'))
 const Voorwaarden = lazy(() => import('./pages/Voorwaarden'))
+const MjopTool = lazy(() => import('./pages/MjopTool'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 function LazyBoundary() {
@@ -48,6 +49,7 @@ export default function App() {
           <Route path={ROUTES.contact} element={<Contact />} />
           <Route path={ROUTES.privacy} element={<Privacy />} />
           <Route path={ROUTES.voorwaarden} element={<Voorwaarden />} />
+          <Route path={ROUTES.mjopTool} element={<MjopTool />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Route>

@@ -17,4 +17,7 @@ export const ROUTES = {
   contact: '/contact',
   privacy: '/privacy',
   voorwaarden: '/voorwaarden',
+  // Intern adviesinstrument, bewust niet in NAV_ITEMS/sitemap opgenomen en
+  // geserveerd met noindex — zie src/pages/MjopTool.jsx.
+  mjopTool: '/MJOP-Tool',
 }

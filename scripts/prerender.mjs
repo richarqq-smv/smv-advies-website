@@ -37,6 +37,11 @@ const ROUTES = [
   ROUTE_PATHS.contact,
   ROUTE_PATHS.privacy,
   ROUTE_PATHS.voorwaarden,
+  // Intern, verborgen adviesinstrument — technisch een echte prerendered
+  // route (zodat de directe URL en een refresh op GitHub Pages werken),
+  // maar bewust niet in NAV_ITEMS of sitemap.xml, en geserveerd met
+  // noindex via Seo (zie src/pages/MjopTool.jsx).
+  ROUTE_PATHS.mjopTool,
 ]
 
 function escapeHtml(str) {
