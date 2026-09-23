@@ -75,7 +75,7 @@ export default function Pakketten() {
                 moet gebeuren, maar ook wilt dat wij dat traject voor u uit handen nemen.
                 Benieuwd hoe een compleet advies eruitziet? Bekijk{' '}
                 <Link to={ROUTES.cases} className={LINK_CLASSNAME}>
-                  het voorbeeld
+                  hoe een advies tot stand komt
                 </Link>
                 .
               </>

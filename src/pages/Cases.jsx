@@ -13,7 +13,6 @@ import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { SectionHeading } from '../components/ui/SectionHeading'
-import { Button } from '../components/ui/Button'
 import { ClosingCta } from '../components/home/ClosingCta'
 import { getBreadcrumbSchema } from '../lib/structuredData'
 import { ROUTES } from '../lib/routes'
@@ -58,7 +57,7 @@ export default function Cases() {
       />
 
       <PageHero
-        eyebrow="Praktijkvoorbeelden"
+        eyebrow="In de praktijk"
         title="Wat u van een advies bij SMV Advies kunt verwachten"
         description="Op dit moment publiceren we geen geverifieerde praktijkcases. Cijfers, resultaten of klantverhalen die we niet met zekerheid kunnen onderbouwen, laten we daarom liever weg. Wel ziet u hieronder precies hoe een adviestraject wordt aangepakt en wat het oplevert."
       />
@@ -162,9 +161,6 @@ export default function Cases() {
             we dat traject hier als een geverifieerde praktijkcase — met de daadwerkelijke
             situatie, cijfers en resultaten van dat specifieke pand.
           </p>
-          <div className="mt-6">
-            <Button to={ROUTES.energieIndicatie}>Start de gratis energiecheck</Button>
-          </div>
         </Container>
       </Section>
 

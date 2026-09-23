@@ -16,7 +16,7 @@ export function ContactFab() {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className="fixed right-4 bottom-20 z-[90] flex flex-col items-end gap-3 lg:bottom-6">
+    <div className="fixed right-4 bottom-20 z-[90] flex flex-col items-end gap-3 xl:bottom-6">
       <div
         inert={!open}
         className={cn(

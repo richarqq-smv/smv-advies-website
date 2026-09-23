@@ -9,7 +9,7 @@ import { Button } from '../ui/Button'
  */
 export function StickyMobileActions() {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 flex gap-3 border-t border-border bg-background/95 p-3 backdrop-blur-sm lg:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-40 flex gap-3 border-t border-border bg-background/95 p-3 backdrop-blur-sm xl:hidden">
       <Button to={ROUTES.energieIndicatie} variant="primary" className="flex-1">
         <Lightning size={18} weight="bold" />
         Indicatie

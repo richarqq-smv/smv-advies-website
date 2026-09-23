@@ -12,10 +12,10 @@ import { useMediaQuery } from '../hooks/useMediaQuery'
 export function MainLayout() {
   const { pathname } = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
-  const isDesktop = useMediaQuery('(min-width: 1024px)')
+  const isDesktop = useMediaQuery('(min-width: 1280px)')
 
   // Derived, not synced via effect: the drawer is only ever open below the
-  // lg breakpoint, so growing the viewport to desktop closes it for free.
+  // xl breakpoint, so growing the viewport to desktop closes it for free.
   const mobileNavOpen = menuOpen && !isDesktop
 
   // Jump to top on route change so navigating never leaves the scroll
@@ -44,7 +44,7 @@ export function MainLayout() {
       <MobileNav items={NAV_ITEMS} open={mobileNavOpen} onClose={() => setMenuOpen(false)} />
       <CookieBanner />
 
-      <main id="main-content" className="flex-1 pt-16 pb-20 lg:pt-[72px] lg:pb-0">
+      <main id="main-content" className="flex-1 pt-16 pb-20 xl:pt-[72px] xl:pb-0">
         <Outlet />
       </main>
 

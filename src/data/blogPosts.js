@@ -806,9 +806,9 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Een beter geïsoleerd dak merkt u het hele jaar: minder warmteverlies in de winter, maar ook minder hitteopbouw in de zomer — vooral in kantoren en winkels vaak het verschil tussen een prettig en een onwerkbaar binnenklimaat. Voor personeel en klanten is dat comfortverschil in de praktijk net zo waardevol als de besparing op de energierekening. Bekijk in onze ',
-          { text: 'cases', to: ROUTES.cases },
-          ' vergelijkbare voorbeelden uit de praktijk.',
+          'Een beter geïsoleerd dak merkt u het hele jaar: minder warmteverlies in de winter, maar ook minder hitteopbouw in de zomer — vooral in kantoren en winkels vaak het verschil tussen een prettig en een onwerkbaar binnenklimaat. Voor personeel en klanten is dat comfortverschil net zo waardevol als de besparing op de energierekening. Benieuwd hoe we dit soort afwegingen maken? Bekijk hoe een advies ',
+          { text: 'in de praktijk', to: ROUTES.cases },
+          ' tot stand komt.',
         ],
       },
       { type: 'h2', text: 'Waar u op moet letten' },
@@ -1080,9 +1080,9 @@ export const BLOG_POSTS = [
       },
     ],
     cta: {
-      label: 'Bekijk vergelijkbare cases',
+      label: 'Bekijk hoe dit in de praktijk werkt',
       to: ROUTES.cases,
-      text: 'Benieuwd hoe dit er in de praktijk uitziet? Bekijk voorbeelden van bedrijfspanden die we hierin hebben begeleid.',
+      text: 'Benieuwd hoe we dit soort afwegingen maken? Bekijk hoe een advies in de praktijk tot stand komt.',
     },
   },
   {
@@ -1127,9 +1127,9 @@ export const BLOG_POSTS = [
           { text: 'EIA, ISDE en SDE++', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
           '. Dit soort maatregelen met een korte terugverdientijd staat bovendien vaak op de Erkende Maatregelenlijst binnen de energiebesparingsplicht die voor veel bedrijfspanden geldt — meer hierover leest u in ons artikel over ',
           { text: 'de energiebesparingsplicht', to: ROUTES.blogPost('energiebesparingsplicht-voor-uw-bedrijfspand') },
-          '. Bekijk in onze ',
-          { text: 'cases', to: ROUTES.cases },
-          ' een voorbeeld van wat dat in de praktijk oplevert.',
+          '. Bekijk hoe we dat ',
+          { text: 'in de praktijk', to: ROUTES.cases },
+          ' afwegen.',
         ],
       },
       { type: 'h2', text: 'Waar u op moet letten' },
@@ -1218,9 +1218,9 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'De meeste bedrijfspanden hebben één energiemeter voor het hele pand. Zonder uitsplitsing per functie — verlichting, verwarming, productieapparatuur — ziet u alleen de totale rekening, niet waar het verbruik precies vandaan komt. Dat maakt het lastig om zelf te bepalen waar de winst zit. Bekijk in onze ',
-          { text: 'cases', to: ROUTES.cases },
-          ' een voorbeeld waarin dit concreet naar boven kwam.',
+          'De meeste bedrijfspanden hebben één energiemeter voor het hele pand. Zonder uitsplitsing per functie — verlichting, verwarming, productieapparatuur — ziet u alleen de totale rekening, niet waar het verbruik precies vandaan komt. Dat maakt het lastig om zelf te bepalen waar de winst zit. Bekijk hoe we dit soort verborgen kosten ',
+          { text: 'in de praktijk', to: ROUTES.cases },
+          ' in kaart brengen.',
         ],
       },
       {

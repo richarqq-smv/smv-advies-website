@@ -7,7 +7,7 @@ export const NAV_ITEMS = [
   { label: 'Over ons', path: ROUTES.over },
   { label: 'Werkwijze', path: ROUTES.werkwijze },
   { label: 'Werkgebied', path: ROUTES.werkgebied },
-  { label: 'Cases', path: ROUTES.cases },
+  { label: 'In de praktijk', path: ROUTES.cases },
   { label: 'Blog', path: ROUTES.blog },
   { label: 'FAQ', path: ROUTES.faq },
 ]

@@ -10,7 +10,7 @@ export function MobileNav({ items, open, onClose }) {
   useLockBodyScroll(open)
 
   return (
-    <div className="fixed inset-0 z-[100] lg:hidden" inert={!open}>
+    <div className="fixed inset-0 z-[100] xl:hidden" inert={!open}>
       <div
         className={cn(
           'absolute inset-0 bg-primary/40 transition-opacity duration-300 ease-default',
