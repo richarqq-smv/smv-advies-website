@@ -54,12 +54,18 @@ export function buildMissingToast(missing, singleTemplate, multipleMessage) {
 // legitieme grote panden te blokkeren.
 const MAX_OPPERVLAKTE = 50000
 
+// Symmetrisch aan de bovengrens: `opp > 0` liet ook 0,01 m² door zonder
+// waarschuwing (bijv. een verschoven decimaalteken, "0.3" i.p.v. "300").
+// 5 m² is kleiner dan enig realistisch bedrijfspand-onderdeel, maar sluit
+// evidente tikfouten uit.
+const MIN_OPPERVLAKTE = 5
+
 export function validateStep1(values) {
   const { errors, missing } = validateOptionFields(values, STEP1_OPTION_FIELDS)
 
   const opp = Number.parseFloat(values.oppervlakte)
-  if (!opp || opp <= 0) {
-    errors.oppervlakte = 'Vul een geldige oppervlakte in (in m²).'
+  if (!opp || opp < MIN_OPPERVLAKTE) {
+    errors.oppervlakte = `Vul een geldige oppervlakte in (minimaal ${MIN_OPPERVLAKTE} m²).`
     missing.push('Gebruiksoppervlakte')
   } else if (opp > MAX_OPPERVLAKTE) {
     errors.oppervlakte = 'Vul een realistische oppervlakte in (max. 50.000 m²).'
