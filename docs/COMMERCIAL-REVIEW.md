@@ -2,6 +2,8 @@
 
 > Dit document staat los van `docs/SEO-ROADMAP.md`. De SEO-roadmap is formeel afgesloten en wordt door dit document niet heropend — dit is een aparte, doorlopende plek voor commerciële kwaliteit, vertrouwen, conversie en UX. Laatst bijgewerkt: 2026-09-04, op basis van de eerste review-fase (zie "Fase-geschiedenis" onderaan).
 
+> **Belangrijke correctie (websitetransformatie, pre-launch)**: dit document (en fase 18/19 van `SEO-ROADMAP.md`) ging er destijds van uit dat de 3 cases echte, bestaande klantresultaten waren ("carried over from the current live site"). De eigenaar heeft dit expliciet gecorrigeerd: SMV Advies is feitelijk pre-launch, en de cases waren fictieve placeholder-content die nooit als echte klantresultaten hadden mogen worden gepresenteerd. De cases (`cases.js`, `casesDetailed.js`, `CaseCard.jsx`, `CaseDetailCard.jsx`, `CasesSection.jsx`) zijn daarom volledig verwijderd; `/cases` toont nu eerlijk dat er nog geen praktijkcases zijn. Bevindingen hieronder die uitgaan van "echte cases" zijn historisch en niet langer van toepassing — zie `WEBSITE_STRATEGY.md` en `CONTENT_NEEDED.md` voor de actuele, pre-launch-bewuste aanpak.
+
 ## Doel
 
 Bepalen welke concrete verbeteringen de website van SMV Advies aantoonbaar duidelijker, geloofwaardiger, overtuigender en commercieel sterker maken — zonder feiten te verzinnen en zonder onnodige wijzigingen. Dit is nadrukkelijk geen SEO-audit: title/meta/canonical/JSON-LD/sitemap/robots zijn hier niet opnieuw beoordeeld (zie `docs/SEO-ROADMAP.md` daarvoor).
