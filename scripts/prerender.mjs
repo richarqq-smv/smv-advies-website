@@ -51,7 +51,10 @@ function buildHead(template, url, seo) {
   const fullTitle = seo?.title ? `${seo.title} | ${SITE_NAME}` : SITE_NAME
   const description = seo?.description || ''
   const robots = seo?.noindex ? 'noindex, nofollow' : 'index, follow'
-  const canonical = `${SITE_ORIGIN}${url}`
+  // `url` is null for the 404 fallback page (see main()) — it's served by
+  // GitHub Pages for every unmatched path, not one specific URL, so it must
+  // not claim any single path as its canonical.
+  const canonical = url ? `${SITE_ORIGIN}${url}` : null
 
   let html = template
   html = html.replace(/<title>.*?<\/title>/s, `<title>${escapeHtml(fullTitle)}</title>`)
@@ -72,11 +75,14 @@ function buildHead(template, url, seo) {
     `<meta property="og:description" content="${escapeHtml(description)}" />`,
   )
   // og:url and canonical don't exist in the static template (the homepage
-  // gets them client-side today) — add them for every prerendered route.
-  html = html.replace(
-    /<meta property="og:locale" content="nl_NL" \/>/,
-    `<meta property="og:locale" content="nl_NL" />\n    <meta property="og:url" content="${canonical}" />\n    <link rel="canonical" href="${canonical}" />`,
-  )
+  // gets them client-side today) — add them for every prerendered route
+  // that has one (every real route does; the 404 fallback doesn't).
+  if (canonical) {
+    html = html.replace(
+      /<meta property="og:locale" content="nl_NL" \/>/,
+      `<meta property="og:locale" content="nl_NL" />\n    <meta property="og:url" content="${canonical}" />\n    <link rel="canonical" href="${canonical}" />`,
+    )
+  }
   if (seo?.structuredData?.length) {
     // data-seo-ld matches the attribute Seo.jsx looks for on hydration to
     // remove these prerendered blocks before adding its own — without it,
@@ -121,6 +127,19 @@ async function main() {
     await writeFile(outPath, pageHtml, 'utf-8')
     console.log(`prerendered ${url} -> ${path.relative(rootDir, outPath).replace(/\\/g, '/')}`)
   }
+
+  // GitHub Pages serves dist/404.html (if present) for any URL that
+  // doesn't match a real file, instead of its own generic branded error
+  // page. The path below is never a real route — it only exists so
+  // StaticRouter falls through to the app's own catch-all ("*") route,
+  // which renders NotFound (already marked noindex).
+  const { html: notFoundHtml, seo: notFoundSeo } = await render('/__prerender-404-fallback__')
+  const notFoundPageHtml = buildHead(template, null, notFoundSeo).replace(
+    '<div id="root"></div>',
+    `<div id="root">${notFoundHtml}</div>`,
+  )
+  await writeFile(path.join(distDir, '404.html'), notFoundPageHtml, 'utf-8')
+  console.log('prerendered 404 fallback -> dist/404.html')
 
   await rm(ssrDir, { recursive: true, force: true })
 }
