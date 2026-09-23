@@ -10,6 +10,445 @@ import { ROUTES } from '../lib/routes.js'
  */
 export const BLOG_POSTS = [
   {
+    slug: 'verduurzamingsmaatregelen-bedrijfspand',
+    category: 'Inzicht',
+    title: 'Welke verduurzamingsmaatregelen leveren bij een bedrijfspand echt iets op?',
+    excerpt:
+      'Isolatie, zonnepanelen, een warmtepomp: de lijst met mogelijke verduurzamingsmaatregelen is lang. Hoe u bepaalt welke maatregelen voor uw eigen bedrijfspand daadwerkelijk iets opleveren.',
+    date: '21 september 2026',
+    isoDate: '2026-09-21',
+    readTime: '7 min',
+    bodyAvailable: true,
+    sections: [
+      {
+        type: 'p',
+        parts: [
+          'Als ondernemer krijgt u al snel een lange lijst met mogelijke verduurzamingsmaatregelen: isoleren, zonnepanelen, ledverlichting, een warmtepomp, ventilatie aanpassen, verwarming vervangen, energie anders regelen. Maar welke maatregelen leveren voor uw bedrijfspand daadwerkelijk iets op? Er is geen algemene lijst met maatregelen die voor ieder pand hetzelfde werkt: de waarde van een maatregel hangt af van het gebouw, het energiegebruik, de investering en de manier waarop het pand wordt gebruikt.',
+        ],
+      },
+      { type: 'h2', text: 'Kijk eerst waar de energie naartoe gaat' },
+      {
+        type: 'p',
+        parts: [
+          'Een maatregel heeft pas zin als die aansluit op het werkelijke energiegebruik. Daarom is het belangrijk om eerst te begrijpen waar energie wordt gebruikt. Bij het ene bedrijf ligt de nadruk op verwarming, bij een ander bedrijf kunnen verlichting, ventilatie, koeling of een productieproces een grotere rol spelen. Een maatregel kiezen zonder dat inzicht kan ervoor zorgen dat u investeert op een plek waar relatief weinig te winnen valt.',
+        ],
+      },
+      { type: 'h2', text: 'Kijk niet alleen naar energiebesparing' },
+      {
+        type: 'p',
+        parts: [
+          'Energiebesparing is belangrijk, maar het is niet het enige criterium. Een ondernemer moet ook kijken naar de investering en de praktische gevolgen: een maatregel kan technisch interessant zijn, maar bijvoorbeeld lastig uitvoerbaar tijdens de bedrijfsvoering. Daarom is het nuttig om maatregelen op meerdere punten te beoordelen.',
+        ],
+      },
+      { type: 'h3', text: '1. Energie-effect' },
+      {
+        type: 'p',
+        parts: [
+          'Hoeveel invloed heeft de maatregel op het energiegebruik? Dat hoeft niet altijd exact vooraf te worden vastgesteld om een eerste prioriteit te bepalen, maar er moet wel een onderbouwde inschatting worden gemaakt. Een maatregel die nauwelijks invloed heeft op het energiegebruik, krijgt mogelijk minder prioriteit dan een maatregel die een belangrijk onderdeel van het energiegebruik aanpakt.',
+        ],
+      },
+      { type: 'h3', text: '2. Investering' },
+      {
+        type: 'p',
+        parts: [
+          'Daarna kijkt u naar de benodigde investering. Een relatief kleine maatregel kan interessant zijn als deze eenvoudig uitvoerbaar is en duidelijk aansluit bij het gebruik van het pand. Een grotere investering vraagt om een andere afweging: dan wilt u vooraf beter begrijpen wat de maatregel oplevert en welke andere maatregelen ermee samenhangen.',
+        ],
+      },
+      { type: 'h3', text: '3. Technische haalbaarheid' },
+      {
+        type: 'p',
+        parts: [
+          'Niet iedere maatregel past technisch in ieder pand. Bij isolatie moet bijvoorbeeld worden gekeken naar de bestaande constructie, zie ook ons artikel over ',
+          { text: 'dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
+          '. Bij een warmtepomp gaat het om de warmtebehoefte en het afgiftesysteem, zoals beschreven in ons artikel over ',
+          { text: 'de warmtepomp in het mkb', to: ROUTES.blogPost('warmtepomp-in-het-mkb') },
+          '. Bij zonnepanelen spelen dak, constructie, ligging en beschikbare ruimte een rol. Technische haalbaarheid moet daarom onderdeel zijn van de beoordeling.',
+        ],
+      },
+      { type: 'h3', text: '4. Gebruik van het pand' },
+      {
+        type: 'p',
+        parts: [
+          'Een maatregel kan financieel interessant lijken, maar toch minder geschikt zijn als het gebruik van het gebouw verandert. Verwacht u bijvoorbeeld binnen enkele jaren te verbouwen, uit te breiden of te verhuizen, dan kan dat invloed hebben op de prioriteit. Daarom moet verduurzaming aansluiten bij de plannen van het bedrijf.',
+        ],
+      },
+      { type: 'h3', text: '5. Het juiste moment' },
+      {
+        type: 'p',
+        parts: [
+          'Sommige maatregelen zijn vooral logisch wanneer er toch al onderhoud of vervanging gepland staat. Wordt een dak bijvoorbeeld binnenkort vervangen, dan kan dat een logisch moment zijn om ook naar de isolatie te kijken. Hetzelfde geldt voor installaties die het einde van hun technische levensduur bereiken. Het beste moment om een maatregel uit te voeren is daarom niet altijd vandaag.',
+        ],
+      },
+      { type: 'h2', text: 'Kijk naar combinaties' },
+      {
+        type: 'p',
+        parts: [
+          'Maatregelen kunnen elkaar beïnvloeden. Een verbetering van de gebouwschil kan bijvoorbeeld gevolgen hebben voor de benodigde verwarmingscapaciteit, en een andere regeling kan invloed hebben op het energiegebruik van een installatie. Daarom is het belangrijk om maatregelen niet uitsluitend afzonderlijk te beoordelen, maar ook naar de onderlinge volgorde te kijken.',
+        ],
+      },
+      { type: 'h2', text: 'Wat levert echt iets op?' },
+      {
+        type: 'p',
+        parts: [
+          'De vraag "wat levert echt iets op?" betekent dus niet alleen: "welke maatregel bespaart de meeste energie?" De betere vraag is: "welke maatregel levert in mijn bedrijfspand een goede combinatie op van energie-effect, investering, haalbaarheid en het juiste moment?" Dat antwoord kan per pand behoorlijk verschillen.',
+        ],
+      },
+      { type: 'h2', text: 'Een prioriteitenlijst werkt beter dan een boodschappenlijst' },
+      {
+        type: 'p',
+        parts: [
+          'Een goed verduurzamingsplan hoeft niet uit tien maatregelen te bestaan die allemaal tegelijk moeten worden uitgevoerd. Het kan juist overzichtelijker zijn om onderscheid te maken tussen:',
+        ],
+      },
+      {
+        type: 'ul',
+        items: [
+          'Nu doen: maatregelen die logisch, haalbaar en passend zijn.',
+          'Later meenemen: maatregelen die beter aansluiten bij gepland onderhoud, vervanging of een toekomstige verbouwing.',
+          'Eerst onderzoeken: maatregelen waarvan de haalbaarheid of het effect nog niet voldoende duidelijk is.',
+          'Voorlopig niet doen: maatregelen die op dit moment onvoldoende aansluiten bij het pand, het gebruik of de investering.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: ['Zo ontstaat een plan waar u als ondernemer daadwerkelijk iets aan heeft.'],
+      },
+      { type: 'h2', text: 'Eerst bepalen wat verstandig is' },
+      {
+        type: 'p',
+        parts: [
+          'Verduurzamen gaat uiteindelijk niet om zo veel mogelijk maatregelen uitvoeren. Het gaat erom dat u de juiste maatregelen op het juiste moment kiest. Daarom is inzicht in het pand en het energiegebruik een belangrijke eerste stap. Pas daarna kunt u bepalen waar investeren zinvol is en welke maatregelen nog even kunnen wachten. Benieuwd hoe die afweging ',
+          { text: 'in de praktijk', to: ROUTES.cases },
+          ' wordt gemaakt?',
+        ],
+      },
+    ],
+    cta: {
+      label: 'Start de gratis energie-indicatie',
+      to: ROUTES.energieIndicatie,
+      text: 'Benieuwd welke maatregelen voor uw bedrijfspand het meest opleveren? Met onze gratis energie-indicatie krijgt u snel een eerste beeld van de kansen in uw pand.',
+    },
+  },
+  {
+    slug: 'warmtepomp-bedrijfspand-verstandige-keuze',
+    category: 'Installaties',
+    title: 'Een warmtepomp in een bedrijfspand: wanneer is het een verstandige keuze?',
+    excerpt:
+      'Een warmtepomp is niet voor elk bedrijfspand automatisch de juiste keuze. Waarom de warmtevraag, het gebouw, de bestaande installatie en het gebruik van het pand bepalen of een warmtepomp verstandig is.',
+    date: '17 september 2026',
+    isoDate: '2026-09-17',
+    readTime: '6 min',
+    bodyAvailable: true,
+    sections: [
+      {
+        type: 'p',
+        parts: [
+          'Een warmtepomp kan een interessante manier zijn om een bedrijfspand anders te verwarmen, maar een warmtepomp is geen automatische oplossing voor ieder gebouw. Of het verstandig is, hangt af van de warmtevraag, het gebouw, de bestaande installatie en de manier waarop het pand wordt gebruikt. Daarom is de vraag niet alleen of een warmtepomp technisch mogelijk is: de belangrijkere vraag is of de combinatie van gebouw, installatie en gebruik ervoor zorgt dat een warmtepomp in uw situatie logisch is.',
+        ],
+      },
+      { type: 'h2', text: 'Hoe wordt het pand gebruikt?' },
+      {
+        type: 'p',
+        parts: [
+          'Begin bij het gebruik van het gebouw. Welke ruimtes worden verwarmd, hoeveel uur per dag, en welke temperaturen zijn nodig? Zijn er ruimtes die alleen tijdens bepaalde werktijden worden gebruikt? Een bedrijfspand met kantoren vraagt iets anders dan een werkplaats, magazijn of productieomgeving. Ook kan het zijn dat niet het hele pand dezelfde verwarmingsbehoefte heeft, daarom is het belangrijk om niet alleen naar het totale vloeroppervlak te kijken.',
+        ],
+      },
+      { type: 'h2', text: 'Is het gebouw geschikt?' },
+      {
+        type: 'p',
+        parts: [
+          'Een warmtepomp werkt anders dan veel traditionele verwarmingsinstallaties. Daarom moet worden gekeken naar de warmtebehoefte van het gebouw en de manier waarop warmte wordt afgegeven. De isolatie speelt daarbij een rol: een gebouw met veel warmteverlies kan een hogere warmtevraag hebben, wat gevolgen kan hebben voor de benodigde capaciteit en de manier waarop het verwarmingssysteem wordt ingericht. Dit betekent niet dat een warmtepomp in een minder goed geïsoleerd pand per definitie onmogelijk is, wel kan de situatie anders uitpakken dan bij een goed geïsoleerd gebouw. Meer over de rol van de bouwkundige schil leest u in ons artikel over ',
+          { text: 'dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Kijk naar het afgiftesysteem' },
+      {
+        type: 'p',
+        parts: [
+          'Ook de bestaande verwarming is belangrijk: denk aan radiatoren, vloerverwarming of andere vormen van warmteafgifte. Een warmtepomp levert warmte op een andere manier dan een traditionele cv-installatie, dus de bestaande installatie moet worden beoordeeld op geschiktheid voor de gewenste situatie. Soms kan een bestaande installatie worden gebruikt, soms zijn aanpassingen nodig. Dat moet vooraf worden onderzocht.',
+        ],
+      },
+      { type: 'h2', text: 'Wat is de bestaande installatie?' },
+      {
+        type: 'p',
+        parts: [
+          'Een warmtepomp staat bovendien niet op zichzelf. Kijk ook naar de leeftijd en staat van de huidige installatie: moet een verwarmingsinstallatie toch vervangen worden, dan kan dat een logisch moment zijn om alternatieven te onderzoeken. Functioneert een bestaande installatie echter nog goed, dan moet de investering in een nieuw systeem wel in verhouding staan tot het verwachte voordeel.',
+        ],
+      },
+      { type: 'h2', text: 'Hoeveel ruimte is beschikbaar?' },
+      {
+        type: 'p',
+        parts: [
+          'Bij een bedrijfspand moet u ook praktisch kijken. Waar komen de benodigde onderdelen, is er voldoende technische ruimte, en waar kan een buitenunit worden geplaatst als die nodig is? Zijn er beperkingen door het gebouw of de omgeving? Techniek kan op papier passen, maar in de praktijk moet het ook uitvoerbaar zijn.',
+        ],
+      },
+      { type: 'h2', text: 'Wat betekent het voor de bedrijfsvoering?' },
+      {
+        type: 'p',
+        parts: [
+          'Een verduurzamingsmaatregel mag de bedrijfsvoering niet onnodig verstoren. Bij een kantoor kan de situatie anders zijn dan bij een werkplaats of productiebedrijf waar installaties continu moeten blijven functioneren. Daarom moet ook worden gekeken naar het moment van uitvoering en eventuele tijdelijke gevolgen.',
+        ],
+      },
+      { type: 'h2', text: 'Maak eerst de technische en financiële afweging' },
+      {
+        type: 'p',
+        parts: [
+          'Een warmtepomp kan interessant zijn, maar de investering moet passen bij het gebouw en het gebruik. Daarbij kunt u onder meer kijken naar:',
+        ],
+      },
+      {
+        type: 'ul',
+        items: [
+          'het huidige energiegebruik',
+          'de warmtevraag',
+          'het isolatieniveau',
+          'de bestaande warmteafgifte',
+          'de staat van de huidige installatie',
+          'de beschikbare ruimte',
+          'de verwachte investering',
+          'het onderhoud',
+          'de gebruiksduur van het pand',
+          'geplande verbouwingen of vervangingen',
+        ],
+      },
+      {
+        type: 'p',
+        parts: ['Op basis daarvan kunt u bepalen of verder onderzoek naar een warmtepomp zinvol is.'],
+      },
+      { type: 'h2', text: 'Een warmtepomp is geen doel op zichzelf' },
+      {
+        type: 'p',
+        parts: [
+          'Het doel van verduurzaming is niet om een specifieke techniek in een gebouw te krijgen, maar om het energiegebruik en de installatie van het pand op een verstandige manier te verbeteren. Soms past daar een warmtepomp bij, soms is eerst een andere maatregel logischer, en soms is het verstandiger om nog even te wachten. Daarom is het verstandig om eerst de situatie van het bedrijfspand in kaart te brengen en daarna pas een keuze voor een installatie te maken. Benieuwd hoe die afweging ',
+          { text: 'in de praktijk', to: ROUTES.cases },
+          ' tot stand komt?',
+        ],
+      },
+    ],
+    cta: {
+      label: 'Start de gratis energie-indicatie',
+      to: ROUTES.energieIndicatie,
+      text: 'Wilt u weten of een warmtepomp voor uw bedrijfspand interessant is? Onze gratis energie-indicatie geeft een eerste beeld van de mogelijkheden.',
+    },
+  },
+  {
+    slug: 'verduurzamen-bedrijfspand-waar-begin-je',
+    category: 'Aanpak',
+    title: 'Verduurzamen van een bedrijfspand: waar begin je als ondernemer?',
+    excerpt:
+      'Verduurzamen van een bedrijfspand roept al snel de vraag op waar u moet beginnen. Een praktische aanpak in zeven stappen, van inzicht in het energiegebruik tot een realistische planning voor de komende jaren.',
+    date: '13 september 2026',
+    isoDate: '2026-09-13',
+    readTime: '7 min',
+    bodyAvailable: true,
+    sections: [
+      {
+        type: 'p',
+        parts: [
+          'U weet dat u iets met verduurzaming van uw bedrijfspand wilt doen, maar waar begint u? Voor veel ondernemers is dat juist het lastige deel: er zijn veel mogelijke maatregelen, en iedere leverancier vertelt vanuit zijn eigen vakgebied wat interessant is. Zonnepanelen, isolatie, een warmtepomp, verlichting, ventilatie of een nieuwe installatie: het kan allemaal relevant zijn, maar dat betekent niet dat alles tegelijk moet gebeuren. Een goede aanpak begint daarom niet met een maatregel. Die begint met inzicht.',
+        ],
+      },
+      { type: 'h2', text: '1. Kijk eerst naar hoe u het pand gebruikt' },
+      {
+        type: 'p',
+        parts: [
+          'Een bedrijfspand wordt niet op dezelfde manier gebruikt als een woning. Misschien staat een deel van het pand regelmatig leeg, zijn er grote productie- of opslagruimtes, wordt alleen een kantoor verwarmd, of juist het hele gebouw. Ook openingstijden en werktijden zijn belangrijk: een maatregel die interessant is voor een pand dat vijf dagen per week intensief wordt gebruikt, kan een andere uitkomst hebben bij een gebouw dat maar beperkt wordt gebruikt. Begin daarom met de vraag hoe het pand daadwerkelijk wordt gebruikt.',
+        ],
+      },
+      { type: 'h2', text: '2. Breng het huidige energiegebruik in beeld' },
+      {
+        type: 'p',
+        parts: [
+          'Daarna is het belangrijk om te weten waar energie wordt gebruikt. Kijk naar gas en elektriciteit, maar ook naar de installaties en processen die daarvoor verantwoordelijk zijn. Een hoog energiegebruik zegt op zichzelf nog niet waar de oplossing ligt: het kan bijvoorbeeld komen door verwarming, ventilatie, verlichting, productieprocessen of een combinatie daarvan. Het doel is om eerst te begrijpen waar de belangrijkste energievraag vandaan komt.',
+        ],
+      },
+      { type: 'h2', text: '3. Bekijk het gebouw' },
+      {
+        type: 'p',
+        parts: [
+          'Vervolgens kijkt u naar de bouwkundige kant van het pand. Hoe is het dak geïsoleerd, hoe zit het met gevels, ramen en deuren, en zijn er duidelijke plekken waar warmte verloren gaat? Meer hierover leest u in ons artikel over ',
+          { text: 'dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
+          '. Ook de staat van het pand is relevant: staat er toch al een renovatie of verbouwing gepland, dan kan dat een logisch moment zijn om verduurzaming mee te nemen. Dat kan invloed hebben op de volgorde van maatregelen.',
+        ],
+      },
+      { type: 'h2', text: '4. Beoordeel de installaties' },
+      {
+        type: 'p',
+        parts: [
+          'Kijk daarna naar verwarming, koeling, ventilatie, verlichting en andere relevante installaties. Hoe oud zijn ze, hoe worden ze geregeld, en zijn ze aangepast aan het huidige gebruik van het gebouw? Een installatie die technisch nog werkt, hoeft niet automatisch de beste keuze te zijn voor de komende jaren. Andersom is vervangen ook niet automatisch verstandig als de bestaande installatie nog goed aansluit op het gebouw en gebruik.',
+        ],
+      },
+      { type: 'h2', text: '5. Maak onderscheid tussen mogelijk en verstandig' },
+      {
+        type: 'p',
+        parts: [
+          'Dit is een belangrijk verschil: een maatregel kan technisch uitvoerbaar zijn zonder dat het voor uw bedrijfspand direct een logische investering is. Daarom is het nuttig om maatregelen naast elkaar te zetten, bijvoorbeeld op:',
+        ],
+      },
+      {
+        type: 'ul',
+        items: [
+          'verwacht energie-effect',
+          'benodigde investering',
+          'technische haalbaarheid',
+          'invloed op de bedrijfsvoering',
+          'onderhoud',
+          'het moment waarop de maatregel logisch kan worden uitgevoerd',
+          'samenhang met andere maatregelen',
+        ],
+      },
+      {
+        type: 'p',
+        parts: ['Zo ontstaat een prioriteitenlijst in plaats van een willekeurige verzameling maatregelen.'],
+      },
+      { type: 'h2', text: '6. Kijk ook naar wat nog even kan wachten' },
+      {
+        type: 'p',
+        parts: [
+          'Verduurzamen betekent niet dat u alles zo snel mogelijk moet uitvoeren. Soms is het verstandiger om een maatregel mee te nemen tijdens een gepland onderhoudsmoment, soms is eerst een andere maatregel nodig, en soms blijkt een investering op dit moment simpelweg niet logisch. Een goed advies moet daarom ook kunnen aangeven wat u voorlopig niet hoeft te doen. Dat voorkomt onnodige investeringen.',
+        ],
+      },
+      { type: 'h2', text: '7. Maak een plan voor de komende jaren' },
+      {
+        type: 'p',
+        parts: [
+          'Niet ieder bedrijfspand hoeft in één keer volledig verduurzaamd te worden. Een praktische aanpak kan bestaan uit een aantal stappen:',
+        ],
+      },
+      {
+        type: 'ul',
+        items: [
+          'Nu: maatregelen die logisch en haalbaar zijn.',
+          'Daarna: maatregelen die samenhangen met onderhoud, vervanging of verbouwing.',
+          'Later: maatregelen waarvoor eerst meer onderzoek, een andere installatie of een ander investeringsmoment nodig is.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: ['Zo ontstaat een plan waar u als ondernemer daadwerkelijk mee kunt werken.'],
+      },
+      {
+        type: 'callout',
+        title: 'Een eerste beeld zonder verplichtingen',
+        text: [
+          'Wilt u eerst een globaal beeld voordat u verder in detail treedt? Een ',
+          { text: 'QuickScan', to: ROUTES.pakketten },
+          ' geeft op basis van beschikbare gegevens een eerste inschatting van de belangrijkste kansen in uw pand.',
+        ],
+      },
+      { type: 'h2', text: 'Eerst weten wat verstandig is' },
+      {
+        type: 'p',
+        parts: [
+          'De eerste stap bij het verduurzamen van een bedrijfspand is daarom niet automatisch isoleren, zonnepanelen plaatsen of een warmtepomp aanschaffen. De eerste stap is begrijpen hoe uw pand functioneert en waar de belangrijkste kansen liggen. Van daaruit kunt u bepalen welke maatregelen prioriteit hebben en welke investeringen kunnen wachten. Dat maakt verduurzamen overzichtelijker en helpt voorkomen dat u geld uitgeeft aan maatregelen die niet goed aansluiten bij uw pand. Benieuwd hoe we deze afweging ',
+          { text: 'in de praktijk', to: ROUTES.cases },
+          ' aanpakken?',
+        ],
+      },
+    ],
+    cta: {
+      label: 'Start de gratis energie-indicatie',
+      to: ROUTES.energieIndicatie,
+      text: 'Wilt u weten waar de grootste kansen in uw bedrijfspand liggen? Onze gratis energie-indicatie geeft een eerste, vrijblijvend beeld.',
+    },
+  },
+  {
+    slug: 'bedrijfspand-isoleren-of-installatie-eerst',
+    category: 'Aanpak',
+    title: 'Moet ik mijn bedrijfspand eerst isoleren of eerst de installatie aanpakken?',
+    excerpt:
+      'Isoleren of eerst de verwarmingsinstallatie aanpakken: voor een bedrijfspand bestaat daar geen vast antwoord op. Waarom de juiste volgorde per pand verschilt, en hoe u die voor uw eigen situatie bepaalt.',
+    date: '8 september 2026',
+    isoDate: '2026-09-08',
+    readTime: '6 min',
+    bodyAvailable: true,
+    sections: [
+      {
+        type: 'p',
+        parts: [
+          'Als ondernemer met een bedrijfspand komt verduurzamen vaak neer op dezelfde vraag: waar begint u? Moet u eerst isoleren, of is het slimmer om de verwarmingsinstallatie aan te pakken? Misschien zijn zonnepanelen interessant, of juist verlichting. Het antwoord is niet voor ieder bedrijfspand hetzelfde: de juiste volgorde hangt af van het gebouw, het gebruik ervan en de installaties die al aanwezig zijn. Daarom is het meestal verstandiger om eerst naar het geheel te kijken voordat u een losse maatregel kiest.',
+        ],
+      },
+      { type: 'h2', text: 'Begin bij het pand zelf' },
+      {
+        type: 'p',
+        parts: [
+          'Een bedrijfspand kan op papier veel mogelijkheden hebben, terwijl een deel daarvan in de praktijk weinig oplevert. Kijk daarom eerst naar de basis: hoe wordt het pand gebruikt, welke ruimtes worden verwarmd, op welke momenten is er activiteit, hoe oud zijn de installaties, en waar gaat op dit moment de meeste energie naartoe? Ook de bouwkundige staat van het pand speelt een rol. Denk bijvoorbeeld aan dak, gevel, vloer, ramen en deuren, zie ook ons artikel over ',
+          { text: 'dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
+          '. Een pand met veel warmteverlies vraagt om een andere aanpak dan een goed geïsoleerd gebouw met een relatief nieuwe installatie.',
+        ],
+      },
+      { type: 'h2', text: 'Waarom isolatie soms logisch is' },
+      {
+        type: 'p',
+        parts: [
+          'Verliest een gebouw veel warmte, dan kan het interessant zijn om eerst naar de bouwkundige schil te kijken. Betere isolatie kan ervoor zorgen dat er minder warmte nodig is om het gebouw op temperatuur te houden. Dat kan vervolgens invloed hebben op de benodigde capaciteit van een verwarmingsinstallatie. Maar dat betekent niet dat isoleren altijd stap één moet zijn: een grote isolatiemaatregel kan bijvoorbeeld technisch ingewikkeld zijn, terwijl een andere maatregel op korte termijn eenvoudiger uitvoerbaar is. Ook de geplande levensduur van het pand en eventuele verbouwingen spelen mee.',
+        ],
+      },
+      { type: 'h2', text: 'En wanneer kijkt u eerst naar de installatie?' },
+      {
+        type: 'p',
+        parts: [
+          'Soms ligt de grootste kans juist bij de installatie. Een verouderde verwarmingsinstallatie, slechte regeling of onnodig draaiende apparatuur kan een belangrijk aandachtspunt zijn. In die situatie kan het logisch zijn om eerst te onderzoeken wat er met de installatie te verbeteren valt, en of een alternatief zoals ',
+          { text: 'een warmtepomp', to: ROUTES.blogPost('warmtepomp-in-het-mkb') },
+          ' voor uw pand passend is. Daarbij moet u wel voorkomen dat u een nieuwe installatie kiest zonder rekening te houden met het gebouw: een installatie moet passen bij de warmtevraag van het pand, dus is het belangrijk om niet alleen naar het apparaat zelf te kijken, maar naar het hele systeem.',
+        ],
+      },
+      { type: 'h2', text: 'Kijk naar de volgorde, niet naar één losse maatregel' },
+      {
+        type: 'p',
+        parts: [
+          'De belangrijkste vraag is daarom niet: "welke maatregel moet ik nemen?" Een betere vraag is: "welke aanpak past bij mijn pand en in welke volgorde kan ik maatregelen het beste uitvoeren?" Soms begint dat bij isolatie, soms bij regeling of installatie, soms blijkt eerst meer inzicht in het energiegebruik nodig. Ook kan het verstandig zijn om een maatregel voorlopig niet uit te voeren.',
+        ],
+      },
+      { type: 'h2', text: 'Een praktische volgorde' },
+      {
+        type: 'p',
+        parts: ['Voor veel ondernemers is een logische aanpak:'],
+      },
+      {
+        type: 'ul',
+        items: [
+          'Breng het huidige energiegebruik en het gebruik van het pand in beeld.',
+          'Kijk naar de bouwkundige staat.',
+          'Beoordeel de bestaande installaties.',
+          'Breng mogelijke maatregelen in kaart.',
+          'Bekijk welke maatregelen elkaar beïnvloeden.',
+          'Bepaal een logische volgorde.',
+          'Kijk pas daarna naar de investering en uitvoering.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'Zo voorkomt u dat u een relatief grote investering doet die later minder goed blijkt te passen bij de rest van het pand.',
+        ],
+      },
+      { type: 'h2', text: 'Eerst inzicht, daarna investeren' },
+      {
+        type: 'p',
+        parts: [
+          'Verduurzamen hoeft niet te beginnen met het kopen van een installatie of het uitvoeren van een grote verbouwing. Voor een ondernemer begint het vaak met weten waar het probleem zit, welke maatregelen mogelijk zijn en welke volgorde logisch is. Pas daarna kunt u beoordelen welke investering verstandig is. Dat is ook waarom een verduurzamingsadvies niet alleen moet kijken naar wat er technisch mogelijk is, maar ook naar wat voor uw bedrijfspand praktisch en financieel logisch is.',
+        ],
+      },
+      {
+        type: 'callout',
+        title: 'Hoe die afweging eruitziet',
+        text: [
+          'Onze ',
+          { text: 'werkwijze', to: ROUTES.werkwijze },
+          ' laat zien hoe we deze afweging voor uw pand stap voor stap doorlopen.',
+        ],
+      },
+    ],
+    cta: {
+      label: 'Start de gratis energie-indicatie',
+      to: ROUTES.energieIndicatie,
+      text: 'Benieuwd welke volgorde voor uw bedrijfspand het meest logisch is? Met onze gratis energie-indicatie krijgt u snel een eerste beeld van de kansen in uw pand.',
+    },
+  },
+  {
     slug: 'ventilatie-in-uw-bedrijfspand',
     category: 'Installaties',
     title: 'Ventilatie in uw bedrijfspand: wettelijke eisen en besparingsmogelijkheden',
