@@ -3,7 +3,7 @@ import { createEmptyBuilding, createEmptyComponent, loadBuilding, saveBuilding, 
 import { triggerJsonDownload, parseImportedJson } from '../lib/mjop/importExport'
 import { buildInsights } from '../lib/mjop/linking'
 import { buildMjopEmailParams } from '../lib/mjop/emailParams'
-import { sendEmail, EMAILJS_TEMPLATE_MJOP } from '../lib/emailjs'
+import { sendEmail, EMAILJS_TEMPLATE_MJOP, EMAILJS_PUBLIC_KEY_MJOP } from '../lib/emailjs'
 
 export const STEPS = [
   { n: 1, id: 'pand', label: 'Pandgegevens' },
@@ -141,7 +141,7 @@ export function useMjopBuilding() {
     dispatch({ type: 'SEND_START' })
     try {
       const params = buildMjopEmailParams(state.building, insights)
-      await sendEmail(EMAILJS_TEMPLATE_MJOP, params)
+      await sendEmail(EMAILJS_TEMPLATE_MJOP, params, EMAILJS_PUBLIC_KEY_MJOP)
       dispatch({ type: 'SEND_SUCCESS' })
     } catch {
       dispatch({ type: 'SEND_ERROR' })
