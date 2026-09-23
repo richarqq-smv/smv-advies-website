@@ -1,6 +1,6 @@
 # Website-audit — samenvatting
 
-> Dit document bundelt de bevindingen uit meerdere eerdere audits (technisch, SEO, commercieel, live-site) plus de nieuwe bevindingen uit de pre-launch-correctie. Voor de volledige, gedetailleerde geschiedenis: zie `docs/SEO-ROADMAP.md` (technisch/SEO, formeel afgesloten) en `docs/COMMERCIAL-REVIEW.md` (commercieel/UX).
+> Dit document bundelt de bevindingen uit meerdere eerdere audits (technisch, SEO, commercieel, live-site) plus de nieuwe bevindingen uit de correctie van de fictieve cases. Voor de volledige, gedetailleerde geschiedenis: zie `docs/SEO-ROADMAP.md` (technisch/SEO, formeel afgesloten) en `docs/COMMERCIAL-REVIEW.md` (commercieel/UX).
 
 ## UX
 
@@ -11,7 +11,7 @@
 ## CRO
 
 - Primaire/secundaire/tertiaire CTA's zijn consistent: energie-indicatie (primair), pakketten (secundair), contact (tertiair).
-- **Gecorrigeerd in deze fase**: een badge "Meest gekozen" op het Premium-pakket en de tekst "de meeste ondernemers kiezen voor het Premium Pakket" impliceerden klantgedrag dat er (pre-launch) nog niet is. Vervangen door "Aanbevolen" (redactionele keuze) en een feitelijke vergelijking.
+- **Gecorrigeerd in deze fase**: een badge "Meest gekozen" op het Premium-pakket en de tekst "de meeste ondernemers kiezen voor het Premium Pakket" impliceerden klantgedrag waarover geen gegevens beschikbaar zijn. Vervangen door "Aanbevolen" (een redactionele keuze van SMV zelf, geen klantgedragsclaim) en een feitelijke vergelijking.
 - **Gecorrigeerd in deze fase**: de 3 cases op de homepage en `/cases` toonden specifieke, overtuigend ogende cijfers (bijv. "58% besparing", "Gasverbruik gehalveerd") die feitelijk fictief/placeholder waren. Volledig verwijderd — zie `docs/COMMERCIAL-REVIEW.md` voor de correctie.
 
 ## SEO

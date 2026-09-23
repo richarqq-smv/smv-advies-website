@@ -37,7 +37,7 @@ CTA-copy is concreet, niet generiek ("Gratis energiecheck", "Bekijk de adviespak
 Drie pakketten, elk met een eigen mentaal frame (toegevoegd in deze fase als `mindset`-veld in `packages.js`, getoond boven elke pakketnaam):
 
 - **Basis Pakket — Oriënteren**: voor ondernemers die eerst inzicht willen.
-- **Premium Pakket — Beslissen**: voor ondernemers die een concreet verduurzamingsplan willen. Gemarkeerd als "Aanbevolen" (redactionele keuze door SMV, expliciet niet als "meest gekozen" — dat zou een klantgedragsclaim zijn die er pre-launch niet is).
+- **Premium Pakket — Beslissen**: voor ondernemers die een concreet verduurzamingsplan willen. Gemarkeerd als "Aanbevolen" (redactionele keuze door SMV, expliciet niet als "meest gekozen" — dat zou een klantgedragsclaim zijn waarover geen gegevens beschikbaar zijn).
 - **Gold Pakket — Ontzorgd worden**: voor ondernemers die begeleiding willen bij de uitvoering.
 
 Prijzen en features zijn ongewijzigd (bestaande, gepubliceerde bedragen — niet verzonnen).
@@ -62,7 +62,7 @@ Gold-begeleiding (optioneel)
 
 ## Trust-architectuur zonder reviews/cases
 
-Omdat er nog geen echte klantresultaten zijn (pre-launch), bouwt de site vertrouwen op via:
+Omdat er nog geen gepubliceerde klantresultaten zijn, bouwt de site vertrouwen op via:
 
 - Onafhankelijkheid (sterkste USP, eigen sectie)
 - Transparante prijzen (zichtbare bandbreedtes, geen verborgen kosten)

@@ -26,7 +26,7 @@ Praktisch overzicht van wat er nog aangeleverd moet worden, en waar het terechtk
 
 ## 5. Eerste praktijkcase
 
-Zodra een eerste traject is afgerond: volg `CASE_TEMPLATE.md` voor de intake, en `REVIEW_TEMPLATE.md` als de klant ook een testimonial wil geven. Pas dan wordt `/cases` gevuld met echte inhoud.
+Zodra een adviestraject is afgerond en gepubliceerd mag worden: volg `CASE_TEMPLATE.md` voor de intake, en `REVIEW_TEMPLATE.md` als de klant ook een testimonial wil geven. Pas dan wordt `/cases` uitgebreid met een geverifieerde praktijkcase.
 
 ## 6. Alt-tekststrategie
 

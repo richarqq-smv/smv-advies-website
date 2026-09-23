@@ -1,6 +1,6 @@
 # Case-intaketemplate
 
-> Gebruik dit formulier zodra een eerste klanttraject is afgerond. Vraag de klant elk antwoord expliciet te bevestigen vóór publicatie — vul nooit iets in namens de klant en verzin geen antwoorden.
+> Gebruik dit formulier zodra een adviestraject is afgerond en er een geverifieerde case gepubliceerd kan worden. Vraag de klant elk antwoord expliciet te bevestigen vóór publicatie — vul nooit iets in namens de klant en verzin geen antwoorden.
 
 ## Vragen aan de klant
 
