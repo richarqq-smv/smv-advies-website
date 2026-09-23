@@ -70,12 +70,12 @@ export default function Pakketten() {
             title="Het verschil in één oogopslag"
             description={
               <>
-                De meeste ondernemers kiezen voor het Premium Pakket: een fysieke opname geeft een betrouwbaarder
-                beeld dan een inschatting op afstand. Twijfelt u tussen Premium en Gold? Kies Gold zodra u niet
-                alleen wilt weten wát er moet gebeuren, maar ook wilt dat wij dat traject voor u uit handen nemen.
-                Benieuwd hoe dat er in de praktijk uitziet? Bekijk{' '}
+                Een fysieke opname (Premium) geeft een betrouwbaarder beeld dan een inschatting op afstand
+                (Basis). Twijfelt u tussen Premium en Gold? Kies Gold zodra u niet alleen wilt weten wát er
+                moet gebeuren, maar ook wilt dat wij dat traject voor u uit handen nemen.
+                Benieuwd hoe een compleet advies eruitziet? Bekijk{' '}
                 <Link to={ROUTES.cases} className={LINK_CLASSNAME}>
-                  onze cases
+                  het voorbeeld
                 </Link>
                 .
               </>

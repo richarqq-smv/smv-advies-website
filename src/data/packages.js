@@ -8,6 +8,7 @@ export const PACKAGES = [
   {
     id: 'basis',
     name: 'Basis Pakket',
+    mindset: 'Oriënteren',
     subtitle: 'QuickScan · op afstand',
     price: '€ 495 - € 795',
     priceNote: 'excl. btw · indicatieve bandbreedte',
@@ -25,6 +26,7 @@ export const PACKAGES = [
   {
     id: 'premium',
     name: 'Premium Pakket',
+    mindset: 'Beslissen',
     subtitle: 'Volledige analyse · met locatiebezoek',
     price: '€ 895 - € 1.495',
     priceNote: 'excl. btw · indicatieve bandbreedte',
@@ -38,11 +40,12 @@ export const PACKAGES = [
     cta: 'Premium advies aanvragen',
     ctaTo: ROUTES.contact,
     featured: true,
-    badge: 'Meest gekozen',
+    badge: 'Aanbevolen',
   },
   {
     id: 'gold',
     name: 'Gold Pakket',
+    mindset: 'Ontzorgd worden',
     subtitle: 'A tot Z · volledige ontzorging',
     price: '€ 1.495 - € 2.495',
     priceNote: 'excl. btw · indicatieve bandbreedte',

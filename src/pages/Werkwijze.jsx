@@ -1,4 +1,4 @@
-import { CurrencyEur, ListNumbers, MagnifyingGlass, Receipt } from '@phosphor-icons/react'
+import { CurrencyEur, ListNumbers, MagnifyingGlass, Prohibit, Receipt } from '@phosphor-icons/react'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
@@ -29,6 +29,12 @@ const WAT_U_KRIJGT = [
     icon: Receipt,
     title: 'Subsidies',
     description: 'Een check op de belangrijkste regelingen, waaronder EIA, ISDE en SDE++.',
+  },
+  {
+    icon: Prohibit,
+    title: 'Wat kan wachten',
+    description:
+      'Ook duidelijkheid over maatregelen die u beter nog niet uitvoert — zodat u niet investeert in de verkeerde volgorde.',
   },
 ]
 

@@ -20,7 +20,10 @@ export function PricingCard({ pkg, delay = 0 }) {
         <div className="mb-4 h-[26px]" aria-hidden="true" />
       )}
 
-      <h3 className="text-xl font-semibold text-primary">{pkg.name}</h3>
+      {pkg.mindset ? (
+        <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">{pkg.mindset}</p>
+      ) : null}
+      <h3 className="mt-1 text-xl font-semibold text-primary">{pkg.name}</h3>
       <p className="mt-1 text-sm text-foreground-muted">{pkg.subtitle}</p>
 
       <p className="mt-5 text-3xl text-primary">{pkg.price}</p>
