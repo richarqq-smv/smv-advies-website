@@ -14,6 +14,20 @@ export const EMAILJS_TEMPLATE_LEAD = 'template_wyw4bfj' // interne leadmail naar
 export const EMAILJS_TEMPLATE_CONFIRM = 'template_v8tzw3c' // automatische bevestiging naar de lead
 export const BUSINESS_EMAIL = 'info@smv-advies.nl'
 
+/**
+ * MJOP-tool (/MJOP-Tool, intern): dezelfde EmailJS-service en hetzelfde
+ * publieke sleutelpaar hieronder, maar een eigen template — de bestaande
+ * energie-indicatietemplates zijn niet geschikt voor een volledig
+ * MJOP-overzicht (pand, bouwdelen, onderhoud, koppelingen, planning,
+ * adviesoverzicht). Dit ID is nog een placeholder ("ONTBREKEND_") totdat er
+ * in het EmailJS-dashboard een echte "MJOP-analyse"-template is aangemaakt
+ * met de merge-velden uit src/lib/mjop/emailParams.js en Richard@smv-advies.nl
+ * als ontvanger. sendEmail() herkent deze prefix al en geeft dan een
+ * nette Nederlandse foutmelding in plaats van een kapotte aanroep.
+ */
+export const EMAILJS_TEMPLATE_MJOP = 'ONTBREKEND_mjop_analyse'
+export const MJOP_RECIPIENT_EMAIL = 'Richard@smv-advies.nl'
+
 let initialized = false
 function ensureInit() {
   if (!initialized) {

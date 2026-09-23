@@ -7,13 +7,14 @@ export function StepKoppeling({ insights, onNext, onBack }) {
       <p className="mb-2 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Stap 5 van 7</p>
       <h2 className="text-2xl text-primary sm:text-3xl">Verduurzamingskoppeling</h2>
       <p className="mt-2 mb-8 text-sm text-foreground-muted">
-        Per onderdeel ziet u hier welke verduurzamingsmogelijkheden aansluiten bij een verwacht onderhouds- of
-        vervangingsmoment. Dit zijn signaleringen op basis van de ingevoerde gegevens, geen automatisch advies.
+        Hier ziet u welke verduurzamingsmaatregelen op basis van de ingevoerde gegevens relevant kunnen zijn, per
+        onderdeel. Dit zijn signaleringen, geen automatisch advies, en dus ook geen probleem als er voor een
+        onderdeel op dit moment niets aan de orde is.
       </p>
 
       {insights.length === 0 ? (
         <p className="rounded-lg border border-dashed border-border px-5 py-8 text-center text-sm text-foreground-muted">
-          Voeg eerst bouwdelen of installaties toe bij stap 3.
+          Geen aanwezige bouwdelen of installaties om te beoordelen. Ga naar stap 3 om aan te geven wat aanwezig is.
         </p>
       ) : (
         <div className="flex flex-col gap-4">

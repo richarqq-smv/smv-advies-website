@@ -26,10 +26,31 @@ export const COMPONENT_TYPES = [
   { id: 'anders', category: 'installatie', label: 'Anders, namelijk...' },
 ]
 
+/** Zoekt de weergavetekst op voor een select-waarde; 'Niet bekend' als er niets is gekozen. */
+export function optionLabel(options, value) {
+  if (!value) return 'Niet bekend'
+  return options.find((o) => o.value === value)?.label ?? value
+}
+
 export function getComponentTypeLabel(typeId, customLabel) {
   if (typeId === 'anders') return customLabel?.trim() || 'Anders'
   return COMPONENT_TYPES.find((t) => t.id === typeId)?.label ?? 'Onbekend onderdeel'
 }
+
+/**
+ * De 12 standaardonderdelen (dus zonder "Anders, namelijk...") staan altijd
+ * al klaar in stap 3/4, zodat een pand direct van boven naar beneden kan
+ * worden langsgelopen in plaats van eerst onderdelen te moeten toevoegen.
+ * "Anders" blijft een losse, door de gebruiker toegevoegde uitzondering.
+ */
+export const STANDARD_COMPONENT_TYPES = COMPONENT_TYPES.filter((t) => t.id !== 'anders')
+
+/** Aanwezigheid van een bouwdeel/installatie in het pand. */
+export const PRESENCE_OPTIONS = [
+  { value: 'ja', label: 'Ja' },
+  { value: 'nee', label: 'Nee' },
+  { value: 'onbekend', label: 'Onbekend' },
+]
 
 /**
  * Mogelijke verduurzamingsmaatregelen. `linkedComponentTypes` bepaalt welke

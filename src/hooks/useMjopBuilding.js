@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
 import { createEmptyBuilding, createEmptyComponent, loadBuilding, saveBuilding, clearBuilding } from '../lib/mjop/storage'
 import { triggerJsonDownload, parseImportedJson } from '../lib/mjop/importExport'
 import { buildInsights } from '../lib/mjop/linking'
+import { buildMjopEmailParams } from '../lib/mjop/emailParams'
+import { sendEmail, EMAILJS_TEMPLATE_MJOP } from '../lib/emailjs'
 
 export const STEPS = [
   { n: 1, id: 'pand', label: 'Pandgegevens' },
@@ -19,6 +21,9 @@ function initState() {
     building: loaded ?? createEmptyBuilding(),
     step: 1,
     toast: null,
+    // 'idle' | 'sending' | 'sent' | 'error' — status van het versturen van
+    // de analyse naar SMV Advies (stap 7), los van het lokaal opslaan.
+    sendStatus: 'idle',
   }
 }
 
@@ -28,6 +33,8 @@ function reducer(state, action) {
       return { ...state, building: { ...state.building, [action.field]: action.value } }
     case 'SET_ENERGY_FIELD':
       return { ...state, building: { ...state.building, energy: { ...state.building.energy, [action.field]: action.value } } }
+    case 'SET_CONTACT_FIELD':
+      return { ...state, building: { ...state.building, contact: { ...state.building.contact, [action.field]: action.value } } }
     case 'ADD_COMPONENT':
       return { ...state, building: { ...state.building, components: [...state.building.components, action.component] } }
     case 'UPDATE_COMPONENT':
@@ -50,7 +57,13 @@ function reducer(state, action) {
     case 'REPLACE_BUILDING':
       return { ...state, building: action.building, step: 1, toast: action.toast ?? null }
     case 'RESET':
-      return { ...state, building: createEmptyBuilding(), step: 1, toast: 'Nieuw pand aangemaakt.' }
+      return { ...state, building: createEmptyBuilding(), step: 1, toast: 'Nieuw pand aangemaakt.', sendStatus: 'idle' }
+    case 'SEND_START':
+      return { ...state, sendStatus: 'sending' }
+    case 'SEND_SUCCESS':
+      return { ...state, sendStatus: 'sent' }
+    case 'SEND_ERROR':
+      return { ...state, sendStatus: 'error' }
     default:
       return state
   }
@@ -80,6 +93,7 @@ export function useMjopBuilding() {
 
   const setBuildingField = useCallback((field, value) => dispatch({ type: 'SET_BUILDING_FIELD', field, value }), [])
   const setEnergyField = useCallback((field, value) => dispatch({ type: 'SET_ENERGY_FIELD', field, value }), [])
+  const setContactField = useCallback((field, value) => dispatch({ type: 'SET_CONTACT_FIELD', field, value }), [])
 
   const addComponent = useCallback((typeId) => {
     dispatch({ type: 'ADD_COMPONENT', component: createEmptyComponent(typeId) })
@@ -118,13 +132,33 @@ export function useMjopBuilding() {
 
   const insights = useMemo(() => buildInsights(state.building), [state.building])
 
+  const isSendingRef = useRef(false)
+  const sendAnalysis = useCallback(async () => {
+    // Ref-guard i.p.v. alleen state, om dubbel verzenden door een snelle
+    // dubbele klik te voorkomen (zelfde patroon als useEnergieScan.submit).
+    if (isSendingRef.current) return
+    isSendingRef.current = true
+    dispatch({ type: 'SEND_START' })
+    try {
+      const params = buildMjopEmailParams(state.building, insights)
+      await sendEmail(EMAILJS_TEMPLATE_MJOP, params)
+      dispatch({ type: 'SEND_SUCCESS' })
+    } catch {
+      dispatch({ type: 'SEND_ERROR' })
+    } finally {
+      isSendingRef.current = false
+    }
+  }, [state.building, insights])
+
   return {
     building: state.building,
     step: state.step,
     toast: state.toast,
     insights,
+    sendStatus: state.sendStatus,
     setBuildingField,
     setEnergyField,
+    setContactField,
     addComponent,
     updateComponent,
     removeComponent,
@@ -133,5 +167,6 @@ export function useMjopBuilding() {
     importJson,
     loadTestBuilding,
     resetAll,
+    sendAnalysis,
   }
 }

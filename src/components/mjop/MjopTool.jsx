@@ -63,7 +63,15 @@ export function MjopTool() {
         {mjop.step === 5 ? <StepKoppeling insights={mjop.insights} onNext={goNext} onBack={goBack} /> : null}
         {mjop.step === 6 ? <StepPlanning insights={mjop.insights} onNext={goNext} onBack={goBack} /> : null}
         {mjop.step === 7 ? (
-          <StepAdvies building={mjop.building} insights={mjop.insights} onExport={mjop.exportJson} onBack={goBack} />
+          <StepAdvies
+            building={mjop.building}
+            insights={mjop.insights}
+            onExport={mjop.exportJson}
+            onSend={mjop.sendAnalysis}
+            sendStatus={mjop.sendStatus}
+            setContactField={mjop.setContactField}
+            onBack={goBack}
+          />
         ) : null}
       </div>
 

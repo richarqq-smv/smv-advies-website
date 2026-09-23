@@ -1,4 +1,7 @@
-import { SCHEMA_VERSION, createEmptyBuilding, createEmptyComponent } from './storage'
+import { SCHEMA_VERSION, createEmptyBuilding, createEmptyComponent, ensureStandardComponents } from './storage'
+import { PRESENCE_OPTIONS } from './constants'
+
+const VALID_PRESENCE = new Set(PRESENCE_OPTIONS.map((o) => o.value))
 
 /** Bouwt de downloadbare JSON-tekst voor het huidige pandprofiel. */
 export function buildExportJson(building) {
@@ -34,10 +37,17 @@ const NUMBER_OR_NULL = (v) => (typeof v === 'number' && Number.isFinite(v) ? v :
  */
 function sanitizeComponent(raw) {
   if (!raw || typeof raw !== 'object') return null
-  const empty = createEmptyComponent()
+  const typeId = STRING_FIELD(raw.typeId) || null
+  // createEmptyComponent(typeId) geeft standaardonderdelen hun voorspelbare
+  // id (gelijk aan typeId) — zo blijft een geïmporteerd standaardonderdeel
+  // herkenbaar voor ensureStandardComponents() en ontstaat er geen dubbele
+  // kaart naast de geïmporteerde data.
+  const empty = createEmptyComponent(typeId)
+  const present = STRING_FIELD(raw.present)
   return {
     id: STRING_FIELD(raw.id) || empty.id,
-    typeId: STRING_FIELD(raw.typeId) || null,
+    typeId,
+    present: VALID_PRESENCE.has(present) ? present : 'onbekend',
     customLabel: STRING_FIELD(raw.customLabel),
     currentSituation: STRING_FIELD(raw.currentSituation),
     installationYear: NUMBER_OR_NULL(raw.installationYear),
@@ -58,9 +68,10 @@ function sanitizeBuilding(raw) {
   if (!BUILDING_LIKE_KEYS.some((key) => key in raw)) return null
   const empty = createEmptyBuilding()
   const energy = raw.energy && typeof raw.energy === 'object' ? raw.energy : {}
+  const contact = raw.contact && typeof raw.contact === 'object' ? raw.contact : {}
   const components = Array.isArray(raw.components) ? raw.components.map(sanitizeComponent).filter(Boolean) : []
 
-  return {
+  const sanitized = {
     ...empty,
     id: STRING_FIELD(raw.id) || empty.id,
     name: STRING_FIELD(raw.name),
@@ -78,10 +89,17 @@ function sanitizeBuilding(raw) {
       heatingSystem: STRING_FIELD(energy.heatingSystem) || null,
       energyLabel: STRING_FIELD(energy.energyLabel) || null,
     },
+    contact: {
+      naam: STRING_FIELD(contact.naam),
+      email: STRING_FIELD(contact.email),
+      telefoon: STRING_FIELD(contact.telefoon),
+    },
     components,
     createdAt: STRING_FIELD(raw.createdAt) || empty.createdAt,
     updatedAt: new Date().toISOString(),
   }
+
+  return ensureStandardComponents(sanitized)
 }
 
 /**

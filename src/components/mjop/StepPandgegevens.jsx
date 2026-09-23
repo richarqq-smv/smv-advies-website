@@ -41,6 +41,7 @@ export function StepPandgegevens({ building, setBuildingField, onNext }) {
           <NumberField
             id="mjop-constructionYear"
             label="Bouwjaar"
+            placeholder="Bijv. 1987"
             value={building.constructionYear ?? ''}
             onChange={(v) => setBuildingField('constructionYear', v === '' ? null : Number(v))}
             error={errors.constructionYear}

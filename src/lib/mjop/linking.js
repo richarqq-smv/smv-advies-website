@@ -139,9 +139,18 @@ export function deriveComponentInsight(component, year = currentYear()) {
   }
 }
 
-/** Bouwt de volledige lijst afgeleide inzichten voor alle bouwdelen van een pand. */
+/**
+ * Bouwt de volledige lijst afgeleide inzichten voor alle bouwdelen van een
+ * pand. Onderdelen die expliciet als "niet aanwezig" zijn aangemerkt
+ * (`present: 'nee'`) worden overgeslagen: er valt niets te onderhouden,
+ * vervangen of verduurzamen aan iets dat er niet is. Ze blijven wel gewoon
+ * onderdeel van `building.components` zelf, voor het volledige overzicht in
+ * stap 7 ("huidige situatie").
+ */
 export function buildInsights(building, year = currentYear()) {
-  return (building.components ?? []).map((c) => deriveComponentInsight(c, year))
+  return (building.components ?? [])
+    .filter((c) => c.present !== 'nee')
+    .map((c) => deriveComponentInsight(c, year))
 }
 
 /**
@@ -179,4 +188,74 @@ export function buildTimeline(insights) {
     years: years.map((year) => ({ year, items: byYear.get(year) })),
     unknown,
   }
+}
+
+/** Groepeert insights per status (sectie 13/18) — vaste volgorde uit STATUSES. */
+export function groupByStatus(insights) {
+  const groups = {
+    nu_onderzoeken: [],
+    meenemen_bij_vervanging: [],
+    later_beoordelen: [],
+    geen_actie_nodig: [],
+    onvoldoende_informatie: [],
+  }
+  insights.forEach((insight) => {
+    groups[insight.status]?.push(insight)
+  })
+  return groups
+}
+
+/**
+ * Vereenvoudigde 4-bucket planningsweergave voor stap 6 (NU / BINNENKORT /
+ * LATER / NOG ONBEKEND) — leunt volledig op de bestaande tijdsbuckets uit
+ * deriveTimeframe(), alleen "kort" en "vervanging" worden hier samengevoegd
+ * tot één leesbare "binnenkort"-groep. Geen nieuwe rekenlogica.
+ */
+export function groupByPlanningBucket(insights) {
+  const buckets = { nu: [], binnenkort: [], later: [], onbekend: [] }
+  insights.forEach((insight) => {
+    if (insight.timeframe === 'nu') buckets.nu.push(insight)
+    else if (insight.timeframe === 'kort' || insight.timeframe === 'vervanging') buckets.binnenkort.push(insight)
+    else if (insight.timeframe === 'later') buckets.later.push(insight)
+    else buckets.onbekend.push(insight)
+  })
+  return buckets
+}
+
+/**
+ * Genereert de korte, automatische samenvatting voor stap 7. Voorzichtige
+ * formulering ("kan zinvol zijn om te onderzoeken"), nooit een instructie
+ * ("u moet"). Ondersteunt de beoordeling van de adviseur, vervangt die niet.
+ */
+export function buildAdviesSummary(insights) {
+  const groups = groupByStatus(insights)
+  const paragraphs = []
+  const labelsFor = (list) => list.map((i) => i.componentLabel.toLowerCase()).join(', ')
+
+  if (groups.nu_onderzoeken.length > 0) {
+    paragraphs.push(
+      `Op basis van de ingevoerde gegevens is het op dit moment vooral zinvol om ${labelsFor(groups.nu_onderzoeken)} nader te onderzoeken.`,
+    )
+  }
+  if (groups.meenemen_bij_vervanging.length > 0) {
+    paragraphs.push(
+      `Voor ${labelsFor(groups.meenemen_bij_vervanging)} is een onderhouds- of vervangingsmoment bekend. Dat kan een geschikt moment zijn om bijpassende verduurzamingsmogelijkheden in het onderzoek mee te nemen.`,
+    )
+  }
+  if (groups.later_beoordelen.length > 0) {
+    paragraphs.push(
+      `Voor ${labelsFor(groups.later_beoordelen)} ligt een mogelijk moment verder in de toekomst. Nog geen directe actie, wel de moeite waard om dit later opnieuw te bekijken.`,
+    )
+  }
+  if (groups.onvoldoende_informatie.length > 0) {
+    paragraphs.push(
+      `Voor ${labelsFor(groups.onvoldoende_informatie)} ontbreekt nog voldoende informatie om een moment te bepalen. Dit kan tijdens een adviesgesprek verder in kaart worden gebracht.`,
+    )
+  }
+  if (paragraphs.length === 0) {
+    paragraphs.push('Op basis van de ingevoerde gegevens is er op dit moment geen duidelijke aanleiding voor actie.')
+  }
+
+  paragraphs.push('Dit overzicht ondersteunt de beoordeling van de adviseur en vervangt geen technische inspectie.')
+  return paragraphs
 }
