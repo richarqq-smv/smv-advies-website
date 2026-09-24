@@ -1,6 +1,5 @@
 import { Container } from '../ui/Container'
 import { Button } from '../ui/Button'
-import { ImagePlaceholder } from '../ui/ImagePlaceholder'
 import { Reveal } from '../ui/Reveal'
 import { ROUTES } from '../../lib/routes'
 
@@ -32,10 +31,12 @@ export function Hero() {
         </Reveal>
 
         <Reveal as="div" delay={120} className="lg:col-span-5">
-          {/* Real photography still needed here — see docs/COMMERCIAL-REVIEW.md for the shot list. */}
-          <ImagePlaceholder
-            label="Bedrijfspand in de Hoeksche Waard"
-            aspect="aspect-[4/3] lg:aspect-[3/4]"
+          <img
+            src="/hero-bedrijfspand.jpg"
+            alt="Luchtfoto van een bedrijfspand in een bedrijventerrein in de Hoeksche Waard"
+            width="912"
+            height="1136"
+            className="aspect-[4/3] w-full rounded-xl border border-border object-cover object-center lg:aspect-[3/4]"
           />
         </Reveal>
       </Container>
