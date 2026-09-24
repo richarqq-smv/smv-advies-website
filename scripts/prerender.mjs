@@ -42,6 +42,12 @@ const ROUTES = [
   // maar bewust niet in NAV_ITEMS of sitemap.xml, en geserveerd met
   // noindex via Seo (zie src/pages/MjopTool.jsx).
   ROUTE_PATHS.mjopTool,
+  // Accountroutes: zelfde reden als mjopTool hierboven — een directe
+  // load/refresh op GitHub Pages heeft een echt bestand nodig, en de
+  // formulieren bevatten geen klantdata om te lekken. Ook noindex.
+  ROUTE_PATHS.inloggen,
+  ROUTE_PATHS.registreren,
+  ROUTE_PATHS.wachtwoordVergeten,
 ]
 
 function escapeHtml(str) {

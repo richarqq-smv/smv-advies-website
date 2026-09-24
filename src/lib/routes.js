@@ -20,4 +20,10 @@ export const ROUTES = {
   // Intern adviesinstrument, bewust niet in NAV_ITEMS/sitemap opgenomen en
   // geserveerd met noindex — zie src/pages/MjopTool.jsx.
   mjopTool: '/MJOP-Tool',
+  // Accountroutes — zelfde behandeling als mjopTool: geen link in
+  // NAV_ITEMS/sitemap, wel noindex, wel prerendered (lege formulieren
+  // bevatten geen klantdata, dus geen bezwaar om ze statisch te serveren).
+  inloggen: '/inloggen',
+  registreren: '/registreren',
+  wachtwoordVergeten: '/wachtwoord-vergeten',
 }

@@ -20,6 +20,9 @@ const Contact = lazy(() => import('./pages/Contact'))
 const Privacy = lazy(() => import('./pages/Privacy'))
 const Voorwaarden = lazy(() => import('./pages/Voorwaarden'))
 const MjopTool = lazy(() => import('./pages/MjopTool'))
+const Inloggen = lazy(() => import('./pages/Inloggen'))
+const Registreren = lazy(() => import('./pages/Registreren'))
+const WachtwoordVergeten = lazy(() => import('./pages/WachtwoordVergeten'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 function LazyBoundary() {
@@ -50,6 +53,9 @@ export default function App() {
           <Route path={ROUTES.privacy} element={<Privacy />} />
           <Route path={ROUTES.voorwaarden} element={<Voorwaarden />} />
           <Route path={ROUTES.mjopTool} element={<MjopTool />} />
+          <Route path={ROUTES.inloggen} element={<Inloggen />} />
+          <Route path={ROUTES.registreren} element={<Registreren />} />
+          <Route path={ROUTES.wachtwoordVergeten} element={<WachtwoordVergeten />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Route>
