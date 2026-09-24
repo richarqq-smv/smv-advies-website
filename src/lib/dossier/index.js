@@ -23,3 +23,9 @@ export {
   loadAllDossiers,
   deleteDossier,
 } from './storage.js'
+export {
+  buildingToPandInput,
+  createMjopSnapshotFromBuilding,
+  buildingToContactInfo,
+  mjopBuildingToDossierInput,
+} from './mjopAdapter.js'
