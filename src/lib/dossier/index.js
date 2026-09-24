@@ -1,8 +1,10 @@
 /**
  * Publieke API van de geïsoleerde Klant/Pand/Dossier-domeinmodule.
- * Bewust nog nergens geïmporteerd door Energie-indicatie, MJOP of enige
- * UI — dit is uitsluitend het fundament uit het Pand-basismodel
- * (ontwerpdocument), niet gekoppeld aan bestaande functionaliteit.
+ * `saveMjopSnapshotToPand` (via mjopKoppeling.js) is de enige functie die
+ * vanuit MJOP wordt aangeroepen (useMjopBuilding.js) — de rest van deze
+ * module blijft ongebruikt door Energie-indicatie of enige UI. Dit is nog
+ * altijd het fundament uit het Pand-basismodel (ontwerpdocument), bewust
+ * nog niet gekoppeld aan Klant of Dossier vanuit MJOP (zie mjopKoppeling.js).
  */
 export { generateId } from './id.js'
 export { createKlant, createContactpersoon, addContactpersoon } from './klant.js'
@@ -29,3 +31,4 @@ export {
   buildingToContactInfo,
   mjopBuildingToDossierInput,
 } from './mjopAdapter.js'
+export { saveMjopSnapshotToPand } from './mjopKoppeling.js'

@@ -69,6 +69,8 @@ export function MjopTool() {
             onExport={mjop.exportJson}
             onSend={mjop.sendAnalysis}
             sendStatus={mjop.sendStatus}
+            onSaveMjop={mjop.saveMjopSnapshot}
+            saveMjopStatus={mjop.saveMjopStatus}
             setContactField={mjop.setContactField}
             onBack={goBack}
           />

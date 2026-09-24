@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Printer, Download, PaperPlaneTilt, SpinnerGap, CheckCircle, WarningCircle } from '@phosphor-icons/react'
+import { Printer, Download, PaperPlaneTilt, FloppyDisk, SpinnerGap, CheckCircle, WarningCircle } from '@phosphor-icons/react'
 import { Button } from '../ui/Button'
 import { TextField } from '../ui/TextField'
 import { StatusBadge } from './StatusBadge'
@@ -57,11 +57,40 @@ function SendStatusNote({ status }) {
   return null
 }
 
-export function StepAdvies({ building, insights, onExport, onSend, sendStatus, setContactField, onBack }) {
+function SaveMjopStatusNote({ status }) {
+  if (status === 'saving') {
+    return (
+      <p role="status" className="flex items-center gap-1.5 text-sm font-medium text-foreground-muted">
+        <SpinnerGap size={15} weight="bold" className="animate-spin motion-reduce:animate-none" />
+        Bezig met opslaan...
+      </p>
+    )
+  }
+  if (status === 'saved') {
+    return (
+      <p role="status" className="flex items-center gap-1.5 text-sm font-medium text-primary">
+        <CheckCircle size={15} weight="fill" className="text-accent" />
+        MJOP opgeslagen bij dit pand.
+      </p>
+    )
+  }
+  if (status === 'error') {
+    return (
+      <p role="alert" className="flex items-center gap-1.5 text-sm font-medium text-error">
+        <WarningCircle size={15} weight="fill" />
+        Opslaan is niet gelukt. Uw huidige MJOP-invoer is behouden. Probeer het opnieuw.
+      </p>
+    )
+  }
+  return null
+}
+
+export function StepAdvies({ building, insights, onExport, onSend, sendStatus, onSaveMjop, saveMjopStatus, setContactField, onBack }) {
   const groups = useMemo(() => groupByStatus(insights), [insights])
   const timeline = useMemo(() => buildTimeline(insights), [insights])
   const summary = useMemo(() => buildAdviesSummary(insights), [insights])
   const isSending = sendStatus === 'sending'
+  const isSavingMjop = saveMjopStatus === 'saving'
 
   return (
     <div>
@@ -186,7 +215,19 @@ export function StepAdvies({ building, insights, onExport, onSend, sendStatus, s
         </OverviewSection>
       </div>
 
-      <div className="mt-10 flex flex-col gap-4 print:hidden">
+      <div className="mt-10 flex flex-col gap-3 rounded-lg border border-border bg-muted/50 px-4 py-3 print:hidden">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-foreground-muted">
+            Bewaar de huidige MJOP-gegevens bij het pandprofiel, los van het versturen van deze analyse.
+          </p>
+          <Button type="button" variant="outline" onClick={onSaveMjop} disabled={isSavingMjop}>
+            <FloppyDisk size={17} /> MJOP opslaan bij dit pand
+          </Button>
+        </div>
+        <SaveMjopStatusNote status={saveMjopStatus} />
+      </div>
+
+      <div className="mt-4 flex flex-col gap-4 print:hidden">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Button type="button" variant="outline" onClick={onBack} disabled={isSending}>
             Terug

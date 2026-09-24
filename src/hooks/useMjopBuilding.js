@@ -4,6 +4,7 @@ import { triggerJsonDownload, parseImportedJson } from '../lib/mjop/importExport
 import { buildInsights } from '../lib/mjop/linking'
 import { buildMjopEmailParams } from '../lib/mjop/emailParams'
 import { sendEmail, EMAILJS_TEMPLATE_MJOP, EMAILJS_PUBLIC_KEY_MJOP } from '../lib/emailjs'
+import { saveMjopSnapshotToPand } from '../lib/dossier'
 
 export const STEPS = [
   { n: 1, id: 'pand', label: 'Pandgegevens' },
@@ -24,6 +25,10 @@ function initState() {
     // 'idle' | 'sending' | 'sent' | 'error' — status van het versturen van
     // de analyse naar SMV Advies (stap 7), los van het lokaal opslaan.
     sendStatus: 'idle',
+    // 'idle' | 'saving' | 'saved' | 'error' — status van het opslaan van de
+    // MJOP-situatie bij het Pand (dossierlaag). Losstaand van sendStatus:
+    // dit is geen verzending, alleen lokale structurele opslag.
+    saveMjopStatus: 'idle',
   }
 }
 
@@ -57,13 +62,19 @@ function reducer(state, action) {
     case 'REPLACE_BUILDING':
       return { ...state, building: action.building, step: 1, toast: action.toast ?? null }
     case 'RESET':
-      return { ...state, building: createEmptyBuilding(), step: 1, toast: 'Nieuw pand aangemaakt.', sendStatus: 'idle' }
+      return { ...state, building: createEmptyBuilding(), step: 1, toast: 'Nieuw pand aangemaakt.', sendStatus: 'idle', saveMjopStatus: 'idle' }
     case 'SEND_START':
       return { ...state, sendStatus: 'sending' }
     case 'SEND_SUCCESS':
       return { ...state, sendStatus: 'sent' }
     case 'SEND_ERROR':
       return { ...state, sendStatus: 'error' }
+    case 'SAVE_MJOP_START':
+      return { ...state, saveMjopStatus: 'saving' }
+    case 'SAVE_MJOP_SUCCESS':
+      return { ...state, saveMjopStatus: 'saved' }
+    case 'SAVE_MJOP_ERROR':
+      return { ...state, saveMjopStatus: 'error' }
     default:
       return state
   }
@@ -132,6 +143,25 @@ export function useMjopBuilding() {
 
   const insights = useMemo(() => buildInsights(state.building), [state.building])
 
+  const isSavingMjopRef = useRef(false)
+  const saveMjopSnapshot = useCallback(() => {
+    // Ref-guard i.p.v. alleen state, zelfde patroon als sendAnalysis
+    // hieronder, om dubbel opslaan door een snelle dubbele klik te
+    // voorkomen. Synchroon (localStorage), maar hetzelfde start/success/
+    // error-patroon houdt de UI-status consistent met sendAnalysis.
+    if (isSavingMjopRef.current) return
+    isSavingMjopRef.current = true
+    dispatch({ type: 'SAVE_MJOP_START' })
+    try {
+      saveMjopSnapshotToPand(state.building)
+      dispatch({ type: 'SAVE_MJOP_SUCCESS' })
+    } catch {
+      dispatch({ type: 'SAVE_MJOP_ERROR' })
+    } finally {
+      isSavingMjopRef.current = false
+    }
+  }, [state.building])
+
   const isSendingRef = useRef(false)
   const sendAnalysis = useCallback(async () => {
     // Ref-guard i.p.v. alleen state, om dubbel verzenden door een snelle
@@ -156,6 +186,8 @@ export function useMjopBuilding() {
     toast: state.toast,
     insights,
     sendStatus: state.sendStatus,
+    saveMjopStatus: state.saveMjopStatus,
+    saveMjopSnapshot,
     setBuildingField,
     setEnergyField,
     setContactField,
