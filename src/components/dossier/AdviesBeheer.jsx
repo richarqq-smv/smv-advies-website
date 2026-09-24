@@ -25,7 +25,13 @@ import {
  * dezelfde inline Tailwind-stijl als KlantDossierFlow.jsx/TextField.jsx.
  */
 
-const LEEG_FORMULIER = { onderwerp: '', adviesStatus: Object.keys(STATUSES)[0], toelichting: '', herbeoordelenBij: '' }
+// adviesStatus start leeg: een handmatig adviespunt is een bewuste
+// inhoudelijke keuze van Richard, dus mag een vergeten dropdown nooit
+// stilzwijgend de meest urgente status ("nu_onderzoeken", de eerste key in
+// STATUSES) opleveren. Bij het overnemen van een MJOP-signaal wordt dit
+// veld altijd expliciet gevuld met de signaalstatus (zie startVanuitSignaal
+// hieronder) — dat pad blijft ongewijzigd.
+const LEEG_FORMULIER = { onderwerp: '', adviesStatus: '', toelichting: '', herbeoordelenBij: '' }
 const STATUS_KEYS = Object.keys(STATUSES)
 
 function AdviesStatusBadge({ status }) {
@@ -45,6 +51,23 @@ function HerkomstBadge({ herkomst }) {
     </span>
   ) : (
     <span className="inline-flex items-center rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">Advies van Richard</span>
+  )
+}
+
+function KandidaatItem({ insight, onKies }) {
+  return (
+    <li className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-dashed border-border px-4 py-3">
+      <div>
+        <p className="text-sm font-medium text-primary">{insight.componentLabel}</p>
+        <p className="text-xs text-foreground-muted">
+          {insight.statusLabel}
+          {insight.relevantYear ? ` — ${insight.relevantYear}` : ''}
+        </p>
+      </div>
+      <Button type="button" variant="outline" size="sm" onClick={() => onKies(insight)}>
+        Als adviespunt toevoegen
+      </Button>
+    </li>
   )
 }
 
@@ -81,13 +104,14 @@ function AdviesFormulier({ idPrefix = 'advies', waarde, onWijzig, onOpslaan, onA
           onChange={(e) => onWijzig({ ...waarde, adviesStatus: e.target.value })}
           className={inputClass}
         >
+          {waarde.adviesStatus === '' ? <option value="">Kies een status</option> : null}
           {STATUS_KEYS.map((key) => (
             <option key={key} value={key}>
               {STATUSES[key].label}
             </option>
           ))}
         </select>
-        <p className="mt-1 text-xs text-foreground-muted">{STATUSES[waarde.adviesStatus]?.description}</p>
+        {waarde.adviesStatus ? <p className="mt-1 text-xs text-foreground-muted">{STATUSES[waarde.adviesStatus].description}</p> : null}
       </div>
       <div>
         <Veld id={`${idPrefix}-toelichting`} label="Toelichting" verplicht />
@@ -166,6 +190,18 @@ export function AdviesBeheer({ dossier: initieelDossier, building }) {
 
   function bevestigNieuw() {
     setFout(null)
+    if (!nieuwWaarde.onderwerp.trim()) {
+      setFout('Vul een onderwerp in.')
+      return
+    }
+    if (!nieuwWaarde.adviesStatus) {
+      setFout('Kies een status.')
+      return
+    }
+    if (!nieuwWaarde.toelichting.trim()) {
+      setFout('Vul een toelichting in.')
+      return
+    }
     setBezig(true)
     try {
       const isSignaal = nieuwBron && nieuwBron !== 'handmatig'
@@ -181,7 +217,7 @@ export function AdviesBeheer({ dossier: initieelDossier, building }) {
       opslaanDossier(addAdviespunt(dossier, adviespunt))
       setNieuwBron(null)
     } catch {
-      setFout('Vul minimaal een onderwerp en een toelichting in.')
+      setFout('Opslaan is niet gelukt. Probeer het opnieuw.')
     } finally {
       setBezig(false)
     }
@@ -252,6 +288,12 @@ export function AdviesBeheer({ dossier: initieelDossier, building }) {
   // als kandidaat getoond.
   const gebruikteComponentIds = new Set(dossier.adviespunten.filter((a) => a.signaalBevroren).map((a) => a.signaalBevroren.componentId))
   const kandidaten = insights.filter((i) => !gebruikteComponentIds.has(i.componentId))
+  // Zuiver visuele groepering (geen nieuwe status, geen nieuwe datalaag):
+  // bij veel bouwdelen met onbekende aanwezigheid/leeftijd komen anders
+  // meerdere losse "Onvoldoende informatie"-regels achter elkaar te staan.
+  // Elk signaal blijft afzonderlijk zichtbaar en te kiezen.
+  const kandidatenMetSignaal = kandidaten.filter((i) => i.status !== 'onvoldoende_informatie')
+  const kandidatenOnbekend = kandidaten.filter((i) => i.status === 'onvoldoende_informatie')
 
   return (
     <div className="flex flex-col gap-6 rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
@@ -326,23 +368,23 @@ export function AdviesBeheer({ dossier: initieelDossier, building }) {
 
       {open ? (
         <div className="flex flex-col gap-4 border-t border-border pt-6">
-          {kandidaten.length > 0 ? (
+          {kandidatenMetSignaal.length > 0 ? (
             <div>
               <p className="mb-2 text-sm font-medium text-primary">Automatisch beschikbare signalen uit MJOP</p>
               <ul className="flex flex-col gap-2">
-                {kandidaten.map((insight) => (
-                  <li key={insight.componentId} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-dashed border-border px-4 py-3">
-                    <div>
-                      <p className="text-sm font-medium text-primary">{insight.componentLabel}</p>
-                      <p className="text-xs text-foreground-muted">
-                        {insight.statusLabel}
-                        {insight.relevantYear ? ` — ${insight.relevantYear}` : ''}
-                      </p>
-                    </div>
-                    <Button type="button" variant="outline" size="sm" onClick={() => startVanuitSignaal(insight)}>
-                      Als adviespunt toevoegen
-                    </Button>
-                  </li>
+                {kandidatenMetSignaal.map((insight) => (
+                  <KandidaatItem key={insight.componentId} insight={insight} onKies={startVanuitSignaal} />
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {kandidatenOnbekend.length > 0 ? (
+            <div>
+              <p className="mb-2 text-sm font-medium text-primary">Aanvullende informatie nodig</p>
+              <ul className="flex flex-col gap-2">
+                {kandidatenOnbekend.map((insight) => (
+                  <KandidaatItem key={insight.componentId} insight={insight} onKies={startVanuitSignaal} />
                 ))}
               </ul>
             </div>
