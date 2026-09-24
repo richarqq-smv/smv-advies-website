@@ -5,12 +5,27 @@
  * openAdviesdossier) wordt aangeroepen vanuit de aparte, interne
  * dossier-UI (components/dossier/) — nooit automatisch vanuit MJOP. Nog
  * altijd niet gekoppeld aan Energie-indicatie.
+ *
+ * Advieslaag: `createAdviespunt`/`createSignaalBevroren` (adviespunt.js) en
+ * `addAdviespunt`/`updateAdviespunt`/`removeAdviespunt` (dossier.js) vormen
+ * samen de enige API om `dossier.adviespunten` te vullen — altijd via een
+ * bewuste actie van Richard, nooit automatisch vanuit een MJOP-signaal.
  */
 export { generateId } from './id.js'
 export { createKlant, createContactpersoon, addContactpersoon } from './klant.js'
 export { createPand, updatePand } from './pand.js'
 export { PAND_SNAPSHOT_FIELDS, createPandSnapshot } from './snapshot.js'
-export { DOSSIER_STATUS, createDossier, isDossierOpen, refreshDossierSnapshot, completeDossier } from './dossier.js'
+export {
+  DOSSIER_STATUS,
+  createDossier,
+  isDossierOpen,
+  refreshDossierSnapshot,
+  completeDossier,
+  addAdviespunt,
+  updateAdviespunt,
+  removeAdviespunt,
+} from './dossier.js'
+export { createAdviespunt, createSignaalBevroren } from './adviespunt.js'
 export {
   saveKlant,
   loadKlant,

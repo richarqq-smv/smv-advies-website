@@ -2,7 +2,8 @@ import { test, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 import { createKlant, createContactpersoon, addContactpersoon } from './klant.js'
 import { createPand, updatePand } from './pand.js'
-import { createDossier, completeDossier, DOSSIER_STATUS } from './dossier.js'
+import { createDossier, completeDossier, addAdviespunt, DOSSIER_STATUS } from './dossier.js'
+import { createAdviespunt } from './adviespunt.js'
 import {
   saveKlant,
   loadKlant,
@@ -387,4 +388,93 @@ test('rehydratie leidt de contactpersoonSnapshot nooit af van de actuele Contact
 
   const geladenDossier = loadDossier(dossier.dossierId)
   assert.equal(geladenDossier.contactpersoonSnapshot.email, 'oud@smvadvies-test.nl')
+})
+
+// --- Advieslaag: adviespunten[] ---------------------------------------------
+
+function handmatigAdviespunt(overrides = {}) {
+  return createAdviespunt({
+    onderwerp: 'Losse notitie',
+    herkomst: 'handmatig',
+    adviesStatus: 'later_beoordelen',
+    toelichting: 'Kort overleg gehad met de klant.',
+    ...overrides,
+  })
+}
+
+test('een ouder opgeslagen Dossier zonder adviespunten-veld laadt als een lege lijst — B', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand })
+
+  // Simuleert een Dossier zoals opgeslagen vóór de advieslaag: geen
+  // adviespunten-property aanwezig, niet eens als lege array.
+  const { adviespunten: _adviespunten, ...ouderDossier } = dossier
+  globalThis.localStorage.setItem('smv_dossier_dossiers_v1', JSON.stringify({ [dossier.dossierId]: ouderDossier }))
+
+  const geladen = loadDossier(dossier.dossierId)
+  assert.ok(geladen)
+  assert.deepEqual(geladen.adviespunten, [])
+})
+
+test('adviespunten blijven na save/load behouden — S', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  let dossier = createDossier({ klant, pand })
+  dossier = addAdviespunt(dossier, handmatigAdviespunt())
+
+  saveDossier(dossier)
+  const geladen = loadDossier(dossier.dossierId)
+
+  assert.equal(geladen.adviespunten.length, 1)
+  assert.deepEqual(geladen.adviespunten[0], dossier.adviespunten[0])
+})
+
+test('adviespunten en hun signaalBevroren worden bij rehydratie opnieuw bevroren — I', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  const signaalBevroren = { componentId: 'component-1', componentLabel: 'Cv / verwarming', status: 'meenemen_bij_vervanging', statusLabel: 'Meenemen bij vervanging', relevantYear: 2027 }
+  let dossier = createDossier({ klant, pand })
+  dossier = addAdviespunt(
+    dossier,
+    createAdviespunt({ onderwerp: 'Cv / verwarming', herkomst: 'automatisch', adviesStatus: 'meenemen_bij_vervanging', toelichting: 'Bevestigd.', signaalBevroren }),
+  )
+
+  saveDossier(dossier)
+  const geladen = loadDossier(dossier.dossierId)
+
+  assert.equal(Object.isFrozen(geladen.adviespunten), true)
+  assert.equal(Object.isFrozen(geladen.adviespunten[0]), true)
+  assert.equal(Object.isFrozen(geladen.adviespunten[0].signaalBevroren), true)
+  assert.throws(() => {
+    geladen.adviespunten[0].toelichting = 'geforceerd'
+  })
+  assert.throws(() => {
+    geladen.adviespunten[0].signaalBevroren.status = 'geen_actie_nodig'
+  })
+})
+
+test('een afgerond Dossier blijft na save/load historisch identiek, inclusief adviespunten', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  let dossier = createDossier({ klant, pand })
+  dossier = addAdviespunt(dossier, handmatigAdviespunt())
+  const afgerond = completeDossier(dossier)
+
+  saveDossier(afgerond)
+  const geladen = loadDossier(afgerond.dossierId)
+
+  assert.equal(geladen.status, DOSSIER_STATUS.AFGEROND)
+  assert.equal(Object.isFrozen(geladen), true)
+  assert.deepEqual(geladen.adviespunten, afgerond.adviespunten)
+  assert.throws(() => {
+    geladen.adviespunten.push(handmatigAdviespunt())
+  })
+})
+
+test('saveDossier wijst een adviespunten-veld af dat geen array is', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand })
+  assert.throws(() => saveDossier({ ...dossier, adviespunten: 'niet-een-array' }))
 })

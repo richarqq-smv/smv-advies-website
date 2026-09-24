@@ -8,7 +8,11 @@ import {
   isDossierOpen,
   refreshDossierSnapshot,
   completeDossier,
+  addAdviespunt,
+  updateAdviespunt,
+  removeAdviespunt,
 } from './dossier.js'
+import { createAdviespunt, createSignaalBevroren } from './adviespunt.js'
 
 function fictiefPand() {
   return createPand({
@@ -293,4 +297,166 @@ test('een afgerond Dossier blijft historisch stabiel: contactpersoonSnapshot kan
   assert.throws(() => {
     afgerond.contactpersoonSnapshot.email = 'geforceerd@smvadvies-test.nl'
   })
+})
+
+// --- Advieslaag: adviespunten[] --------------------------------------------
+
+function fictieveInsight(overrides = {}) {
+  return {
+    componentId: 'component-1',
+    componentLabel: 'Cv / verwarming',
+    status: 'meenemen_bij_vervanging',
+    statusLabel: 'Meenemen bij vervanging',
+    relevantYear: 2027,
+    ...overrides,
+  }
+}
+
+function handmatigAdviespunt(overrides = {}) {
+  return createAdviespunt({
+    onderwerp: 'Losse notitie',
+    herkomst: 'handmatig',
+    adviesStatus: 'later_beoordelen',
+    toelichting: 'Kort overleg gehad met de klant.',
+    ...overrides,
+  })
+}
+
+test('een nieuw Dossier heeft een lege adviespunten-lijst — A', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand })
+  assert.deepEqual(dossier.adviespunten, [])
+})
+
+test('een handmatig adviespunt kan worden toegevoegd aan een open Dossier — C', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand })
+
+  const advies = handmatigAdviespunt()
+  const bijgewerkt = addAdviespunt(dossier, advies)
+
+  assert.equal(bijgewerkt.adviespunten.length, 1)
+  assert.equal(bijgewerkt.adviespunten[0].adviespuntId, advies.adviespuntId)
+  // immutable update: het origineel blijft ongewijzigd
+  assert.deepEqual(dossier.adviespunten, [])
+})
+
+test('een automatisch MJOP-signaal kan bewust worden omgezet naar een adviespunt — D', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand })
+
+  const signaalBevroren = createSignaalBevroren(fictieveInsight())
+  const advies = createAdviespunt({
+    onderwerp: 'Cv / verwarming',
+    herkomst: 'automatisch',
+    adviesStatus: 'meenemen_bij_vervanging',
+    toelichting: 'Bevestigd: meenemen bij de eerstvolgende vervanging.',
+    signaalBevroren,
+  })
+  const bijgewerkt = addAdviespunt(dossier, advies)
+
+  assert.equal(bijgewerkt.adviespunten[0].herkomst, 'automatisch')
+  assert.deepEqual(bijgewerkt.adviespunten[0].signaalBevroren, signaalBevroren)
+})
+
+test('Richard kan status en toelichting van een bestaand adviespunt wijzigen — F', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  let dossier = createDossier({ klant, pand })
+  dossier = addAdviespunt(dossier, handmatigAdviespunt())
+  const id = dossier.adviespunten[0].adviespuntId
+
+  const bijgewerkt = updateAdviespunt(dossier, id, { adviesStatus: 'nu_onderzoeken', toelichting: 'Toch met voorrang oppakken.' })
+
+  assert.equal(bijgewerkt.adviespunten[0].adviesStatus, 'nu_onderzoeken')
+  assert.equal(bijgewerkt.adviespunten[0].toelichting, 'Toch met voorrang oppakken.')
+  // herkomst/signaalBevroren/adviespuntId blijven onaangeraakt
+  assert.equal(bijgewerkt.adviespunten[0].adviespuntId, id)
+  assert.equal(bijgewerkt.adviespunten[0].herkomst, 'handmatig')
+  // het origineel blijft ongewijzigd
+  assert.equal(dossier.adviespunten[0].adviesStatus, 'later_beoordelen')
+})
+
+test('updateAdviespunt weigert een lege toelichting of onderwerp', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  let dossier = createDossier({ klant, pand })
+  dossier = addAdviespunt(dossier, handmatigAdviespunt())
+  const id = dossier.adviespunten[0].adviespuntId
+
+  assert.throws(() => updateAdviespunt(dossier, id, { toelichting: '   ' }))
+  assert.throws(() => updateAdviespunt(dossier, id, { onderwerp: '' }))
+  assert.throws(() => updateAdviespunt(dossier, id, { adviesStatus: 'niet_bestaand' }))
+})
+
+test('Richard kan een adviespunt verwijderen zolang het Dossier open is — G', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  let dossier = createDossier({ klant, pand })
+  dossier = addAdviespunt(dossier, handmatigAdviespunt())
+  const id = dossier.adviespunten[0].adviespuntId
+
+  const bijgewerkt = removeAdviespunt(dossier, id)
+
+  assert.deepEqual(bijgewerkt.adviespunten, [])
+  // het origineel blijft ongewijzigd
+  assert.equal(dossier.adviespunten.length, 1)
+})
+
+test('een afgerond Dossier kan zijn adviespunten niet meer wijzigen — H', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  let dossier = createDossier({ klant, pand })
+  dossier = addAdviespunt(dossier, handmatigAdviespunt())
+  const afgerond = completeDossier(dossier)
+  const id = afgerond.adviespunten[0].adviespuntId
+
+  assert.throws(() => addAdviespunt(afgerond, handmatigAdviespunt()))
+  assert.throws(() => updateAdviespunt(afgerond, id, { toelichting: 'aangepast' }))
+  assert.throws(() => removeAdviespunt(afgerond, id))
+  // het afgeronde Dossier zelf is bevroren: geen enkel adviespunt kan nog wijzigen
+  assert.throws(() => {
+    afgerond.adviespunten[0].toelichting = 'geforceerd'
+  })
+})
+
+test('MJOP opnieuw opslaan (snapshot verversen) wijzigt bestaande adviespunten niet — J', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  let dossier = createDossier({ klant, pand, mjopSnapshot: { components: [], energy: {} } })
+  dossier = addAdviespunt(dossier, handmatigAdviespunt())
+
+  const nieuweMjopSnapshot = { components: [{ typeId: 'verwarming' }], energy: { gasConsumption: 5000 } }
+  const ververst = refreshDossierSnapshot(dossier, pand, null, dossier.primaireContactpersoonId, nieuweMjopSnapshot)
+
+  assert.deepEqual(ververst.mjopSnapshot, nieuweMjopSnapshot)
+  assert.deepEqual(ververst.adviespunten, dossier.adviespunten)
+})
+
+test('Pand wijzigen wijzigt afgeronde adviespunten niet — K', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  let pand = fictiefPand()
+  let dossier = createDossier({ klant, pand })
+  dossier = addAdviespunt(dossier, handmatigAdviespunt())
+  const afgerond = completeDossier(dossier)
+
+  pand = updatePand(pand, { bouwjaar: 1986 })
+  assert.throws(() => refreshDossierSnapshot(afgerond, pand))
+  assert.equal(afgerond.adviespunten[0].toelichting, 'Kort overleg gehad met de klant.')
+})
+
+test('twee Dossiers voor hetzelfde Pand houden onafhankelijke adviespunten — T', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  let dossierA = createDossier({ klant, pand })
+  let dossierB = createDossier({ klant, pand })
+
+  dossierA = addAdviespunt(dossierA, handmatigAdviespunt({ onderwerp: 'Alleen in dossier A' }))
+
+  assert.equal(dossierA.adviespunten.length, 1)
+  assert.equal(dossierB.adviespunten.length, 0)
+  assert.notEqual(dossierA.dossierId, dossierB.dossierId)
 })

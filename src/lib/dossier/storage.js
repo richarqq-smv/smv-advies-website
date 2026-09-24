@@ -76,7 +76,13 @@ function isValidDossier(value) {
     // is, moet het een plain object zijn — nooit een corrupte waarde
     // stilzwijgend doorlaten.
     (value.contactpersoonSnapshot === undefined || value.contactpersoonSnapshot === null || isPlainObject(value.contactpersoonSnapshot)) &&
-    (value.mjopSnapshot === undefined || value.mjopSnapshot === null || isPlainObject(value.mjopSnapshot))
+    (value.mjopSnapshot === undefined || value.mjopSnapshot === null || isPlainObject(value.mjopSnapshot)) &&
+    // adviespunten (advieslaag): afwezig is geldig — een ouder Dossier van
+    // vóór de advieslaag wordt bij het rehydrateren als lege lijst
+    // behandeld (zie rehydrateDossier()). Als het veld er is, moet het een
+    // array zijn; de inhoud van elk item wordt hier niet volledig
+    // gevalideerd, zelfde lichte aanpak als de rest van deze module.
+    (value.adviespunten === undefined || Array.isArray(value.adviespunten))
   )
 }
 
@@ -143,12 +149,22 @@ function deepFreeze(value) {
  * van `null`, of een geheel ontbrekend veld (een Dossier van vóór deze
  * velden bestonden), wordt in beide gevallen als `null` behandeld — geen
  * migratie nodig.
+ *
+ * Hetzelfde principe geldt voor `adviespunten` (advieslaag): een geheel
+ * ontbrekend veld (een Dossier van vóór de advieslaag) wordt behandeld als
+ * een lege lijst — geen migratie, geen verzonnen data.
  */
+function rehydrateAdviespunt(raw) {
+  const signaalBevroren = raw.signaalBevroren ? Object.freeze({ ...raw.signaalBevroren }) : null
+  return Object.freeze({ ...raw, signaalBevroren })
+}
+
 function rehydrateDossier(raw) {
   const pandSnapshot = Object.freeze({ ...raw.pandSnapshot })
   const contactpersoonSnapshot = raw.contactpersoonSnapshot ? Object.freeze({ ...raw.contactpersoonSnapshot }) : null
   const mjopSnapshot = raw.mjopSnapshot ? deepFreeze({ ...raw.mjopSnapshot }) : null
-  const dossier = { ...raw, pandSnapshot, contactpersoonSnapshot, mjopSnapshot }
+  const adviespunten = Object.freeze((raw.adviespunten ?? []).map(rehydrateAdviespunt))
+  const dossier = { ...raw, pandSnapshot, contactpersoonSnapshot, mjopSnapshot, adviespunten }
   return dossier.status === DOSSIER_STATUS.AFGEROND ? Object.freeze(dossier) : dossier
 }
 

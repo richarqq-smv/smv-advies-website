@@ -11,6 +11,7 @@ import {
   koppelKlantAanPand,
   openAdviesdossier,
 } from '../../lib/dossier'
+import { AdviesBeheer } from './AdviesBeheer'
 
 /**
  * Interne flow "Bestaand Pand → Klant koppelen → Contactpersoon kiezen/maken
@@ -364,12 +365,15 @@ export function KlantDossierFlow({ pand, building }) {
               </div>
             </>
           ) : (
-            <p role="status" className="flex items-center gap-2 text-sm font-medium text-primary">
-              <CheckCircle size={18} weight="fill" className="text-accent" />
-              {dossierResultaat.hergebruikt
-                ? 'Er was al een open dossier voor deze klant en dit pand — dat dossier is hervat.'
-                : 'Het dossier is geopend.'}
-            </p>
+            <div className="flex flex-col gap-6">
+              <p role="status" className="flex items-center gap-2 text-sm font-medium text-primary">
+                <CheckCircle size={18} weight="fill" className="text-accent" />
+                {dossierResultaat.hergebruikt
+                  ? 'Er was al een open dossier voor deze klant en dit pand — dat dossier is hervat.'
+                  : 'Het dossier is geopend.'}
+              </p>
+              <AdviesBeheer dossier={dossierResultaat.dossier} building={building} />
+            </div>
           )}
         </div>
       ) : null}

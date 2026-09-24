@@ -7,6 +7,7 @@
  */
 import { generateId } from './id.js'
 import { createPandSnapshot } from './snapshot.js'
+import { STATUSES } from '../mjop/constants.js'
 
 export const DOSSIER_STATUS = {
   OPEN: 'open',
@@ -54,6 +55,11 @@ export function createDossier({ klant, pand, primaireContactpersoonId = null, mj
     // hier alleen overgenomen. `null` als er (nog) geen MJOP-momentopname
     // voor dit Pand bestaat: een Dossier mag zonder MJOP bestaan.
     mjopSnapshot,
+    // Advieslaag (ontwerpdocument "De advieslaag van SMV Advies" + de
+    // readiness review daarop): additief veld, geen nieuwe entiteit. Altijd
+    // een lege array bij aanmaken — een adviespunt ontstaat pas via
+    // addAdviespunt(), nooit automatisch vanuit een MJOP-signaal.
+    adviespunten: [],
     createdAt: now,
     updatedAt: now,
   }
@@ -130,4 +136,67 @@ export function refreshDossierSnapshot(
 export function completeDossier(dossier) {
   if (!isDossierOpen(dossier)) return dossier
   return Object.freeze({ ...dossier, status: DOSSIER_STATUS.AFGEROND, updatedAt: new Date().toISOString() })
+}
+
+// --- Advieslaag: adviespunten --------------------------------------------
+//
+// Drie kleine, guarded mutatiefuncties — zelfde stijl als
+// refreshDossierSnapshot(): alleen toegestaan op een open Dossier, elke
+// aanroep levert een nieuw Dossier-object op (geen mutatie in place). Het
+// aanmaken/valideren van een Adviespunt zelf gebeurt in adviespunt.js
+// (createAdviespunt()); deze functies voegen alleen een al geldig
+// Adviespunt toe, wijzigen het, of verwijderen het.
+
+/** Voegt een al aangemaakt Adviespunt toe — nooit aan een afgerond Dossier. */
+export function addAdviespunt(dossier, adviespunt) {
+  if (!isDossierOpen(dossier)) throw new Error('Een afgerond Dossier kan geen adviespunten meer krijgen.')
+  return {
+    ...dossier,
+    adviespunten: [...dossier.adviespunten, adviespunt],
+    updatedAt: new Date().toISOString(),
+  }
+}
+
+// Velden die Richard kan bijstellen zolang het Dossier open is. `herkomst`,
+// `signaalBevroren`, `adviespuntId` en `aangemaaktOp` blijven het bevroren
+// spoor van hoe/waarom het adviespunt ontstond en zijn hier bewust
+// uitgesloten — dat onderscheid moet juist behouden blijven (zie hoofdstuk
+// 7 van het ontwerp).
+const ADVIESPUNT_MUTABLE_FIELDS = ['onderwerp', 'adviesStatus', 'toelichting', 'herbeoordelenBij']
+
+/** Wijzigt onderwerp/status/toelichting/herbeoordelenBij van een bestaand Adviespunt — nooit in een afgerond Dossier. */
+export function updateAdviespunt(dossier, adviespuntId, changes = {}) {
+  if (!isDossierOpen(dossier)) throw new Error('Een afgerond Dossier kan zijn adviespunten niet meer wijzigen.')
+  if (!dossier.adviespunten.some((a) => a.adviespuntId === adviespuntId)) {
+    throw new Error('Dit adviespunt bestaat niet in dit Dossier.')
+  }
+  if ('onderwerp' in changes && !changes.onderwerp?.trim()) throw new Error('onderwerp mag niet leeg zijn.')
+  if ('toelichting' in changes && !changes.toelichting?.trim()) throw new Error('toelichting mag niet leeg zijn.')
+  if ('adviesStatus' in changes && !(changes.adviesStatus in STATUSES)) throw new Error('adviesStatus moet een bestaande MJOP-status zijn.')
+
+  const now = new Date().toISOString()
+  const adviespunten = dossier.adviespunten.map((a) => {
+    if (a.adviespuntId !== adviespuntId) return a
+    const next = { ...a }
+    for (const field of ADVIESPUNT_MUTABLE_FIELDS) {
+      if (field in changes) next[field] = changes[field]
+    }
+    next.laatstGewijzigd = now
+    // Zelfde bevriezingsdiscipline als createAdviespunt(): elk adviespunt
+    // is altijd bevroren, ook binnen een open Dossier — alleen de array die
+    // ernaar verwijst wordt vervangen.
+    return Object.freeze(next)
+  })
+
+  return { ...dossier, adviespunten, updatedAt: now }
+}
+
+/** Verwijdert een Adviespunt — nooit uit een afgerond Dossier. Onbekend adviespuntId is een no-op, geen fout. */
+export function removeAdviespunt(dossier, adviespuntId) {
+  if (!isDossierOpen(dossier)) throw new Error('Een afgerond Dossier kan zijn adviespunten niet meer verwijderen.')
+  return {
+    ...dossier,
+    adviespunten: dossier.adviespunten.filter((a) => a.adviespuntId !== adviespuntId),
+    updatedAt: new Date().toISOString(),
+  }
 }
