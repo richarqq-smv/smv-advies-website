@@ -52,18 +52,48 @@ function isValidKoppeling(value) {
   )
 }
 
-/** Geeft de koppeling voor deze mjopBuildingId terug, of `null`. Verwerpt corrupte of verkeerd gevormde data stilzwijgend, net als storage.js. */
-function loadMjopKoppeling(mjopBuildingId) {
+/** Leest en valideert de opgeslagen koppeling, ongeacht welke building/pand — of `null`. */
+function readStoredKoppeling() {
   try {
     const raw = globalThis.localStorage.getItem(MJOP_KOPPELING_KEY)
     if (!raw) return null
     const parsed = JSON.parse(raw)
-    if (!isValidKoppeling(parsed)) return null
-    if (parsed.mjopBuildingId !== mjopBuildingId) return null
-    return { ...parsed, mjopSnapshot: deepFreeze({ ...parsed.mjopSnapshot }) }
+    return isValidKoppeling(parsed) ? parsed : null
   } catch {
     return null
   }
+}
+
+/** Geeft de koppeling voor deze mjopBuildingId terug, of `null`. Verwerpt corrupte of verkeerd gevormde data stilzwijgend, net als storage.js. */
+function loadMjopKoppeling(mjopBuildingId) {
+  const koppeling = readStoredKoppeling()
+  if (!koppeling || koppeling.mjopBuildingId !== mjopBuildingId) return null
+  return { ...koppeling, mjopSnapshot: deepFreeze({ ...koppeling.mjopSnapshot }) }
+}
+
+/**
+ * Geeft de laatst opgeslagen MJOP-momentopname voor dit Pand terug, of
+ * `null` als er geen MJOP-koppeling voor dit Pand bestaat. Gebruikt door de
+ * "Dossier openen"-flow (openDossier.js) om een bestaande MJOP-snapshot
+ * over te nemen in een nieuw Dossier — een Dossier hoeft dus geen MJOP te
+ * hebben, maar neemt het wel automatisch mee als het er al is.
+ */
+export function loadMjopSnapshotForPand(pandId) {
+  const koppeling = readStoredKoppeling()
+  if (!koppeling || koppeling.pandId !== pandId) return null
+  return deepFreeze({ ...koppeling.mjopSnapshot })
+}
+
+/**
+ * Geeft het Pand terug dat aan de gegeven MJOP-building is gekoppeld, of
+ * `null`. Gebruikt om na een pagina-herlaad te herstellen welk Pand bij de
+ * huidige MJOP-sessie hoort, zonder dat de gebruiker opnieuw op "MJOP
+ * opslaan bij dit pand" hoeft te klikken.
+ */
+export function getGekoppeldPandVoorMjopBuilding(mjopBuildingId) {
+  const koppeling = loadMjopKoppeling(mjopBuildingId)
+  if (!koppeling) return null
+  return loadPand(koppeling.pandId)
 }
 
 function saveMjopKoppelingRecord(koppeling) {

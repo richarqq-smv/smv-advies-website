@@ -32,7 +32,7 @@ function createContactpersoonSnapshot(contactpersoon) {
   return Object.freeze(snapshot)
 }
 
-export function createDossier({ klant, pand, primaireContactpersoonId = null } = {}) {
+export function createDossier({ klant, pand, primaireContactpersoonId = null, mjopSnapshot = null } = {}) {
   if (!klant?.klantId) throw new Error('createDossier vereist een Klant met klantId.')
   if (!pand?.pandId) throw new Error('createDossier vereist een Pand met pandId.')
   const primaireContactpersoon = primaireContactpersoonId ? findContactpersoon(klant, primaireContactpersoonId) : null
@@ -49,6 +49,11 @@ export function createDossier({ klant, pand, primaireContactpersoonId = null } =
     status: DOSSIER_STATUS.OPEN,
     pandSnapshot: createPandSnapshot(pand),
     contactpersoonSnapshot: createContactpersoonSnapshot(primaireContactpersoon),
+    // Ruwe MJOP-invoer op het moment van openen, exact zoals opgeleverd
+    // door mjopAdapter.js/mjopKoppeling.js — al bevroren door die module,
+    // hier alleen overgenomen. `null` als er (nog) geen MJOP-momentopname
+    // voor dit Pand bestaat: een Dossier mag zonder MJOP bestaan.
+    mjopSnapshot,
     createdAt: now,
     updatedAt: now,
   }
@@ -73,8 +78,18 @@ export function isDossierOpen(dossier) {
  * dezelfde, al gekozen contactpersoon (het correctie-geval); met een
  * afwijkende `primaireContactpersoonId` wisselt de primaire contactpersoon
  * zelf (inclusief `null`, om de primaire contactpersoon te wissen).
+ *
+ * `mjopSnapshot` is eveneens optioneel en ververst alleen wanneer expliciet
+ * meegegeven (bijv. een nieuwe MJOP-opslag voor hetzelfde Pand); zonder
+ * argument blijft de al vastgelegde MJOP-momentopname ongewijzigd.
  */
-export function refreshDossierSnapshot(dossier, pand, klant = null, primaireContactpersoonId = dossier.primaireContactpersoonId) {
+export function refreshDossierSnapshot(
+  dossier,
+  pand,
+  klant = null,
+  primaireContactpersoonId = dossier.primaireContactpersoonId,
+  mjopSnapshot = dossier.mjopSnapshot,
+) {
   if (!isDossierOpen(dossier)) {
     throw new Error('Een afgerond Dossier kan zijn snapshot niet meer bijwerken.')
   }
@@ -101,6 +116,7 @@ export function refreshDossierSnapshot(dossier, pand, klant = null, primaireCont
     pandSnapshot: createPandSnapshot(pand),
     contactpersoonSnapshot,
     primaireContactpersoonId: nextPrimaireContactpersoonId,
+    mjopSnapshot,
     updatedAt: new Date().toISOString(),
   }
 }

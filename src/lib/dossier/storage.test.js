@@ -336,6 +336,36 @@ test('een ouder opgeslagen Dossier zonder contactpersoonSnapshot-veld blijft com
   assert.equal(geladen.dossierId, dossier.dossierId)
 })
 
+test('mjopSnapshot wordt na rehydratie opnieuw diep bevroren, inclusief geneste components', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  const mjopSnapshot = { components: [{ typeId: 'dak', present: 'ja', installationYear: 1987 }], energy: { gasConsumption: 18000 } }
+  const dossier = createDossier({ klant, pand, mjopSnapshot })
+
+  saveDossier(dossier)
+  const geladen = loadDossier(dossier.dossierId)
+
+  assert.deepEqual(geladen.mjopSnapshot, mjopSnapshot)
+  assert.equal(Object.isFrozen(geladen.mjopSnapshot), true)
+  assert.equal(Object.isFrozen(geladen.mjopSnapshot.components), true)
+  assert.equal(Object.isFrozen(geladen.mjopSnapshot.components[0]), true)
+  assert.throws(() => {
+    geladen.mjopSnapshot.components[0].installationYear = 2099
+  })
+})
+
+test('een ouder Dossier zonder mjopSnapshot-veld blijft compatibel (mjopSnapshot: null)', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand })
+  const { mjopSnapshot: _mjopSnapshot, ...ouderDossier } = dossier
+  globalThis.localStorage.setItem('smv_dossier_dossiers_v1', JSON.stringify({ [dossier.dossierId]: ouderDossier }))
+
+  const geladen = loadDossier(dossier.dossierId)
+  assert.ok(geladen)
+  assert.equal(geladen.mjopSnapshot, null)
+})
+
 test('rehydratie leidt de contactpersoonSnapshot nooit af van de actuele Contactpersoon', () => {
   let klant = createKlant({ naam: 'Fictief Bedrijf' })
   const eigenaar = createContactpersoon({ naam: 'Eigenaar', email: 'oud@smvadvies-test.nl', rol: 'eigenaar' })

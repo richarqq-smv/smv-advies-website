@@ -24,6 +24,11 @@ export const SCHEMA_VERSION = 1
 const KLANTEN_KEY = 'smv_dossier_klanten_v1'
 const PANDEN_KEY = 'smv_dossier_panden_v1'
 const DOSSIERS_KEY = 'smv_dossier_dossiers_v1'
+// Nieuw voor de Klant↔Pand-koppeling (zie klantPandRelatie.js): een eigen,
+// kleine collectie, zelfde vorm als de drie hierboven. Nodig omdat de
+// relatie niet als veld op Pand of Klant leeft (zie de toelichting daar) —
+// bestaande storage volstaat dus niet, een vierde, analoge sleutel wel.
+const RELATIES_KEY = 'smv_dossier_relaties_v1'
 
 function isPlainObject(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -43,6 +48,18 @@ function isValidPand(value) {
   return isPlainObject(value) && typeof value.pandId === 'string' && value.pandId.length > 0
 }
 
+function isValidKlantPandRelatie(value) {
+  return (
+    isPlainObject(value) &&
+    typeof value.relatieId === 'string' &&
+    value.relatieId.length > 0 &&
+    typeof value.klantId === 'string' &&
+    value.klantId.length > 0 &&
+    typeof value.pandId === 'string' &&
+    value.pandId.length > 0
+  )
+}
+
 function isValidDossier(value) {
   return (
     isPlainObject(value) &&
@@ -54,11 +71,12 @@ function isValidDossier(value) {
     value.pandId.length > 0 &&
     (value.status === DOSSIER_STATUS.OPEN || value.status === DOSSIER_STATUS.AFGEROND) &&
     isPlainObject(value.pandSnapshot) &&
-    // contactpersoonSnapshot is optioneel: afwezig (oudere Dossiers van vóór
-    // 0335fbe) of expliciet null is geldig, maar als het veld er is, moet
-    // het een plain object zijn — nooit een corrupte waarde stilzwijgend
-    // doorlaten.
-    (value.contactpersoonSnapshot === undefined || value.contactpersoonSnapshot === null || isPlainObject(value.contactpersoonSnapshot))
+    // contactpersoonSnapshot en mjopSnapshot zijn allebei optioneel: afwezig
+    // (oudere Dossiers) of expliciet null is geldig, maar als het veld er
+    // is, moet het een plain object zijn — nooit een corrupte waarde
+    // stilzwijgend doorlaten.
+    (value.contactpersoonSnapshot === undefined || value.contactpersoonSnapshot === null || isPlainObject(value.contactpersoonSnapshot)) &&
+    (value.mjopSnapshot === undefined || value.mjopSnapshot === null || isPlainObject(value.mjopSnapshot))
   )
 }
 
@@ -95,24 +113,42 @@ function writeCollection(key, collection) {
   }
 }
 
+// mjopSnapshot heeft, anders dan pandSnapshot/contactpersoonSnapshot, geneste
+// structuur (components-array + energy-object) — een shallow Object.freeze
+// zou alleen de buitenste laag bevriezen. Zelfde kleine, generieke helper als
+// al gebruikt in mjopAdapter.js/mjopKoppeling.js voor precies dit doel.
+function deepFreeze(value) {
+  if (Array.isArray(value)) {
+    value.forEach(deepFreeze)
+    return Object.freeze(value)
+  }
+  if (value && typeof value === 'object') {
+    Object.values(value).forEach(deepFreeze)
+    return Object.freeze(value)
+  }
+  return value
+}
+
 /**
  * Een Dossier verliest bij JSON.stringify/parse zijn Object.freeze — dat is
  * puur een JavaScript-runtime-eigenschap, geen opgeslagen data. Na het
  * teruglezen wordt dezelfde bevriezing opnieuw toegepast op elke
- * snapshot-eigenschap (pandSnapshot én contactpersoonSnapshot): beide
- * blijven altijd bevroren, en een afgerond Dossier wordt in zijn geheel
- * opnieuw bevroren — precies het gedrag van createDossier()/
- * completeDossier() in dossier.js, hier hergebruikt in plaats van opnieuw
- * gedefinieerd. Geen van beide snapshots wordt hierbij aangeraakt of
- * opnieuw afgeleid van een Pand- of Contactpersoon-object: wat is
- * opgeslagen, is wat wordt teruggegeven. Een `contactpersoonSnapshot` van
- * `null` blijft `null`; ontbreekt het veld (een Dossier van vóór 0335fbe),
- * dan wordt dat ook als `null` behandeld — geen migratie nodig.
+ * snapshot-eigenschap (pandSnapshot, contactpersoonSnapshot én
+ * mjopSnapshot): alle drie blijven altijd bevroren, en een afgerond Dossier
+ * wordt in zijn geheel opnieuw bevroren — precies het gedrag van
+ * createDossier()/completeDossier() in dossier.js, hier hergebruikt in
+ * plaats van opnieuw gedefinieerd. Geen van de snapshots wordt hierbij
+ * aangeraakt of opnieuw afgeleid van een Pand-, Contactpersoon- of
+ * MJOP-object: wat is opgeslagen, is wat wordt teruggegeven. Een snapshot
+ * van `null`, of een geheel ontbrekend veld (een Dossier van vóór deze
+ * velden bestonden), wordt in beide gevallen als `null` behandeld — geen
+ * migratie nodig.
  */
 function rehydrateDossier(raw) {
   const pandSnapshot = Object.freeze({ ...raw.pandSnapshot })
   const contactpersoonSnapshot = raw.contactpersoonSnapshot ? Object.freeze({ ...raw.contactpersoonSnapshot }) : null
-  const dossier = { ...raw, pandSnapshot, contactpersoonSnapshot }
+  const mjopSnapshot = raw.mjopSnapshot ? deepFreeze({ ...raw.mjopSnapshot }) : null
+  const dossier = { ...raw, pandSnapshot, contactpersoonSnapshot, mjopSnapshot }
   return dossier.status === DOSSIER_STATUS.AFGEROND ? Object.freeze(dossier) : dossier
 }
 
@@ -162,6 +198,30 @@ export function deletePand(pandId) {
   if (!(pandId in all)) return false
   delete all[pandId]
   return writeCollection(PANDEN_KEY, all)
+}
+
+// --- KlantPandRelatie -----------------------------------------------------
+
+export function saveKlantPandRelatie(relatie) {
+  if (!isValidKlantPandRelatie(relatie)) throw new Error('saveKlantPandRelatie vereist een geldige relatie (relatieId + klantId + pandId).')
+  const all = readCollection(RELATIES_KEY, isValidKlantPandRelatie)
+  all[relatie.relatieId] = relatie
+  return writeCollection(RELATIES_KEY, all)
+}
+
+export function loadKlantPandRelatie(relatieId) {
+  return readCollection(RELATIES_KEY, isValidKlantPandRelatie)[relatieId] ?? null
+}
+
+export function loadAllKlantPandRelaties() {
+  return Object.values(readCollection(RELATIES_KEY, isValidKlantPandRelatie))
+}
+
+export function deleteKlantPandRelatie(relatieId) {
+  const all = readCollection(RELATIES_KEY, isValidKlantPandRelatie)
+  if (!(relatieId in all)) return false
+  delete all[relatieId]
+  return writeCollection(RELATIES_KEY, all)
 }
 
 // --- Dossier --------------------------------------------------------------

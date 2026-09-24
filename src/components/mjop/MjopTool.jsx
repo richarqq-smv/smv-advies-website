@@ -10,6 +10,7 @@ import { StepKoppeling } from './StepKoppeling'
 import { StepPlanning } from './StepPlanning'
 import { StepAdvies } from './StepAdvies'
 import { Toast } from '../energieIndicatie/Toast'
+import { KlantDossierFlow } from '../dossier/KlantDossierFlow'
 
 export function MjopTool() {
   const mjop = useMjopBuilding()
@@ -76,6 +77,12 @@ export function MjopTool() {
           />
         ) : null}
       </div>
+
+      {mjop.savedPand ? (
+        <div className="mt-6 print:hidden">
+          <KlantDossierFlow pand={mjop.savedPand} building={mjop.building} />
+        </div>
+      ) : null}
 
       <Toast message={mjop.toast} />
     </div>

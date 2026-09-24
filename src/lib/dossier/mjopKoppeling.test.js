@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { loadPand, loadAllPanden, loadAllKlanten, loadAllDossiers } from './storage.js'
 import { createDossier } from './dossier.js'
 import { createKlant } from './klant.js'
-import { saveMjopSnapshotToPand } from './mjopKoppeling.js'
+import { saveMjopSnapshotToPand, loadMjopSnapshotForPand, getGekoppeldPandVoorMjopBuilding } from './mjopKoppeling.js'
 
 // Zelfde minimale in-memory localStorage-vervanger als storage.test.js.
 class MemoryStorage {
@@ -162,4 +162,26 @@ test('bestaande MJOP-storage (smv_mjop_building_v1) blijft volledig buiten beeld
   saveMjopSnapshotToPand(mjopBuildingA())
 
   assert.equal(globalThis.localStorage.getItem('smv_mjop_building_v1'), mjopWaarde)
+})
+
+test('loadMjopSnapshotForPand geeft de opgeslagen MJOP-snapshot voor het gekoppelde Pand terug', () => {
+  const { pand, mjopSnapshot } = saveMjopSnapshotToPand(mjopBuildingA())
+  const gevonden = loadMjopSnapshotForPand(pand.pandId)
+  assert.deepEqual(gevonden, mjopSnapshot)
+})
+
+test('loadMjopSnapshotForPand geeft null terug voor een Pand zonder MJOP-koppeling', () => {
+  assert.equal(loadMjopSnapshotForPand('onbestaand-pand'), null)
+})
+
+test('getGekoppeldPandVoorMjopBuilding herstelt het gekoppelde Pand voor een MJOP-building', () => {
+  const building = mjopBuildingA()
+  const { pand } = saveMjopSnapshotToPand(building)
+
+  const gevonden = getGekoppeldPandVoorMjopBuilding(building.id)
+  assert.deepEqual(gevonden, pand)
+})
+
+test('getGekoppeldPandVoorMjopBuilding geeft null terug zonder bestaande koppeling', () => {
+  assert.equal(getGekoppeldPandVoorMjopBuilding('onbestaande-building-id'), null)
 })

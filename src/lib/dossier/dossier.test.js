@@ -244,6 +244,38 @@ test('refreshDossierSnapshot zonder klant laat de contactpersoonSnapshot ongewij
   assert.deepEqual(bijgewerkt.contactpersoonSnapshot, dossier.contactpersoonSnapshot)
 })
 
+test('Dossier neemt een meegegeven mjopSnapshot over bij aanmaken', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  const mjopSnapshot = { components: [{ typeId: 'dak', present: 'ja' }], energy: { gasConsumption: 18000, electricityConsumption: 32000 } }
+
+  const dossier = createDossier({ klant, pand, mjopSnapshot })
+  assert.deepEqual(dossier.mjopSnapshot, mjopSnapshot)
+})
+
+test('Dossier heeft mjopSnapshot: null zonder MJOP-invoer — een Dossier mag zonder MJOP bestaan', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand })
+  assert.equal(dossier.mjopSnapshot, null)
+})
+
+test('refreshDossierSnapshot ververst mjopSnapshot alleen als expliciet meegegeven', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand, mjopSnapshot: { components: [], energy: {} } })
+
+  // Zonder mjopSnapshot-argument: blijft ongewijzigd, ook als pand/klant/id wel worden meegegeven.
+  const zonderWijziging = refreshDossierSnapshot(dossier, pand)
+  assert.deepEqual(zonderWijziging.mjopSnapshot, dossier.mjopSnapshot)
+
+  const nieuweSnapshot = { components: [{ typeId: 'verwarming' }], energy: { gasConsumption: 5000 } }
+  const metWijziging = refreshDossierSnapshot(dossier, pand, null, dossier.primaireContactpersoonId, nieuweSnapshot)
+  assert.deepEqual(metWijziging.mjopSnapshot, nieuweSnapshot)
+  // het origineel blijft ongewijzigd
+  assert.deepEqual(dossier.mjopSnapshot, { components: [], energy: {} })
+})
+
 test('een afgerond Dossier blijft historisch stabiel: contactpersoonSnapshot kan niet meer worden ververst', () => {
   const eigenaar = createContactpersoon({ naam: 'Eigenaar', email: 'oud@smvadvies-test.nl', rol: 'eigenaar' })
   const klant = addContactpersoon(createKlant({ naam: 'Fictief Bedrijf' }), eigenaar)

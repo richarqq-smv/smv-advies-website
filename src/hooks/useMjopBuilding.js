@@ -4,7 +4,7 @@ import { triggerJsonDownload, parseImportedJson } from '../lib/mjop/importExport
 import { buildInsights } from '../lib/mjop/linking'
 import { buildMjopEmailParams } from '../lib/mjop/emailParams'
 import { sendEmail, EMAILJS_TEMPLATE_MJOP, EMAILJS_PUBLIC_KEY_MJOP } from '../lib/emailjs'
-import { saveMjopSnapshotToPand } from '../lib/dossier'
+import { saveMjopSnapshotToPand, getGekoppeldPandVoorMjopBuilding } from '../lib/dossier'
 
 export const STEPS = [
   { n: 1, id: 'pand', label: 'Pandgegevens' },
@@ -18,8 +18,9 @@ export const STEPS = [
 
 function initState() {
   const loaded = typeof window !== 'undefined' ? loadBuilding() : null
+  const building = loaded ?? createEmptyBuilding()
   return {
-    building: loaded ?? createEmptyBuilding(),
+    building,
     step: 1,
     toast: null,
     // 'idle' | 'sending' | 'sent' | 'error' — status van het versturen van
@@ -29,6 +30,11 @@ function initState() {
     // MJOP-situatie bij het Pand (dossierlaag). Losstaand van sendStatus:
     // dit is geen verzending, alleen lokale structurele opslag.
     saveMjopStatus: 'idle',
+    // Het Pand dat aan de huidige MJOP-building is gekoppeld, indien die
+    // koppeling al bestaat (bijv. na een eerdere "MJOP opslaan bij dit
+    // pand" en een pagina-herlaad) — anders `null` tot de eerste
+    // succesvolle opslag. Bepaalt of de Klant/Dossier-flow zichtbaar is.
+    savedPand: typeof window !== 'undefined' ? getGekoppeldPandVoorMjopBuilding(building.id) : null,
   }
 }
 
@@ -60,9 +66,11 @@ function reducer(state, action) {
     case 'SET_TOAST':
       return { ...state, toast: action.toast }
     case 'REPLACE_BUILDING':
-      return { ...state, building: action.building, step: 1, toast: action.toast ?? null }
+      return { ...state, building: action.building, step: 1, toast: action.toast ?? null, savedPand: action.savedPand ?? null }
     case 'RESET':
-      return { ...state, building: createEmptyBuilding(), step: 1, toast: 'Nieuw pand aangemaakt.', sendStatus: 'idle', saveMjopStatus: 'idle' }
+      // Een nieuwe building krijgt een geheel nieuwe id, die per definitie
+      // nog nergens aan gekoppeld kan zijn.
+      return { ...state, building: createEmptyBuilding(), step: 1, toast: 'Nieuw pand aangemaakt.', sendStatus: 'idle', saveMjopStatus: 'idle', savedPand: null }
     case 'SEND_START':
       return { ...state, sendStatus: 'sending' }
     case 'SEND_SUCCESS':
@@ -72,7 +80,7 @@ function reducer(state, action) {
     case 'SAVE_MJOP_START':
       return { ...state, saveMjopStatus: 'saving' }
     case 'SAVE_MJOP_SUCCESS':
-      return { ...state, saveMjopStatus: 'saved' }
+      return { ...state, saveMjopStatus: 'saved', savedPand: action.pand }
     case 'SAVE_MJOP_ERROR':
       return { ...state, saveMjopStatus: 'error' }
     default:
@@ -128,12 +136,22 @@ export function useMjopBuilding() {
       dispatch({ type: 'SET_TOAST', toast: result.error })
       return false
     }
-    dispatch({ type: 'REPLACE_BUILDING', building: result.building, toast: 'Pandprofiel geïmporteerd.' })
+    dispatch({
+      type: 'REPLACE_BUILDING',
+      building: result.building,
+      toast: 'Pandprofiel geïmporteerd.',
+      savedPand: getGekoppeldPandVoorMjopBuilding(result.building.id),
+    })
     return true
   }, [])
 
   const loadTestBuilding = useCallback((building) => {
-    dispatch({ type: 'REPLACE_BUILDING', building, toast: 'Testdata geladen (alleen voor ontwikkeldoeleinden).' })
+    dispatch({
+      type: 'REPLACE_BUILDING',
+      building,
+      toast: 'Testdata geladen (alleen voor ontwikkeldoeleinden).',
+      savedPand: getGekoppeldPandVoorMjopBuilding(building.id),
+    })
   }, [])
 
   const resetAll = useCallback(() => {
@@ -153,8 +171,8 @@ export function useMjopBuilding() {
     isSavingMjopRef.current = true
     dispatch({ type: 'SAVE_MJOP_START' })
     try {
-      saveMjopSnapshotToPand(state.building)
-      dispatch({ type: 'SAVE_MJOP_SUCCESS' })
+      const { pand } = saveMjopSnapshotToPand(state.building)
+      dispatch({ type: 'SAVE_MJOP_SUCCESS', pand })
     } catch {
       dispatch({ type: 'SAVE_MJOP_ERROR' })
     } finally {
@@ -188,6 +206,7 @@ export function useMjopBuilding() {
     sendStatus: state.sendStatus,
     saveMjopStatus: state.saveMjopStatus,
     saveMjopSnapshot,
+    savedPand: state.savedPand,
     setBuildingField,
     setEnergyField,
     setContactField,

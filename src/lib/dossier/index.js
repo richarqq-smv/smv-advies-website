@@ -1,10 +1,10 @@
 /**
  * Publieke API van de geïsoleerde Klant/Pand/Dossier-domeinmodule.
- * `saveMjopSnapshotToPand` (via mjopKoppeling.js) is de enige functie die
- * vanuit MJOP wordt aangeroepen (useMjopBuilding.js) — de rest van deze
- * module blijft ongebruikt door Energie-indicatie of enige UI. Dit is nog
- * altijd het fundament uit het Pand-basismodel (ontwerpdocument), bewust
- * nog niet gekoppeld aan Klant of Dossier vanuit MJOP (zie mjopKoppeling.js).
+ * `saveMjopSnapshotToPand` blijft de enige functie die MJOP zelf aanroept
+ * (useMjopBuilding.js). De Klant↔Pand↔Dossier-flow (koppelKlantAanPand,
+ * openAdviesdossier) wordt aangeroepen vanuit de aparte, interne
+ * dossier-UI (components/dossier/) — nooit automatisch vanuit MJOP. Nog
+ * altijd niet gekoppeld aan Energie-indicatie.
  */
 export { generateId } from './id.js'
 export { createKlant, createContactpersoon, addContactpersoon } from './klant.js'
@@ -24,11 +24,17 @@ export {
   loadDossier,
   loadAllDossiers,
   deleteDossier,
+  saveKlantPandRelatie,
+  loadKlantPandRelatie,
+  loadAllKlantPandRelaties,
+  deleteKlantPandRelatie,
 } from './storage.js'
+export { createKlantPandRelatie, findKlantPandRelatie, koppelKlantAanPand } from './klantPandRelatie.js'
+export { openAdviesdossier, vindOpenDossier } from './openDossier.js'
 export {
   buildingToPandInput,
   createMjopSnapshotFromBuilding,
   buildingToContactInfo,
   mjopBuildingToDossierInput,
 } from './mjopAdapter.js'
-export { saveMjopSnapshotToPand } from './mjopKoppeling.js'
+export { saveMjopSnapshotToPand, loadMjopSnapshotForPand, getGekoppeldPandVoorMjopBuilding } from './mjopKoppeling.js'
