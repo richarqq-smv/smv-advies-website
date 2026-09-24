@@ -1,6 +1,6 @@
 # Security-model
 
-Status: **ontworpen en adversarieel gereviewd (zie "Reviewgeschiedenis" onderaan), nog niet uitgevoerd tegen een levende database.** Alles hieronder beschrijft het model in `supabase/migrations/0001_init.sql` — geen enkele regel is al live getest, omdat er nog geen Supabase-project bestaat.
+Status: **geïmplementeerd, adversarieel gereviewd vóór uitvoering, en nadien live A/B-getest tegen de echte database** (project `cdthrbflmuqblydggszf`, 2026-09-24). Zie "Live testresultaten" en "Reviewgeschiedenis" onderaan voor de volledige toedracht, inclusief één kritieke bug die pas via echte databasetests aan het licht kwam (niet via statische review).
 
 ## Kernprincipe
 
@@ -74,6 +74,25 @@ rollback; -- nooit committen
 
 Herhaal symmetrisch voor klant B tegen klant A's data, en nogmaals met een admin-account (verwacht: wél toegang tot beide).
 
+## Live testresultaten (2026-09-24)
+
+Bovenstaande testmethode is daadwerkelijk uitgevoerd tegen de echte database, met twee echte testaccounts (Klant A, Klant B), elk met een eigen Klant/Pand/Dossier/Adviespunt, aangemaakt via de echte RPC's/insert-policies onder gesimuleerde `auth.uid()`-context. Resultaten:
+
+| Test | Verwacht | Resultaat |
+|---|---|---|
+| A leest Klant B / Pand B / Dossier B / Adviespunt B / Contactpersoon B | 0 rijen | ✅ 0 rijen (alle vijf) |
+| A wijzigt Klant B (`bedrijfsnaam`) | 0 rijen gewijzigd | ✅ 0 |
+| A verwijdert Adviespunt B | 0 rijen verwijderd | ✅ 0 |
+| A koppelt zichzelf als Contactpersoon aan Klant B (account-hijack) | RLS-weigering | ✅ geweigerd (42501) |
+| A koppelt Pand B rechtstreeks aan zijn eigen Klant via `klant_pand_relaties` (buiten de RPC om) | RLS-weigering | ✅ geweigerd (42501) |
+| A wijzigt `user_roles` naar `admin` voor zichzelf | 0 rijen gewijzigd | ✅ 0 |
+| Anonieme sessie leest elke tabel (klanten/dossiers/adviespunten/profiles/user_roles/panden/contactpersonen) | 0 rijen, geen interne foutmelding | ✅ 0 rijen, schoon (na fix, zie DATABASE_ARCHITECTURE.md) |
+| Anonieme sessie probeert een Klant aan te maken | RLS-weigering | ✅ geweigerd (42501) |
+| Admin (tijdelijk gepromoot testaccount) leest alle Klanten/Dossiers, incl. Klant B specifiek | Volledige toegang | ✅ 2/2 klanten, 2/2 dossiers, Klant B zichtbaar |
+| Dossier afronden, daarna wijzigen (ook door de eigenaar zelf) | Geweigerd, ook voor de eigenaar | ✅ 0 rijen gewijzigd |
+
+Tijdens het opzetten van deze test (vóór bovenstaande resultaten) werd de kritieke recursiebug (zie Reviewgeschiedenis, Bevinding 3) ontdekt en gecorrigeerd — de tabel hierboven is het resultaat ná die fix. Alle testdata is na afloop verwijderd (`delete`, met tijdelijk uitgeschakelde integriteitstriggers om de test-fixture zelf — inclusief een bewust afgerond testdossier — te kunnen opruimen).
+
 ## Reviewgeschiedenis
 
 Een eerdere versie van dit schema bevatte twee bevestigde kwetsbaarheden, gevonden in een expliciete adversariële review vóórdat er iets werd uitgevoerd:
@@ -81,4 +100,7 @@ Een eerdere versie van dit schema bevatte twee bevestigde kwetsbaarheden, gevond
 1. **Rolescalatie via `profiles.role`** — de UPDATE-policy controleerde alleen *welke rij* mocht worden aangepast, niet *welke kolommen*; een customer had zichzelf admin kunnen maken. Opgelost door rol naar de volledig afgeschermde `user_roles`-tabel te verplaatsen.
 2. **Een Auth Hook-functie was publiek aanroepbaar** — `EXECUTE` was niet expliciet ingetrokken van `public`/`authenticated` (Postgres geeft dat standaard wél uit), waardoor elke klant de functie rechtstreeks via het REST/RPC-endpoint had kunnen aanroepen. Opgelost door het hele mechanisme te vervangen door `is_admin()`.
 
-Dit schema (v2, in `0001_init.sql`) is de gecorrigeerde versie — niet de oorspronkelijke.
+Dit schema (v2, in `0001_init.sql`) is de gecorrigeerde versie — niet de oorspronkelijke, en is degene die daadwerkelijk is uitgevoerd.
+
+3. **`is_member_of_klant()`-recursie, gevonden bij live testen (2026-09-24), niet bij de statische adversariële review hierboven.** De functie was `SECURITY INVOKER` en las `public.contactpersonen`; de eigen SELECT-policy van die tabel roept `is_member_of_klant()` opnieuw aan → oneindige recursie (`stack depth limit exceeded`) zodra een échte `authenticated`-sessie (dus niet via een `SECURITY DEFINER`-RPC, die toevallig als tabel-eigenaar draait en zo buiten RLS om leest) een Dossier/Adviespunt/Pand/koppeling/Contactpersoon aanraakte — in de praktijk vrijwel de hele datalaag buiten `registreer_klant()`/`maak_pand_en_koppel()`. Dit demonstreert precies waarom een statische review, hoe grondig ook, nooit vervangt wat alleen écht uitvoeren tegen een levende database aan het licht brengt. Fix in `0003_fix_is_member_of_klant_recursion.sql`: de functie is nu `SECURITY DEFINER`, exact hetzelfde patroon als `is_admin()` — de interne SELECT op `contactpersonen` triggert RLS dan niet meer opnieuw. Geverifieerd door na de fix de volledige A/B-isolatietest opnieuw en met succes te doorlopen (zie "Live testresultaten" hierboven).
+4. **Anon kreeg een rauwe Postgres-foutmelding bij elke poging tot toegang**, gevonden tijdens dezelfde live testronde — zie DATABASE_ARCHITECTURE.md, "Correcties na live testen", punt 2. Geen toegangslek, wel gecorrigeerd (`0004_grant_helper_functions_to_anon.sql`).

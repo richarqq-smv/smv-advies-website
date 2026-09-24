@@ -48,6 +48,16 @@ const ROUTES = [
   ROUTE_PATHS.inloggen,
   ROUTE_PATHS.registreren,
   ROUTE_PATHS.wachtwoordVergeten,
+  // /account en /admin zijn achter RequireAuth/RequireAdmin (client-side
+  // guards, zie App.jsx) altijd lege shells bij een niet-ingelogde SSR-
+  // render — zelfde soort statische bestand nodig voor een directe
+  // load/refresh op GitHub Pages als de routes hierboven. /dossier/:id
+  // is bewust NIET hier opgenomen: dossier-ID's bestaan pas na aanmaken
+  // in de database (geen vooraf bekende lijst, zoals BLOG_POSTS) en de
+  // inhoud is per definitie klant-specifiek — geen statisch bestand,
+  // werkt alleen via client-side routing (zie routes.js).
+  ROUTE_PATHS.account,
+  ROUTE_PATHS.admin,
 ]
 
 function escapeHtml(str) {

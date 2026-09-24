@@ -1,6 +1,8 @@
 import { lazy, Suspense } from 'react'
 import { Outlet, Route, Routes } from 'react-router-dom'
 import { MainLayout } from './layouts/MainLayout'
+import { RequireAuth } from './components/auth/RequireAuth'
+import { RequireAdmin } from './components/auth/RequireAdmin'
 import { ROUTES } from './lib/routes'
 import Home from './pages/Home'
 
@@ -23,6 +25,9 @@ const MjopTool = lazy(() => import('./pages/MjopTool'))
 const Inloggen = lazy(() => import('./pages/Inloggen'))
 const Registreren = lazy(() => import('./pages/Registreren'))
 const WachtwoordVergeten = lazy(() => import('./pages/WachtwoordVergeten'))
+const Account = lazy(() => import('./pages/Account'))
+const DossierDetail = lazy(() => import('./pages/DossierDetail'))
+const Admin = lazy(() => import('./pages/Admin'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 function LazyBoundary() {
@@ -56,6 +61,15 @@ export default function App() {
           <Route path={ROUTES.inloggen} element={<Inloggen />} />
           <Route path={ROUTES.registreren} element={<Registreren />} />
           <Route path={ROUTES.wachtwoordVergeten} element={<WachtwoordVergeten />} />
+
+          <Route element={<RequireAuth />}>
+            <Route path={ROUTES.account} element={<Account />} />
+            <Route path="/dossier/:dossierId" element={<DossierDetail />} />
+            <Route element={<RequireAdmin />}>
+              <Route path={ROUTES.admin} element={<Admin />} />
+            </Route>
+          </Route>
+
           <Route path="*" element={<NotFound />} />
         </Route>
       </Route>

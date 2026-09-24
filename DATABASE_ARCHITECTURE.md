@@ -1,6 +1,6 @@
 # Databasearchitectuur
 
-Status: **ontworpen en security-gereviewd, nog niet uitgevoerd tegen een levende database.** Er bestaat op dit moment geen Supabase-project voor dit account — zie "Openstaande, menselijke stap" onderaan.
+Status: **geïmplementeerd en getest tegen een levende database.** Project `cdthrbflmuqblydggszf` (regio eu-west-1), migraties `0001_init.sql` t/m `0004_grant_helper_functions_to_anon.sql` toegepast via de Supabase MCP-koppeling op 2026-09-24. Twee reële problemen zijn tijdens dat proces gevonden en gecorrigeerd — zie "Correcties na live testen" hieronder en SECURITY_MODEL.md.
 
 ## Waarom Supabase
 
@@ -56,6 +56,21 @@ Er is bewust geen publiek admin-registratieformulier en geen `if (email === 'ric
 
 `supabase/migrations/0001_init.sql` bevat het complete schema in uitvoervolgorde. Eenmalig plakken in de Supabase SQL Editor van een schoon project, of via de Supabase CLI (`supabase db push`) zodra dat is ingericht. Toekomstige wijzigingen horen als nieuwe, genummerde bestanden in dezelfde map (`0002_...sql`, enz.) — nooit door `0001_init.sql` achteraf te wijzigen zodra die al is toegepast.
 
-## Openstaande, menselijke stap
+## Correcties na live testen
 
-Er bestaat nog geen Supabase-project. Zie het eindrapport van deze implementatiestap voor de exacte, genummerde stappen om er een aan te maken en de credentials aan te leveren.
+Twee problemen kwamen pas aan het licht bij het daadwerkelijk uitvoeren van een A/B-klantisolatietest tegen de echte database (niet vindbaar via statische review alleen):
+
+1. **`is_member_of_klant()` veroorzaakte oneindige recursie** (`0003_fix_is_member_of_klant_recursion.sql`) — de functie was `SECURITY INVOKER` en las `contactpersonen`, waarvan de eigen SELECT-policy op zijn beurt weer `is_member_of_klant()` aanriep. Dit trof elke actie buiten de twee atomaire RPC's om (die dit toevallig omzeilden doordat ze als tabel-eigenaar draaien). Fix: net als `is_admin()` is deze functie nu `SECURITY DEFINER`.
+2. **Anonieme requests kregen een rauwe Postgres-foutmelding** in plaats van een schone afwijzing (`0004_grant_helper_functions_to_anon.sql`) — `anon` had geen `EXECUTE` op `is_admin()`/`is_member_of_klant()`, dus RLS-evaluatie crashte met "permission denied for function" in plaats van gewoon `false` op te leveren. Geen databeveiligingslek (nul toegang bleef nul toegang), wel gecorrigeerd voor een nette API-respons.
+
+Zie SECURITY_MODEL.md, "Reviewgeschiedenis", voor de volledige toedracht en de testresultaten.
+
+## Klantomgeving en adminoverzicht (geïmplementeerd)
+
+`src/lib/klantOmgeving/api.js` is de Supabase-backed datalaag voor de échte klant-self-service-flow (`/account`, `/dossier/:id`) en het adminoverzicht (`/admin`) — losstaand van `src/lib/dossier/` (localStorage), dat ongewijzigd blijft als het interne MJOP-Tool-prototype van Richard.
+
+Belangrijk architectuurverschil met de oude localStorage-flow: `klant_pand_relaties` staat geen directe `INSERT` toe voor `authenticated` (zie SECURITY_MODEL.md) — een klant koppelt zich dus nooit aan een bestaand Pand, alleen aan een nieuw aangemaakt Pand via `maak_pand_en_koppel()`. Eén account = precies één Klant (afgedwongen door `registreer_klant()`). Dit maakt de oude, Richard-gerichte "zoek of maak willekeurige Klant, koppel willekeurig Pand"-flow (`KlantDossierFlow.jsx`) architectuurincompatibel met de RLS-beveiligde self-service-flow — vandaar dat die twee flows bewust naast elkaar bestaan in plaats van samengevoegd te zijn.
+
+## Lokale-data-migratie (admin-only import)
+
+Bestaande `localStorage`-demodata (`smv_dossier_*_v1`) heeft geen `account_id` — die klanten hebben nooit ingelogd, dus kunnen niet via `registreer_klant()` (dat uitsluitend voor de ingelogde aanroeper zelf werkt) worden geïmporteerd. In plaats daarvan: `adminImporteerKlant()` in `src/lib/klantOmgeving/api.js`, uitsluitend bereikbaar via `/admin` en uitsluitend uitvoerbaar door een admin (`klanten_insert_admin`/`panden_insert_admin`/`kpr_insert_admin` vereisen alle drie `is_admin()`). Kopieert Klant → Contactpersonen → Panden → Dossiers → Adviespunten rechtstreeks naar de database; de lokale data blijft ongewijzigd staan (geen destructieve migratie, wel eenmalig te herhalen zonder duplicaten te controleren — dat is een bewuste, gedocumenteerde beperking: Richard voert dit handmatig, eenmalig per browser uit).

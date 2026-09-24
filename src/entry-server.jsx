@@ -2,6 +2,7 @@ import { Writable } from 'node:stream'
 import { renderToPipeableStream } from 'react-dom/server'
 import { StaticRouter } from 'react-router-dom'
 import App from './App.jsx'
+import { AuthProvider } from './lib/auth/AuthProvider.jsx'
 import { getLastSeo } from './components/seo/seoRegistry'
 
 /**
@@ -23,7 +24,9 @@ export function render(url) {
     let html = ''
     const { pipe } = renderToPipeableStream(
       <StaticRouter location={url}>
-        <App />
+        <AuthProvider>
+          <App />
+        </AuthProvider>
       </StaticRouter>,
       {
         onAllReady() {

@@ -26,4 +26,12 @@ export const ROUTES = {
   inloggen: '/inloggen',
   registreren: '/registreren',
   wachtwoordVergeten: '/wachtwoord-vergeten',
+  // Echte klantomgeving — alleen bereikbaar ingelogd (RequireAuth in
+  // App.jsx). /dossier/:id is bewust NIET in scripts/prerender.mjs
+  // opgenomen: het dossier bestaat pas na aanmaken in de database en de
+  // inhoud is per definitie klant-specifiek, dus geen statisch te
+  // genereren pad (zie DossierDetail.jsx).
+  account: '/account',
+  dossier: (dossierId) => `/dossier/${dossierId}`,
+  admin: '/admin',
 }

@@ -1,6 +1,6 @@
 # Auth-architectuur
 
-Status: **ontworpen, nog niet geïmplementeerd.** Er bestaat geen Supabase-project, dus er is nog geen `@supabase/supabase-js` in de dependencies, geen `.env`, geen login/registratiepagina en geen auth-provider in de React-boom. Dit document is het blauwdruk voor de eerstvolgende implementatiestap, zodra het project in `.env.local` staat (zie `.env.example`).
+Status: **geïmplementeerd en live getest** tegen project `cdthrbflmuqblydggszf`. `@supabase/supabase-js` is een dependency, `.env.local` bevat de echte Project-URL + publishable key (gitignored), en de volledige auth-/klantomgeving-/adminlaag hieronder bestaat en is getest — inclusief een echte login/registratie/dossier/advies/admin-doorloop in de browser tegen de live database.
 
 ## Waarom Supabase Auth
 
@@ -19,8 +19,10 @@ Voortbouwend op de bestaande `src/lib/routes.js`-conventie (één bron van waarh
 | `/inloggen` | E-mail + wachtwoord, "wachtwoord vergeten"-link | Publiek bereikbaar, redirect naar klantomgeving als al ingelogd |
 | `/registreren` | Naam, e-mail, wachtwoord, wachtwoordbevestiging, evt. bedrijfsnaam | Publiek bereikbaar |
 | `/wachtwoord-vergeten` | E-mail invoeren, reset-link via Supabase | Publiek bereikbaar |
-| `/MJOP-Tool` | Bestaande interne tool | Krijgt een inlogvereiste (zie hieronder) — blijft dezelfde route, geen URL-wijziging |
-| `/admin` | Adminomgeving voor Richard | Uitsluitend voor `role = 'admin'`, database-afgedwongen (zie SECURITY_MODEL.md) |
+| `/MJOP-Tool` | Bestaande interne tool | Ongewijzigd, geen inlogvereiste — blijft het localStorage-gebaseerde interne prototype (zie DATABASE_ARCHITECTURE.md, "Klantomgeving en adminoverzicht") |
+| `/account` | Echte klantomgeving: bedrijfsgegevens, panden, dossiers | Achter `RequireAuth` |
+| `/dossier/:dossierId` | Advies bekijken/beheren voor één Dossier | Achter `RequireAuth`; RLS bepaalt of de rij zichtbaar is. Niet geprerenderd (zie routes.js) |
+| `/admin` | Adminoverzicht voor Richard | Achter `RequireAuth` + `RequireAdmin` (client-side UX; database-afgedwongen via `is_admin()` in elke RLS-policy, zie SECURITY_MODEL.md) |
 
 Bestaande publieke marketingroutes (homepage, `/pakketten`, `/energie-indicatie`, `/werkwijze`, `/blog`, enz.) blijven ongewijzigd publiek en geprerenderd — deze auth-laag komt er bovenop, niet in de plaats van.
 
@@ -68,6 +70,14 @@ Gebruikt de bestaande RPC's uit `0001_init.sql` — geen tweede, parallelle aanm
 
 Geen fake auth, geen `isAdmin`-boolean in frontend-state als beveiliging, geen verborgen route als enige bescherming voor `/admin`, geen `service_role`-sleutel in de frontend. De React-laag hierboven is gebruikerservaring; SECURITY_MODEL.md beschrijft de laag die het daadwerkelijk afdwingt.
 
-## Openstaande implementatiestap
+## Admin-bootstrap: enige nog openstaande, echt menselijke stap
 
-Zodra `.env.local` met een echte `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` bestaat: `@supabase/supabase-js` toevoegen, een `supabaseClient.js`, de auth-provider/context, en de bovenstaande routes/componenten daadwerkelijk bouwen en testen tegen de echte database.
+Richard heeft nog geen eigen account. Er is bewust geen wachtwoord voor hem verzonnen (zie STOP-voorwaarden van het implementatieplan) — hij registreert zichzelf via `/registreren` met `richard@smv-advies.nl` en een zelf gekozen wachtwoord, precies zoals elke andere gebruiker. Daarna eenmalig, in de Supabase SQL Editor:
+
+```sql
+update public.user_roles
+set role = 'admin'
+where user_id = (select id from auth.users where email = 'richard@smv-advies.nl');
+```
+
+Zie DATABASE_ARCHITECTURE.md, "Admin bootstrap", voor dezelfde stap in context.
