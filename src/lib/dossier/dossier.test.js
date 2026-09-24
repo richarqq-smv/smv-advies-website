@@ -148,3 +148,117 @@ test('een Dossier kan één primaire Contactpersoon aanwijzen, mits die bij de K
 
   assert.throws(() => createDossier({ klant, pand, primaireContactpersoonId: 'niet-bestaand' }))
 })
+
+test('Dossier krijgt bij aanmaken een contactpersoonSnapshot van de primaire Contactpersoon', () => {
+  const eigenaar = createContactpersoon({ naam: 'Eigenaar', email: 'eigenaar@smvadvies-test.nl', telefoon: '0612345678', rol: 'eigenaar' })
+  const klant = addContactpersoon(createKlant({ naam: 'Fictief Bedrijf' }), eigenaar)
+  const pand = fictiefPand()
+
+  const dossier = createDossier({ klant, pand, primaireContactpersoonId: eigenaar.contactpersoonId })
+
+  assert.deepEqual(dossier.contactpersoonSnapshot, {
+    naam: 'Eigenaar',
+    email: 'eigenaar@smvadvies-test.nl',
+    telefoon: '0612345678',
+    rol: 'eigenaar',
+  })
+  // geen contactpersoonId in de snapshot — dat blijft de verwijzing, niet de inhoud
+  assert.equal('contactpersoonId' in dossier.contactpersoonSnapshot, false)
+})
+
+test('contactpersoonSnapshot is null zonder primaire Contactpersoon', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand })
+  assert.equal(dossier.contactpersoonSnapshot, null)
+})
+
+test('contactpersoonSnapshot is onafhankelijk van het actuele Contactpersoon-object', () => {
+  const eigenaar = createContactpersoon({ naam: 'Eigenaar', email: 'oud@smvadvies-test.nl', telefoon: '0600000000', rol: 'eigenaar' })
+  const klant = addContactpersoon(createKlant({ naam: 'Fictief Bedrijf' }), eigenaar)
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand, primaireContactpersoonId: eigenaar.contactpersoonId })
+
+  // Een latere wijziging aan het oorspronkelijke contactpersoon-object
+  // (bijv. via een toekomstige updateContactpersoon()) mag de al bevroren
+  // snapshot niet raken.
+  eigenaar.email = 'nieuw@smvadvies-test.nl'
+
+  assert.equal(dossier.contactpersoonSnapshot.email, 'oud@smvadvies-test.nl')
+  assert.throws(() => {
+    dossier.contactpersoonSnapshot.email = 'geforceerd@smvadvies-test.nl'
+  })
+})
+
+test('een open Dossier kan de contactpersoonSnapshot bewust verversen: correctie van dezelfde contactpersoon', () => {
+  const eigenaar = createContactpersoon({ naam: 'Eigenaar', email: 'oud@smvadvies-test.nl', telefoon: '0600000000', rol: 'eigenaar' })
+  let klant = addContactpersoon(createKlant({ naam: 'Fictief Bedrijf' }), eigenaar)
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand, primaireContactpersoonId: eigenaar.contactpersoonId })
+
+  // Gecorrigeerde contactgegevens, zelfde contactpersoonId.
+  klant = {
+    ...klant,
+    contactpersonen: klant.contactpersonen.map((c) =>
+      c.contactpersoonId === eigenaar.contactpersoonId ? { ...c, telefoon: '0699999999' } : c,
+    ),
+  }
+
+  const bijgewerkt = refreshDossierSnapshot(dossier, pand, klant)
+
+  assert.equal(bijgewerkt.primaireContactpersoonId, eigenaar.contactpersoonId)
+  assert.equal(bijgewerkt.contactpersoonSnapshot.telefoon, '0699999999')
+  // het origineel blijft ongewijzigd (immutable update)
+  assert.equal(dossier.contactpersoonSnapshot.telefoon, '0600000000')
+})
+
+test('een open Dossier kan de primaire Contactpersoon zelf wisselen', () => {
+  const eigenaar = createContactpersoon({ naam: 'Eigenaar', rol: 'eigenaar' })
+  const facilitair = createContactpersoon({ naam: 'Facilitair', rol: 'facilitair' })
+  let klant = createKlant({ naam: 'Fictief Bedrijf' })
+  klant = addContactpersoon(klant, eigenaar)
+  klant = addContactpersoon(klant, facilitair)
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand, primaireContactpersoonId: eigenaar.contactpersoonId })
+
+  const bijgewerkt = refreshDossierSnapshot(dossier, pand, klant, facilitair.contactpersoonId)
+
+  assert.equal(bijgewerkt.primaireContactpersoonId, facilitair.contactpersoonId)
+  assert.equal(bijgewerkt.contactpersoonSnapshot.naam, 'Facilitair')
+  // het origineel blijft bij de eigenaar
+  assert.equal(dossier.primaireContactpersoonId, eigenaar.contactpersoonId)
+  assert.equal(dossier.contactpersoonSnapshot.naam, 'Eigenaar')
+})
+
+test('refreshDossierSnapshot zonder klant laat de contactpersoonSnapshot ongewijzigd (bestaand gedrag)', () => {
+  const eigenaar = createContactpersoon({ naam: 'Eigenaar', rol: 'eigenaar' })
+  const klant = addContactpersoon(createKlant({ naam: 'Fictief Bedrijf' }), eigenaar)
+  let pand = fictiefPand()
+  const dossier = createDossier({ klant, pand, primaireContactpersoonId: eigenaar.contactpersoonId })
+
+  pand = updatePand(pand, { bouwjaar: 1986 })
+  const bijgewerkt = refreshDossierSnapshot(dossier, pand)
+
+  assert.equal(bijgewerkt.pandSnapshot.bouwjaar, 1986)
+  assert.equal(bijgewerkt.primaireContactpersoonId, eigenaar.contactpersoonId)
+  assert.deepEqual(bijgewerkt.contactpersoonSnapshot, dossier.contactpersoonSnapshot)
+})
+
+test('een afgerond Dossier blijft historisch stabiel: contactpersoonSnapshot kan niet meer worden ververst', () => {
+  const eigenaar = createContactpersoon({ naam: 'Eigenaar', email: 'oud@smvadvies-test.nl', rol: 'eigenaar' })
+  const klant = addContactpersoon(createKlant({ naam: 'Fictief Bedrijf' }), eigenaar)
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand, primaireContactpersoonId: eigenaar.contactpersoonId })
+  const afgerond = completeDossier(dossier)
+
+  const gecorrigeerdeKlant = {
+    ...klant,
+    contactpersonen: klant.contactpersonen.map((c) => ({ ...c, email: 'nieuw@smvadvies-test.nl' })),
+  }
+
+  assert.throws(() => refreshDossierSnapshot(afgerond, pand, gecorrigeerdeKlant))
+  assert.equal(afgerond.contactpersoonSnapshot.email, 'oud@smvadvies-test.nl')
+  assert.throws(() => {
+    afgerond.contactpersoonSnapshot.email = 'geforceerd@smvadvies-test.nl'
+  })
+})

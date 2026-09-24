@@ -13,10 +13,30 @@ export const DOSSIER_STATUS = {
   AFGEROND: 'afgerond',
 }
 
+// Zelfde principe als PAND_SNAPSHOT_FIELDS in snapshot.js: alleen de
+// inhoudelijke Contactpersoon-velden, niet het contactpersoonId zelf —
+// dat blijft de verwijzing (`primaireContactpersoonId`), de snapshot is de
+// bevroren inhoud op het moment van vastleggen (ontwerpdocument "Pand naar
+// Klant naar Dossier", hoofdstuk 4/9).
+const CONTACTPERSOON_SNAPSHOT_FIELDS = ['naam', 'email', 'telefoon', 'rol']
+
+function findContactpersoon(klant, contactpersoonId) {
+  return klant.contactpersonen?.find((c) => c.contactpersoonId === contactpersoonId) ?? null
+}
+
+/** Bevroren, onafhankelijke kopie van de Contactpersoon-inhoud — `null` als er geen primaire Contactpersoon is. */
+function createContactpersoonSnapshot(contactpersoon) {
+  if (!contactpersoon) return null
+  const snapshot = {}
+  for (const field of CONTACTPERSOON_SNAPSHOT_FIELDS) snapshot[field] = contactpersoon[field]
+  return Object.freeze(snapshot)
+}
+
 export function createDossier({ klant, pand, primaireContactpersoonId = null } = {}) {
   if (!klant?.klantId) throw new Error('createDossier vereist een Klant met klantId.')
   if (!pand?.pandId) throw new Error('createDossier vereist een Pand met pandId.')
-  if (primaireContactpersoonId && !klant.contactpersonen?.some((c) => c.contactpersoonId === primaireContactpersoonId)) {
+  const primaireContactpersoon = primaireContactpersoonId ? findContactpersoon(klant, primaireContactpersoonId) : null
+  if (primaireContactpersoonId && !primaireContactpersoon) {
     throw new Error('primaireContactpersoonId moet een bestaande Contactpersoon van deze Klant zijn.')
   }
 
@@ -28,6 +48,7 @@ export function createDossier({ klant, pand, primaireContactpersoonId = null } =
     primaireContactpersoonId,
     status: DOSSIER_STATUS.OPEN,
     pandSnapshot: createPandSnapshot(pand),
+    contactpersoonSnapshot: createContactpersoonSnapshot(primaireContactpersoon),
     createdAt: now,
     updatedAt: now,
   }
@@ -41,15 +62,47 @@ export function isDossierOpen(dossier) {
  * Ververst de snapshot met de op dit moment geldende Pandgegevens — alleen
  * toegestaan zolang het Dossier open is (hoofdstuk 6). Dit is normale
  * voortgang binnen een lopend traject, geen herschrijving van geschiedenis.
+ *
+ * `klant` is optioneel: alleen meegeven wanneer ook de contactpersoon-
+ * snapshot moet worden ververst (bijv. omdat de primaire contactpersoon
+ * bewust wisselt, of omdat diens gegevens zijn gecorrigeerd). Zonder
+ * `klant` blijven `contactpersoonSnapshot` en `primaireContactpersoonId`
+ * ongewijzigd — bestaande aanroepen met alleen (dossier, pand) blijven dus
+ * exact hetzelfde gedrag houden. Met `klant` maar zonder een expliciete
+ * nieuwe `primaireContactpersoonId` wordt de snapshot ververst voor
+ * dezelfde, al gekozen contactpersoon (het correctie-geval); met een
+ * afwijkende `primaireContactpersoonId` wisselt de primaire contactpersoon
+ * zelf (inclusief `null`, om de primaire contactpersoon te wissen).
  */
-export function refreshDossierSnapshot(dossier, pand) {
+export function refreshDossierSnapshot(dossier, pand, klant = null, primaireContactpersoonId = dossier.primaireContactpersoonId) {
   if (!isDossierOpen(dossier)) {
     throw new Error('Een afgerond Dossier kan zijn snapshot niet meer bijwerken.')
   }
   if (dossier.pandId !== pand.pandId) {
     throw new Error('Dit Pand hoort niet bij dit Dossier.')
   }
-  return { ...dossier, pandSnapshot: createPandSnapshot(pand), updatedAt: new Date().toISOString() }
+
+  let contactpersoonSnapshot = dossier.contactpersoonSnapshot
+  let nextPrimaireContactpersoonId = dossier.primaireContactpersoonId
+  if (klant) {
+    if (klant.klantId !== dossier.klantId) {
+      throw new Error('Deze Klant hoort niet bij dit Dossier.')
+    }
+    const contactpersoon = primaireContactpersoonId ? findContactpersoon(klant, primaireContactpersoonId) : null
+    if (primaireContactpersoonId && !contactpersoon) {
+      throw new Error('primaireContactpersoonId moet een bestaande Contactpersoon van deze Klant zijn.')
+    }
+    contactpersoonSnapshot = createContactpersoonSnapshot(contactpersoon)
+    nextPrimaireContactpersoonId = primaireContactpersoonId
+  }
+
+  return {
+    ...dossier,
+    pandSnapshot: createPandSnapshot(pand),
+    contactpersoonSnapshot,
+    primaireContactpersoonId: nextPrimaireContactpersoonId,
+    updatedAt: new Date().toISOString(),
+  }
 }
 
 /**
