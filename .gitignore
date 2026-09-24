@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 
+# Environment variables (Supabase-project-URL + anon key zijn publiek
+# genoeg om te committen, maar worden hier toch nooit vertrouwd aan git
+# toevertrouwd — zie .env.example voor de placeholders).
+.env
+.env.*
+!.env.example
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
