@@ -26,6 +26,7 @@ export {
   removeAdviespunt,
 } from './dossier.js'
 export { createAdviespunt, createSignaalBevroren } from './adviespunt.js'
+export { groepeerAdviespunten, ADVIESRESULTAAT_VOLGORDE } from './adviesresultaat.js'
 export {
   saveKlant,
   loadKlant,

@@ -34,7 +34,9 @@ import {
 const LEEG_FORMULIER = { onderwerp: '', adviesStatus: '', toelichting: '', herbeoordelenBij: '' }
 const STATUS_KEYS = Object.keys(STATUSES)
 
-function AdviesStatusBadge({ status }) {
+// Geëxporteerd: ook hergebruikt door AdviesResultaat.jsx, zodat "feit vs.
+// signaal vs. advies" er exact hetzelfde uitziet als hier.
+export function AdviesStatusBadge({ status }) {
   const info = STATUSES[status]
   if (!info) return null
   return (
@@ -44,13 +46,40 @@ function AdviesStatusBadge({ status }) {
   )
 }
 
-function HerkomstBadge({ herkomst }) {
+export function HerkomstBadge({ herkomst }) {
   return herkomst === 'automatisch' ? (
     <span className="inline-flex items-center rounded-full border border-dashed border-border px-3 py-1 text-xs font-medium text-foreground-muted">
       Automatisch signaal
     </span>
   ) : (
     <span className="inline-flex items-center rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">Advies van Richard</span>
+  )
+}
+
+// Read-only kaartvorm van één adviespunt — geëxporteerd en hergebruikt door
+// AdviesResultaat.jsx (identieke weergave van onderwerp/status/toelichting/
+// herbeoordelenBij/signaalspoor), hier aangevuld met optionele acties
+// (Aanpassen/Verwijderen) die alleen bij een open Dossier verschijnen.
+export function AdviespuntKaart({ advies, actions }) {
+  return (
+    <div className="rounded-lg border border-border p-4">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+        <p className="text-base font-semibold text-primary">{advies.onderwerp}</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <HerkomstBadge herkomst={advies.herkomst} />
+          <AdviesStatusBadge status={advies.adviesStatus} />
+        </div>
+      </div>
+      <p className="text-sm leading-relaxed text-foreground-muted">{advies.toelichting}</p>
+      {advies.herbeoordelenBij ? <p className="mt-2 text-xs text-foreground-muted">Opnieuw beoordelen: {advies.herbeoordelenBij}</p> : null}
+      {advies.signaalBevroren ? (
+        <p className="mt-2 text-xs text-foreground-muted">
+          Oorspronkelijk MJOP-signaal: {advies.signaalBevroren.statusLabel}
+          {advies.signaalBevroren.relevantYear ? ` (${advies.signaalBevroren.relevantYear})` : ''}
+        </p>
+      ) : null}
+      {actions ? <div className="mt-3 flex flex-wrap gap-3">{actions}</div> : null}
+    </div>
   )
 }
 
@@ -154,7 +183,7 @@ function AdviesFormulier({ idPrefix = 'advies', waarde, onWijzig, onOpslaan, onA
   )
 }
 
-export function AdviesBeheer({ dossier: initieelDossier, building }) {
+export function AdviesBeheer({ dossier: initieelDossier, building, onDossierChange }) {
   const [dossier, setDossier] = useState(initieelDossier)
   const [nieuwBron, setNieuwBron] = useState(null) // 'handmatig' | insight-object
   const [nieuwWaarde, setNieuwWaarde] = useState(LEEG_FORMULIER)
@@ -169,6 +198,7 @@ export function AdviesBeheer({ dossier: initieelDossier, building }) {
   function opslaanDossier(volgende) {
     if (!saveDossier(volgende)) throw new Error('opslaan mislukt')
     setDossier(volgende)
+    onDossierChange?.(volgende)
   }
 
   function startHandmatig() {
@@ -334,32 +364,22 @@ export function AdviesBeheer({ dossier: initieelDossier, building }) {
                 />
               </li>
             ) : (
-              <li key={advies.adviespuntId} className="rounded-lg border border-border p-4">
-                <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                  <p className="text-base font-semibold text-primary">{advies.onderwerp}</p>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <HerkomstBadge herkomst={advies.herkomst} />
-                    <AdviesStatusBadge status={advies.adviesStatus} />
-                  </div>
-                </div>
-                <p className="text-sm leading-relaxed text-foreground-muted">{advies.toelichting}</p>
-                {advies.herbeoordelenBij ? <p className="mt-2 text-xs text-foreground-muted">Opnieuw beoordelen: {advies.herbeoordelenBij}</p> : null}
-                {advies.signaalBevroren ? (
-                  <p className="mt-2 text-xs text-foreground-muted">
-                    Oorspronkelijk MJOP-signaal: {advies.signaalBevroren.statusLabel}
-                    {advies.signaalBevroren.relevantYear ? ` (${advies.signaalBevroren.relevantYear})` : ''}
-                  </p>
-                ) : null}
-                {open ? (
-                  <div className="mt-3 flex flex-wrap gap-3">
-                    <Button type="button" variant="ghost" size="sm" onClick={() => startBewerken(advies)}>
-                      Aanpassen
-                    </Button>
-                    <Button type="button" variant="ghost" size="sm" onClick={() => verwijder(advies.adviespuntId)}>
-                      Verwijderen
-                    </Button>
-                  </div>
-                ) : null}
+              <li key={advies.adviespuntId}>
+                <AdviespuntKaart
+                  advies={advies}
+                  actions={
+                    open ? (
+                      <>
+                        <Button type="button" variant="ghost" size="sm" onClick={() => startBewerken(advies)}>
+                          Aanpassen
+                        </Button>
+                        <Button type="button" variant="ghost" size="sm" onClick={() => verwijder(advies.adviespuntId)}>
+                          Verwijderen
+                        </Button>
+                      </>
+                    ) : null
+                  }
+                />
               </li>
             ),
           )}

@@ -10,8 +10,10 @@ import {
   loadAllKlanten,
   koppelKlantAanPand,
   openAdviesdossier,
+  isDossierOpen,
 } from '../../lib/dossier'
 import { AdviesBeheer } from './AdviesBeheer'
+import { AdviesResultaat } from './AdviesResultaat'
 
 /**
  * Interne flow "Bestaand Pand → Klant koppelen → Contactpersoon kiezen/maken
@@ -79,6 +81,15 @@ export function KlantDossierFlow({ pand, building }) {
   const [dossierResultaat, setDossierResultaat] = useState(null)
   const [dossierFout, setDossierFout] = useState(null)
   const [dossierBezig, setDossierBezig] = useState(false)
+
+  // Adviesweergave: "beheren" (AdviesBeheer, muteerbaar) of "resultaat"
+  // (AdviesResultaat, read-only) — bewust een losse, lichte toggle in plaats
+  // van een nieuwe navigatiestructuur. Een eigen kopie van het Dossier hier
+  // houdt AdviesResultaat synchroon met wijzigingen die Richard in
+  // AdviesBeheer opslaat (via AdviesBeheer's onDossierChange), zonder dat
+  // AdviesBeheer zijn eigen interne state-aanpak hoeft te verliezen.
+  const [weergegevenDossier, setWeergegevenDossier] = useState(null)
+  const [adviesWeergave, setAdviesWeergave] = useState('beheren')
 
   // Bewust geen memo: loadAllKlanten() is een goedkope lokale lezing, en
   // moet na elke render de actuele lijst tonen (bijv. direct na het
@@ -179,6 +190,8 @@ export function KlantDossierFlow({ pand, building }) {
         primaireContactpersoonId: gekozenContactpersoonId,
       })
       setDossierResultaat(resultaat)
+      setWeergegevenDossier(resultaat.dossier)
+      setAdviesWeergave(isDossierOpen(resultaat.dossier) ? 'beheren' : 'resultaat')
     } catch {
       setDossierFout('Het dossier kon niet worden geopend. Probeer het opnieuw.')
     } finally {
@@ -372,7 +385,26 @@ export function KlantDossierFlow({ pand, building }) {
                   ? 'Er was al een open dossier voor deze klant en dit pand — dat dossier is hervat.'
                   : 'Het dossier is geopend.'}
               </p>
-              <AdviesBeheer dossier={dossierResultaat.dossier} building={building} />
+
+              <div className="flex gap-2">
+                <Button type="button" variant={adviesWeergave === 'beheren' ? 'primary' : 'outline'} size="sm" onClick={() => setAdviesWeergave('beheren')}>
+                  Advies beheren
+                </Button>
+                <Button type="button" variant={adviesWeergave === 'resultaat' ? 'primary' : 'outline'} size="sm" onClick={() => setAdviesWeergave('resultaat')}>
+                  Adviesresultaat
+                </Button>
+              </div>
+
+              {adviesWeergave === 'beheren' ? (
+                // dossier={weergegevenDossier}, niet dossierResultaat.dossier: dat laatste
+                // blijft de verouderde stand van vóór het eerste opslaan. AdviesBeheer
+                // remount (en initialiseert dus zijn interne state opnieuw) telkens wanneer
+                // hiertussen wordt gewisseld — zonder de bijgewerkte prop zou dat elke
+                // eerder opgeslagen wijziging ongedaan maken zodra Richard terugschakelt.
+                <AdviesBeheer dossier={weergegevenDossier} building={building} onDossierChange={setWeergegevenDossier} />
+              ) : (
+                <AdviesResultaat adviespunten={weergegevenDossier.adviespunten} />
+              )}
             </div>
           )}
         </div>
