@@ -251,3 +251,110 @@ test('saveKlant/savePand/saveDossier wijzen duidelijk ongeldige objecten af', ()
   assert.throws(() => savePand({ omschrijving: 'geen pandId' }))
   assert.throws(() => saveDossier({ status: 'open' }))
 })
+
+test('Dossier met contactpersoonSnapshot wordt opgeslagen en opnieuw geladen', () => {
+  let klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const eigenaar = createContactpersoon({ naam: 'Eigenaar', email: 'eigenaar@smvadvies-test.nl', telefoon: '0612345678', rol: 'eigenaar' })
+  klant = addContactpersoon(klant, eigenaar)
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand, primaireContactpersoonId: eigenaar.contactpersoonId })
+
+  saveDossier(dossier)
+  const geladen = loadDossier(dossier.dossierId)
+
+  assert.deepEqual(geladen.contactpersoonSnapshot, {
+    naam: 'Eigenaar',
+    email: 'eigenaar@smvadvies-test.nl',
+    telefoon: '0612345678',
+    rol: 'eigenaar',
+  })
+})
+
+test('contactpersoonSnapshot en pandSnapshot zijn na rehydration allebei opnieuw bevroren', () => {
+  let klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const eigenaar = createContactpersoon({ naam: 'Eigenaar', rol: 'eigenaar' })
+  klant = addContactpersoon(klant, eigenaar)
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand, primaireContactpersoonId: eigenaar.contactpersoonId })
+
+  saveDossier(dossier)
+  const geladen = loadDossier(dossier.dossierId)
+
+  assert.equal(Object.isFrozen(geladen.pandSnapshot), true)
+  assert.equal(Object.isFrozen(geladen.contactpersoonSnapshot), true)
+
+  // een mutatiepoging op de gerehydrateerde snapshot verandert de data niet
+  assert.throws(() => {
+    geladen.contactpersoonSnapshot.naam = 'Geforceerd'
+  })
+  assert.equal(geladen.contactpersoonSnapshot.naam, 'Eigenaar')
+})
+
+test('een afgerond Dossier blijft na save/load historisch identiek, inclusief contactpersoonSnapshot', () => {
+  let klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const eigenaar = createContactpersoon({ naam: 'Eigenaar', email: 'oud@smvadvies-test.nl', rol: 'eigenaar' })
+  klant = addContactpersoon(klant, eigenaar)
+  const pand = fictiefPand()
+  const afgerond = completeDossier(createDossier({ klant, pand, primaireContactpersoonId: eigenaar.contactpersoonId }))
+
+  saveDossier(afgerond)
+  const geladen = loadDossier(afgerond.dossierId)
+
+  assert.equal(geladen.status, DOSSIER_STATUS.AFGEROND)
+  assert.equal(Object.isFrozen(geladen), true)
+  assert.equal(Object.isFrozen(geladen.contactpersoonSnapshot), true)
+  assert.equal(geladen.contactpersoonSnapshot.email, 'oud@smvadvies-test.nl')
+  assert.throws(() => {
+    geladen.contactpersoonSnapshot = null
+  })
+})
+
+test('een Dossier met contactpersoonSnapshot: null blijft geldig na save/load', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand })
+
+  assert.equal(dossier.contactpersoonSnapshot, null)
+  saveDossier(dossier)
+  const geladen = loadDossier(dossier.dossierId)
+  assert.equal(geladen.contactpersoonSnapshot, null)
+})
+
+test('een ouder opgeslagen Dossier zonder contactpersoonSnapshot-veld blijft compatibel', () => {
+  const klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand })
+
+  // Simuleert een Dossier zoals opgeslagen vóór 0335fbe: geen
+  // contactpersoonSnapshot-property aanwezig, niet eens als null.
+  const { contactpersoonSnapshot: _contactpersoonSnapshot, ...ouderDossier } = dossier
+  globalThis.localStorage.setItem('smv_dossier_dossiers_v1', JSON.stringify({ [dossier.dossierId]: ouderDossier }))
+
+  const geladen = loadDossier(dossier.dossierId)
+  assert.ok(geladen)
+  assert.equal(geladen.contactpersoonSnapshot, null)
+  assert.equal(geladen.dossierId, dossier.dossierId)
+})
+
+test('rehydratie leidt de contactpersoonSnapshot nooit af van de actuele Contactpersoon', () => {
+  let klant = createKlant({ naam: 'Fictief Bedrijf' })
+  const eigenaar = createContactpersoon({ naam: 'Eigenaar', email: 'oud@smvadvies-test.nl', rol: 'eigenaar' })
+  klant = addContactpersoon(klant, eigenaar)
+  const pand = fictiefPand()
+  const dossier = createDossier({ klant, pand, primaireContactpersoonId: eigenaar.contactpersoonId })
+  saveKlant(klant)
+  saveDossier(dossier)
+
+  // De levende Klant/Contactpersoon wordt daarna gecorrigeerd en opnieuw
+  // opgeslagen — de al opgeslagen Dossier-snapshot mag dit niet oppikken,
+  // want loadDossier() leest nooit de Klant-opslag om de snapshot opnieuw
+  // samen te stellen.
+  const gecorrigeerdeKlant = {
+    ...klant,
+    contactpersonen: klant.contactpersonen.map((c) => ({ ...c, email: 'nieuw@smvadvies-test.nl' })),
+  }
+  saveKlant(gecorrigeerdeKlant)
+
+  const geladenDossier = loadDossier(dossier.dossierId)
+  assert.equal(geladenDossier.contactpersoonSnapshot.email, 'oud@smvadvies-test.nl')
+})

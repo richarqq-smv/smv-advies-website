@@ -53,7 +53,12 @@ function isValidDossier(value) {
     typeof value.pandId === 'string' &&
     value.pandId.length > 0 &&
     (value.status === DOSSIER_STATUS.OPEN || value.status === DOSSIER_STATUS.AFGEROND) &&
-    isPlainObject(value.pandSnapshot)
+    isPlainObject(value.pandSnapshot) &&
+    // contactpersoonSnapshot is optioneel: afwezig (oudere Dossiers van vóór
+    // 0335fbe) of expliciet null is geldig, maar als het veld er is, moet
+    // het een plain object zijn — nooit een corrupte waarde stilzwijgend
+    // doorlaten.
+    (value.contactpersoonSnapshot === undefined || value.contactpersoonSnapshot === null || isPlainObject(value.contactpersoonSnapshot))
   )
 }
 
@@ -93,16 +98,21 @@ function writeCollection(key, collection) {
 /**
  * Een Dossier verliest bij JSON.stringify/parse zijn Object.freeze — dat is
  * puur een JavaScript-runtime-eigenschap, geen opgeslagen data. Na het
- * teruglezen wordt dezelfde bevriezing opnieuw toegepast: de snapshot blijft
- * altijd bevroren, en een afgerond Dossier wordt in zijn geheel opnieuw
- * bevroren — precies het gedrag van completeDossier() in dossier.js, hier
- * hergebruikt in plaats van opnieuw gedefinieerd. De snapshot-inhoud zelf
- * wordt hierbij niet aangeraakt of opnieuw afgeleid van een Pand-object: wat
- * is opgeslagen, is wat wordt teruggegeven.
+ * teruglezen wordt dezelfde bevriezing opnieuw toegepast op elke
+ * snapshot-eigenschap (pandSnapshot én contactpersoonSnapshot): beide
+ * blijven altijd bevroren, en een afgerond Dossier wordt in zijn geheel
+ * opnieuw bevroren — precies het gedrag van createDossier()/
+ * completeDossier() in dossier.js, hier hergebruikt in plaats van opnieuw
+ * gedefinieerd. Geen van beide snapshots wordt hierbij aangeraakt of
+ * opnieuw afgeleid van een Pand- of Contactpersoon-object: wat is
+ * opgeslagen, is wat wordt teruggegeven. Een `contactpersoonSnapshot` van
+ * `null` blijft `null`; ontbreekt het veld (een Dossier van vóór 0335fbe),
+ * dan wordt dat ook als `null` behandeld — geen migratie nodig.
  */
 function rehydrateDossier(raw) {
   const pandSnapshot = Object.freeze({ ...raw.pandSnapshot })
-  const dossier = { ...raw, pandSnapshot }
+  const contactpersoonSnapshot = raw.contactpersoonSnapshot ? Object.freeze({ ...raw.contactpersoonSnapshot }) : null
+  const dossier = { ...raw, pandSnapshot, contactpersoonSnapshot }
   return dossier.status === DOSSIER_STATUS.AFGEROND ? Object.freeze(dossier) : dossier
 }
 
