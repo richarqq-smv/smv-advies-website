@@ -93,6 +93,23 @@ Bovenstaande testmethode is daadwerkelijk uitgevoerd tegen de echte database, me
 
 Tijdens het opzetten van deze test (vóór bovenstaande resultaten) werd de kritieke recursiebug (zie Reviewgeschiedenis, Bevinding 3) ontdekt en gecorrigeerd — de tabel hierboven is het resultaat ná die fix. Alle testdata is na afloop verwijderd (`delete`, met tijdelijk uitgeschakelde integriteitstriggers om de test-fixture zelf — inclusief een bewust afgerond testdossier — te kunnen opruimen).
 
+## Live testresultaten: MJOP → Dossier → Advies (2026-09-25)
+
+Volledige keten eerst live doorlopen in de browser (inloggen → `/account` → `registreer_klant()` → `/MJOP-Tool` testdata A laden → `MjopKlantKoppeling` → nieuw Pand + Dossier met echte `mjop_snapshot` → automatisch signaal "Cv / verwarming" overgenomen als adviespunt met `herkomst = 'automatisch'` en bevroren `signaal_bevroren` → Dossier afgerond → `AdviesResultaat`-groepering correct). Daarna dezelfde A/B-aanvalstests specifiek op MJOP-data, met een tweede, eigen Dossier + `mjop_snapshot` voor Klant B:
+
+| Test | Verwacht | Resultaat |
+|---|---|---|
+| Klant A ziet eigen MJOP-snapshot (eigen Dossier) | Toegang | ✅ `mjop_snapshot` leesbaar |
+| Klant A leest Dossier B / Pand B (met MJOP-data) | 0 rijen | ✅ 0 rijen (beide) |
+| Klant A wijzigt `mjop_snapshot` van Dossier B | 0 rijen gewijzigd | ✅ 0 |
+| Klant A koppelt zich rechtstreeks aan Pand B via `klant_pand_relaties`, of wijzigt Pand B rechtstreeks | RLS-weigering | ✅ geweigerd (42501) / 0 rijen |
+| Klant A voegt een adviespunt toe aan Dossier B, of rondt Dossier B af | RLS-weigering / 0 rijen | ✅ geweigerd (42501) / 0 rijen |
+| Anonieme sessie leest dossiers met een `mjop_snapshot`, of panden | 0 rijen | ✅ 0 rijen (beide) |
+| Admin (tijdelijk gepromoot) leest `mjop_snapshot` van zowel Dossier A als Dossier B | Volledige toegang | ✅ beide zichtbaar |
+| Afgerond Dossier A: `mjop_snapshot` wijzigen, ook door de eigenaar zelf | 0 rijen gewijzigd | ✅ 0 |
+
+Alle testdata (twee accounts, klanten, panden, dossiers, adviespunten) na afloop verwijderd.
+
 ## Reviewgeschiedenis
 
 Een eerdere versie van dit schema bevatte twee bevestigde kwetsbaarheden, gevonden in een expliciete adversariële review vóórdat er iets werd uitgevoerd:

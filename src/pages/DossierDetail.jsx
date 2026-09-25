@@ -61,7 +61,7 @@ export default function DossierDetail() {
               Dit dossier bestaat niet, of u heeft er geen toegang toe.
             </p>
           ) : (
-            <DossierWerkruimte dossier={dossier} adviespunten={adviespunten} onDossierChange={setDossier} />
+            <DossierWerkruimte dossier={dossier} adviespunten={adviespunten} mjopSnapshot={dossier.mjop_snapshot} onDossierChange={setDossier} />
           )}
         </Container>
       </Section>

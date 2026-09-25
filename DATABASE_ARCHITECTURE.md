@@ -71,6 +71,19 @@ Zie SECURITY_MODEL.md, "Reviewgeschiedenis", voor de volledige toedracht en de t
 
 Belangrijk architectuurverschil met de oude localStorage-flow: `klant_pand_relaties` staat geen directe `INSERT` toe voor `authenticated` (zie SECURITY_MODEL.md) — een klant koppelt zich dus nooit aan een bestaand Pand, alleen aan een nieuw aangemaakt Pand via `maak_pand_en_koppel()`. Eén account = precies één Klant (afgedwongen door `registreer_klant()`). Dit maakt de oude, Richard-gerichte "zoek of maak willekeurige Klant, koppel willekeurig Pand"-flow (`KlantDossierFlow.jsx`) architectuurincompatibel met de RLS-beveiligde self-service-flow — vandaar dat die twee flows bewust naast elkaar bestaan in plaats van samengevoegd te zijn.
 
+## MJOP → Dossier → Advies (geïmplementeerd, 2026-09-25)
+
+De MJOP-tool zelf (7-staps wizard, `smv_mjop_building_v1` in localStorage) is **ongewijzigd** — dat blijft het interne/prototype-werkdocument, precies zoals het al werkte. Wat nieuw is: een auth-bewuste brug (`src/components/klantOmgeving/MjopKlantKoppeling.jsx`, alleen zichtbaar met een echte sessie) die de HUIDIGE MJOP-building naar de klant-Supabase-flow tilt:
+
+1. Klant kiest "nieuw pand" of een al bestaand eigen Pand.
+2. `buildingToPandInput()`/`createMjopSnapshotFromBuilding()` — **dezelfde, ongewijzigde pure adapterfuncties** uit `src/lib/dossier/mjopAdapter.js` die de localStorage-koppeling ook al gebruikte — vertalen de building naar Pand-velden + een bevroren MJOP-momentopname.
+3. `maakPandEnKoppel()` (nieuw pand) of `updatePand()` (bestaand pand) schrijft naar Supabase; `openOfHergebruikDossier()` slaat de snapshot op in `dossiers.mjop_snapshot`.
+4. Op `/dossier/:id` berekent `DossierWerkruimte.jsx` de automatische signaalkandidaten met `buildInsights()` uit `lib/mjop/linking.js` — **ongewijzigd, pure, regelgebaseerde functie** — toegepast op `dossier.mjop_snapshot.components` (de bevroren snapshot, nooit de actuele MJOP-building). Een gekozen signaal wordt via `createSignaalBevroren()` (ongewijzigd, `lib/dossier/adviespunt.js`) bevroren vastgelegd bij het adviespunt (`herkomst = 'automatisch'`).
+
+**Snapshot-immutabiliteit**: `mjop_snapshot` wordt uitsluitend geschreven bij het aanmaken van een Dossier — er is geen "ververs snapshot"-actie. Een later gewijzigde MJOP-building of Pand raakt een al bestaand Dossier dus nooit, en de bestaande `dossiers_bewaak_integriteit`-trigger blokkeert sowieso elke wijziging aan een afgerond Dossier (getest, zie SECURITY_MODEL.md).
+
+**Waarom geen automatische pre-load van een gekozen Pand terug in de MJOP-wizard**: de MJOP-tool is bewust V1-single-profile (één actieve building per browser, zie `lib/mjop/storage.js`'s eigen ontwerpdocumentatie) — dat per-Pand multi-sessie zou maken is een aparte, grotere architectuurwijziging die niet is gevraagd. `/account` linkt daarom naar `/MJOP-Tool` als losse navigatiestap ("MJOP starten/bekijken"), en de koppeling naar een specifiek Pand gebeurt bewust bij het opslaan (stap 1-3 hierboven), niet bij het openen.
+
 ## Lokale-data-migratie (admin-only import)
 
 Bestaande `localStorage`-demodata (`smv_dossier_*_v1`) heeft geen `account_id` — die klanten hebben nooit ingelogd, dus kunnen niet via `registreer_klant()` (dat uitsluitend voor de ingelogde aanroeper zelf werkt) worden geïmporteerd. In plaats daarvan: `adminImporteerKlant()` in `src/lib/klantOmgeving/api.js`, uitsluitend bereikbaar via `/admin` en uitsluitend uitvoerbaar door een admin (`klanten_insert_admin`/`panden_insert_admin`/`kpr_insert_admin` vereisen alle drie `is_admin()`). Kopieert Klant → Contactpersonen → Panden → Dossiers → Adviespunten rechtstreeks naar de database; de lokale data blijft ongewijzigd staan (geen destructieve migratie, wel eenmalig te herhalen zonder duplicaten te controleren — dat is een bewuste, gedocumenteerde beperking: Richard voert dit handmatig, eenmalig per browser uit).

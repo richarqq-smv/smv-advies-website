@@ -11,6 +11,7 @@ import { StepPlanning } from './StepPlanning'
 import { StepAdvies } from './StepAdvies'
 import { Toast } from '../energieIndicatie/Toast'
 import { KlantDossierFlow } from '../dossier/KlantDossierFlow'
+import { MjopKlantKoppeling } from '../klantOmgeving/MjopKlantKoppeling'
 
 export function MjopTool() {
   const mjop = useMjopBuilding()
@@ -83,6 +84,14 @@ export function MjopTool() {
           <KlantDossierFlow pand={mjop.savedPand} building={mjop.building} />
         </div>
       ) : null}
+
+      {/*
+        Auth-bewuste brug naar de echte, Supabase-backed klantomgeving —
+        losstaand van de KlantDossierFlow hierboven (die blijft het interne/
+        prototype pad zonder account). Rendert zelf niets wanneer er geen
+        sessie is, dus geen wijziging voor anoniem/intern gebruik.
+      */}
+      <MjopKlantKoppeling building={mjop.building} />
 
       <Toast message={mjop.toast} />
     </div>

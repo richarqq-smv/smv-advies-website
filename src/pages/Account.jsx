@@ -171,6 +171,9 @@ export default function Account() {
                         <p className="font-medium text-primary">{pand.omschrijving || pand.adres || 'Naamloos pand'}</p>
                         {pand.plaats ? <p className="text-sm text-foreground-muted">{pand.adres ? `${pand.adres}, ` : ''}{pand.plaats}</p> : null}
                         <div className="mt-3 flex flex-wrap items-center gap-3">
+                          <Link to={ROUTES.mjopTool} className="text-sm font-medium text-accent hover:underline">
+                            MJOP starten/bekijken
+                          </Link>
                           {(dossiersPerPand[pand.pand_id] ?? []).length === 0 ? (
                             <Button type="button" variant="outline" size="sm" onClick={() => openDossierVoorPand(pand)}>
                               Adviesdossier openen

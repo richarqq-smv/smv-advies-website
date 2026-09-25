@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { CheckCircle, WarningCircle, SpinnerGap } from '@phosphor-icons/react'
 import { Button } from '../ui/Button'
 import { STATUSES } from '../../lib/mjop/constants'
+import { buildInsights } from '../../lib/mjop/linking'
+import { createSignaalBevroren } from '../../lib/dossier/adviespunt'
 import { groepeerAdviespunten } from '../../lib/dossier/adviesresultaat'
 import { AdviesStatusBadge, HerkomstBadge, AdviespuntKaart } from '../dossier/AdviesBeheer'
 import { addAdviespunt, updateAdviespunt, removeAdviespunt, completeDossier } from '../../lib/klantOmgeving/api'
@@ -16,9 +18,17 @@ import { addAdviespunt, updateAdviespunt, removeAdviespunt, completeDossier } fr
  * `adviespunten`-tabel (niet één "hele Dossier opslaan"-aanroep, zoals
  * bij de localStorage-versie, want adviespunten is hier een eigen tabel).
  *
- * Nog geen MJOP-signaalkandidaten (kandidatenMetSignaal/kandidatenOnbekend
- * in AdviesBeheer.jsx): de MJOP-wizard is nog niet aan deze Supabase-flow
- * gekoppeld, alleen handmatige adviespunten. Zie het eindrapport.
+ * MJOP-signaalkandidaten (`mjopSnapshot`, optioneel): exact dezelfde
+ * regellogica als AdviesBeheer.jsx, hergebruikt (buildInsights uit
+ * lib/mjop/linking.js, createSignaalBevroren uit lib/dossier/adviespunt.js
+ * — beide pure functies, geen wijziging nodig). Cruciaal: de kandidaten
+ * worden altijd berekend uit `mjopSnapshot.components` — de BEVROREN
+ * momentopname die bij het openen van dit Dossier is vastgelegd, nooit uit
+ * de actuele/live MJOP-building. Wijzigt de klant later iets in de
+ * MJOP-tool, dan verandert dat dus nooit met terugwerkende kracht welke
+ * signalen dit Dossier toont, en al helemaal niet die van een afgerond
+ * Dossier (dat sowieso niet meer beschrijfbaar is — zie de dossiers/
+ * adviespunten-integriteitstriggers in 0001_init.sql).
  */
 
 const LEEG_FORMULIER = { onderwerp: '', adviesStatus: '', toelichting: '', herbeoordelenBij: '' }
@@ -96,6 +106,23 @@ function AdviesFormulier({ idPrefix = 'advies', waarde, onWijzig, onOpslaan, onA
   )
 }
 
+function KandidaatItem({ insight, onKies }) {
+  return (
+    <li className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-dashed border-border px-4 py-3">
+      <div>
+        <p className="text-sm font-medium text-primary">{insight.componentLabel}</p>
+        <p className="text-xs text-foreground-muted">
+          {insight.statusLabel}
+          {insight.relevantYear ? ` — ${insight.relevantYear}` : ''}
+        </p>
+      </div>
+      <Button type="button" variant="outline" size="sm" onClick={() => onKies(insight)}>
+        Als adviespunt toevoegen
+      </Button>
+    </li>
+  )
+}
+
 /** Resultaatweergave (groepering per status) — alleen getoond bij een afgerond Dossier of desgewenst ernaast. */
 function Resultaat({ adviespunten }) {
   const { groepen, totaal } = groepeerAdviespunten(adviespunten.map((a) => ({ ...a, adviesStatus: a.advies_status, adviespuntId: a.adviespunt_id })))
@@ -117,10 +144,10 @@ function Resultaat({ adviespunten }) {
   )
 }
 
-export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: initieleAdviespunten, onDossierChange, magBewerken = true }) {
+export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: initieleAdviespunten, mjopSnapshot = null, onDossierChange, magBewerken = true }) {
   const [dossier, setDossier] = useState(initieelDossier)
   const [adviespunten, setAdviespunten] = useState(initieleAdviespunten)
-  const [nieuwBron, setNieuwBron] = useState(null) // null | 'handmatig'
+  const [nieuwBron, setNieuwBron] = useState(null) // null | 'handmatig' | insight-object
   const [nieuwWaarde, setNieuwWaarde] = useState(LEEG_FORMULIER)
   const [bewerkId, setBewerkId] = useState(null)
   const [bewerkWaarde, setBewerkWaarde] = useState(LEEG_FORMULIER)
@@ -129,9 +156,25 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
 
   const open = dossier.status === 'open' && magBewerken
 
+  // Altijd berekend uit de bevroren mjopSnapshot van dít Dossier, nooit uit
+  // de actuele MJOP-building (zie de moduledoc hierboven). buildInsights()
+  // verwacht een object met een `components`-array — exact de vorm van
+  // mjopSnapshot zelf (zie createMjopSnapshotFromBuilding in mjopAdapter.js).
+  const insights = useMemo(() => (mjopSnapshot?.components ? buildInsights(mjopSnapshot) : []), [mjopSnapshot])
+  const gebruikteComponentIds = new Set(adviespunten.filter((a) => a.signaal_bevroren).map((a) => a.signaal_bevroren.componentId))
+  const kandidaten = insights.filter((i) => !gebruikteComponentIds.has(i.componentId))
+  const kandidatenMetSignaal = kandidaten.filter((i) => i.status !== 'onvoldoende_informatie')
+  const kandidatenOnbekend = kandidaten.filter((i) => i.status === 'onvoldoende_informatie')
+
   function startHandmatig() {
     setNieuwBron('handmatig')
     setNieuwWaarde(LEEG_FORMULIER)
+    setFout(null)
+  }
+
+  function startVanuitSignaal(insight) {
+    setNieuwBron(insight)
+    setNieuwWaarde({ onderwerp: insight.componentLabel, adviesStatus: insight.status, toelichting: '', herbeoordelenBij: '' })
     setFout(null)
   }
 
@@ -147,12 +190,14 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
     if (!nieuwWaarde.toelichting.trim()) return setFout('Vul een toelichting in.')
     setBezig(true)
     try {
+      const isSignaal = nieuwBron && nieuwBron !== 'handmatig'
       const nieuw = await addAdviespunt(dossier.dossier_id, {
         onderwerp: nieuwWaarde.onderwerp,
-        herkomst: 'handmatig',
+        herkomst: isSignaal ? 'automatisch' : 'handmatig',
         adviesStatus: nieuwWaarde.adviesStatus,
         toelichting: nieuwWaarde.toelichting,
         herbeoordelenBij: nieuwWaarde.herbeoordelenBij,
+        signaalBevroren: isSignaal ? createSignaalBevroren(nieuwBron) : null,
       })
       setAdviespunten((v) => [...v, nieuw])
       setNieuwBron(null)
@@ -283,12 +328,34 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
 
       {open ? (
         <div className="flex flex-col gap-4 border-t border-border pt-6">
+          {kandidatenMetSignaal.length > 0 ? (
+            <div>
+              <p className="mb-2 text-sm font-medium text-primary">Automatisch beschikbare signalen uit MJOP</p>
+              <ul className="flex flex-col gap-2">
+                {kandidatenMetSignaal.map((insight) => (
+                  <KandidaatItem key={insight.componentId} insight={insight} onKies={startVanuitSignaal} />
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {kandidatenOnbekend.length > 0 ? (
+            <div>
+              <p className="mb-2 text-sm font-medium text-primary">Aanvullende informatie nodig</p>
+              <ul className="flex flex-col gap-2">
+                {kandidatenOnbekend.map((insight) => (
+                  <KandidaatItem key={insight.componentId} insight={insight} onKies={startVanuitSignaal} />
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
           {nieuwBron ? (
             <AdviesFormulier idPrefix="nieuw" waarde={nieuwWaarde} onWijzig={setNieuwWaarde} onOpslaan={bevestigNieuw} onAnnuleer={annuleerNieuw} bezig={bezig} fout={fout} />
           ) : (
             <div>
               <Button type="button" variant="outline" size="sm" onClick={startHandmatig}>
-                Adviespunt toevoegen
+                Handmatig adviespunt toevoegen
               </Button>
             </div>
           )}

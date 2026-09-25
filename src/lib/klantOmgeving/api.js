@@ -63,6 +63,41 @@ export async function maakPandEnKoppel(klantId, pandInput) {
   return throwOnError(await supabase.from('panden').select('*').eq('pand_id', pandId).single())
 }
 
+/**
+ * Werkt een al bestaand, al aan de Klant gekoppeld Pand bij — bijv. wanneer
+ * dezelfde MJOP-building opnieuw wordt opgeslagen (zelfde regel als de
+ * bestaande lib/dossier/mjopKoppeling.js: "update in plaats van dupliceren"
+ * bij een tweede opslag voor dezelfde building). Toegestaan via de
+ * panden_update-policy (is_member_of_klant via klant_pand_relaties) —
+ * geen aparte RPC nodig, dit is geen aanmaak- maar een wijzigactie.
+ *
+ * Neemt bewust hetzelfde camelCase `pandInput`-formaat als
+ * maak_pand_en_koppel()'s `p_pand`-parameter (zie 0001_init.sql en
+ * lib/dossier/mjopAdapter.js's buildingToPandInput()) — dezelfde
+ * aanroeper kan dus zonder omzetting tussen "nieuw pand" en "bestaand
+ * pand bijwerken" kiezen. De snake_case-vertaling gebeurt hier, niet bij
+ * de aanroeper.
+ */
+export async function updatePand(pandId, pandInput) {
+  const changes = {
+    omschrijving: pandInput.omschrijving,
+    adres: pandInput.adres,
+    postcode: pandInput.postcode,
+    plaats: pandInput.plaats,
+    bouwjaar: pandInput.bouwjaar,
+    gebruikstype: pandInput.gebruikstype,
+    vloeroppervlak: pandInput.vloeroppervlak,
+    bouwlagen: pandInput.bouwlagen,
+    gebruikers: pandInput.gebruikers,
+    energiebron: pandInput.energiebron,
+    verwarmingssysteem_type: pandInput.verwarmingssysteemType,
+    energielabel: pandInput.energielabel,
+    opmerkingen: pandInput.opmerkingen,
+  }
+  Object.keys(changes).forEach((key) => changes[key] === undefined && delete changes[key])
+  return throwOnError(await supabase.from('panden').update(changes).eq('pand_id', pandId).select('*').single())
+}
+
 // --- Dossier + advieslaag ---------------------------------------------------
 
 export async function listDossiersVoorKlant(klantId) {
@@ -93,8 +128,18 @@ async function vindOpenDossier(klantId, pandId) {
  * bestaand open Dossier voor exact deze combinatie (zelfde regel als de
  * bestaande interne flow, lib/dossier/openDossier.js). Retourneert
  * `{ dossier, hergebruikt }`.
+ *
+ * `mjopSnapshot` (optioneel) is het resultaat van
+ * lib/dossier/mjopAdapter.js's createMjopSnapshotFromBuilding() —
+ * dezelfde bevroren, onafhankelijke momentopname als de bestaande
+ * localStorage-flow al gebruikt, hier alleen naar `dossiers.mjop_snapshot`
+ * geschreven in plaats van naar een localStorage-koppelrecord. Bij een
+ * hergebruikt (al bestaand) Dossier wordt de snapshot NIET overschreven —
+ * zie DATABASE_ARCHITECTURE.md, "MJOP-snapshot en immutabiliteit": een
+ * Dossier legt vast wat gold toen het werd geopend, niet wat er later
+ * verandert aan het Pand of de MJOP-data.
  */
-export async function openOfHergebruikDossier({ klantId, pandId, pand, primaireContactpersoonId = null }) {
+export async function openOfHergebruikDossier({ klantId, pandId, pand, primaireContactpersoonId = null, mjopSnapshot = null }) {
   const bestaand = await vindOpenDossier(klantId, pandId)
   if (bestaand) return { dossier: bestaand, hergebruikt: true }
 
@@ -116,6 +161,7 @@ export async function openOfHergebruikDossier({ klantId, pandId, pand, primaireC
         pand_id: pandId,
         primaire_contactpersoon_id: primaireContactpersoonId,
         pand_snapshot: pandSnapshot,
+        mjop_snapshot: mjopSnapshot,
       })
       .select('*, panden(*)')
       .single(),
