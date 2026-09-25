@@ -3,6 +3,7 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '../../lib/auth/useAuth'
 import { checkIsAdmin } from '../../lib/klantOmgeving/api'
 import { ROUTES } from '../../lib/routes'
+import { BeveiligdePaginaSeo } from './BeveiligdePaginaSeo'
 
 /**
  * Extra laag boven RequireAuth: vraagt is_admin() op (een SECURITY
@@ -30,9 +31,9 @@ export function RequireAdmin() {
     }
   }, [laden, user])
 
-  if (laden) return null
+  if (laden) return <BeveiligdePaginaSeo />
   if (!user) return <Navigate to={ROUTES.inloggen} replace />
-  if (status === 'bezig') return null
+  if (status === 'bezig') return <BeveiligdePaginaSeo />
   if (status === 'geen-admin') return <Navigate to={ROUTES.account} replace />
   return <Outlet />
 }

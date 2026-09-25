@@ -8,10 +8,11 @@ import { MjopTool as MjopToolWidget } from '../components/mjop/MjopTool'
  * Intern adviesinstrument (MJOP & verduurzamingsplanning), bewust niet
  * publiek gepromoot: geen link in header/mobiele nav/footer/sitemap (zie
  * data/navigation.js en public/sitemap.xml, beide niet aangepast voor deze
- * route), en `noindex` hieronder zodat de pagina ook niet wordt geïndexeerd
- * als iemand de URL toch vindt. De route bestaat wel technisch en werkt
- * direct via de URL, inclusief refresh en prerendering — alleen niet als
- * onderdeel van de publieke contentstructuur.
+ * route), en `noindex` hieronder zodat de pagina ook niet wordt geïndexeerd.
+ * Alleen bereikbaar voor een ingelogde admin (RequireAuth + RequireAdmin in
+ * App.jsx): de MJOP-analyse is onderdeel van het adviesproces van SMV, geen
+ * klantproduct. Een klant of anonieme bezoeker wordt doorgestuurd naar
+ * /inloggen respectievelijk /account.
  */
 export default function MjopTool() {
   return (

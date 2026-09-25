@@ -8,7 +8,7 @@
     "build": "vite build && vite build --ssr src/entry-server.jsx --outDir dist-ssr && node scripts/prerender.mjs",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "node --test src/lib/dossier/*.test.js src/lib/klantOmgeving/*.test.js"
+    "test": "node --test src/lib/dossier/*.test.js src/lib/klantOmgeving/*.test.js supabase/tests/*.test.js"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
@@ -23,6 +23,7 @@
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.3.16",
     "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-react": "^6.1.0",
     "oxlint": "^1.79.0",

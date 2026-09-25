@@ -73,7 +73,6 @@ export default function App() {
           <Route path={ROUTES.contact} element={<Contact />} />
           <Route path={ROUTES.privacy} element={<Privacy />} />
           <Route path={ROUTES.voorwaarden} element={<Voorwaarden />} />
-          <Route path={ROUTES.mjopTool} element={<MjopTool />} />
           <Route path={ROUTES.inloggen} element={<Inloggen />} />
           <Route path={ROUTES.registreren} element={<Registreren />} />
           <Route path={ROUTES.wachtwoordVergeten} element={<WachtwoordVergeten />} />
@@ -83,6 +82,8 @@ export default function App() {
             <Route path="/dossier/:dossierId" element={<DossierDetail />} />
             <Route element={<RequireAdmin />}>
               <Route path={ROUTES.admin} element={<Admin />} />
+              {/* Intern adviesinstrument van SMV — niet voor klanten of bezoekers. */}
+              <Route path={ROUTES.mjopTool} element={<MjopTool />} />
             </Route>
           </Route>
 

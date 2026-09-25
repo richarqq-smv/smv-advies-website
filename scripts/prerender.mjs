@@ -37,27 +37,25 @@ const ROUTES = [
   ROUTE_PATHS.contact,
   ROUTE_PATHS.privacy,
   ROUTE_PATHS.voorwaarden,
-  // Intern, verborgen adviesinstrument — technisch een echte prerendered
-  // route (zodat de directe URL en een refresh op GitHub Pages werken),
-  // maar bewust niet in NAV_ITEMS of sitemap.xml, en geserveerd met
-  // noindex via Seo (zie src/pages/MjopTool.jsx).
-  ROUTE_PATHS.mjopTool,
-  // Accountroutes: zelfde reden als mjopTool hierboven — een directe
-  // load/refresh op GitHub Pages heeft een echt bestand nodig, en de
-  // formulieren bevatten geen klantdata om te lekken. Ook noindex.
+  // Accountroutes: een directe load/refresh op GitHub Pages heeft een echt
+  // bestand nodig, en de formulieren bevatten geen klantdata om te lekken.
+  // Altijd noindex.
   ROUTE_PATHS.inloggen,
   ROUTE_PATHS.registreren,
   ROUTE_PATHS.wachtwoordVergeten,
-  // /account en /admin zijn achter RequireAuth/RequireAdmin (client-side
-  // guards, zie App.jsx) altijd lege shells bij een niet-ingelogde SSR-
-  // render — zelfde soort statische bestand nodig voor een directe
-  // load/refresh op GitHub Pages als de routes hierboven. /dossier/:id
+  // /account, /admin en de interne MJOP-tool zijn achter RequireAuth/
+  // RequireAdmin (client-side guards, zie App.jsx) altijd lege shells bij
+  // een niet-ingelogde SSR-render: alleen noindex-head-tags
+  // (BeveiligdePaginaSeo), geen inhoud — zelfde soort statische bestand
+  // nodig voor een directe load/refresh op GitHub Pages als de routes
+  // hierboven. /dossier/:id
   // is bewust NIET hier opgenomen: dossier-ID's bestaan pas na aanmaken
   // in de database (geen vooraf bekende lijst, zoals BLOG_POSTS) en de
   // inhoud is per definitie klant-specifiek — geen statisch bestand,
   // werkt alleen via client-side routing (zie routes.js).
   ROUTE_PATHS.account,
   ROUTE_PATHS.admin,
+  ROUTE_PATHS.mjopTool,
 ]
 
 function escapeHtml(str) {

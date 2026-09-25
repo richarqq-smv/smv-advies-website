@@ -144,7 +144,10 @@ function Resultaat({ adviespunten }) {
   )
 }
 
-export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: initieleAdviespunten, mjopSnapshot = null, onDossierChange, magBewerken = true }) {
+// `magBewerken` staat standaard uit: alleen de adviseur (admin) krijgt
+// bewerkrechten, expliciet meegegeven door DossierDetail — zie
+// lib/klantOmgeving/rechten.js en migration 0006.
+export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: initieleAdviespunten, mjopSnapshot = null, onDossierChange, magBewerken = false }) {
   const [dossier, setDossier] = useState(initieelDossier)
   const [adviespunten, setAdviespunten] = useState(initieleAdviespunten)
   const [nieuwBron, setNieuwBron] = useState(null) // null | 'handmatig' | insight-object
@@ -154,7 +157,8 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
   const [bezig, setBezig] = useState(false)
   const [fout, setFout] = useState(null)
 
-  const open = dossier.status === 'open' && magBewerken
+  const afgerond = dossier.status === 'afgerond'
+  const open = !afgerond && magBewerken
 
   // Altijd berekend uit de bevroren mjopSnapshot van dít Dossier, nooit uit
   // de actuele MJOP-building (zie de moduledoc hierboven). buildInsights()
@@ -275,7 +279,7 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
           <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Adviesdossier</p>
           <h3 className="text-xl text-primary">Advies</h3>
         </div>
-        {!open ? (
+        {afgerond ? (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
             <CheckCircle size={14} weight="fill" /> Afgerond
           </span>
@@ -284,11 +288,15 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
       <p className="-mt-4 text-sm text-foreground-muted">
         {open
           ? 'Leg hier vast wat u met de klant bespreekt — ook "geen actie nodig" of "later opnieuw beoordelen" zijn volwaardige uitkomsten.'
-          : 'Dit dossier is afgerond. Het advies hieronder is definitief vastgelegd en kan niet meer worden gewijzigd.'}
+          : afgerond
+            ? 'Dit dossier is afgerond. Het advies hieronder is definitief vastgelegd en kan niet meer worden gewijzigd.'
+            : 'SMV Advies werkt aan het advies voor dit pand. Zodra het advies is afgerond, ziet u hier de uitkomst.'}
       </p>
 
       {adviespunten.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border px-5 py-6 text-center text-sm text-foreground-muted">Nog geen adviespunten vastgelegd.</p>
+        open || afgerond ? (
+          <p className="rounded-lg border border-dashed border-border px-5 py-6 text-center text-sm text-foreground-muted">Nog geen adviespunten vastgelegd.</p>
+        ) : null
       ) : (
         <ul className="flex flex-col gap-3">
           {adviespunten.map((advies) =>
@@ -368,9 +376,9 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
             <p className="mt-2 text-xs text-foreground-muted">Na afronden staat het advies vast en kan het niet meer worden gewijzigd.</p>
           </div>
         </div>
-      ) : (
+      ) : afgerond ? (
         <Resultaat adviespunten={adviespunten} />
-      )}
+      ) : null}
     </div>
   )
 }

@@ -2,133 +2,195 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { CheckCircle, WarningCircle, SpinnerGap } from '@phosphor-icons/react'
 import { Button } from '../ui/Button'
-import { useAuth } from '../../lib/auth/useAuth'
 import { ROUTES } from '../../lib/routes'
 import { buildingToPandInput, createMjopSnapshotFromBuilding } from '../../lib/dossier/mjopAdapter'
-import { getMijnKlant, listPandenVoorKlant, maakPandEnKoppel, updatePand, openOfHergebruikDossier } from '../../lib/klantOmgeving/api'
+import { adminListKlanten, listPandenVoorKlant, maakPandEnKoppel, updatePand, openOfHergebruikDossier, legMjopSnapshotVastAlsLeeg } from '../../lib/klantOmgeving/api'
+
+const selectClass =
+  'w-full rounded-lg border border-border bg-white px-3.5 py-2.5 text-sm text-primary focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none'
 
 /**
- * De auth-bewuste "brug" tussen de MJOP-tool en de échte, Supabase-backed
- * klantomgeving — losstaand van en aanvullend op
- * lib/dossier/mjopKoppeling.js (localStorage), dat ongewijzigd blijft voor
- * het interne/prototype gebruik zonder account (zie DATABASE_ARCHITECTURE.md,
- * "Klantomgeving en adminoverzicht"). Alleen zichtbaar wanneer er een echte
- * sessie is — geen concurrentie met de bestaande, altijd-zichtbare
- * "MJOP opslaan bij dit pand"-actie in StepAdvies, die voor iedereen
- * (ingelogd of niet) blijft werken zoals hij al werkte.
+ * Bij het bijwerken van een BESTAAND pand: alleen velden die de MJOP-tool
+ * daadwerkelijk invult. Een leeg MJOP-veld (bijv. geen naam of plaats
+ * ingevuld) mag nooit gegevens wissen die de klant of SMV al eerder bij het
+ * pand heeft vastgelegd.
+ */
+function alleenIngevuld(pandInput) {
+  return Object.fromEntries(Object.entries(pandInput).filter(([, waarde]) => waarde !== null && waarde !== undefined && waarde !== ''))
+}
+
+/**
+ * De brug tussen de (interne) MJOP-tool en een klantdossier in Supabase.
+ * Alleen voor de adviseur: /MJOP-Tool staat achter RequireAdmin (App.jsx),
+ * en dossiers aanmaken of wijzigen mag sinds migration 0006 uitsluitend een
+ * admin. De adviseur kiest de klant en het pand; daarna wordt een dossier
+ * geopend (of het bestaande open dossier hergebruikt) met de huidige
+ * MJOP-invoer als bevroren momentopname.
  *
- * Hergebruikt bewust dezelfde pure adapterfuncties als de bestaande
- * localStorage-koppeling (buildingToPandInput/createMjopSnapshotFromBuilding
- * uit lib/dossier/mjopAdapter.js) — geen tweede, parallelle vertaallaag.
+ * Een bestaand open dossier zonder MJOP-momentopname krijgt de snapshot
+ * alsnog; een dossier dat er al een heeft, wordt nooit overschreven (dat is
+ * vastgelegde historie) — de adviseur krijgt dan een melding.
+ *
+ * Hergebruikt bewust dezelfde pure adapterfuncties als de localStorage-
+ * koppeling (buildingToPandInput/createMjopSnapshotFromBuilding uit
+ * lib/dossier/mjopAdapter.js) — geen tweede, parallelle vertaallaag.
  */
 export function MjopKlantKoppeling({ building }) {
-  const { user, laden: authLaden } = useAuth()
   const navigate = useNavigate()
 
-  const [status, setStatus] = useState('laden') // 'laden' | 'geen-klant' | 'klaar'
-  const [klant, setKlant] = useState(null)
+  const [status, setStatus] = useState('laden') // 'laden' | 'fout' | 'klaar'
+  const [klanten, setKlanten] = useState([])
+  const [klantId, setKlantId] = useState('')
   const [panden, setPanden] = useState([])
-  const [gekozenPandId, setGekozenPandId] = useState('nieuw')
+  const [pandId, setPandId] = useState('nieuw')
   const [bezig, setBezig] = useState(false)
   const [fout, setFout] = useState(null)
+  const [melding, setMelding] = useState(null) // { dossierId, tekst }
 
   useEffect(() => {
-    if (authLaden || !user) return
     let actief = true
-    getMijnKlant()
-      .then(async (mijnKlant) => {
+    adminListKlanten()
+      .then((lijst) => {
         if (!actief) return
-        if (!mijnKlant?.klant) {
-          setStatus('geen-klant')
-          return
-        }
-        setKlant(mijnKlant.klant)
-        const lijst = await listPandenVoorKlant(mijnKlant.klant.klant_id)
-        if (!actief) return
-        setPanden(lijst)
+        setKlanten(lijst ?? [])
         setStatus('klaar')
       })
-      .catch(() => actief && setStatus('geen-klant'))
+      .catch(() => actief && setStatus('fout'))
     return () => {
       actief = false
     }
-  }, [authLaden, user])
+  }, [])
 
-  if (authLaden || !user) return null
+  useEffect(() => {
+    let actief = true
+    if (!klantId) return undefined
+    listPandenVoorKlant(klantId)
+      .then((lijst) => actief && setPanden(lijst ?? []))
+      .catch(() => actief && setFout('De panden van deze klant konden niet worden geladen.'))
+    return () => {
+      actief = false
+    }
+  }, [klantId])
+
   if (status === 'laden') return null
 
-  if (status === 'geen-klant') {
-    return (
-      <div className="mt-6 rounded-2xl border border-accent/30 bg-accent/5 p-6 text-sm print:hidden">
-        <p className="text-primary">
-          Rond eerst uw <Link to={ROUTES.account} className="font-medium text-accent hover:underline">bedrijfsgegevens</Link> af om deze MJOP-gegevens aan uw
-          account te koppelen.
-        </p>
-      </div>
-    )
+  function kiesKlant(id) {
+    setKlantId(id)
+    setPanden([])
+    setPandId('nieuw')
+    setFout(null)
+    setMelding(null)
   }
 
   async function koppelEnOpenDossier(e) {
     e.preventDefault()
     setFout(null)
+    setMelding(null)
+    if (!klantId) return setFout('Kies eerst een klant.')
     setBezig(true)
     try {
       const pandInput = buildingToPandInput(building)
       const mjopSnapshot = createMjopSnapshotFromBuilding(building)
 
-      const pand = gekozenPandId === 'nieuw' ? await maakPandEnKoppel(klant.klant_id, pandInput) : await updatePand(gekozenPandId, pandInput)
+      let pand
+      if (pandId === 'nieuw') {
+        pand = await maakPandEnKoppel(klantId, pandInput)
+      } else {
+        // `ontstaanVia` hoort bij het aanmaken, niet bij het bijwerken van een bestaand pand.
+        const { ontstaanVia: _ontstaanVia, ...wijzigingen } = alleenIngevuld(pandInput)
+        pand = Object.keys(wijzigingen).length > 0 ? await updatePand(pandId, wijzigingen) : panden.find((p) => p.pand_id === pandId)
+      }
 
-      const { dossier } = await openOfHergebruikDossier({ klantId: klant.klant_id, pandId: pand.pand_id, pand, mjopSnapshot })
+      const { dossier, hergebruikt } = await openOfHergebruikDossier({ klantId, pandId: pand.pand_id, pand, mjopSnapshot })
+
+      if (hergebruikt && dossier.mjop_snapshot) {
+        setMelding({
+          dossierId: dossier.dossier_id,
+          tekst: 'Er bestaat al een open dossier met een MJOP-momentopname voor dit pand. Die is niet overschreven.',
+        })
+        setBezig(false)
+        return
+      }
+      if (hergebruikt) await legMjopSnapshotVastAlsLeeg(dossier.dossier_id, mjopSnapshot)
       navigate(ROUTES.dossier(dossier.dossier_id))
     } catch {
-      setFout('Koppelen aan uw account is niet gelukt. Probeer het opnieuw.')
+      setFout('Koppelen aan het klantdossier is niet gelukt. Probeer het opnieuw.')
       setBezig(false)
     }
   }
 
   return (
     <div className="mt-6 rounded-2xl border border-accent/30 bg-accent/5 p-6 print:hidden">
-      <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Uw account</p>
-      <h3 className="text-lg text-primary">Koppel deze MJOP-gegevens aan uw pand</h3>
+      <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Klantdossier</p>
+      <h3 className="text-lg text-primary">Koppel deze MJOP-gegevens aan een klantdossier</h3>
       <p className="mt-1 text-sm text-foreground-muted">
-        Dit slaat de huidige MJOP-gegevens op bij uw eigen, ingelogde account (bedrijf: <strong className="text-primary">{klant.naam || klant.bedrijfsnaam}</strong>) en opent
-        daar een adviesdossier — anders dan de testdata/lokale opslag hierboven, die alleen in deze browser blijft.
+        Legt de huidige MJOP-invoer vast als momentopname in het adviesdossier van de gekozen klant en pand — anders dan de lokale opslag hierboven, die
+        alleen in deze browser blijft.
       </p>
 
-      <form onSubmit={koppelEnOpenDossier} className="mt-4 flex flex-col gap-4">
-        <div>
-          <label htmlFor="mjop-koppel-pand" className="mb-1.5 block text-sm font-medium text-primary">
-            Pand
-          </label>
-          <select
-            id="mjop-koppel-pand"
-            value={gekozenPandId}
-            onChange={(e) => setGekozenPandId(e.target.value)}
-            className="w-full rounded-lg border border-border bg-white px-3.5 py-2.5 text-sm text-primary focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
-          >
-            <option value="nieuw">Nieuw pand aanmaken van deze MJOP-gegevens</option>
-            {panden.map((pand) => (
-              <option key={pand.pand_id} value={pand.pand_id}>
-                {pand.omschrijving || pand.adres || 'Naamloos pand'}
-              </option>
-            ))}
-          </select>
-        </div>
+      {status === 'fout' ? (
+        <p role="alert" className="mt-4 flex items-center gap-1.5 text-sm font-medium text-error">
+          <WarningCircle size={15} weight="fill" />
+          De klantenlijst kon niet worden geladen.
+        </p>
+      ) : klanten.length === 0 ? (
+        <p className="mt-4 text-sm text-foreground-muted">Er zijn nog geen klanten om aan te koppelen.</p>
+      ) : (
+        <form onSubmit={koppelEnOpenDossier} className="mt-4 flex flex-col gap-4">
+          <div>
+            <label htmlFor="mjop-koppel-klant" className="mb-1.5 block text-sm font-medium text-primary">
+              Klant
+            </label>
+            <select id="mjop-koppel-klant" value={klantId} onChange={(e) => kiesKlant(e.target.value)} className={selectClass}>
+              <option value="">Kies een klant</option>
+              {klanten.map((k) => (
+                <option key={k.klant_id} value={k.klant_id}>
+                  {k.bedrijfsnaam || k.naam || 'Naamloze klant'}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        {fout ? (
-          <p role="alert" className="flex items-center gap-1.5 text-sm font-medium text-error">
-            <WarningCircle size={15} weight="fill" />
-            {fout}
-          </p>
-        ) : null}
+          {klantId ? (
+            <div>
+              <label htmlFor="mjop-koppel-pand" className="mb-1.5 block text-sm font-medium text-primary">
+                Pand
+              </label>
+              <select id="mjop-koppel-pand" value={pandId} onChange={(e) => setPandId(e.target.value)} className={selectClass}>
+                <option value="nieuw">Nieuw pand aanmaken van deze MJOP-gegevens</option>
+                {panden.map((pand) => (
+                  <option key={pand.pand_id} value={pand.pand_id}>
+                    {pand.omschrijving || pand.adres || 'Naamloos pand'}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
 
-        <div>
-          <Button type="submit" size="sm" disabled={bezig}>
-            {bezig ? <SpinnerGap size={16} className="animate-spin" /> : <CheckCircle size={16} />}
-            Koppelen en dossier openen
-          </Button>
-        </div>
-      </form>
+          {fout ? (
+            <p role="alert" className="flex items-center gap-1.5 text-sm font-medium text-error">
+              <WarningCircle size={15} weight="fill" />
+              {fout}
+            </p>
+          ) : null}
+
+          {melding ? (
+            <p role="status" className="text-sm text-primary">
+              {melding.tekst}{' '}
+              <Link to={ROUTES.dossier(melding.dossierId)} className="font-medium text-accent hover:underline">
+                Naar het dossier
+              </Link>
+            </p>
+          ) : null}
+
+          <div>
+            <Button type="submit" size="sm" disabled={bezig || !klantId}>
+              {bezig ? <SpinnerGap size={16} className="animate-spin" /> : <CheckCircle size={16} />}
+              Koppelen en dossier openen
+            </Button>
+          </div>
+        </form>
+      )}
     </div>
   )
 }

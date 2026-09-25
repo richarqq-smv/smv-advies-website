@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
@@ -7,7 +7,7 @@ import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
 import { UitloggenKnop } from '../components/auth/UitloggenKnop'
 import { ROUTES } from '../lib/routes'
-import { adminListKlanten, adminListDossiers, adminImporteerKlant } from '../lib/klantOmgeving/api'
+import { adminListKlanten, adminListDossiers, adminImporteerKlant, listPandenVoorKlant, openOfHergebruikDossier } from '../lib/klantOmgeving/api'
 import { loadAllKlanten, loadAllPanden, loadAllDossiers, loadAllKlantPandRelaties } from '../lib/dossier'
 
 /**
@@ -21,8 +21,14 @@ import { loadAllKlanten, loadAllPanden, loadAllDossiers, loadAllKlantPandRelatie
  * admin-only, want die klanten hebben nooit een eigen account (geen
  * account_id om aan te koppelen), en alleen een admin mag rechtstreeks
  * (buiten registreer_klant/maak_pand_en_koppel om) een Klant/Pand aanmaken.
+ *
+ * Een adviesdossier openen is werk van SMV (migration 0006): per klant zijn
+ * hier de panden zichtbaar, met een "Dossier openen"-actie voor panden
+ * zonder open dossier. Een dossier mét MJOP-momentopname opent de adviseur
+ * vanuit de MJOP-tool (MjopKlantKoppeling).
  */
 export default function Admin() {
+  const navigate = useNavigate()
   const [laden, setLaden] = useState(true)
   const [klanten, setKlanten] = useState([])
   const [dossiers, setDossiers] = useState([])
@@ -32,6 +38,11 @@ export default function Admin() {
   const [importBezig, setImportBezig] = useState(null) // klantId die momenteel importeert, of null
   const [importFout, setImportFout] = useState(null)
   const [geimporteerd, setGeimporteerd] = useState(new Set())
+
+  const [uitgeklapteKlantId, setUitgeklapteKlantId] = useState(null)
+  const [pandenPerKlant, setPandenPerKlant] = useState({})
+  const [dossierBezig, setDossierBezig] = useState(null) // pand_id waarvoor een dossier wordt geopend
+  const [dossierFout, setDossierFout] = useState(null)
 
   useEffect(() => {
     laadAlles()
@@ -78,6 +89,31 @@ export default function Admin() {
       setImportFout(`Importeren van "${item.klant.naam || item.klant.bedrijfsnaam}" is niet gelukt.`)
     } finally {
       setImportBezig(null)
+    }
+  }
+
+  async function toonPanden(klantId) {
+    setDossierFout(null)
+    if (uitgeklapteKlantId === klantId) return setUitgeklapteKlantId(null)
+    setUitgeklapteKlantId(klantId)
+    if (pandenPerKlant[klantId]) return
+    try {
+      const lijst = await listPandenVoorKlant(klantId)
+      setPandenPerKlant((v) => ({ ...v, [klantId]: lijst ?? [] }))
+    } catch {
+      setDossierFout('De panden van deze klant konden niet worden geladen.')
+    }
+  }
+
+  async function openDossier(klantId, pand) {
+    setDossierFout(null)
+    setDossierBezig(pand.pand_id)
+    try {
+      const { dossier } = await openOfHergebruikDossier({ klantId, pandId: pand.pand_id, pand })
+      navigate(ROUTES.dossier(dossier.dossier_id))
+    } catch {
+      setDossierFout('Het dossier kon niet worden geopend. Probeer het opnieuw.')
+      setDossierBezig(null)
     }
   }
 
@@ -145,8 +181,49 @@ export default function Admin() {
                   <ul className="flex flex-col gap-2">
                     {gefilterdeKlanten.map((k) => (
                       <li key={k.klant_id} className="rounded-lg border border-border bg-white px-4 py-3 text-sm">
-                        <p className="font-medium text-primary">{k.naam || k.bedrijfsnaam || 'Naamloze klant'}</p>
-                        {k.email ? <p className="text-foreground-muted">{k.email}</p> : null}
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <p className="font-medium text-primary">{k.naam || k.bedrijfsnaam || 'Naamloze klant'}</p>
+                            {k.email ? <p className="text-foreground-muted">{k.email}</p> : null}
+                          </div>
+                          <Button type="button" variant="ghost" size="sm" onClick={() => toonPanden(k.klant_id)}>
+                            {uitgeklapteKlantId === k.klant_id ? 'Panden verbergen' : 'Panden en dossiers'}
+                          </Button>
+                        </div>
+                        {uitgeklapteKlantId === k.klant_id ? (
+                          <div className="mt-3 border-t border-border pt-3">
+                            {dossierFout ? <p role="alert" className="mb-2 text-sm font-medium text-error">{dossierFout}</p> : null}
+                            {!pandenPerKlant[k.klant_id] ? (
+                              <p className="text-foreground-muted">Bezig met laden...</p>
+                            ) : pandenPerKlant[k.klant_id].length === 0 ? (
+                              <p className="text-foreground-muted">Deze klant heeft nog geen panden.</p>
+                            ) : (
+                              <ul className="flex flex-col gap-2">
+                                {pandenPerKlant[k.klant_id].map((pand) => {
+                                  const pandDossiers = dossiers.filter((d) => d.klant_id === k.klant_id && d.pand_id === pand.pand_id)
+                                  const heeftOpenDossier = pandDossiers.some((d) => d.status === 'open')
+                                  return (
+                                    <li key={pand.pand_id} className="flex flex-wrap items-center justify-between gap-2">
+                                      <span className="text-primary">{pand.omschrijving || pand.adres || 'Naamloos pand'}</span>
+                                      <span className="flex flex-wrap items-center gap-3">
+                                        {pandDossiers.map((d) => (
+                                          <Link key={d.dossier_id} to={ROUTES.dossier(d.dossier_id)} className="font-medium text-accent hover:underline">
+                                            Dossier {d.status === 'afgerond' ? '(afgerond)' : '(open)'}
+                                          </Link>
+                                        ))}
+                                        {!heeftOpenDossier ? (
+                                          <Button type="button" variant="outline" size="sm" onClick={() => openDossier(k.klant_id, pand)} disabled={dossierBezig === pand.pand_id}>
+                                            {dossierBezig === pand.pand_id ? 'Bezig...' : 'Dossier openen'}
+                                          </Button>
+                                        ) : null}
+                                      </span>
+                                    </li>
+                                  )
+                                })}
+                              </ul>
+                            )}
+                          </div>
+                        ) : null}
                       </li>
                     ))}
                   </ul>

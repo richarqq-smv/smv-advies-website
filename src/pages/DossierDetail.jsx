@@ -7,14 +7,20 @@ import { Container } from '../components/ui/Container'
 import { DossierWerkruimte } from '../components/klantOmgeving/DossierWerkruimte'
 import { OfferteEditor } from '../components/klantOmgeving/OfferteEditor'
 import { OffertesHistorie } from '../components/klantOmgeving/OffertesHistorie'
-import { getDossier, listAdviespunten } from '../lib/klantOmgeving/api'
+import { checkIsAdmin, getDossier, listAdviespunten } from '../lib/klantOmgeving/api'
+import { bepaalDossierRechten } from '../lib/klantOmgeving/rechten'
 
 /**
  * Detailpagina voor één Dossier — bereikbaar voor de eigen klant (RLS:
- * is_member_of_klant) en voor een admin (RLS: is_admin()). Geen eigen
- * autorisatielogica hier: als de rij niet zichtbaar is voor deze sessie
- * geeft Supabase eenvoudigweg niets terug (`notFound`-weergave hieronder),
- * precies zoals RLS is bedoeld te werken.
+ * is_member_of_klant) en voor een admin (RLS: is_admin()). Als de rij niet
+ * zichtbaar is voor deze sessie geeft Supabase eenvoudigweg niets terug
+ * (`notFound`-weergave hieronder), precies zoals RLS is bedoeld te werken.
+ *
+ * Advies en offertes zijn werk van de adviseur: de klant ziet alleen zijn
+ * dossier (en de adviespunten zodra het advies is afgerond), zonder
+ * bewerkknoppen of offerte-editor. bepaalDossierRechten() bepaalt wat
+ * zichtbaar is; de database (0006_advies_en_dossier_alleen_adviseur.sql)
+ * dwingt hetzelfde af, ook als iemand de UI omzeilt.
  *
  * Bewust niet opgenomen in scripts/prerender.mjs: het dossier_id bestaat
  * pas na aanmaken in de database, en de inhoud is per definitie
@@ -28,6 +34,7 @@ export default function DossierDetail() {
   const [nietGevonden, setNietGevonden] = useState(false)
   const [dossier, setDossier] = useState(null)
   const [adviespunten, setAdviespunten] = useState([])
+  const [isAdmin, setIsAdmin] = useState(false)
   // Verhoogd door OfferteEditor na een geslaagde opslag — laat
   // OffertesHistorie zichzelf herladen zonder dat beide componenten
   // elkaars interne state hoeven te kennen (zie OffertesHistorie.jsx).
@@ -37,11 +44,14 @@ export default function DossierDetail() {
     let actief = true
     setLaden(true)
     setNietGevonden(false)
-    Promise.all([getDossier(dossierId), listAdviespunten(dossierId)])
-      .then(([d, a]) => {
+    // Een mislukte admin-check betekent "geen admin" — nooit extra rechten
+    // bij twijfel.
+    Promise.all([getDossier(dossierId), listAdviespunten(dossierId), checkIsAdmin().catch(() => false)])
+      .then(([d, a, admin]) => {
         if (!actief) return
         setDossier(d)
         setAdviespunten(a)
+        setIsAdmin(admin === true)
       })
       .catch(() => {
         if (actief) setNietGevonden(true)
@@ -53,6 +63,8 @@ export default function DossierDetail() {
       actief = false
     }
   }, [dossierId])
+
+  const rechten = bepaalDossierRechten({ isAdmin, status: dossier?.status })
 
   return (
     <>
@@ -68,15 +80,25 @@ export default function DossierDetail() {
             </p>
           ) : (
             <div className="flex flex-col gap-6">
-              <DossierWerkruimte dossier={dossier} adviespunten={adviespunten} mjopSnapshot={dossier.mjop_snapshot} onDossierChange={setDossier} />
-              <OffertesHistorie dossierId={dossier.dossier_id} refreshSignal={offerteRefresh} />
-              <OfferteEditor
-                klant={dossier.klanten}
-                contactpersoon={dossier.contactpersonen}
-                pand={dossier.panden}
+              <DossierWerkruimte
                 dossier={dossier}
-                onOpgeslagen={() => setOfferteRefresh((n) => n + 1)}
+                adviespunten={adviespunten}
+                mjopSnapshot={dossier.mjop_snapshot}
+                onDossierChange={setDossier}
+                magBewerken={rechten.magAdviesBewerken}
               />
+              {rechten.magOffertesBeheren ? (
+                <>
+                  <OffertesHistorie dossierId={dossier.dossier_id} refreshSignal={offerteRefresh} />
+                  <OfferteEditor
+                    klant={dossier.klanten}
+                    contactpersoon={dossier.contactpersonen}
+                    pand={dossier.panden}
+                    dossier={dossier}
+                    onOpgeslagen={() => setOfferteRefresh((n) => n + 1)}
+                  />
+                </>
+              ) : null}
             </div>
           )}
         </Container>

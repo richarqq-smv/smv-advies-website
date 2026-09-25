@@ -9,7 +9,7 @@ import { Button } from '../components/ui/Button'
 import { useAuth } from '../lib/auth/useAuth'
 import { UitloggenKnop } from '../components/auth/UitloggenKnop'
 import { ROUTES } from '../lib/routes'
-import { getMijnKlant, registreerKlant, listPandenVoorKlant, maakPandEnKoppel, listDossiersVoorKlant, openOfHergebruikDossier } from '../lib/klantOmgeving/api'
+import { getMijnKlant, registreerKlant, listPandenVoorKlant, maakPandEnKoppel, listDossiersVoorKlant } from '../lib/klantOmgeving/api'
 
 const LEEG_PAND = { omschrijving: '', adres: '', postcode: '', plaats: '', gebruikstype: '' }
 
@@ -19,6 +19,11 @@ const LEEG_PAND = { omschrijving: '', adres: '', postcode: '', plaats: '', gebru
  * nog steeds localStorage-gebaseerd) — hier hoort een bezoeker eerst een
  * account te hebben (afgedwongen door RequireAuth in App.jsx), en is er
  * precies één Klant per account (afgedwongen door registreer_klant()).
+ *
+ * De klant levert hier informatie aan (bedrijfsgegevens, panden) en bekijkt
+ * zijn dossiers. Een dossier openen is werk van SMV (zie Admin.jsx en
+ * migration 0006) — daarom staat hier geen "dossier openen"-knop en geen
+ * link naar de interne MJOP-tool.
  */
 export default function Account() {
   const { user } = useAuth()
@@ -92,12 +97,6 @@ export default function Account() {
     } finally {
       setPandBezig(false)
     }
-  }
-
-  async function openDossierVoorPand(pand) {
-    const { dossier } = await openOfHergebruikDossier({ klantId: klant.klant_id, pandId: pand.pand_id, pand })
-    setDossiersPerPand((v) => ({ ...v, [pand.pand_id]: [dossier, ...(v[pand.pand_id] ?? []).filter((d) => d.dossier_id !== dossier.dossier_id)] }))
-    window.location.assign(ROUTES.dossier(dossier.dossier_id))
   }
 
   return (
@@ -175,13 +174,10 @@ export default function Account() {
                         <p className="font-medium text-primary">{pand.omschrijving || pand.adres || 'Naamloos pand'}</p>
                         {pand.plaats ? <p className="text-sm text-foreground-muted">{pand.adres ? `${pand.adres}, ` : ''}{pand.plaats}</p> : null}
                         <div className="mt-3 flex flex-wrap items-center gap-3">
-                          <Link to={ROUTES.mjopTool} className="text-sm font-medium text-accent hover:underline">
-                            MJOP starten/bekijken
-                          </Link>
                           {(dossiersPerPand[pand.pand_id] ?? []).length === 0 ? (
-                            <Button type="button" variant="outline" size="sm" onClick={() => openDossierVoorPand(pand)}>
-                              Adviesdossier openen
-                            </Button>
+                            <p className="text-sm text-foreground-muted">
+                              Nog geen adviesdossier. Zodra SMV Advies met uw advies aan de slag gaat, vindt u het dossier hier.
+                            </p>
                           ) : (
                             (dossiersPerPand[pand.pand_id] ?? []).map((d) => (
                               <Link key={d.dossier_id} to={ROUTES.dossier(d.dossier_id)} className="text-sm font-medium text-accent hover:underline">

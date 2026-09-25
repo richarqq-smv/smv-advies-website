@@ -17,8 +17,9 @@ export const ROUTES = {
   contact: '/contact',
   privacy: '/privacy',
   voorwaarden: '/voorwaarden',
-  // Intern adviesinstrument, bewust niet in NAV_ITEMS/sitemap opgenomen en
-  // geserveerd met noindex — zie src/pages/MjopTool.jsx.
+  // Intern adviesinstrument van SMV: alleen voor een ingelogde admin
+  // (RequireAuth + RequireAdmin in App.jsx), niet in NAV_ITEMS/sitemap en
+  // altijd noindex — zie src/pages/MjopTool.jsx.
   mjopTool: '/MJOP-Tool',
   // Accountroutes — zelfde behandeling als mjopTool: geen link in
   // NAV_ITEMS/sitemap, wel noindex, wel prerendered (lege formulieren

@@ -57,7 +57,11 @@ export async function listPandenVoorKlant(klantId) {
   return (rows ?? []).map((r) => r.panden)
 }
 
-/** Maakt een nieuw Pand aan en koppelt het atomair aan de Klant. Kan nooit aan een bestaand Pand koppelen (zie 0001_init.sql). */
+/**
+ * Maakt een nieuw Pand aan en koppelt het atomair aan de Klant. Kan nooit aan
+ * een bestaand Pand koppelen (zie 0001_init.sql). Uitvoerbaar door een lid
+ * van de klant én (sinds 0006) door een admin voor elke klant.
+ */
 export async function maakPandEnKoppel(klantId, pandInput) {
   const pandId = throwOnError(await supabase.rpc('maak_pand_en_koppel', { p_klant_id: klantId, p_pand: pandInput }))
   return throwOnError(await supabase.from('panden').select('*').eq('pand_id', pandId).single())
@@ -140,6 +144,11 @@ async function vindOpenDossier(klantId, pandId) {
  * zie DATABASE_ARCHITECTURE.md, "MJOP-snapshot en immutabiliteit": een
  * Dossier legt vast wat gold toen het werd geopend, niet wat er later
  * verandert aan het Pand of de MJOP-data.
+ *
+ * Sinds migration 0006 alleen uitvoerbaar door een admin: een dossier is
+ * een SMV-product en ontstaat pas als SMV met een traject aan de slag gaat.
+ * Hetzelfde geldt voor alle schrijfacties hieronder (adviespunten en
+ * completeDossier) — een klant krijgt daarop een RLS-weigering.
  */
 export async function openOfHergebruikDossier({ klantId, pandId, pand, primaireContactpersoonId = null, mjopSnapshot = null }) {
   const bestaand = await vindOpenDossier(klantId, pandId)
@@ -169,6 +178,27 @@ export async function openOfHergebruikDossier({ klantId, pandId, pand, primaireC
       .single(),
   )
   return { dossier, hergebruikt: false }
+}
+
+/**
+ * Legt een MJOP-momentopname vast op een al bestaand, open Dossier — maar
+ * uitsluitend als dat Dossier er nog geen heeft (`mjop_snapshot is null`).
+ * Een bestaande snapshot wordt nooit overschreven: dat is vastgelegde
+ * historie. Geeft het bijgewerkte Dossier terug, of `null` als er niets is
+ * vastgelegd (er stond al een snapshot, of het Dossier is niet open).
+ * Alleen een admin mag dit (RLS dossiers_update_admin, migration 0006).
+ */
+export async function legMjopSnapshotVastAlsLeeg(dossierId, mjopSnapshot) {
+  const rijen = throwOnError(
+    await supabase
+      .from('dossiers')
+      .update({ mjop_snapshot: mjopSnapshot })
+      .eq('dossier_id', dossierId)
+      .eq('status', 'open')
+      .is('mjop_snapshot', null)
+      .select('*, panden(*)'),
+  )
+  return rijen?.[0] ?? null
 }
 
 export async function addAdviespunt(dossierId, { onderwerp, herkomst, adviesStatus, toelichting, herbeoordelenBij = null, signaalBevroren = null }) {

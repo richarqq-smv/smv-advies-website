@@ -1,6 +1,7 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '../../lib/auth/useAuth'
 import { ROUTES } from '../../lib/routes'
+import { BeveiligdePaginaSeo } from './BeveiligdePaginaSeo'
 
 /**
  * Routebeveiliging is UX, geen beveiligingsgrens (die is RLS in de
@@ -11,7 +12,7 @@ import { ROUTES } from '../../lib/routes'
 export function RequireAuth() {
   const { laden, user } = useAuth()
 
-  if (laden) return null
+  if (laden) return <BeveiligdePaginaSeo />
   if (!user) return <Navigate to={ROUTES.inloggen} replace />
   return <Outlet />
 }
