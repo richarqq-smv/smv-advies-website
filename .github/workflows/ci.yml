@@ -25,7 +25,15 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # @supabase/supabase-js instantieert altijd een RealtimeClient
+          # (ook al gebruikt deze app geen Realtime-subscriptions), en die
+          # heeft op Node.js een NATIVE WebSocket-implementatie nodig — pas
+          # aanwezig vanaf Node 22. Op Node 20 faalt scripts/prerender.mjs
+          # daardoor hard bij het importeren van supabaseClient.js ("Node.js
+          # detected but native WebSocket not found"), voor elke route, niet
+          # alleen de auth-/klantroutes. Node 22 is ook wat Supabase zelf als
+          # minimum aanraadt.
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
