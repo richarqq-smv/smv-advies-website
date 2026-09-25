@@ -35,6 +35,18 @@ jobs:
         run: npm run lint
 
       - name: Build
+        env:
+          # Publieke Project URL + anon/publishable key — veilig om in de
+          # frontendbundel te staan (RLS is de echte beveiligingsgrens, zie
+          # SECURITY_MODEL.md), maar wel verplicht aanwezig op build-time:
+          # prerender.mjs importeert src/lib/supabaseClient.js voor elke
+          # route (ook de publieke), en die gooit een expliciete fout als
+          # deze twee ontbreken — zonder deze twee repository variabelen
+          # (Settings -> Secrets and variables -> Actions -> Variables,
+          # NIET Secrets, want dit zijn geen geheime waarden) faalt de
+          # volledige build, niet alleen de nieuwe auth-/klantroutes.
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
         run: npm run build
 
       - name: Setup Pages

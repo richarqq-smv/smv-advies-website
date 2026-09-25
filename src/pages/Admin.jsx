@@ -5,6 +5,7 @@ import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
+import { UitloggenKnop } from '../components/auth/UitloggenKnop'
 import { ROUTES } from '../lib/routes'
 import { adminListKlanten, adminListDossiers, adminImporteerKlant } from '../lib/klantOmgeving/api'
 import { loadAllKlanten, loadAllPanden, loadAllDossiers, loadAllKlantPandRelaties } from '../lib/dossier'
@@ -92,6 +93,9 @@ export default function Admin() {
       <PageHero eyebrow="Beheer" title="Klanten en dossiers" description="Overzicht van alle klanten, panden en adviesdossiers." />
       <Section tone="white" noTopPadding>
         <Container className="max-w-3xl">
+          <div className="mb-4 flex justify-end">
+            <UitloggenKnop />
+          </div>
           {laden ? (
             <p className="text-sm text-foreground-muted">Bezig met laden...</p>
           ) : (

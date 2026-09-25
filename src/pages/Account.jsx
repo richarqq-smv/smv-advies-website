@@ -7,6 +7,7 @@ import { Container } from '../components/ui/Container'
 import { TextField } from '../components/ui/TextField'
 import { Button } from '../components/ui/Button'
 import { useAuth } from '../lib/auth/useAuth'
+import { UitloggenKnop } from '../components/auth/UitloggenKnop'
 import { ROUTES } from '../lib/routes'
 import { getMijnKlant, registreerKlant, listPandenVoorKlant, maakPandEnKoppel, listDossiersVoorKlant, openOfHergebruikDossier } from '../lib/klantOmgeving/api'
 
@@ -105,6 +106,9 @@ export default function Account() {
       <PageHero eyebrow="Account" title="Mijn account" description="Uw bedrijfsgegevens, panden en adviesdossiers op één plek." />
       <Section tone="white" noTopPadding>
         <Container className="max-w-2xl">
+          <div className="mb-4 flex justify-end">
+            <UitloggenKnop />
+          </div>
           {laden ? (
             <p className="text-sm text-foreground-muted">Bezig met laden...</p>
           ) : !klant ? (
