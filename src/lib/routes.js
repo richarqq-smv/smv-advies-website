@@ -34,4 +34,10 @@ export const ROUTES = {
   account: '/account',
   dossier: (dossierId) => `/dossier/${dossierId}`,
   admin: '/admin',
+  // Offerte-preview/print (Fase 3) — buiten MainLayout gerouteerd (geen
+  // header/nav/footer), zodat de printweergave nooit sitenavigatie bevat.
+  // Zelfde reden als /dossier/:id om niet in scripts/prerender.mjs te
+  // staan: bestaat pas na het aanmaken van een offerte, per definitie
+  // klant-/offertespecifiek.
+  offertePreview: (dossierId, offerteId) => `/dossier/${dossierId}/offerte/${offerteId}`,
 }

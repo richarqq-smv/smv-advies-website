@@ -5,6 +5,8 @@ import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { DossierWerkruimte } from '../components/klantOmgeving/DossierWerkruimte'
+import { OfferteEditor } from '../components/klantOmgeving/OfferteEditor'
+import { OffertesHistorie } from '../components/klantOmgeving/OffertesHistorie'
 import { getDossier, listAdviespunten } from '../lib/klantOmgeving/api'
 
 /**
@@ -26,6 +28,10 @@ export default function DossierDetail() {
   const [nietGevonden, setNietGevonden] = useState(false)
   const [dossier, setDossier] = useState(null)
   const [adviespunten, setAdviespunten] = useState([])
+  // Verhoogd door OfferteEditor na een geslaagde opslag — laat
+  // OffertesHistorie zichzelf herladen zonder dat beide componenten
+  // elkaars interne state hoeven te kennen (zie OffertesHistorie.jsx).
+  const [offerteRefresh, setOfferteRefresh] = useState(0)
 
   useEffect(() => {
     let actief = true
@@ -61,7 +67,17 @@ export default function DossierDetail() {
               Dit dossier bestaat niet, of u heeft er geen toegang toe.
             </p>
           ) : (
-            <DossierWerkruimte dossier={dossier} adviespunten={adviespunten} mjopSnapshot={dossier.mjop_snapshot} onDossierChange={setDossier} />
+            <div className="flex flex-col gap-6">
+              <DossierWerkruimte dossier={dossier} adviespunten={adviespunten} mjopSnapshot={dossier.mjop_snapshot} onDossierChange={setDossier} />
+              <OffertesHistorie dossierId={dossier.dossier_id} refreshSignal={offerteRefresh} />
+              <OfferteEditor
+                klant={dossier.klanten}
+                contactpersoon={dossier.contactpersonen}
+                pand={dossier.panden}
+                dossier={dossier}
+                onOpgeslagen={() => setOfferteRefresh((n) => n + 1)}
+              />
+            </div>
           )}
         </Container>
       </Section>

@@ -27,6 +27,7 @@ const Registreren = lazy(() => import('./pages/Registreren'))
 const WachtwoordVergeten = lazy(() => import('./pages/WachtwoordVergeten'))
 const Account = lazy(() => import('./pages/Account'))
 const DossierDetail = lazy(() => import('./pages/DossierDetail'))
+const OffertePreview = lazy(() => import('./pages/OffertePreview'))
 const Admin = lazy(() => import('./pages/Admin'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
@@ -41,6 +42,21 @@ function LazyBoundary() {
 export default function App() {
   return (
     <Routes>
+      {/*
+        Buiten <MainLayout />: de offerte-preview/print-pagina mag nooit
+        site-header/nav/footer bevatten, ook niet als printCSS die zou
+        moeten wegwerken — dus geen gedeelde layout hier, alleen de
+        auth-/admin-guards (die zijn layout-agnostisch, zie RequireAuth/
+        RequireAdmin).
+      */}
+      <Route element={<LazyBoundary />}>
+        <Route element={<RequireAuth />}>
+          <Route element={<RequireAdmin />}>
+            <Route path="/dossier/:dossierId/offerte/:offerteId" element={<OffertePreview />} />
+          </Route>
+        </Route>
+      </Route>
+
       <Route element={<MainLayout />}>
         <Route path={ROUTES.home} element={<Home />} />
 

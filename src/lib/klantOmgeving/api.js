@@ -107,7 +107,9 @@ export async function listDossiersVoorKlant(klantId) {
 }
 
 export async function getDossier(dossierId) {
-  return throwOnError(await supabase.from('dossiers').select('*, panden(*), klanten(*)').eq('dossier_id', dossierId).single())
+  return throwOnError(
+    await supabase.from('dossiers').select('*, panden(*), klanten(*), contactpersonen(*)').eq('dossier_id', dossierId).single(),
+  )
 }
 
 export async function listAdviespunten(dossierId) {
@@ -203,6 +205,89 @@ export async function removeAdviespunt(adviespuntId) {
 
 export async function completeDossier(dossierId) {
   return throwOnError(await supabase.from('dossiers').update({ status: 'afgerond' }).eq('dossier_id', dossierId).select('*, panden(*)').single())
+}
+
+// --- Offerte -----------------------------------------------------------------
+//
+// Uitsluitend admin (RLS: offertes_insert_admin vereist is_admin(), zie
+// 0005_offertes.sql). `offerte_nummer` wordt nooit meegegeven — die komt
+// altijd uit de kolom-DEFAULT (genereer_offerte_nummer()), dus een niet
+// opgeslagen formulier verbruikt nooit een nummer. Alle berekeningen
+// (subtotaal/btw/totaal) en de snapshot zelf worden door de aanroeper
+// aangeleverd — deze functie is een dunne insert, zie
+// lib/klantOmgeving/offerte.js voor de berekenings-/snapshotlogica.
+export async function createOfferte({
+  klantId,
+  pandId,
+  dossierId,
+  geldigTot,
+  pakketId,
+  bedrag,
+  meerwerk,
+  subtotaal,
+  btwPercentage,
+  btwBedrag,
+  totaal,
+  opmerkingen,
+  snapshot,
+}) {
+  return throwOnError(
+    await supabase
+      .from('offertes')
+      .insert({
+        klant_id: klantId,
+        pand_id: pandId,
+        dossier_id: dossierId,
+        geldig_tot: geldigTot,
+        pakket_id: pakketId,
+        bedrag,
+        meerwerk,
+        subtotaal,
+        btw_percentage: btwPercentage,
+        btw_bedrag: btwBedrag,
+        totaal,
+        opmerkingen: opmerkingen?.trim() || null,
+        snapshot,
+      })
+      .select('*')
+      .single(),
+  )
+}
+
+/**
+ * Eén offerte, voor de preview/printweergave (Fase 3). Geeft de rij zelf
+ * terug (incl. `snapshot`) — de render gebruikt uitsluitend `snapshot` voor
+ * klant/pand/contactpersoon/pakketinhoud en de top-level financiële kolommen
+ * (bedrag/subtotaal/btw_bedrag/totaal/meerwerk) voor de bedragen, nooit
+ * live `klanten`/`panden`/`packages.js`-data. RLS (offertes_select_admin)
+ * is de enige toegangsgrens — deze functie is een kale select.
+ */
+export async function getOfferte(offerteId) {
+  return throwOnError(await supabase.from('offertes').select('*').eq('id', offerteId).single())
+}
+
+/** Offertehistorie van één Dossier (Fase 4), nieuwste eerst — zelfde `offertes_select_admin`-policy als getOfferte(). */
+export async function getOffertesVoorDossier(dossierId) {
+  return throwOnError(
+    await supabase.from('offertes').select('*').eq('dossier_id', dossierId).order('created_at', { ascending: false }),
+  )
+}
+
+/**
+ * Verwijdert één offerte. Alleen een concept kan hierdoor daadwerkelijk
+ * verdwijnen — `offertes_delete_admin_concept` (0005_offertes.sql) staat
+ * uitsluitend `status = 'concept'` toe. Een DELETE die door RLS'
+ * USING-voorwaarde wordt tegengehouden geeft geen `error` terug (dat doet
+ * alleen een WITH CHECK-schending bij INSERT/UPDATE) — hij verwijdert
+ * gewoon 0 rijen. Vandaar `.select('id')`: alleen als er daadwerkelijk een
+ * rij terugkomt, is er ook echt iets verwijderd; anders gooien we zelf een
+ * fout, zodat een geblokkeerde verwijdering (niet-concept) in de UI ook
+ * echt als mislukt wordt getoond in plaats van stilzwijgend niets te doen.
+ */
+export async function deleteOfferte(offerteId) {
+  const { data, error } = await supabase.from('offertes').delete().eq('id', offerteId).select('id')
+  if (error) throw error
+  if (!data || data.length === 0) throw new Error('Verwijderen is niet toegestaan voor deze offerte.')
 }
 
 // --- Admin -------------------------------------------------------------------

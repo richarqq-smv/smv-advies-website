@@ -24,7 +24,11 @@ import { COMPANY } from './company'
 const KVK_CLAUSE = COMPANY.kvk ? `, ingeschreven bij de Kamer van Koophandel onder nummer ${COMPANY.kvk}` : ''
 const KVK_BYLINE = COMPANY.kvk ? ` — KvK ${COMPANY.kvk}` : ''
 const ADDRESS_LINE = `${COMPANY.address.street}, ${COMPANY.address.postalCode} ${COMPANY.address.city}`
-const LAST_UPDATED = '26 augustus 2026'
+// Geëxporteerd (niet alleen module-lokaal) zodat de offertefunctionaliteit
+// dezelfde versie-aanduiding in een offerte-snapshot kan vastleggen zonder
+// een tweede plek te creëren waar deze datum zou moeten kloppen — zie
+// src/lib/klantOmgeving/offerte.js.
+export const LAST_UPDATED = '26 augustus 2026'
 
 export const PRIVACY_CONTENT = {
   intro:

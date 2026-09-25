@@ -81,3 +81,36 @@
     }
   }
 }
+
+/*
+ * Printopmaak voor de offerte (OffertePreview.jsx / OfferteDocument.jsx —
+ * Fase 3). `@page` is een documentbrede at-rule (kan niet per component
+ * worden gescoped zonder de "named pages"-syntax, die Chrome/Blink niet
+ * betrouwbaar ondersteunt voor herhaalde headers/footers — vandaar dat dit
+ * ontwerp bewust geen paginanummering of herhaalde koptekst belooft). Er
+ * bestond nog geen @page-regel in deze SPA, dus dit is een nieuwe, veilige
+ * default (A4 + nette marges) voor elke printactie — geen wijziging van
+ * bestaand gedrag (bijv. StepAdvies.jsx's "Afdrukken / PDF"), alleen een
+ * eerste verstandige instelling waar voorheen niets stond.
+ *
+ * Al het overige hieronder is bewust gescoped op `.offerte-document` /
+ * `.offerte-blok` / `.offerte-tabelrij`, zodat het geen ander printpad in
+ * de site raakt.
+ */
+@media print {
+  @page {
+    size: A4;
+    margin: 16mm 14mm;
+  }
+
+  .offerte-document {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .offerte-document p,
+  .offerte-document li {
+    orphans: 3;
+    widows: 3;
+  }
+}
