@@ -15,7 +15,7 @@ import {
   TYPE_GAS_FACTOR,
   VERWARMING_SCORE,
   VLOER_FACTOR,
-} from './constants'
+} from './constants.js'
 
 /** Average of the three insulation multiplier factors (gevel/dak/vloer). */
 export function gemIsolatieFactor(values) {

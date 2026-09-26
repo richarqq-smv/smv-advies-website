@@ -8,8 +8,8 @@ export function StepContact({ values, errors, setValue, onSubmit, onBack, isSubm
     <div>
       <StepHead
         eyebrow="Stap 4 van 4"
-        title="Waar sturen we uw rapport naartoe?"
-        description="Uw persoonlijke rapport met besparingskansen staat klaar. Vul uw gegevens in en we sturen het meteen door."
+        title="Waar sturen we uw indicatie naartoe?"
+        description="Uw eerste indicatie staat klaar. Vul uw gegevens in: u ziet het resultaat direct en ontvangt een bevestiging per e-mail."
       />
 
       <div className="mb-6 grid gap-6 sm:grid-cols-2">
@@ -60,7 +60,7 @@ export function StepContact({ values, errors, setValue, onSubmit, onBack, isSubm
         <LockSimple size={18} weight="fill" className="mt-0.5 shrink-0 text-primary/60" />
         <p>
           <strong className="font-semibold text-primary">Uw gegevens zijn veilig.</strong> We gebruiken ze uitsluitend om
-          uw rapport te versturen en u — desgewenst — te woord te staan over verduurzaming van uw pand. Geen spam, geen
+          uw indicatie te versturen en u — desgewenst — te woord te staan over verduurzaming van uw pand. Geen spam, geen
           doorverkoop aan derden.
         </p>
       </div>
@@ -73,7 +73,7 @@ export function StepContact({ values, errors, setValue, onSubmit, onBack, isSubm
           {isSubmitting ? (
             <SpinnerGap size={18} weight="bold" className="animate-spin motion-reduce:animate-none" />
           ) : null}
-          {isSubmitting ? 'Bezig met berekenen…' : 'Bekijk mijn volledige rapport'}
+          {isSubmitting ? 'Bezig met berekenen…' : 'Bekijk mijn indicatie'}
         </Button>
       </div>
     </div>

@@ -114,8 +114,8 @@ export function validateStep4(values) {
     errors,
     toast: buildMissingToast(
       missing,
-      "Vul '%s' goed in om uw rapport te ontvangen.",
-      'Vul de gemarkeerde velden in om uw rapport te ontvangen.',
+      "Vul '%s' goed in om uw indicatie te ontvangen.",
+      'Vul de gemarkeerde velden in om uw indicatie te ontvangen.',
     ),
   }
 }

@@ -14,14 +14,14 @@ export default function EnergieIndicatie() {
     <>
       <Seo
         title="Gratis energie-indicatie"
-        description="Ontdek in enkele minuten waar uw bedrijfspand energie verliest en welke maatregelen het meeste opleveren."
+        description="Ontdek in enkele minuten waar uw bedrijfspand globaal staat op energiegebied en welke onderdelen aandacht verdienen. Gratis eerste indicatie."
         structuredData={[getBreadcrumbSchema([{ name: 'Energie-indicatie', path: ROUTES.energieIndicatie }])]}
       />
 
       <PageHero
         eyebrow="Gratis indicatie · geen officieel energielabel"
         title="Ontdek waar uw bedrijfspand energie verliest"
-        description="Beantwoord in 5-7 minuten een paar vragen over uw pand en ontvang direct een persoonlijk rapport met de grootste besparingskansen."
+        description="Beantwoord in 5-7 minuten een paar vragen over uw pand en krijg direct een eerste, globale indicatie van de energiesituatie en de belangrijkste aandachtspunten."
       />
 
       <Section tone="white" noTopPadding>
@@ -30,7 +30,7 @@ export default function EnergieIndicatie() {
 
           <p className="mx-auto mt-8 max-w-[65ch] text-center text-sm leading-relaxed text-foreground-muted">
             De scan kijkt onder meer naar isolatie, verwarming en verlichting, en geeft een eerste
-            indicatie van kansen zoals{' '}
+            indicatie van aandachtspunten, zoals{' '}
             <Link to={ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand')} className={LINK_CLASSNAME}>
               dakisolatie
             </Link>

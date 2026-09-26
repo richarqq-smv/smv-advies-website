@@ -1,5 +1,7 @@
-import { LABELS } from './fieldOptions'
-import { euro, euroRange, jaren } from './calculations'
+import { LABELS } from './fieldOptions.js'
+import { euro, euroRange, jaren } from './calculations.js'
+import { bouwPubliekResultaat, WAT_DEZE_INDICATIE_NIET_WEET } from './publiekResultaat.js'
+import { COMPANY } from '../../data/company.js'
 
 /**
  * Ported 1-op-1 uit de originele energie-indicatietool
@@ -16,11 +18,10 @@ function formatMaatregelRegel(m, i, kort) {
   const besparingUnitsTekst = m.isElektrisch
     ? `${Math.round(m.besparingKwh).toLocaleString('nl-NL')} kWh/jaar`
     : `${Math.round(m.besparingM3).toLocaleString('nl-NL')} m³ gas/jaar`
-  // Zelfde vier gegevens als de maatregelkaart die de gebruiker tijdens het
-  // invullen ziet (MeasureCard.jsx: toelichting, investering,
-  // terugverdientijd, besparing in m³/kWh) plus de besparing in euro/jaar —
-  // eerder ontbraken toelichting en de fysieke besparingseenheid hier, dus
-  // was de mail een minder volledige samenvatting dan wat de tool toonde.
+  // Volledige maatregelregel (toelichting, investering, terugverdientijd,
+  // besparing in m³/kWh en euro/jaar). Wordt alleen nog gebruikt in de
+  // interne leadmail naar SMV Advies — de bezoeker ziet deze bedragen niet
+  // meer (zie publiekResultaat.js en buildKlantEmailParams hieronder).
   return (
     `${i + 1}. ${m.naam} — besparing ca. ${euro(m.besparingEuro)}/jaar (${besparingUnitsTekst}), ` +
     `${investeringTekst}, terugverdientijd ${jaren(m.terugverdientijd)}\n   ${m.toelichting}`
@@ -80,5 +81,40 @@ export function buildEmailParams(values, result) {
     maatregelen_intern: buildMaatregelenTekstIntern(result.maatregelen),
     maatregelen_klant: buildMaatregelenTekstKlant(result.maatregelen),
     ingevuld_op: new Date().toLocaleString('nl-NL'),
+  }
+}
+
+function aandachtspuntenTekst(publiek) {
+  if (publiek.aandachtspunten.length === 0) {
+    return 'Op basis van uw invoer springen er geen duidelijke aandachtspunten uit. Dat zegt nog niets over onderhoud of het juiste investeringsmoment.'
+  }
+  return publiek.aandachtspunten.map((p) => `- ${p.titel}: ${p.toelichting}`).join('\n')
+}
+
+/**
+ * Merge-velden voor de automatische bevestigingsmail aan de bezoeker. Zelfde
+ * veldnamen als buildEmailParams() (het EmailJS-template blijft dus werken),
+ * maar met uitsluitend de publieke uitkomst van de Energie Indicatie (zie
+ * publiekResultaat.js): geen maatregelen met investering, besparing of
+ * terugverdientijd, geen totale besparing en geen CO2-besparing. De interne
+ * leadmail naar SMV Advies gebruikt nog steeds buildEmailParams() met de
+ * volledige berekening.
+ */
+export function buildKlantEmailParams(values, result) {
+  const publiek = bouwPubliekResultaat(result)
+  const { maatregelen_intern: _intern, ...basis } = buildEmailParams(values, result)
+  const maatregelenTekst =
+    `Belangrijkste aandachtspunten:\n${aandachtspuntenTekst(publiek)}\n\n` +
+    `Wat deze indicatie niet weet:\n${WAT_DEZE_INDICATIE_NIET_WEET.map((regel) => `- ${regel}`).join('\n')}\n\n` +
+    `Wilt u weten welke maatregelen voor uw pand logisch zijn, en welke voorlopig kunnen wachten? Bespreek uw resultaat met SMV Advies — beantwoord deze e-mail of bel ${COMPANY.phone}.`
+
+  return {
+    ...basis,
+    status: publiek.band.status,
+    huidige_kosten: publiek.energiekosten ? `${euroRange(publiek.energiekosten.min, publiek.energiekosten.max)} per jaar (indicatie)` : 'Niet te bepalen',
+    totale_besparing: 'Bespreken we graag met u in een adviesgesprek',
+    co2_besparing: 'Bespreken we graag met u in een adviesgesprek',
+    maatregelen: maatregelenTekst,
+    maatregelen_klant: maatregelenTekst,
   }
 }

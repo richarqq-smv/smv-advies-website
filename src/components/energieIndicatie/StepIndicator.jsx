@@ -4,7 +4,7 @@ const STEPS = [
   { n: 1, label: 'Basisgegevens' },
   { n: 2, label: 'Staat van het pand' },
   { n: 3, label: 'Energieverbruik' },
-  { n: 4, label: 'Uw rapport' },
+  { n: 4, label: 'Uw indicatie' },
 ]
 
 export function StepIndicator({ currentStep }) {
