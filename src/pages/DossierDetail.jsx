@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { DownloadSimple } from '@phosphor-icons/react'
+import { ArrowLeft, DownloadSimple } from '@phosphor-icons/react'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
@@ -14,6 +14,7 @@ import { OfferteEditor } from '../components/klantOmgeving/OfferteEditor'
 import { OffertesHistorie } from '../components/klantOmgeving/OffertesHistorie'
 import { getDossier, listAdviespunten, getOffertesVoorDossier, checkIsAdmin } from '../lib/klantOmgeving/api'
 import { bouwDossierHealthCheck } from '../lib/klantOmgeving/dossierHealthCheck'
+import { bepaalDossierOverzichtRoute } from '../lib/klantOmgeving/dossierNavigatie'
 import { triggerDossierJsonDownload } from '../lib/klantOmgeving/dossierExport'
 import { buildInsights } from '../lib/mjop/linking'
 import { buildEnergieInsights } from '../lib/dossier/energieInsights'
@@ -132,6 +133,21 @@ export default function DossierDetail() {
       <PageHero eyebrow="Adviesdossier" title={dossier?.panden?.omschrijving || dossier?.panden?.adres || 'Adviesdossier'} description={dossier?.klanten ? `${dossier.klanten.naam || dossier.klanten.bedrijfsnaam}` : undefined} />
       <Section tone="white" noTopPadding>
         <Container className="max-w-2xl">
+          {/*
+            UX-ronde: duidelijke terugknop naar het dossieroverzicht. Dat
+            overzicht is voor een klant Account.jsx (/account, panden/
+            dossiers) en voor een admin Admin.jsx (/admin, "Dossiers"-lijst)
+            — vandaar op isAdmin, dezelfde vlag die hieronder ook al bepaalt
+            welke bedieningselementen zichtbaar zijn. Geen browser-history
+            (geen navigate(-1)): een rechtstreekse link naar een dossier
+            (bijv. vanuit een e-mail) heeft geen geschiedenis om naar terug
+            te gaan, en zou anders op een willekeurige, mogelijk verkeerde
+            pagina kunnen uitkomen.
+          */}
+          <Button to={bepaalDossierOverzichtRoute(isAdmin)} variant="ghost" size="sm" className="-ml-3 mb-6">
+            <ArrowLeft size={16} />
+            Terug naar dossiers
+          </Button>
           {laden ? (
             <p className="text-sm text-foreground-muted">Bezig met laden...</p>
           ) : nietGevonden || !dossier ? (

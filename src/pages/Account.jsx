@@ -10,6 +10,7 @@ import { useAuth } from '../lib/auth/useAuth'
 import { UitloggenKnop } from '../components/auth/UitloggenKnop'
 import { ROUTES } from '../lib/routes'
 import { getMijnKlant, registreerKlant, listPandenVoorKlant, maakPandEnKoppel, listDossiersVoorKlant, openOfHergebruikDossier } from '../lib/klantOmgeving/api'
+import { valideerKlantRegistratie } from '../lib/klantOmgeving/klantValidatie'
 
 const LEEG_PAND = { omschrijving: '', adres: '', postcode: '', plaats: '', gebruikstype: '' }
 
@@ -31,6 +32,7 @@ export default function Account() {
   const [registratie, setRegistratie] = useState({ naam: '', bedrijfsnaam: '', email: '', telefoon: '' })
   const [registratieBezig, setRegistratieBezig] = useState(false)
   const [registratieFout, setRegistratieFout] = useState(null)
+  const [registratieVeldFouten, setRegistratieVeldFouten] = useState({})
 
   const [nieuwPandModus, setNieuwPandModus] = useState(false)
   const [nieuwPand, setNieuwPand] = useState(LEEG_PAND)
@@ -65,7 +67,9 @@ export default function Account() {
   async function submitRegistratie(e) {
     e.preventDefault()
     setRegistratieFout(null)
-    if (!registratie.naam.trim()) return setRegistratieFout('Vul uw naam in.')
+    const veldFouten = valideerKlantRegistratie(registratie)
+    setRegistratieVeldFouten(veldFouten)
+    if (Object.keys(veldFouten).length > 0) return
     setRegistratieBezig(true)
     try {
       await registreerKlant(registratie)
@@ -118,12 +122,41 @@ export default function Account() {
                 <h2 className="text-lg text-primary">Bedrijfsgegevens</h2>
                 <p className="mt-1 text-sm text-foreground-muted">Rond uw account af met uw bedrijfsgegevens, zodat we panden en dossiers aan uw bedrijf kunnen koppelen.</p>
               </div>
-              <TextField id="acc-naam" label="Naam" required value={registratie.naam} onChange={(v) => setRegistratie((s) => ({ ...s, naam: v }))} />
+              <TextField
+                id="acc-naam"
+                label="Naam"
+                required
+                value={registratie.naam}
+                onChange={(v) => setRegistratie((s) => ({ ...s, naam: v }))}
+                error={registratieVeldFouten.naam}
+              />
               <TextField id="acc-bedrijfsnaam" label="Bedrijfsnaam" value={registratie.bedrijfsnaam} onChange={(v) => setRegistratie((s) => ({ ...s, bedrijfsnaam: v }))} />
               <div className="grid gap-5 sm:grid-cols-2">
-                <TextField id="acc-email" label="E-mailadres" type="email" value={registratie.email} onChange={(v) => setRegistratie((s) => ({ ...s, email: v }))} />
-                <TextField id="acc-telefoon" label="Telefoonnummer" type="tel" value={registratie.telefoon} onChange={(v) => setRegistratie((s) => ({ ...s, telefoon: v }))} />
+                <TextField
+                  id="acc-email"
+                  label="E-mailadres"
+                  type="email"
+                  value={registratie.email}
+                  onChange={(v) => setRegistratie((s) => ({ ...s, email: v }))}
+                  error={registratieVeldFouten.email}
+                />
+                <TextField
+                  id="acc-telefoon"
+                  label="Telefoonnummer"
+                  type="tel"
+                  value={registratie.telefoon}
+                  onChange={(v) => setRegistratie((s) => ({ ...s, telefoon: v }))}
+                  error={registratieVeldFouten.telefoon}
+                />
               </div>
+              {/*
+                Geen "verplicht"-sterretje op e-mail/telefoon los van elkaar:
+                de regel is "minstens één van de twee", niet "allebei
+                verplicht" (zie klantValidatie.js) — een sterretje op beide
+                zou dat verkeerd suggereren. De foutmelding hieronder legt
+                de echte regel uit zodra ze allebei leeg blijken.
+              */}
+              <p className="-mt-3 text-xs text-foreground-muted">Vul minimaal een e-mailadres of telefoonnummer in, zodat we u kunnen bereiken.</p>
               {registratieFout ? <p role="alert" className="text-sm font-medium text-error">{registratieFout}</p> : null}
               <Button type="submit" disabled={registratieBezig}>
                 {registratieBezig ? 'Bezig...' : 'Bedrijfsgegevens opslaan'}
