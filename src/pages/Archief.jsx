@@ -13,10 +13,12 @@ import { formatDatumNl } from '../lib/klantOmgeving/offerte'
 /**
  * Dossier-archief (admin-feature, 2026-09-28) — toont uitsluitend
  * gearchiveerde dossiers (adminListGearchiveerdeDossiers(), het spiegelbeeld
- * van adminListDossiers() op /admin, zie api.js). Archiveren gebeurt op
- * /admin zelf (prullenbakknop); hier staat alleen de terugweg: Herstellen.
- * Geen tweede dossierweergave — "openen" navigeert altijd naar het
- * bestaande DossierDetail.jsx, exact zoals /admin dat ook al doet.
+ * van adminListDossiers() op /admin/dossiers, zie api.js). Archiveren
+ * gebeurt op AdminDossiers.jsx (prullenbakknop); hier staat alleen de
+ * terugweg: Herstellen. Geen tweede dossierweergave — "openen" navigeert
+ * altijd naar het bestaande DossierDetail.jsx. Navigatie naar de rest van
+ * de adminomgeving loopt sinds de Admin-ronde via AdminLayout.jsx (zie
+ * App.jsx), niet meer via een eigen knop op deze pagina.
  */
 export default function Archief() {
   const [laden, setLaden] = useState(true)
@@ -60,11 +62,6 @@ export default function Archief() {
       <PageHero eyebrow="Beheer" title="Gearchiveerde dossiers" description="Dossiers die uit het actieve overzicht zijn gehaald, maar nog volledig bewaard blijven." />
       <Section tone="white" noTopPadding>
         <Container className="max-w-3xl">
-          <div className="mb-4">
-            <Button to={ROUTES.admin} variant="ghost" size="sm" className="-ml-3">
-              Terug naar Klanten en dossiers
-            </Button>
-          </div>
           {laden ? (
             <p className="text-sm text-foreground-muted">Bezig met laden...</p>
           ) : fout ? (

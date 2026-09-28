@@ -553,3 +553,120 @@ export async function adminImporteerKlant({ klant, panden, dossiers }) {
 
   return nieuweKlant
 }
+
+// --- Admin-planning (2026-09-28) ---------------------------------------------
+//
+// Volledig admin-only: planning_afspraken heeft uitsluitend admin-only
+// RLS-policies (0011_admin_planning.sql, geen enkele policy voor een
+// klant) — deze functies voegen zelf geen extra autorisatie toe, RLS is
+// de enige echte grens, precies zoals de rest van dit bestand.
+
+/**
+ * Afspraken binnen een datumbereik (inclusief), met net genoeg
+ * klant-/dossier-/pandcontext om een blok in de weekplanning te kunnen
+ * tonen (naam/pand) en door te klikken naar het bestaande dossier — geen
+ * tweede dossierweergave.
+ */
+export async function listAfspraken({ vanaf, tot }) {
+  return throwOnError(
+    await supabase
+      .from('planning_afspraken')
+      .select('*, klanten(naam, bedrijfsnaam), dossiers(dossier_id, panden(omschrijving, adres))')
+      .gte('datum', vanaf)
+      .lte('datum', tot)
+      .order('datum', { ascending: true })
+      .order('starttijd', { ascending: true }),
+  )
+}
+
+export async function createAfspraak({ onderwerp, type, datum, starttijd, eindtijd, klantId = null, dossierId = null, notitie = null }) {
+  return throwOnError(
+    await supabase
+      .from('planning_afspraken')
+      .insert({
+        onderwerp: onderwerp.trim(),
+        type,
+        datum,
+        starttijd,
+        eindtijd,
+        klant_id: klantId,
+        dossier_id: dossierId,
+        notitie: notitie?.trim() || null,
+      })
+      .select('*, klanten(naam, bedrijfsnaam), dossiers(dossier_id, panden(omschrijving, adres))')
+      .single(),
+  )
+}
+
+export async function updateAfspraak(
+  afspraakId,
+  { onderwerp, type, datum, starttijd, eindtijd, status, klantId, dossierId, notitie },
+) {
+  const changes = { updated_at: new Date().toISOString() }
+  if (onderwerp !== undefined) changes.onderwerp = onderwerp.trim()
+  if (type !== undefined) changes.type = type
+  if (datum !== undefined) changes.datum = datum
+  if (starttijd !== undefined) changes.starttijd = starttijd
+  if (eindtijd !== undefined) changes.eindtijd = eindtijd
+  if (status !== undefined) changes.status = status
+  if (klantId !== undefined) changes.klant_id = klantId
+  if (dossierId !== undefined) changes.dossier_id = dossierId
+  if (notitie !== undefined) changes.notitie = notitie?.trim() || null
+  return throwOnError(
+    await supabase
+      .from('planning_afspraken')
+      .update(changes)
+      .eq('afspraak_id', afspraakId)
+      .select('*, klanten(naam, bedrijfsnaam), dossiers(dossier_id, panden(omschrijving, adres))')
+      .single(),
+  )
+}
+
+/** Verwijdert uitsluitend de afspraak zelf — geen cascade, klant/dossierdata blijft altijd onaangeroerd (er is ook geen enkele FK die die kant op wijst). */
+export async function verwijderAfspraak(afspraakId) {
+  const { error } = await supabase.from('planning_afspraken').delete().eq('afspraak_id', afspraakId)
+  if (error) throw error
+}
+
+// --- Interne commerciële kans per dossier (2026-09-28) -----------------------
+//
+// Volledig admin-only, zelfde reden als hierboven — zie
+// 0012_dossier_commerciele_kansen.sql. Bewust een losse tabel i.p.v. een
+// kolom op `dossiers`: getDossier() hieronder is een `select('*', ...)`
+// die zowel een klant als een admin gebruikt, dus een veld op `dossiers`
+// zelf zou met elke klant-fetch meekomen. Deze tabel wordt nooit vanuit
+// een klantpad aangeroepen.
+
+/** De vastgelegde commerciële kans van één dossier, of `null` als er nog nooit iets is opgeslagen. */
+export async function getCommercieleKans(dossierId) {
+  const { data, error } = await supabase.from('dossier_commerciele_kansen').select('*').eq('dossier_id', dossierId).maybeSingle()
+  if (error) throw error
+  return data
+}
+
+/**
+ * Slaat de commerciële kans van een dossier op — upsert, want er is
+ * precies één rij per dossier (dossier_id is de primary key). Nooit een
+ * automatische waarde: `vervolgstap`/`notitie` komen altijd van een
+ * expliciete admin-keuze in DossierDetail.jsx, nooit hier bepaald.
+ */
+export async function saveCommercieleKans(dossierId, { vervolgstap, notitie }) {
+  if (!dossierId) throw new Error('saveCommercieleKans vereist een geldig dossier-ID.')
+  return throwOnError(
+    await supabase
+      .from('dossier_commerciele_kansen')
+      .upsert({ dossier_id: dossierId, vervolgstap, notitie: notitie?.trim() || null, updated_at: new Date().toISOString() })
+      .select('*')
+      .single(),
+  )
+}
+
+/** Alle dossiers met een vastgelegde commerciële kans (admin-overzicht /admin/kansen), standaard op laatste wijziging. */
+export async function adminListCommercieleKansen() {
+  return throwOnError(
+    await supabase
+      .from('dossier_commerciele_kansen')
+      .select('*, dossiers(dossier_id, status, klanten(naam, bedrijfsnaam), panden(omschrijving, adres))')
+      .order('updated_at', { ascending: false }),
+  )
+}

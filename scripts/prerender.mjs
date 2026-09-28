@@ -64,6 +64,11 @@ const ROUTES = [
   ROUTE_PATHS.watKanWachten,
   // Zelfde reden als watKanWachten hierboven (admin-feature, 2026-09-28).
   ROUTE_PATHS.archief,
+  // Admin-ronde (2026-09-28): drie nieuwe statische admin-paden zonder
+  // parameter, zelfde reden als hierboven.
+  ROUTE_PATHS.adminDossiers,
+  ROUTE_PATHS.adminPlanning,
+  ROUTE_PATHS.adminKansen,
 ]
 
 function escapeHtml(str) {

@@ -11,6 +11,7 @@ import { DossierWerkruimte } from '../components/klantOmgeving/DossierWerkruimte
 import { DossierHealthCheck } from '../components/klantOmgeving/DossierHealthCheck'
 import { EnergieSnapshot } from '../components/klantOmgeving/EnergieSnapshot'
 import { EnergieUitnodiging } from '../components/klantOmgeving/EnergieUitnodiging'
+import { CommercieleKansSectie } from '../components/klantOmgeving/CommercieleKansSectie'
 import { OfferteEditor } from '../components/klantOmgeving/OfferteEditor'
 import { OffertesHistorie } from '../components/klantOmgeving/OffertesHistorie'
 import { getDossier, listAdviespunten, getOffertesVoorDossier, checkIsAdmin } from '../lib/klantOmgeving/api'
@@ -138,9 +139,10 @@ export default function DossierDetail() {
           {/*
             UX-ronde: duidelijke terugknop naar het dossieroverzicht. Dat
             overzicht is voor een klant Account.jsx (/account, panden/
-            dossiers) en voor een admin Admin.jsx (/admin, "Dossiers"-lijst)
-            — vandaar op isAdmin, dezelfde vlag die hieronder ook al bepaalt
-            welke bedieningselementen zichtbaar zijn. Geen browser-history
+            dossiers) en voor een admin AdminDossiers.jsx (/admin/dossiers,
+            "Klanten & dossiers") — vandaar op isAdmin, dezelfde vlag die
+            hieronder ook al bepaalt welke bedieningselementen zichtbaar
+            zijn. Geen browser-history
             (geen navigate(-1)): een rechtstreekse link naar een dossier
             (bijv. vanuit een e-mail) heeft geen geschiedenis om naar terug
             te gaan, en zou anders op een willekeurige, mogelijk verkeerde
@@ -205,6 +207,14 @@ export default function DossierDetail() {
                   />
                 ) : null}
               </div>
+              {/*
+                Admin-ronde (2026-09-28): uitsluitend interne
+                admininformatie — nooit voor een klant. Zowel de UI-gate
+                hier (isAdmin) als de databasegrens (admin-only RLS,
+                0012_dossier_commerciele_kansen.sql) sluiten een klant
+                buiten, zie CommercieleKansSectie.jsx.
+              */}
+              {isAdmin ? <CommercieleKansSectie dossierId={dossier.dossier_id} /> : null}
             </div>
           )}
         </Container>

@@ -4,7 +4,7 @@ import { bepaalDossierOverzichtRoute, voegDossierContextToe, leesDossierContext,
 import { ROUTES } from '../routes.js'
 
 test('admin gaat terug naar het admin-dossieroverzicht', () => {
-  assert.equal(bepaalDossierOverzichtRoute(true), ROUTES.admin)
+  assert.equal(bepaalDossierOverzichtRoute(true), ROUTES.adminDossiers)
 })
 
 test('klant gaat terug naar het eigen accountoverzicht', () => {

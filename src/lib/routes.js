@@ -33,7 +33,13 @@ export const ROUTES = {
   // genereren pad (zie DossierDetail.jsx).
   account: '/account',
   dossier: (dossierId) => `/dossier/${dossierId}`,
+  // /admin is sinds de Admin-ronde (2026-09-28) het centrale Admin
+  // Dashboard/startpunt — de klanten/dossiers-lijst zelf staat op
+  // adminDossiers hieronder (was voorheen de inhoud van /admin zelf).
   admin: '/admin',
+  adminDossiers: '/admin/dossiers',
+  adminPlanning: '/admin/planning',
+  adminKansen: '/admin/kansen',
   // Werkfase Fase 8 — dossier-overstijgend, admin-only, geen klantroute.
   watKanWachten: '/admin/wat-kan-wachten',
   // Dossier-archief (admin-feature, 2026-09-28) — zelfde behandeling als

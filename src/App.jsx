@@ -3,6 +3,7 @@ import { Outlet, Route, Routes } from 'react-router-dom'
 import { MainLayout } from './layouts/MainLayout'
 import { RequireAuth } from './components/auth/RequireAuth'
 import { RequireAdmin } from './components/auth/RequireAdmin'
+import { AdminLayout } from './components/admin/AdminLayout'
 import { ROUTES } from './lib/routes'
 import Home from './pages/Home'
 
@@ -32,6 +33,9 @@ const Klantgesprek = lazy(() => import('./pages/Klantgesprek'))
 const WatKanWachten = lazy(() => import('./pages/WatKanWachten'))
 const Archief = lazy(() => import('./pages/Archief'))
 const Admin = lazy(() => import('./pages/Admin'))
+const AdminDossiers = lazy(() => import('./pages/AdminDossiers'))
+const AdminPlanning = lazy(() => import('./pages/AdminPlanning'))
+const AdminKansen = lazy(() => import('./pages/AdminKansen'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 function LazyBoundary() {
@@ -96,10 +100,22 @@ export default function App() {
           <Route element={<RequireAuth />}>
             <Route path={ROUTES.account} element={<Account />} />
             <Route path="/dossier/:dossierId" element={<DossierDetail />} />
+            {/*
+              Admin-ronde (2026-09-28): AdminLayout geeft elke admin-
+              subpagina dezelfde navigatiebalk (Dashboard/Planning/
+              Klanten & dossiers/Wat kan wachten/Archief) — dat is ook de
+              "terug naar Admin Dashboard"-mogelijkheid, dus de losse
+              pagina's hoeven daar zelf niets meer voor te bouwen.
+            */}
             <Route element={<RequireAdmin />}>
-              <Route path={ROUTES.admin} element={<Admin />} />
-              <Route path={ROUTES.watKanWachten} element={<WatKanWachten />} />
-              <Route path={ROUTES.archief} element={<Archief />} />
+              <Route element={<AdminLayout />}>
+                <Route path={ROUTES.admin} element={<Admin />} />
+                <Route path={ROUTES.adminPlanning} element={<AdminPlanning />} />
+                <Route path={ROUTES.adminDossiers} element={<AdminDossiers />} />
+                <Route path={ROUTES.watKanWachten} element={<WatKanWachten />} />
+                <Route path={ROUTES.archief} element={<Archief />} />
+                <Route path={ROUTES.adminKansen} element={<AdminKansen />} />
+              </Route>
             </Route>
           </Route>
 
