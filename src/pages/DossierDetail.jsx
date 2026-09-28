@@ -189,7 +189,13 @@ export default function DossierDetail() {
               <EnergieSnapshot snapshot={dossier.energie_snapshot} />
               {/* Anchor voor de Health Check-offerteactie hieronder ("Offerte bekijken") — geen routewijziging nodig, dit staat al op dezelfde pagina. */}
               <div id="offertes-sectie" className="flex flex-col gap-6">
-                <OffertesHistorie dossierId={dossier.dossier_id} refreshSignal={offerteRefresh} magBeheren={isAdmin} />
+                <OffertesHistorie
+                  dossierId={dossier.dossier_id}
+                  refreshSignal={offerteRefresh}
+                  magBeheren={isAdmin}
+                  klant={dossier.klanten}
+                  contactpersoon={dossier.contactpersonen}
+                />
                 {/*
                   Werkfase Fase 3: alleen admin ziet/gebruikt het opstelformulier
                   — een klant mag offertes uitsluitend bekijken (RLS staat een

@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { FileText, Trash, WarningCircle } from '@phosphor-icons/react'
 import { Button } from '../ui/Button'
 import { ROUTES } from '../../lib/routes'
-import { getOffertesVoorDossier, deleteOfferte, updateOfferteStatus } from '../../lib/klantOmgeving/api'
+import { getOffertesVoorDossier, deleteOfferte, updateOfferteStatus, getFacturenVoorDossier, createFactuur, getFactuurInstellingen } from '../../lib/klantOmgeving/api'
 import { euro, formatDatumNl, OFFERTE_TOEGESTANE_OVERGANGEN } from '../../lib/klantOmgeving/offerte'
+import { berekenFactuurTotalen, bouwFactuurKlantSnapshot, bouwFactuurRegelsVanuitOfferte, standaardVervaldatum } from '../../lib/klantOmgeving/factuur'
 
 // Knoptekst per mogelijke volgende status — alleen de overgangen die
 // OFFERTE_TOEGESTANE_OVERGANGEN daadwerkelijk toestaat komen ooit in beeld
@@ -75,8 +77,14 @@ function isVerlopen(offerte) {
  * al weigeren (offertes_update_admin/offertes_delete_admin_concept vereisen
  * is_admin()), dit verbergt alleen knoppen die voor een klant toch altijd
  * zouden falen. "Bekijken" blijft voor iedereen zichtbaar.
+ *
+ * `klant`/`contactpersoon` (Administratie-ronde, 2026-09-28): alleen nodig
+ * voor "Factuur maken" (bouwFactuurKlantSnapshot) — een klant ziet die knop
+ * toch nooit (magBeheren-gate hieronder), dus deze props blijven voor een
+ * klant-sessie gewoon ongebruikt in plaats van een aparte query te forceren.
  */
-export function OffertesHistorie({ dossierId, refreshSignal, magBeheren = false }) {
+export function OffertesHistorie({ dossierId, refreshSignal, magBeheren = false, klant = null, contactpersoon = null }) {
+  const navigate = useNavigate()
   const [laden, setLaden] = useState(true)
   const [fout, setFout] = useState(null)
   const [offertes, setOffertes] = useState([])
@@ -91,6 +99,15 @@ export function OffertesHistorie({ dossierId, refreshSignal, magBeheren = false 
   const [overgangBevestigId, setOvergangBevestigId] = useState(null) // `${offerteId}:${nieuweStatus}` in bevestigingsstap
   const [overgangBezigId, setOvergangBezigId] = useState(null)
   const [overgangFoutId, setOvergangFoutId] = useState(null)
+
+  // Factuur-vanuit-offerte (Administratie-ronde, 2026-09-28): per offerte-id
+  // hooguit één (de meest recente) gekoppelde factuur — een offerte kan in
+  // de praktijk maar één keer gefactureerd worden, maar mocht dat ooit
+  // vaker gebeuren dan toont deze lijst bewust alleen de laatste, niet om
+  // de weergave te vervuilen.
+  const [facturenPerOfferte, setFacturenPerOfferte] = useState({})
+  const [factuurMakenBezig, setFactuurMakenBezig] = useState(null) // offerte.id
+  const [factuurMakenFoutId, setFactuurMakenFoutId] = useState(null)
 
   useEffect(() => {
     let actief = true
@@ -110,6 +127,62 @@ export function OffertesHistorie({ dossierId, refreshSignal, magBeheren = false 
       actief = false
     }
   }, [dossierId, refreshSignal])
+
+  useEffect(() => {
+    if (!magBeheren) return undefined
+    let actief = true
+    getFacturenVoorDossier(dossierId)
+      .then((rows) => {
+        if (!actief) return
+        const perOfferte = {}
+        for (const factuur of rows) {
+          if (factuur.offerte_id && !perOfferte[factuur.offerte_id]) {
+            perOfferte[factuur.offerte_id] = factuur
+          }
+        }
+        setFacturenPerOfferte(perOfferte)
+      })
+      .catch(() => {
+        // Stil falen: de "Factuur maken"-knop blijft dan gewoon zichtbaar in
+        // plaats van een tweede foutmelding naast de offertelijst te tonen.
+      })
+    return () => {
+      actief = false
+    }
+  }, [dossierId, magBeheren, refreshSignal])
+
+  /**
+   * Bouwt een onafhankelijke factuur-snapshot vanuit de huidige inhoud van
+   * de offerte (bouwFactuurRegelsVanuitOfferte) — de offerte zelf wordt
+   * hier nooit aangepast, en een latere wijziging van de offerte raakt
+   * deze factuur niet meer (zie factuur.js/0014_facturen.sql).
+   */
+  async function maakFactuur(offerte) {
+    setFactuurMakenBezig(offerte.id)
+    setFactuurMakenFoutId(null)
+    try {
+      const regels = bouwFactuurRegelsVanuitOfferte(offerte)
+      const totalen = berekenFactuurTotalen(regels)
+      const klantSnapshot = bouwFactuurKlantSnapshot({ klant, contactpersoon })
+      const instellingen = await getFactuurInstellingen()
+      const vervaldatum = standaardVervaldatum(new Date(), instellingen.standaard_betalingstermijn_dagen)
+      const factuur = await createFactuur({
+        klantId: klant?.klant_id,
+        dossierId,
+        offerteId: offerte.id,
+        vervaldatum,
+        regels,
+        subtotaalExclBtw: totalen.subtotaalExclBtw,
+        btwBedrag: totalen.btwBedrag,
+        totaalInclBtw: totalen.totaalInclBtw,
+        klantSnapshot,
+      })
+      navigate(ROUTES.adminFactuurDetail(factuur.factuur_id))
+    } catch {
+      setFactuurMakenFoutId(offerte.id)
+      setFactuurMakenBezig(null)
+    }
+  }
 
   async function bevestigVerwijderen(offerteId) {
     setVerwijderBezig(true)
@@ -241,6 +314,15 @@ export function OffertesHistorie({ dossierId, refreshSignal, magBeheren = false 
                           <Trash size={15} /> Verwijderen
                         </Button>
                       ) : null}
+                      {magBeheren && facturenPerOfferte[offerte.id] ? (
+                        <Button as="link" to={ROUTES.adminFactuurDetail(facturenPerOfferte[offerte.id].factuur_id)} variant="ghost" size="sm">
+                          <FileText size={15} /> Factuur {facturenPerOfferte[offerte.id].factuurnummer}
+                        </Button>
+                      ) : magBeheren ? (
+                        <Button type="button" variant="outline" size="sm" onClick={() => maakFactuur(offerte)} disabled={factuurMakenBezig === offerte.id}>
+                          <FileText size={15} /> Factuur maken
+                        </Button>
+                      ) : null}
                     </>
                   )}
                 </div>
@@ -256,6 +338,12 @@ export function OffertesHistorie({ dossierId, refreshSignal, magBeheren = false 
                 <p role="alert" className="mt-2 flex items-center gap-1.5 text-xs font-medium text-error">
                   <WarningCircle size={13} weight="fill" />
                   Statuswijziging is niet gelukt. Probeer het opnieuw.
+                </p>
+              ) : null}
+              {magBeheren && factuurMakenFoutId === offerte.id ? (
+                <p role="alert" className="mt-2 flex items-center gap-1.5 text-xs font-medium text-error">
+                  <WarningCircle size={13} weight="fill" />
+                  Factuur aanmaken is niet gelukt. Probeer het opnieuw.
                 </p>
               ) : null}
             </div>

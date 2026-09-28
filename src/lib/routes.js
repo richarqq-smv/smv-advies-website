@@ -45,6 +45,19 @@ export const ROUTES = {
   // Dossier-archief (admin-feature, 2026-09-28) — zelfde behandeling als
   // watKanWachten hierboven: admin-only, geen klantroute.
   archief: '/admin/archief',
+  // Administratie-uitbreiding (2026-09-28) — offertes/facturen/financiële
+  // administratie, allemaal admin-only, geen klantroute. /admin/facturen/:id
+  // is bewust GEEN publiek/voorspelbaar deelbare URL (zie
+  // FactuurDetail.jsx): admin-only RLS + RequireAdmin is de toegangsgrens,
+  // niet de onvoorspelbaarheid van het pad (een uuid raden is geen
+  // beveiliging, RLS wel).
+  adminOffertes: '/admin/offertes',
+  adminFacturen: '/admin/facturen',
+  adminFactuurDetail: (factuurId) => `/admin/facturen/${factuurId}`,
+  adminAdministratie: '/admin/administratie',
+  adminKosten: '/admin/administratie/kosten',
+  adminBtw: '/admin/administratie/btw',
+  adminInstellingen: '/admin/administratie/instellingen',
   // Offerte-preview/print (Fase 3) — buiten MainLayout gerouteerd (geen
   // header/nav/footer), zodat de printweergave nooit sitenavigatie bevat.
   // Zelfde reden als /dossier/:id om niet in scripts/prerender.mjs te

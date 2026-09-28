@@ -69,6 +69,17 @@ const ROUTES = [
   ROUTE_PATHS.adminDossiers,
   ROUTE_PATHS.adminPlanning,
   ROUTE_PATHS.adminKansen,
+  // Administratie-uitbreiding (2026-09-28): zelfde reden als hierboven —
+  // statische paden zonder parameter, achter RequireAuth/RequireAdmin.
+  // adminFactuurDetail (/admin/facturen/:id) staat hier bewust NIET in:
+  // dat bestaat pas na het aanmaken van een factuur, per definitie
+  // factuurspecifiek (zelfde reden als /dossier/:id hierboven).
+  ROUTE_PATHS.adminOffertes,
+  ROUTE_PATHS.adminFacturen,
+  ROUTE_PATHS.adminAdministratie,
+  ROUTE_PATHS.adminKosten,
+  ROUTE_PATHS.adminBtw,
+  ROUTE_PATHS.adminInstellingen,
 ]
 
 function escapeHtml(str) {

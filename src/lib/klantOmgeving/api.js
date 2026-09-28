@@ -670,3 +670,234 @@ export async function adminListCommercieleKansen() {
       .order('updated_at', { ascending: false }),
   )
 }
+
+// --- Facturen (Administratie-uitbreiding, 2026-09-28) -------------------------
+//
+// Volledig admin-only: `facturen` heeft uitsluitend admin-only
+// RLS-policies (0014_facturen.sql, geen enkele policy voor een klant) —
+// deze functies voegen zelf geen extra autorisatie toe, RLS is de enige
+// echte grens, precies zoals de rest van dit bestand.
+
+/**
+ * Alle facturen, optioneel gefilterd op status (/admin/facturen se
+ * filterknoppen) en/of een factuurdatum-bereik (BTW-overzicht). Embedt
+ * net genoeg klant-/dossier-/offertecontext om een rij te tonen en door
+ * te klikken naar het bestaande dossier — geen tweede dossierweergave.
+ */
+export async function adminListFacturen({ status, vanaf, tot } = {}) {
+  let query = supabase
+    .from('facturen')
+    .select('*, klanten(naam, bedrijfsnaam), dossiers(dossier_id, panden(omschrijving, adres)), offertes(id, offerte_nummer)')
+    .order('factuurdatum', { ascending: false })
+  if (status) query = query.eq('status', status)
+  if (vanaf) query = query.gte('factuurdatum', vanaf)
+  if (tot) query = query.lte('factuurdatum', tot)
+  return throwOnError(await query)
+}
+
+/** Eén factuur, voor de detail-/printweergave. RLS (facturen_select_admin) is de enige toegangsgrens — deze functie is een kale select. */
+export async function getFactuur(factuurId) {
+  return throwOnError(
+    await supabase
+      .from('facturen')
+      .select('*, klanten(naam, bedrijfsnaam), dossiers(dossier_id, panden(omschrijving, adres)), offertes(id, offerte_nummer)')
+      .eq('factuur_id', factuurId)
+      .single(),
+  )
+}
+
+/** Facturen die al voor deze offerte zijn gemaakt (offerteweergave "Bekijk factuur", zie OffertesHistorie.jsx) — nieuwste eerst. */
+export async function getFacturenVoorOfferte(offerteId) {
+  return throwOnError(await supabase.from('facturen').select('*').eq('offerte_id', offerteId).order('created_at', { ascending: false }))
+}
+
+/** Alle facturen van één Dossier (OffertesHistorie.jsx: "Bekijk factuur" per offerte, één query voor het hele dossier i.p.v. één per offerte) — nieuwste eerst. */
+export async function getFacturenVoorDossier(dossierId) {
+  return throwOnError(await supabase.from('facturen').select('*').eq('dossier_id', dossierId).order('created_at', { ascending: false }))
+}
+
+/**
+ * Maakt een nieuwe factuur aan. `factuurnummer` wordt nooit meegegeven —
+ * die komt altijd uit de kolom-DEFAULT (genereer_factuur_nummer()), dus
+ * een niet-opgeslagen formulier verbruikt nooit een nummer, en
+ * gelijktijdige admin-acties kunnen nooit hetzelfde nummer krijgen. Alle
+ * berekeningen (subtotaal/btw/totaal) en de snapshot zelf worden door de
+ * aanroeper aangeleverd — deze functie is een dunne insert, zie
+ * lib/klantOmgeving/factuur.js voor de berekenings-/snapshotlogica.
+ */
+export async function createFactuur({
+  klantId,
+  dossierId = null,
+  offerteId = null,
+  vervaldatum,
+  regels,
+  subtotaalExclBtw,
+  btwBedrag,
+  totaalInclBtw,
+  klantSnapshot,
+  notitie = null,
+}) {
+  return throwOnError(
+    await supabase
+      .from('facturen')
+      .insert({
+        klant_id: klantId,
+        dossier_id: dossierId,
+        offerte_id: offerteId,
+        vervaldatum,
+        regels,
+        subtotaal_excl_btw: subtotaalExclBtw,
+        btw_bedrag: btwBedrag,
+        totaal_incl_btw: totaalInclBtw,
+        klant_snapshot: klantSnapshot,
+        notitie: notitie?.trim() || null,
+      })
+      .select('*')
+      .single(),
+  )
+}
+
+/**
+ * Wijzigt uitsluitend de `status`-kolom van een factuur (plus het
+ * bijbehorende tijdstip: `verzonden_op` bij een overgang naar verzonden,
+ * `betaalde_op` bij een overgang naar betaald) — nooit gecombineerd met
+ * een inhoudelijke wijziging in dezelfde aanroep, exact dezelfde reden
+ * als updateOfferteStatus() hierboven: bewaak_factuur_integriteit()
+ * (0014_facturen.sql) bevriest de rest van de factuur al op het moment
+ * van een statusovergang. Een ongeldige overgang geeft een databasefout
+ * terug (net als bij offertes), geen stille no-op.
+ */
+export async function updateFactuurStatus(factuurId, nieuweStatus) {
+  const changes = { status: nieuweStatus }
+  if (nieuweStatus === 'verzonden') changes.verzonden_op = new Date().toISOString()
+  if (nieuweStatus === 'betaald') changes.betaalde_op = new Date().toISOString()
+  return throwOnError(await supabase.from('facturen').update(changes).eq('factuur_id', factuurId).select('*').single())
+}
+
+/**
+ * "Betaling corrigeren" — een expliciete, losse actie (géén vrije
+ * statuskiezer) die een per ongeluk als betaald gemarkeerde factuur
+ * terugzet naar verzonden en `betaalde_op` weer leegt. Toegestaan door
+ * bewaak_factuur_integriteit() (betaald -> verzonden is de enige
+ * uitgaande overgang vanuit "betaald"), maar in de UI altijd apart
+ * getoond van de normale statusknoppen (zie FactuurDetail.jsx) zodat het
+ * nooit per ongeluk wordt aangeklikt in plaats van "Markeer als betaald".
+ */
+export async function corrigeerFactuurBetaling(factuurId) {
+  return throwOnError(
+    await supabase.from('facturen').update({ status: 'verzonden', betaalde_op: null }).eq('factuur_id', factuurId).select('*').single(),
+  )
+}
+
+/** Verwijdert één factuur. Alleen een concept kan hierdoor daadwerkelijk verdwijnen — zelfde patroon/reden als deleteOfferte() hierboven (audit-trail voor elke uitgestuurde factuur). */
+export async function deleteFactuur(factuurId) {
+  const { data, error } = await supabase.from('facturen').delete().eq('factuur_id', factuurId).select('factuur_id')
+  if (error) throw error
+  if (!data || data.length === 0) throw new Error('Verwijderen is niet toegestaan voor deze factuur.')
+}
+
+// --- Kosten (Administratie-uitbreiding, 2026-09-28) ---------------------------
+//
+// Volledig admin-only, zelfde reden als facturen hierboven — zie
+// 0015_kosten.sql. Geen immutability-trigger op deze tabel: een
+// kostenregistratie is geen extern/juridisch document zoals een
+// verstuurde factuur, de admin mag een typefout altijd corrigeren.
+
+export async function adminListKosten({ vanaf, tot } = {}) {
+  let query = supabase.from('kosten').select('*').order('datum', { ascending: false })
+  if (vanaf) query = query.gte('datum', vanaf)
+  if (tot) query = query.lte('datum', tot)
+  return throwOnError(await query)
+}
+
+export async function createKostenpost({
+  datum,
+  leverancier,
+  omschrijving,
+  categorie,
+  bedragExclBtw,
+  btwPercentage,
+  btwBedrag,
+  totaalInclBtw,
+  notitie = null,
+  documentUrl = null,
+}) {
+  return throwOnError(
+    await supabase
+      .from('kosten')
+      .insert({
+        datum,
+        leverancier: leverancier.trim(),
+        omschrijving: omschrijving.trim(),
+        categorie,
+        bedrag_excl_btw: bedragExclBtw,
+        btw_percentage: btwPercentage,
+        btw_bedrag: btwBedrag,
+        totaal_incl_btw: totaalInclBtw,
+        notitie: notitie?.trim() || null,
+        document_url: documentUrl?.trim() || null,
+      })
+      .select('*')
+      .single(),
+  )
+}
+
+/** Zet een kostenpost tussen 'open' en 'betaald' — losse, kleine wijziging, geen volledig bewerkformulier nodig voor uitsluitend de betaalstatus. */
+export async function updateKostenpostStatus(kostenId, status) {
+  return throwOnError(
+    await supabase.from('kosten').update({ status, updated_at: new Date().toISOString() }).eq('kosten_id', kostenId).select('*').single(),
+  )
+}
+
+export async function verwijderKostenpost(kostenId) {
+  const { error } = await supabase.from('kosten').delete().eq('kosten_id', kostenId)
+  if (error) throw error
+}
+
+// --- Factuurinstellingen (Administratie-uitbreiding, 2026-09-28) --------------
+//
+// Eén centrale, admin-only configuratiebron (0013_factuur_instellingen.sql,
+// singleton-tabel — `id` is altijd 1) voor bedrijfs-/betaalgegevens op een
+// factuur. Nooit hardcoded verspreid door React-componenten.
+
+export async function getFactuurInstellingen() {
+  return throwOnError(await supabase.from('factuur_instellingen').select('*').eq('id', 1).single())
+}
+
+export async function updateFactuurInstellingen({
+  bedrijfsnaam,
+  adres,
+  postcode,
+  plaats,
+  kvkNummer,
+  btwId,
+  iban,
+  tenaamstelling,
+  betalingsvoorwaarden,
+  standaardBetalingstermijnDagen,
+  factuurprefix,
+  standaardBtwPercentage,
+}) {
+  return throwOnError(
+    await supabase
+      .from('factuur_instellingen')
+      .update({
+        bedrijfsnaam,
+        adres,
+        postcode,
+        plaats,
+        kvk_nummer: kvkNummer,
+        btw_id: btwId,
+        iban,
+        tenaamstelling,
+        betalingsvoorwaarden,
+        standaard_betalingstermijn_dagen: standaardBetalingstermijnDagen,
+        factuurprefix,
+        standaard_btw_percentage: standaardBtwPercentage,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', 1)
+      .select('*')
+      .single(),
+  )
+}

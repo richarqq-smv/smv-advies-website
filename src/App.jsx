@@ -36,6 +36,13 @@ const Admin = lazy(() => import('./pages/Admin'))
 const AdminDossiers = lazy(() => import('./pages/AdminDossiers'))
 const AdminPlanning = lazy(() => import('./pages/AdminPlanning'))
 const AdminKansen = lazy(() => import('./pages/AdminKansen'))
+const AdminOffertes = lazy(() => import('./pages/AdminOffertes'))
+const AdminFacturen = lazy(() => import('./pages/AdminFacturen'))
+const FactuurDetail = lazy(() => import('./pages/FactuurDetail'))
+const AdminAdministratie = lazy(() => import('./pages/AdminAdministratie'))
+const AdminKosten = lazy(() => import('./pages/AdminKosten'))
+const AdminBtw = lazy(() => import('./pages/AdminBtw'))
+const AdminInstellingen = lazy(() => import('./pages/AdminInstellingen'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 function LazyBoundary() {
@@ -115,6 +122,24 @@ export default function App() {
                 <Route path={ROUTES.watKanWachten} element={<WatKanWachten />} />
                 <Route path={ROUTES.archief} element={<Archief />} />
                 <Route path={ROUTES.adminKansen} element={<AdminKansen />} />
+                {/*
+                  Administratie-uitbreiding (2026-09-28): zelfde
+                  RequireAuth -> RequireAdmin -> AdminLayout-boom als hierboven
+                  — geen enkele van deze routes staat buiten die bewaking
+                  (zie opdracht sectie 16, "elke admin-route hoort achter
+                  RequireAuth + RequireAdmin"). /admin/facturen/:id staat
+                  bewust WEL binnen deze boom (in tegenstelling tot
+                  offertePreview hierboven) — het is puur admin, geen
+                  klantfunctie, dus de gedeelde adminnavigatie hoort hier
+                  logisch bij.
+                */}
+                <Route path={ROUTES.adminOffertes} element={<AdminOffertes />} />
+                <Route path={ROUTES.adminFacturen} element={<AdminFacturen />} />
+                <Route path="/admin/facturen/:factuurId" element={<FactuurDetail />} />
+                <Route path={ROUTES.adminAdministratie} element={<AdminAdministratie />} />
+                <Route path={ROUTES.adminKosten} element={<AdminKosten />} />
+                <Route path={ROUTES.adminBtw} element={<AdminBtw />} />
+                <Route path={ROUTES.adminInstellingen} element={<AdminInstellingen />} />
               </Route>
             </Route>
           </Route>

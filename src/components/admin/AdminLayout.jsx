@@ -4,13 +4,18 @@ import { UitloggenKnop } from '../auth/UitloggenKnop'
 import { Container } from '../ui/Container'
 
 /**
- * Gedeelde navigatie voor de hele Admin-omgeving (Admin-ronde, 2026-09-28)
- * — bewust een extra, dunne laag BINNEN de bestaande MainLayout (site-
- * header/footer blijven ongewijzigd, zie App.jsx), niet een vervanging
- * daarvan. Elke admin-subpagina (Dashboard/Planning/Klanten & dossiers/
- * Wat kan wachten/Archief) staat hierdoor altijd één klik bij elkaar
- * vandaan — dit is dus ook de "← Admin Dashboard"-mogelijkheid die de
- * losse pagina's zelf niet meer apart hoeven te bouwen.
+ * Gedeelde navigatie voor de hele Admin-omgeving (Admin-ronde, 2026-09-28;
+ * uitgebreid met Offertes/Facturen/Administratie in de Administratie-
+ * ronde) — bewust een extra, dunne laag BINNEN de bestaande MainLayout
+ * (site-header/footer blijven ongewijzigd, zie App.jsx), niet een
+ * vervanging daarvan. Elke admin-subpagina staat hierdoor altijd één klik
+ * bij elkaar vandaan — dit is dus ook de "← Admin Dashboard"-mogelijkheid
+ * die de losse pagina's zelf niet meer apart hoeven te bouwen.
+ *
+ * Subpagina's van Administratie zelf (Kosten/BTW/Instellingen) staan
+ * bewust NIET in deze balk — die blijven bereikbaar via kaarten op
+ * /admin/administratie (zelfde "compact/overzichtelijk"-afweging als
+ * Commerciële kansen, dat ook niet los in deze balk staat).
  *
  * `end` op de Dashboard-link: zonder die vlag zou NavLink "/admin" als
  * prefix ook op elke sub-pagina (/admin/planning, /admin/dossiers, ...)
@@ -22,6 +27,9 @@ const ADMIN_NAV_ITEMS = [
   { to: ROUTES.adminDossiers, label: 'Klanten & dossiers' },
   { to: ROUTES.watKanWachten, label: 'Wat kan wachten' },
   { to: ROUTES.archief, label: 'Archief' },
+  { to: ROUTES.adminOffertes, label: 'Offertes' },
+  { to: ROUTES.adminFacturen, label: 'Facturen' },
+  { to: ROUTES.adminAdministratie, label: 'Administratie' },
 ]
 
 function navLinkClassName({ isActive }) {
@@ -33,7 +41,7 @@ function navLinkClassName({ isActive }) {
 export function AdminLayout() {
   return (
     <>
-      <div className="border-b border-border bg-white">
+      <div className="border-b border-border bg-white print:hidden">
         <Container className="max-w-5xl">
           <div className="flex flex-wrap items-center justify-between gap-3 py-3">
             <nav aria-label="Admin" className="flex flex-wrap gap-1">
