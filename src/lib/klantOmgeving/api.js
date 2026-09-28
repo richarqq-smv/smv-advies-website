@@ -172,6 +172,7 @@ export async function openOfHergebruikDossier({ klantId, pandId, pand, primaireC
   return { dossier, hergebruikt: false }
 }
 
+/** Uitsluitend admin sinds de security-hardeningsronde (2026-09-28, adviespunten_insert/update/delete): alleen SMV zet een signaal om naar definitief advies. UI toont deze actie alleen bij magBeheren (zie DossierWerkruimte.jsx). */
 export async function addAdviespunt(
   dossierId,
   { onderwerp, herkomst, adviesStatus, toelichting, herbeoordelenBij = null, herbeoordelenDatum = null, signaalBevroren = null },
@@ -213,6 +214,7 @@ export async function removeAdviespunt(adviespuntId) {
   if (error) throw error
 }
 
+/** Uitsluitend admin: sinds de security-hardeningsronde (2026-09-28) blokkeert bewaak_dossier_integriteit() een statuswijziging door een niet-admin, ook al zou dossiers_update de rij zelf toestaan. De UI toont "Dossier afronden" alleen bij magBeheren (zie DossierWerkruimte.jsx). */
 export async function completeDossier(dossierId) {
   return throwOnError(await supabase.from('dossiers').update({ status: 'afgerond' }).eq('dossier_id', dossierId).select('*, panden(*)').single())
 }
@@ -332,14 +334,23 @@ export async function createOfferte({
  * live `klanten`/`panden`/`packages.js`-data. RLS (offertes_select_admin)
  * is de enige toegangsgrens — deze functie is een kale select.
  */
+// Expliciete kolomselectie (Security-hardeningsronde, 2026-09-28): dekt
+// precies wat OfferteDocument.jsx/OffertesHistorie.jsx tonen — `aangemaakt_
+// door` (een interne auth.users-uuid, nooit gerenderd; dossierExport.js
+// sluit deze kolom om dezelfde reden al uit een export) staat er bewust
+// niet in. Deze functies zijn zichtbaar voor zowel admin als de eigen
+// klant (offertes_select_klant, 0007_offertes_klant_select.sql).
+const OFFERTE_KOLOMMEN =
+  'id, klant_id, pand_id, dossier_id, offerte_nummer, status, offerte_datum, geldig_tot, verzonden_op, pakket_id, bedrag, meerwerk, subtotaal, btw_percentage, btw_bedrag, totaal, opmerkingen, snapshot, created_at, updated_at'
+
 export async function getOfferte(offerteId) {
-  return throwOnError(await supabase.from('offertes').select('*').eq('id', offerteId).single())
+  return throwOnError(await supabase.from('offertes').select(OFFERTE_KOLOMMEN).eq('id', offerteId).single())
 }
 
-/** Offertehistorie van één Dossier (Fase 4), nieuwste eerst — zelfde `offertes_select_admin`-policy als getOfferte(). */
+/** Offertehistorie van één Dossier (Fase 4), nieuwste eerst — zelfde `offertes_select_admin`/`offertes_select_klant`-policy als getOfferte(). */
 export async function getOffertesVoorDossier(dossierId) {
   return throwOnError(
-    await supabase.from('offertes').select('*').eq('dossier_id', dossierId).order('created_at', { ascending: false }),
+    await supabase.from('offertes').select(OFFERTE_KOLOMMEN).eq('dossier_id', dossierId).order('created_at', { ascending: false }),
   )
 }
 
@@ -695,25 +706,40 @@ export async function adminListFacturen({ status, vanaf, tot } = {}) {
   return throwOnError(await query)
 }
 
-/** Eén factuur, voor de detail-/printweergave. RLS (facturen_select_admin) is de enige toegangsgrens — deze functie is een kale select. */
+// Expliciete kolomselectie (Security-hardeningsronde, 2026-09-28): deze
+// kolommenlijst dekt precies wat FactuurDocument.jsx/FactuurDetail.jsx
+// tonen (aan admin én, sinds de klantomgeving-ronde, aan de eigen klant op
+// /account/facturen/:id) — `aangemaakt_door` (een interne auth.users-uuid,
+// nooit gerenderd, zie dossierExport.js voor hetzelfde uitgangspunt bij
+// offertes) staat er bewust NIET in. `notitie` blijft wel meekomen (admin
+// heeft die nodig); FactuurDocument.jsx verbergt hem voor een klant zelf
+// via de `toonNotitie`-prop — dit is de kolomgrens, dat is de rendergrens.
+const FACTUUR_KOLOMMEN =
+  'factuur_id, klant_id, dossier_id, offerte_id, factuurnummer, status, factuurdatum, vervaldatum, verzonden_op, betaalde_op, subtotaal_excl_btw, btw_bedrag, totaal_incl_btw, klant_snapshot, regels, notitie, created_at, updated_at'
+
+/** Eén factuur, voor de detail-/printweergave. RLS (facturen_select_admin/facturen_select_klant) is de enige toegangsgrens — deze functie is een kale select. */
 export async function getFactuur(factuurId) {
   return throwOnError(
     await supabase
       .from('facturen')
-      .select('*, klanten(naam, bedrijfsnaam), dossiers(dossier_id, panden(omschrijving, adres)), offertes(id, offerte_nummer)')
+      .select(`${FACTUUR_KOLOMMEN}, klanten(naam, bedrijfsnaam), dossiers(dossier_id, panden(omschrijving, adres)), offertes(id, offerte_nummer)`)
       .eq('factuur_id', factuurId)
       .single(),
   )
 }
 
-/** Facturen die al voor deze offerte zijn gemaakt (offerteweergave "Bekijk factuur", zie OffertesHistorie.jsx) — nieuwste eerst. */
+/** Facturen die al voor deze offerte zijn gemaakt (offerteweergave "Bekijk factuur", zie OffertesHistorie.jsx — zichtbaar voor admin én de eigen klant) — nieuwste eerst. Alleen wat een link nodig heeft, geen interne velden. */
 export async function getFacturenVoorOfferte(offerteId) {
-  return throwOnError(await supabase.from('facturen').select('*').eq('offerte_id', offerteId).order('created_at', { ascending: false }))
+  return throwOnError(
+    await supabase.from('facturen').select('factuur_id, factuurnummer, offerte_id').eq('offerte_id', offerteId).order('created_at', { ascending: false }),
+  )
 }
 
-/** Alle facturen van één Dossier (OffertesHistorie.jsx: "Bekijk factuur" per offerte, één query voor het hele dossier i.p.v. één per offerte) — nieuwste eerst. */
+/** Alle facturen van één Dossier (OffertesHistorie.jsx: "Bekijk factuur" per offerte, één query voor het hele dossier i.p.v. één per offerte — zichtbaar voor admin én de eigen klant) — nieuwste eerst. Alleen wat een link nodig heeft. */
 export async function getFacturenVoorDossier(dossierId) {
-  return throwOnError(await supabase.from('facturen').select('*').eq('dossier_id', dossierId).order('created_at', { ascending: false }))
+  return throwOnError(
+    await supabase.from('facturen').select('factuur_id, factuurnummer, offerte_id').eq('dossier_id', dossierId).order('created_at', { ascending: false }),
+  )
 }
 
 /**
@@ -933,7 +959,11 @@ export async function updateKlant(klantId, { naam, bedrijfsnaam, email, telefoon
 /** Alle offertes van deze Klant, over alle dossiers heen ("Mijn offertes"). RLS (offertes_select_klant) is de toegangsgrens. */
 export async function getOffertesVoorKlant(klantId) {
   return throwOnError(
-    await supabase.from('offertes').select('*, dossiers(dossier_id, panden(omschrijving, adres))').eq('klant_id', klantId).order('offerte_datum', { ascending: false }),
+    await supabase
+      .from('offertes')
+      .select(`${OFFERTE_KOLOMMEN}, dossiers(dossier_id, panden(omschrijving, adres))`)
+      .eq('klant_id', klantId)
+      .order('offerte_datum', { ascending: false }),
   )
 }
 

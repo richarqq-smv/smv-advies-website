@@ -182,6 +182,7 @@ export default function DossierDetail() {
                 mjopSnapshot={dossier.mjop_snapshot}
                 energieSnapshot={dossier.energie_snapshot}
                 onDossierChange={setDossier}
+                magBeheren={isAdmin}
               />
               {isAdmin && !dossier.energie_snapshot ? (
                 <EnergieUitnodiging dossierId={dossier.dossier_id} klant={dossier.klanten} />

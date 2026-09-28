@@ -179,7 +179,24 @@ function Resultaat({ adviespunten }) {
   )
 }
 
-export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: initieleAdviespunten, mjopSnapshot = null, energieSnapshot = null, onDossierChange, magBewerken = true }) {
+export function DossierWerkruimte({
+  dossier: initieelDossier,
+  adviespunten: initieleAdviespunten,
+  mjopSnapshot = null,
+  energieSnapshot = null,
+  onDossierChange,
+  magBewerken = true,
+  // Security-hardeningsronde (2026-09-28): apart van magBewerken (dat
+  // uitsluitend "is dit dossier open" betekent) — magBeheren bepaalt of
+  // deze sessie een adviespunt mag toevoegen/aanpassen/verwijderen of het
+  // dossier mag afronden. Default false (veiligste kant): alleen
+  // DossierDetail.jsx zet dit expliciet op isAdmin. RLS (adviespunten_
+  // insert/update/delete, 0020_account_security_hardening.sql) weigert een
+  // niet-admin sowieso al — dit verbergt alleen bedieningselementen die
+  // voor een klant toch altijd zouden falen, zelfde patroon als
+  // OffertesHistorie.jsx se magBeheren.
+  magBeheren = false,
+}) {
   const [dossier, setDossier] = useState(initieelDossier)
   const [adviespunten, setAdviespunten] = useState(initieleAdviespunten)
   const [nieuwBron, setNieuwBron] = useState(null) // null | 'handmatig' | insight-object
@@ -369,7 +386,7 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
                     signaalBevroren: advies.signaal_bevroren,
                   }}
                   actions={
-                    open ? (
+                    open && magBeheren ? (
                       <>
                         <Button type="button" variant="ghost" size="sm" onClick={() => startBewerken(advies)}>
                           Aanpassen
@@ -387,7 +404,7 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
         </ul>
       )}
 
-      {open ? (
+      {open && magBeheren ? (
         <div className="flex flex-col gap-4 border-t border-border pt-6">
           {kandidatenMetSignaal.length > 0 ? (
             <div>
