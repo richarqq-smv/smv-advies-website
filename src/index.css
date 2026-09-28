@@ -84,18 +84,26 @@
 
 /*
  * Printopmaak voor de offerte (OffertePreview.jsx / OfferteDocument.jsx —
- * Fase 3). `@page` is een documentbrede at-rule (kan niet per component
- * worden gescoped zonder de "named pages"-syntax, die Chrome/Blink niet
- * betrouwbaar ondersteunt voor herhaalde headers/footers — vandaar dat dit
- * ontwerp bewust geen paginanummering of herhaalde koptekst belooft). Er
- * bestond nog geen @page-regel in deze SPA, dus dit is een nieuwe, veilige
- * default (A4 + nette marges) voor elke printactie — geen wijziging van
- * bestaand gedrag (bijv. StepAdvies.jsx's "Afdrukken / PDF"), alleen een
- * eerste verstandige instelling waar voorheen niets stond.
+ * Fase 3) en, sinds de factuursjabloon-ronde (2026-09-28), de factuur
+ * (FactuurDocument.jsx). `@page` is een documentbrede at-rule (kan niet per
+ * component worden gescoped zonder de "named pages"-syntax, die
+ * Chrome/Blink niet betrouwbaar ondersteunt voor herhaalde headers/
+ * footers — vandaar dat dit ontwerp bewust geen paginanummering of
+ * herhaalde koptekst belooft). Er bestond nog geen @page-regel in deze SPA,
+ * dus dit is een nieuwe, veilige default (A4 + nette marges) voor elke
+ * printactie — geen wijziging van bestaand gedrag (bijv. StepAdvies.jsx's
+ * "Afdrukken / PDF"), alleen een eerste verstandige instelling waar
+ * voorheen niets stond.
  *
  * Al het overige hieronder is bewust gescoped op `.offerte-document` /
- * `.offerte-blok` / `.offerte-tabelrij`, zodat het geen ander printpad in
- * de site raakt.
+ * `.offerte-blok` / `.offerte-tabelrij` en `.factuur-document` /
+ * `.factuur-blok` / `.factuur-tabelrij`, zodat het geen ander printpad in
+ * de site raakt. `print-color-adjust: exact` is voor het factuurdocument
+ * functioneel noodzakelijk (niet alleen cosmetisch): het SMV-sjabloon
+ * gebruikt donkergroene tabelkopregels als structuurelement (zie
+ * FactuurDocument.jsx) — zonder deze regel drukken/exporteren browsers
+ * achtergrondkleuren standaard niet af, en zou de kop van elke tabel leeg/
+ * wit ogen op de afgedrukte/PDF-factuur.
  */
 @media print {
   @page {
@@ -103,13 +111,16 @@
     margin: 16mm 14mm;
   }
 
-  .offerte-document {
+  .offerte-document,
+  .factuur-document {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
 
   .offerte-document p,
-  .offerte-document li {
+  .offerte-document li,
+  .factuur-document p,
+  .factuur-document li {
     orphans: 3;
     widows: 3;
   }

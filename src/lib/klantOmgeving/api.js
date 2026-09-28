@@ -882,9 +882,14 @@ export async function verwijderKostenpost(kostenId) {
 
 // --- Factuurinstellingen (Administratie-uitbreiding, 2026-09-28) --------------
 //
-// Eén centrale, admin-only configuratiebron (0013_factuur_instellingen.sql,
-// singleton-tabel — `id` is altijd 1) voor bedrijfs-/betaalgegevens op een
-// factuur. Nooit hardcoded verspreid door React-componenten.
+// Eén centrale configuratiebron (0013_factuur_instellingen.sql, singleton-
+// tabel — `id` is altijd 1) voor bedrijfs-/betaalgegevens op een factuur.
+// Nooit hardcoded verspreid door React-componenten. Lezen mag sinds de
+// factuursjabloon-ronde (0021) door elke ingelogde gebruiker (een klant
+// moet dit ook kunnen lezen om zijn eigen factuur — incl. IBAN/
+// betalingsvoorwaarden — te kunnen bekijken/printen, zie FactuurDetail.jsx/
+// FactuurDocument.jsx); wijzigen (updateFactuurInstellingen hieronder)
+// blijft uitsluitend admin (0013's update-policy, ongewijzigd).
 
 export async function getFactuurInstellingen() {
   return throwOnError(await supabase.from('factuur_instellingen').select('*').eq('id', 1).single())
@@ -895,6 +900,8 @@ export async function updateFactuurInstellingen({
   adres,
   postcode,
   plaats,
+  email,
+  telefoon,
   kvkNummer,
   btwId,
   iban,
@@ -912,6 +919,8 @@ export async function updateFactuurInstellingen({
         adres,
         postcode,
         plaats,
+        email,
+        telefoon,
         kvk_nummer: kvkNummer,
         btw_id: btwId,
         iban,

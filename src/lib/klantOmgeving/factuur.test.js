@@ -12,6 +12,8 @@ import {
   valideerFactuurRegel,
   valideerNieuweFactuur,
   buildFactuurMailto,
+  afgeleidBetreft,
+  afgeleidBtwPercentage,
 } from './factuur.js'
 
 test('FACTUUR_STATUSSEN bevat exact de vijf vaste statussen', () => {
@@ -223,4 +225,34 @@ test('buildFactuurMailto: bevat factuurnummer en bedrag, geen interne velden', (
   assert.match(decoded, /1\.203,95/)
   assert.doesNotMatch(decoded, /dossier_id/)
   assert.doesNotMatch(decoded, /commerci/i)
+})
+
+// --- afgeleidBetreft / afgeleidBtwPercentage (factuursjabloon-ronde) --------------------------------------------------
+
+test('afgeleidBetreft: neemt de omschrijving van de eerste regel over (de hoofdregel)', () => {
+  const regels = bouwFactuurRegelsVanuitOfferte(fictieveOfferte({ meerwerk: [{ omschrijving: 'Extra opname', aantal: 1, eenheidsprijs: 95, totaal: 95 }] }))
+  assert.match(afgeleidBetreft(regels), /Premium/)
+})
+
+test('afgeleidBetreft: null bij lege regel-lijst, geen crash', () => {
+  assert.equal(afgeleidBetreft([]), null)
+  assert.equal(afgeleidBetreft(), null)
+})
+
+test('afgeleidBtwPercentage: geeft het gedeelde percentage terug als alle regels hetzelfde tarief hanteren', () => {
+  const regels = bouwFactuurRegelsVanuitOfferte(fictieveOfferte({ meerwerk: [{ omschrijving: 'Extra opname', aantal: 1, eenheidsprijs: 95, totaal: 95 }] }))
+  assert.equal(afgeleidBtwPercentage(regels), 21)
+})
+
+test('afgeleidBtwPercentage: null bij afwijkende percentages tussen regels — verzint nooit een gemiddelde', () => {
+  const regels = [
+    { omschrijving: 'A', btwPercentage: 21 },
+    { omschrijving: 'B', btwPercentage: 9 },
+  ]
+  assert.equal(afgeleidBtwPercentage(regels), null)
+})
+
+test('afgeleidBtwPercentage: null bij lege regel-lijst, geen crash', () => {
+  assert.equal(afgeleidBtwPercentage([]), null)
+  assert.equal(afgeleidBtwPercentage(), null)
 })

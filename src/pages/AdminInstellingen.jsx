@@ -38,6 +38,8 @@ export default function AdminInstellingen() {
           adres: i.adres ?? '',
           postcode: i.postcode ?? '',
           plaats: i.plaats ?? '',
+          email: i.email ?? '',
+          telefoon: i.telefoon ?? '',
           kvkNummer: i.kvk_nummer ?? '',
           btwId: i.btw_id ?? '',
           iban: i.iban ?? '',
@@ -103,6 +105,8 @@ export default function AdminInstellingen() {
                 <TextField id="inst-btwid" label="Btw-id" value={formulier.btwId} onChange={(v) => wijzigVeld('btwId', v)} />
                 <TextField id="inst-postcode" label="Postcode" value={formulier.postcode} onChange={(v) => wijzigVeld('postcode', v)} />
                 <TextField id="inst-plaats" label="Plaats" value={formulier.plaats} onChange={(v) => wijzigVeld('plaats', v)} />
+                <TextField id="inst-email" label="E-mailadres" type="email" value={formulier.email} onChange={(v) => wijzigVeld('email', v)} />
+                <TextField id="inst-telefoon" label="Telefoonnummer" value={formulier.telefoon} onChange={(v) => wijzigVeld('telefoon', v)} />
                 <TextField id="inst-iban" label="IBAN" value={formulier.iban} onChange={(v) => wijzigVeld('iban', v)} />
                 <TextField id="inst-tenaamstelling" label="Tenaamstelling rekening" value={formulier.tenaamstelling} onChange={(v) => wijzigVeld('tenaamstelling', v)} />
                 <TextField id="inst-prefix" label="Factuurprefix" required value={formulier.factuurprefix} onChange={(v) => wijzigVeld('factuurprefix', v)} />

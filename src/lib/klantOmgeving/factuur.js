@@ -189,6 +189,34 @@ export function bouwFactuurRegelsVanuitOfferte(offerte) {
 }
 
 /**
+ * "Betreft" op het factuurdocument (SMV-sjabloon, factuursjabloon-ronde
+ * 2026-09-28) — de omschrijving van de eerste factuurregel, want die is
+ * per conventie altijd de hoofdregel (het pakket zelf, zie
+ * bouwFactuurRegelsVanuitOfferte hierboven; bij een losstaand aangemaakte
+ * factuur de eerst ingevoerde regel). Geen nieuw databaseveld: puur een
+ * weergave-afleiding uit de al bestaande, bevroren regels — verandert dus
+ * nooit met terugwerkende kracht.
+ */
+export function afgeleidBetreft(regels = []) {
+  return regels[0]?.omschrijving ?? null
+}
+
+/**
+ * Het btw-percentage voor de totaalregel op het factuurdocument
+ * ("Btw (21%)", zie het SMV-sjabloon) — alleen tonen als alle regels
+ * hetzelfde percentage hanteren (in de praktijk altijd het geval: één
+ * offerte/factuur hanteert één geldend tarief, zie
+ * bouwFactuurRegelsVanuitOfferte). Bij een (theoretische) afwijking `null`,
+ * dan toont het document enkel "Btw" zonder percentage — nooit een
+ * verzonnen of gemiddeld getal.
+ */
+export function afgeleidBtwPercentage(regels = []) {
+  if (regels.length === 0) return null
+  const eerste = regels[0]?.btwPercentage
+  return regels.every((r) => r.btwPercentage === eerste) ? eerste : null
+}
+
+/**
  * Bouwt de `mailto:`-conceptmail voor "Factuur verzenden" (zie
  * FactuurDetail.jsx) — exact hetzelfde patroon als buildGesprekMailto() in
  * ResultsView.jsx: geen EmailJS-aanroep (geen verifieerbaar/geconfigureerd
