@@ -901,3 +901,114 @@ export async function updateFactuurInstellingen({
       .single(),
   )
 }
+
+// --- Klantomgeving (/account) ------------------------------------------------
+//
+// Alles hieronder is puur dataverkeer voor de eigen Klant van de ingelogde
+// sessie. RLS (is_member_of_klant(), 0001_init.sql/0007/0017) is ook hier de
+// enige echte toegangsgrens — deze functies filteren zelf op klantId zoals
+// de aanroeper (Account.jsx) die al kent via getMijnKlant(), maar vertrouwen
+// daar nooit blind op: een poging om een ANDERE klant_id mee te geven wordt
+// door de database geweigerd/geeft niets terug, niet door deze laag.
+
+/** Werkt de eigen Contactpersoon-rij bij ("Mijn gegevens") — nooit klant_id of account_id, dat blijven vaste identiteitsvelden. */
+export async function updateMijnContactpersoon(contactpersoonId, { naam, email, telefoon, rol }) {
+  return throwOnError(
+    await supabase.from('contactpersonen').update({ naam, email, telefoon, rol }).eq('contactpersoon_id', contactpersoonId).select('*').single(),
+  )
+}
+
+/** Werkt de eigen Klant-rij bij ("Mijn bedrijf") — nooit klant_id zelf (dat is de rij-id, geen wijzigbare kolom). */
+export async function updateKlant(klantId, { naam, bedrijfsnaam, email, telefoon, adres, postcode, plaats }) {
+  return throwOnError(
+    await supabase
+      .from('klanten')
+      .update({ naam, bedrijfsnaam, email, telefoon, adres, postcode, plaats, updated_at: new Date().toISOString() })
+      .eq('klant_id', klantId)
+      .select('*')
+      .single(),
+  )
+}
+
+/** Alle offertes van deze Klant, over alle dossiers heen ("Mijn offertes"). RLS (offertes_select_klant) is de toegangsgrens. */
+export async function getOffertesVoorKlant(klantId) {
+  return throwOnError(
+    await supabase.from('offertes').select('*, dossiers(dossier_id, panden(omschrijving, adres))').eq('klant_id', klantId).order('offerte_datum', { ascending: false }),
+  )
+}
+
+/**
+ * Alle facturen van deze Klant ("Mijn facturen"). Expliciete kolomselectie
+ * (geen `select('*')`) — `notitie` en `aangemaakt_door` zijn interne
+ * admin-velden die hier bewust nooit worden opgehaald, ook al zou RLS
+ * (facturen_select_klant) de rij zelf wel toestaan: RLS is de rijgrens,
+ * deze selectie is de kolomgrens voor wat een klantweergave daadwerkelijk
+ * nodig heeft (zie opdracht: "klant mag facturen niet wijzigen"/"geen
+ * interne notities").
+ */
+export async function getFacturenVoorKlant(klantId) {
+  return throwOnError(
+    await supabase
+      .from('facturen')
+      .select('factuur_id, factuurnummer, factuurdatum, vervaldatum, status, subtotaal_excl_btw, btw_bedrag, totaal_incl_btw, dossier_id, offerte_id')
+      .eq('klant_id', klantId)
+      .order('factuurdatum', { ascending: false }),
+  )
+}
+
+/** Documenten van deze Klant ("Mijn documenten"). RLS (documenten_select) is de toegangsgrens. */
+export async function getMijnDocumenten(klantId) {
+  return throwOnError(await supabase.from('documenten').select('*').eq('klant_id', klantId).order('created_at', { ascending: false }))
+}
+
+const DOCUMENTEN_BUCKET = 'klant-documenten'
+
+/**
+ * Uploadt een bestand naar de privébucket en legt daarna de metadata vast.
+ * Het pad `${klantId}/${uuid}-${bestandsnaam}` bepaalt de Storage-
+ * autorisatie (klant_documenten_select/insert/delete, 0018_documenten.sql
+ * — het eerste padsegment moet de eigen klant_id zijn), dus een klant kan
+ * nooit naar een ander klant_id-pad uploaden (de Storage-policy weigert dat
+ * onafhankelijk van wat de client hier verzint). Twee stappen zijn bewust
+ * niet in één transactie te vangen (Storage is geen Postgres-tabel) — bij
+ * een geslaagde upload maar een falende metadata-insert blijft er een
+ * "wees"-bestand in Storage staan zonder rij in `documenten`, onzichtbaar
+ * voor iedereen (dezelfde RLS geldt voor de lijst); geen lek, alleen
+ * ongebruikte opslag.
+ */
+export async function uploadDocument({ klantId, dossierId = null, file, omschrijving = null }) {
+  const veiligeNaam = file.name.replace(/[^a-zA-Z0-9.\-_]+/g, '-')
+  const storagePath = `${klantId}/${crypto.randomUUID()}-${veiligeNaam}`
+  const { error: uploadError } = await supabase.storage.from(DOCUMENTEN_BUCKET).upload(storagePath, file)
+  if (uploadError) throw uploadError
+  return throwOnError(
+    await supabase
+      .from('documenten')
+      .insert({
+        klant_id: klantId,
+        dossier_id: dossierId,
+        bestandsnaam: file.name,
+        storage_path: storagePath,
+        omschrijving: omschrijving?.trim() || null,
+        grootte_bytes: file.size,
+        content_type: file.type || null,
+      })
+      .select('*')
+      .single(),
+  )
+}
+
+/** Tijdelijke, ondertekende downloadlink (10 minuten) — de bucket is privé, er bestaat geen voorspelbare/publieke bestands-URL. */
+export async function getDocumentDownloadUrl(storagePath) {
+  const { data, error } = await supabase.storage.from(DOCUMENTEN_BUCKET).createSignedUrl(storagePath, 600)
+  if (error) throw error
+  return data.signedUrl
+}
+
+/** Verwijdert eerst het Storage-object, dan de metadata-rij — in die volgorde blijft er nooit een rij zonder bestand achter dat een download-poging alsnog zou laten falen. */
+export async function verwijderDocument(documentId, storagePath) {
+  const { error: storageError } = await supabase.storage.from(DOCUMENTEN_BUCKET).remove([storagePath])
+  if (storageError) throw storageError
+  const { error } = await supabase.from('documenten').delete().eq('document_id', documentId)
+  if (error) throw error
+}

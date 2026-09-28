@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { berekenBtwPeriode, formatBtwPeriodeLabel, berekenBtwOverzicht } from './btwOverzicht.js'
+import { berekenBtwPeriode, formatBtwPeriodeLabel, berekenBtwOverzicht, vorigePeriodeAnker } from './btwOverzicht.js'
 
 // --- berekenBtwPeriode --------------------------------------------------
 
@@ -80,4 +80,30 @@ test('berekenBtwOverzicht: leeg blijft leeg, geen crash', () => {
   const overzicht = berekenBtwOverzicht({})
   assert.equal(overzicht.omzetExclBtw, 0)
   assert.equal(overzicht.saldo, 0)
+})
+
+// --- vorigePeriodeAnker --------------------------------------------------
+
+test('vorigePeriodeAnker: maand gaat één maand terug', () => {
+  assert.deepEqual(berekenBtwPeriode('maand', vorigePeriodeAnker('maand', '2026-09-15')), { vanaf: '2026-08-01', tot: '2026-08-31' })
+})
+
+test('vorigePeriodeAnker: maand over een jaargrens (januari -> december vorig jaar)', () => {
+  assert.deepEqual(berekenBtwPeriode('maand', vorigePeriodeAnker('maand', '2026-01-15')), { vanaf: '2025-12-01', tot: '2025-12-31' })
+})
+
+test('vorigePeriodeAnker: maand blijft correct bij een korte doelmaand (31 maart -> februari, niet april)', () => {
+  assert.deepEqual(berekenBtwPeriode('maand', vorigePeriodeAnker('maand', '2026-03-31')), { vanaf: '2026-02-01', tot: '2026-02-28' })
+})
+
+test('vorigePeriodeAnker: kwartaal gaat één kwartaal terug (Q4 -> Q3)', () => {
+  assert.deepEqual(berekenBtwPeriode('kwartaal', vorigePeriodeAnker('kwartaal', '2026-11-15')), { vanaf: '2026-07-01', tot: '2026-09-30' })
+})
+
+test('vorigePeriodeAnker: kwartaal over een jaargrens (Q1 -> Q4 vorig jaar)', () => {
+  assert.deepEqual(berekenBtwPeriode('kwartaal', vorigePeriodeAnker('kwartaal', '2026-02-15')), { vanaf: '2025-10-01', tot: '2025-12-31' })
+})
+
+test('vorigePeriodeAnker: jaar gaat één jaar terug', () => {
+  assert.deepEqual(berekenBtwPeriode('jaar', vorigePeriodeAnker('jaar', '2026-06-15')), { vanaf: '2025-01-01', tot: '2025-12-31' })
 })

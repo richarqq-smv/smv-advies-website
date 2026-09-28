@@ -7,7 +7,7 @@ import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { FactuurDocument } from '../components/admin/FactuurDocument'
 import { ROUTES } from '../lib/routes'
-import { getFactuur, getFactuurInstellingen, updateFactuurStatus, corrigeerFactuurBetaling, deleteFactuur } from '../lib/klantOmgeving/api'
+import { getFactuur, getFactuurInstellingen, updateFactuurStatus, corrigeerFactuurBetaling, deleteFactuur, checkIsAdmin } from '../lib/klantOmgeving/api'
 import { FACTUUR_TOEGESTANE_OVERGANGEN, FACTUUR_STATUS_LABELS, buildFactuurMailto } from '../lib/klantOmgeving/factuur'
 
 // Overgangen die hier als generieke knop verschijnen — "verzonden" staat
@@ -26,15 +26,22 @@ const OVERGANG_LABEL = {
 const TERMINALE_STATUSSEN = new Set(['geannuleerd'])
 
 /**
- * Factuurdetail (/admin/facturen/:id, Administratie-ronde 2026-09-28) —
- * combineert de admin-acties (statusovergangen, verzenden, betaling
- * corrigeren, verwijderen) met de print-/PDF-weergave, in tegenstelling
- * tot OffertePreview.jsx (die een losse, klant-toegankelijke pagina is).
- * Deze pagina is volledig admin-only (RequireAdmin, zie App.jsx) en staat
- * daarom gewoon BINNEN AdminLayout — de actiebalk en AdminLayout's eigen
- * navigatiebalk zijn beide `print:hidden`, zodat "Afdrukken/PDF" toch een
- * schone factuur oplevert zonder een losse routeboom zoals offertePreview
- * nodig te hebben.
+ * Factuurdetail — sinds de Administratie-ronde (2026-09-28) bereikbaar op
+ * twee paden die exact hetzelfde component renderen: /admin/facturen/:id
+ * (binnen AdminLayout/RequireAdmin) en, sinds de Klantomgeving-
+ * detailronde, /account/facturen/:id (RequireAuth, geen RequireAdmin — de
+ * eigen klant, RLS: facturen_select_klant). `isAdmin` (checkIsAdmin(),
+ * zelfde patroon als DossierDetail.jsx) bepaalt welke variant dit is: de
+ * admin-actiebalk (statusovergangen, verzenden, betaling corrigeren,
+ * verwijderen) én de interne notitie zijn ALLEEN zichtbaar voor een admin
+ * — RLS staat een klant sowieso geen enkele van die mutaties toe, dit
+ * verbergt alleen bedieningselementen die voor een klant toch altijd
+ * zouden falen (zelfde redenering als OffertesHistorie.jsx's magBeheren).
+ *
+ * De print-/PDF-weergave (FactuurDocument.jsx) is voor beide varianten
+ * identiek — de actiebalk en AdminLayout's eigen navigatiebalk zijn beide
+ * `print:hidden`, zodat "Afdrukken/PDF" hoe dan ook een schone factuur
+ * oplevert.
  *
  * Nog geen door de gebruiker aangeleverde factuur-sjabloon beschikbaar in
  * deze repository — zie het eindrapport van deze ronde voor wat daarvoor
@@ -47,6 +54,7 @@ export default function FactuurDetail() {
   const [nietGevonden, setNietGevonden] = useState(false)
   const [factuur, setFactuur] = useState(null)
   const [instellingen, setInstellingen] = useState(null)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   const [overgangBevestigStatus, setOvergangBevestigStatus] = useState(null)
   const [overgangBezig, setOvergangBezig] = useState(false)
@@ -72,6 +80,11 @@ export default function FactuurDetail() {
       .finally(() => {
         if (actief) setLaden(false)
       })
+    // Losse aanroep, mag nooit de factuurweergave blokkeren — bij een fout
+    // blijft isAdmin simpelweg false (veiligste kant, zie DossierDetail.jsx).
+    checkIsAdmin()
+      .then((admin) => actief && setIsAdmin(Boolean(admin)))
+      .catch(() => {})
     return () => {
       actief = false
     }
@@ -136,7 +149,7 @@ export default function FactuurDetail() {
       <Section tone="white" noTopPadding>
         <Container className="max-w-[900px]">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3 print:hidden">
-            <Button as="link" to={ROUTES.adminFacturen} variant="ghost" size="sm">
+            <Button as="link" to={isAdmin ? ROUTES.adminFacturen : ROUTES.account} variant="ghost" size="sm">
               <ArrowLeft size={16} /> Terug
             </Button>
             {factuur ? (
@@ -154,86 +167,96 @@ export default function FactuurDetail() {
             </p>
           ) : (
             <>
-              <div className="mb-6 flex flex-wrap items-center gap-2 print:hidden">
-                <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold tracking-wide text-foreground-muted uppercase">
-                  {FACTUUR_STATUS_LABELS[factuur.status] ?? factuur.status}
-                </span>
+              {isAdmin ? (
+                <>
+                  <div className="mb-6 flex flex-wrap items-center gap-2 print:hidden">
+                    <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold tracking-wide text-foreground-muted uppercase">
+                      {FACTUUR_STATUS_LABELS[factuur.status] ?? factuur.status}
+                    </span>
 
-                {factuur.status === 'concept' ? (
-                  <Button type="button" variant="primary" size="sm" onClick={verzendFactuur} disabled={overgangBezig}>
-                    Factuur verzenden
-                  </Button>
-                ) : null}
-
-                {overgangBevestigStatus ? (
-                  <>
-                    <span className="text-xs text-foreground-muted">Dit kan niet ongedaan worden gemaakt. Weet u het zeker?</span>
-                    <Button type="button" variant="ghost" size="sm" onClick={() => voerOvergangUit(overgangBevestigStatus)} disabled={overgangBezig}>
-                      Ja, doorvoeren
-                    </Button>
-                    <Button type="button" variant="ghost" size="sm" onClick={() => setOvergangBevestigStatus(null)} disabled={overgangBezig}>
-                      Annuleren
-                    </Button>
-                  </>
-                ) : (
-                  (FACTUUR_TOEGESTANE_OVERGANGEN[factuur.status] ?? [])
-                    .filter((s) => s !== 'verzonden')
-                    .map((nieuweStatus) => (
-                      <Button
-                        key={nieuweStatus}
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        disabled={overgangBezig}
-                        onClick={() =>
-                          TERMINALE_STATUSSEN.has(nieuweStatus) ? setOvergangBevestigStatus(nieuweStatus) : voerOvergangUit(nieuweStatus)
-                        }
-                      >
-                        {OVERGANG_LABEL[nieuweStatus]}
+                    {factuur.status === 'concept' ? (
+                      <Button type="button" variant="primary" size="sm" onClick={verzendFactuur} disabled={overgangBezig}>
+                        Factuur verzenden
                       </Button>
-                    ))
-                )}
+                    ) : null}
 
-                {factuur.status === 'betaald' ? (
-                  <Button type="button" variant="ghost" size="sm" onClick={corrigeerBetaling} disabled={overgangBezig}>
-                    Betaling corrigeren
-                  </Button>
-                ) : null}
+                    {overgangBevestigStatus ? (
+                      <>
+                        <span className="text-xs text-foreground-muted">Dit kan niet ongedaan worden gemaakt. Weet u het zeker?</span>
+                        <Button type="button" variant="ghost" size="sm" onClick={() => voerOvergangUit(overgangBevestigStatus)} disabled={overgangBezig}>
+                          Ja, doorvoeren
+                        </Button>
+                        <Button type="button" variant="ghost" size="sm" onClick={() => setOvergangBevestigStatus(null)} disabled={overgangBezig}>
+                          Annuleren
+                        </Button>
+                      </>
+                    ) : (
+                      (FACTUUR_TOEGESTANE_OVERGANGEN[factuur.status] ?? [])
+                        .filter((s) => s !== 'verzonden')
+                        .map((nieuweStatus) => (
+                          <Button
+                            key={nieuweStatus}
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            disabled={overgangBezig}
+                            onClick={() =>
+                              TERMINALE_STATUSSEN.has(nieuweStatus) ? setOvergangBevestigStatus(nieuweStatus) : voerOvergangUit(nieuweStatus)
+                            }
+                          >
+                            {OVERGANG_LABEL[nieuweStatus]}
+                          </Button>
+                        ))
+                    )}
 
-                {factuur.status === 'concept' ? (
-                  verwijderBevestig ? (
-                    <>
-                      <span className="text-xs text-foreground-muted">Weet u het zeker?</span>
-                      <Button type="button" variant="ghost" size="sm" onClick={bevestigVerwijderen} disabled={verwijderBezig}>
-                        Ja, verwijderen
+                    {factuur.status === 'betaald' ? (
+                      <Button type="button" variant="ghost" size="sm" onClick={corrigeerBetaling} disabled={overgangBezig}>
+                        Betaling corrigeren
                       </Button>
-                      <Button type="button" variant="ghost" size="sm" onClick={() => setVerwijderBevestig(false)} disabled={verwijderBezig}>
-                        Annuleren
-                      </Button>
-                    </>
-                  ) : (
-                    <Button type="button" variant="ghost" size="sm" onClick={() => setVerwijderBevestig(true)}>
-                      <Trash size={15} /> Verwijderen
-                    </Button>
-                  )
-                ) : null}
-              </div>
+                    ) : null}
 
-              {overgangFout ? (
-                <p role="alert" className="mb-4 flex items-center gap-1.5 text-sm font-medium text-error print:hidden">
-                  <WarningCircle size={15} weight="fill" />
-                  Actie is niet gelukt. Probeer het opnieuw.
-                </p>
-              ) : null}
-              {verwijderFout ? (
-                <p role="alert" className="mb-4 flex items-center gap-1.5 text-sm font-medium text-error print:hidden">
-                  <WarningCircle size={15} weight="fill" />
-                  Verwijderen is niet gelukt. Probeer het opnieuw.
-                </p>
-              ) : null}
+                    {factuur.status === 'concept' ? (
+                      verwijderBevestig ? (
+                        <>
+                          <span className="text-xs text-foreground-muted">Weet u het zeker?</span>
+                          <Button type="button" variant="ghost" size="sm" onClick={bevestigVerwijderen} disabled={verwijderBezig}>
+                            Ja, verwijderen
+                          </Button>
+                          <Button type="button" variant="ghost" size="sm" onClick={() => setVerwijderBevestig(false)} disabled={verwijderBezig}>
+                            Annuleren
+                          </Button>
+                        </>
+                      ) : (
+                        <Button type="button" variant="ghost" size="sm" onClick={() => setVerwijderBevestig(true)}>
+                          <Trash size={15} /> Verwijderen
+                        </Button>
+                      )
+                    ) : null}
+                  </div>
+
+                  {overgangFout ? (
+                    <p role="alert" className="mb-4 flex items-center gap-1.5 text-sm font-medium text-error print:hidden">
+                      <WarningCircle size={15} weight="fill" />
+                      Actie is niet gelukt. Probeer het opnieuw.
+                    </p>
+                  ) : null}
+                  {verwijderFout ? (
+                    <p role="alert" className="mb-4 flex items-center gap-1.5 text-sm font-medium text-error print:hidden">
+                      <WarningCircle size={15} weight="fill" />
+                      Verwijderen is niet gelukt. Probeer het opnieuw.
+                    </p>
+                  ) : null}
+                </>
+              ) : (
+                <div className="mb-6 print:hidden">
+                  <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold tracking-wide text-foreground-muted uppercase">
+                    {FACTUUR_STATUS_LABELS[factuur.status] ?? factuur.status}
+                  </span>
+                </div>
+              )}
 
               <div className="rounded-2xl border border-border bg-white p-8 shadow-sm print:rounded-none print:border-0 print:p-0 print:shadow-none sm:p-12">
-                <FactuurDocument factuur={factuur} instellingen={instellingen} />
+                <FactuurDocument factuur={factuur} instellingen={instellingen} toonNotitie={isAdmin} />
               </div>
             </>
           )}

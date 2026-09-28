@@ -77,6 +77,13 @@ const ROUTES = [
   ROUTE_PATHS.adminOffertes,
   ROUTE_PATHS.adminFacturen,
   ROUTE_PATHS.adminAdministratie,
+  // Klantomgeving-/Administratie-detailronde (2026-09-28): drie nieuwe
+  // statische admin-paden zonder parameter, zelfde reden als hierboven.
+  // /account/facturen/:id staat hier bewust NIET in — zelfde reden als
+  // adminFactuurDetail hierboven, factuurspecifiek.
+  ROUTE_PATHS.adminOmzet,
+  ROUTE_PATHS.adminOpenstaand,
+  ROUTE_PATHS.adminResultaat,
   ROUTE_PATHS.adminKosten,
   ROUTE_PATHS.adminBtw,
   ROUTE_PATHS.adminInstellingen,

@@ -41,6 +41,32 @@ export function berekenBtwPeriode(type, ankerIso) {
   }
 }
 
+/**
+ * Ankerdatum van de vorige periode van hetzelfde type — bijv. voor het
+ * Resultaat-overzicht (/admin/administratie/resultaat, opdracht "vergelijking
+ * met vorige periode"). Geeft een datum TERUG in de vorige periode (niet
+ * per se de eerste dag), zodat een aanroeper er gewoon weer
+ * berekenBtwPeriode(type, ...) op kan loslaten voor de exacte grenzen — dit
+ * hoeft dus zelf geen kalenderrandgevallen (kwartaal-/jaargrenzen) opnieuw
+ * te kennen.
+ */
+export function vorigePeriodeAnker(type, ankerIso) {
+  const anker = new Date(ankerIso)
+  const jaar = anker.getFullYear()
+  const maandIndex0 = anker.getMonth()
+  const maandenTerug = type === 'jaar' ? 12 : type === 'kwartaal' ? 3 : 1
+  // Reken in totaal-maanden i.p.v. Date#setMonth op de bestaande dag: die
+  // laatste "schuift" bij een korte doelmaand door naar de maand erna
+  // (bijv. 31 maart min 1 maand → 3 april i.p.v. februari) — hier maakt de
+  // exacte dag toch niet uit, alleen welke maand/welk jaar het wordt
+  // (berekenBtwPeriode hierboven leest alleen year/month), dus altijd de
+  // 1e van de doelmaand teruggeven sluit dat randgeval structureel uit.
+  const totaalMaanden = jaar * 12 + maandIndex0 - maandenTerug
+  const doelJaar = Math.floor(totaalMaanden / 12)
+  const doelMaandIndex0 = ((totaalMaanden % 12) + 12) % 12
+  return `${doelJaar}-${String(doelMaandIndex0 + 1).padStart(2, '0')}-01`
+}
+
 /** Nette periodelabel, bijv. "Q4 2026", "september 2026", "2026". */
 export function formatBtwPeriodeLabel(type, ankerIso) {
   const anker = new Date(ankerIso)

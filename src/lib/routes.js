@@ -55,9 +55,21 @@ export const ROUTES = {
   adminFacturen: '/admin/facturen',
   adminFactuurDetail: (factuurId) => `/admin/facturen/${factuurId}`,
   adminAdministratie: '/admin/administratie',
+  adminOmzet: '/admin/administratie/omzet',
+  adminOpenstaand: '/admin/administratie/openstaand',
+  adminResultaat: '/admin/administratie/resultaat',
   adminKosten: '/admin/administratie/kosten',
   adminBtw: '/admin/administratie/btw',
   adminInstellingen: '/admin/administratie/instellingen',
+  // Klantomgeving-uitbreiding (2026-09-28) — "Mijn facturen" op /account
+  // hergebruikt letterlijk FactuurDetail.jsx (zelfde component als
+  // adminFactuurDetail hierboven, admin-acties verbergen zichzelf al via
+  // een isAdmin-check), maar bereikbaar via de klant-eigen routeboom
+  // (RequireAuth, geen RequireAdmin) — vandaar een los pad in plaats van
+  // hergebruik van /admin/facturen/:id zelf. Zelfde niet-voorspelbare-URL-
+  // redenering als adminFactuurDetail: RLS (facturen_select_klant) is de
+  // toegangsgrens, niet het pad.
+  mijnFactuur: (factuurId) => `/account/facturen/${factuurId}`,
   // Offerte-preview/print (Fase 3) — buiten MainLayout gerouteerd (geen
   // header/nav/footer), zodat de printweergave nooit sitenavigatie bevat.
   // Zelfde reden als /dossier/:id om niet in scripts/prerender.mjs te

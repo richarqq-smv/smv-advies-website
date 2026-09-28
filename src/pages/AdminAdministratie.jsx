@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { ArrowRight } from '@phosphor-icons/react'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
@@ -14,9 +16,13 @@ import { berekenBtwOverzicht, berekenBtwPeriode, formatBtwPeriodeLabel } from '.
  * startpunt van de facturatie-/BTW-administratie: vier kaarten met
  * uitsluitend optellingen van al vastgelegde facturen/kosten (Omzet,
  * Openstaand, Btw, Resultaat), geen scores/voorspellingen/automatisch
- * financieel advies. Kosten/Btw-overzicht/Instellingen staan hier als
- * kaarten (niet in AdminLayout's navigatiebalk, zie moduledoc daar) — dit
- * is dus ook het enige klikpad naar die drie subpagina's.
+ * financieel advies. Sinds de detailronde (2026-09-28) is elke kaart in
+ * zijn geheel een link naar een eigen detailoverzicht (AdminOmzet.jsx/
+ * AdminOpenstaand.jsx/AdminResultaat.jsx/AdminBtw.jsx) — "Bekijk
+ * overzicht →" maakt dat visueel duidelijk, zonder een aparte knop.
+ * Kosten/Instellingen staan hier nog als losse knoppen onderaan (niet in
+ * AdminLayout's navigatiebalk voor Instellingen, zie moduledoc daar) — dit
+ * is dus ook het enige klikpad naar Instellingen.
  *
  * Eén brede fetch (heel het lopende jaar aan facturen/kosten) waaruit alle
  * vier kaarten client-side worden afgeleid — geen vier losse queries voor
@@ -77,24 +83,24 @@ export default function AdminAdministratie() {
             </p>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
-              <Kaart titel="Omzet" omschrijving="Excl. btw, van daadwerkelijk verstuurde facturen.">
+              <Kaart titel="Omzet" omschrijving="Excl. btw, van daadwerkelijk verstuurde facturen." to={ROUTES.adminOmzet}>
                 <Regel label="Deze maand" waarde={euro(maandOverzicht.omzetExclBtw)} />
                 <Regel label="Dit jaar" waarde={euro(jaarOverzicht.omzetExclBtw)} />
               </Kaart>
 
-              <Kaart titel="Openstaand" omschrijving="Verzonden facturen die nog niet betaald zijn.">
+              <Kaart titel="Openstaand" omschrijving="Verzonden facturen die nog niet betaald zijn." to={ROUTES.adminOpenstaand}>
                 <Regel label="Aantal openstaand" waarde={String(openFacturen.length)} />
                 <Regel label="Totaal openstaand" waarde={euro(openBedrag)} />
                 <Regel label="Waarvan vervallen" waarde={euro(vervallenBedrag)} nadruk={vervallenBedrag > 0} />
               </Kaart>
 
-              <Kaart titel="Btw" omschrijving={`Huidige periode (${formatBtwPeriodeLabel('kwartaal', vandaagIso)}).`} cta="Naar btw-overzicht" to={ROUTES.adminBtw}>
+              <Kaart titel="Btw" omschrijving={`Huidige periode (${formatBtwPeriodeLabel('kwartaal', vandaagIso)}).`} to={ROUTES.adminBtw}>
                 <Regel label="Verschuldigd" waarde={euro(kwartaalOverzicht.btwVerkoop)} />
                 <Regel label="Aftrekbaar" waarde={euro(kwartaalOverzicht.btwAftrekbaar)} />
                 <Regel label="Saldo" waarde={euro(kwartaalOverzicht.saldo)} />
               </Kaart>
 
-              <Kaart titel="Resultaat" omschrijving="Omzet minus kosten, excl. btw, dit jaar.">
+              <Kaart titel="Resultaat" omschrijving="Omzet minus kosten, excl. btw, dit jaar." to={ROUTES.adminResultaat}>
                 <Regel label="Omzet" waarde={euro(jaarOverzicht.omzetExclBtw)} />
                 <Regel label="Kosten" waarde={euro(jaarOverzicht.kostenExclBtw)} />
                 <Regel label="Resultaat" waarde={euro(jaarOverzicht.omzetExclBtw - jaarOverzicht.kostenExclBtw)} />
@@ -106,9 +112,6 @@ export default function AdminAdministratie() {
             <Button to={ROUTES.adminKosten} variant="outline" size="sm">
               Kosten
             </Button>
-            <Button to={ROUTES.adminBtw} variant="outline" size="sm">
-              Btw-overzicht
-            </Button>
             <Button to={ROUTES.adminInstellingen} variant="outline" size="sm">
               Instellingen
             </Button>
@@ -119,22 +122,21 @@ export default function AdminAdministratie() {
   )
 }
 
-function Kaart({ titel, omschrijving, cta, to, children }) {
+function Kaart({ titel, omschrijving, to, children }) {
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-border bg-white p-6 shadow-sm">
+    <Link
+      to={to}
+      className="flex flex-col gap-3 rounded-2xl border border-border bg-white p-6 shadow-sm transition-colors hover:border-accent hover:bg-muted/40"
+    >
       <div>
         <h3 className="text-lg text-primary">{titel}</h3>
         <p className="mt-1 text-sm text-foreground-muted">{omschrijving}</p>
       </div>
       <div className="flex flex-col gap-1">{children}</div>
-      {to ? (
-        <div className="mt-auto pt-1">
-          <Button to={to} variant="outline" size="sm">
-            {cta}
-          </Button>
-        </div>
-      ) : null}
-    </div>
+      <p className="mt-auto flex items-center gap-1 pt-1 text-sm font-medium text-accent">
+        Bekijk overzicht <ArrowRight size={14} />
+      </p>
+    </Link>
   )
 }
 

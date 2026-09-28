@@ -40,6 +40,9 @@ const AdminOffertes = lazy(() => import('./pages/AdminOffertes'))
 const AdminFacturen = lazy(() => import('./pages/AdminFacturen'))
 const FactuurDetail = lazy(() => import('./pages/FactuurDetail'))
 const AdminAdministratie = lazy(() => import('./pages/AdminAdministratie'))
+const AdminOmzet = lazy(() => import('./pages/AdminOmzet'))
+const AdminOpenstaand = lazy(() => import('./pages/AdminOpenstaand'))
+const AdminResultaat = lazy(() => import('./pages/AdminResultaat'))
 const AdminKosten = lazy(() => import('./pages/AdminKosten'))
 const AdminBtw = lazy(() => import('./pages/AdminBtw'))
 const AdminInstellingen = lazy(() => import('./pages/AdminInstellingen'))
@@ -106,6 +109,15 @@ export default function App() {
 
           <Route element={<RequireAuth />}>
             <Route path={ROUTES.account} element={<Account />} />
+            {/*
+              Klantomgeving-uitbreiding (2026-09-28) — "Mijn facturen":
+              hergebruikt FactuurDetail.jsx (zelfde component als de
+              admin-route hieronder), maar bewust BUITEN de RequireAdmin-
+              boom: RLS (facturen_select_klant, 0017) is de toegangsgrens,
+              FactuurDetail.jsx verbergt de admin-acties zelf al via een
+              eigen isAdmin-check.
+            */}
+            <Route path="/account/facturen/:factuurId" element={<FactuurDetail />} />
             <Route path="/dossier/:dossierId" element={<DossierDetail />} />
             {/*
               Admin-ronde (2026-09-28): AdminLayout geeft elke admin-
@@ -137,6 +149,9 @@ export default function App() {
                 <Route path={ROUTES.adminFacturen} element={<AdminFacturen />} />
                 <Route path="/admin/facturen/:factuurId" element={<FactuurDetail />} />
                 <Route path={ROUTES.adminAdministratie} element={<AdminAdministratie />} />
+                <Route path={ROUTES.adminOmzet} element={<AdminOmzet />} />
+                <Route path={ROUTES.adminOpenstaand} element={<AdminOpenstaand />} />
+                <Route path={ROUTES.adminResultaat} element={<AdminResultaat />} />
                 <Route path={ROUTES.adminKosten} element={<AdminKosten />} />
                 <Route path={ROUTES.adminBtw} element={<AdminBtw />} />
                 <Route path={ROUTES.adminInstellingen} element={<AdminInstellingen />} />

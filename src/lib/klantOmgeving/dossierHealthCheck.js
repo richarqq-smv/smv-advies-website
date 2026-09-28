@@ -42,8 +42,14 @@ function heeftWaarde(waarde) {
   return v !== null && v !== undefined && v !== ''
 }
 
-/** KLANT: naam/bedrijfsnaam + minstens één bruikbare contactpersoon (naam + e-mail of telefoon). */
-function controleerKlant({ klant, contactpersoon }) {
+/**
+ * KLANT: naam/bedrijfsnaam + minstens één bruikbare contactpersoon (naam +
+ * e-mail of telefoon). Geëxporteerd (naast bouwDossierHealthCheck) zodat
+ * accountActies.js dezelfde feitelijke controle kan hergebruiken voor de
+ * "Acties voor u"-lijst op /account, zonder een tweede, licht afwijkende
+ * kopie van deze regel te introduceren.
+ */
+export function controleerKlant({ klant, contactpersoon }) {
   if (!heeftWaarde(klant?.naam) && !heeftWaarde(klant?.bedrijfsnaam)) {
     return { status: HEALTH_STATUS.ONTBREEKT, reden: 'Geen klantnaam of bedrijfsnaam bekend.' }
   }
@@ -56,8 +62,8 @@ function controleerKlant({ klant, contactpersoon }) {
   return { status: HEALTH_STATUS.GEREED, reden: 'Klant- en contactgegevens compleet.' }
 }
 
-/** PAND: adres/postcode/plaats (kunnen bereiken) + gebruikstype (relevant voor advies). */
-function controleerPand({ pand }) {
+/** PAND: adres/postcode/plaats (kunnen bereiken) + gebruikstype (relevant voor advies). Geëxporteerd, zie controleerKlant hierboven. */
+export function controleerPand({ pand }) {
   const adresVelden = [pand?.adres, pand?.postcode, pand?.plaats]
   const aantalIngevuld = adresVelden.filter(heeftWaarde).length
   if (aantalIngevuld === 0) {
@@ -69,16 +75,16 @@ function controleerPand({ pand }) {
   return { status: HEALTH_STATUS.GEREED, reden: 'Pandgegevens compleet.' }
 }
 
-/** ENERGIE: is er een (bevroren) Energie-indicatie-snapshot bij dit Dossier? Atomair — geen tussenstap mogelijk. */
-function controleerEnergie({ energieSnapshot }) {
+/** ENERGIE: is er een (bevroren) Energie-indicatie-snapshot bij dit Dossier? Atomair — geen tussenstap mogelijk. Geëxporteerd, zie controleerKlant hierboven. */
+export function controleerEnergie({ energieSnapshot }) {
   if (!energieSnapshot) {
     return { status: HEALTH_STATUS.ONTBREEKT, reden: 'Geen Energie-indicatie gekoppeld aan dit dossier.' }
   }
   return { status: HEALTH_STATUS.GEREED, reden: 'Energie-indicatie gekoppeld.' }
 }
 
-/** MJOP: is er een snapshot, en bevat die daadwerkelijk bouwdelen/installaties? */
-function controleerMjop({ mjopSnapshot }) {
+/** MJOP: is er een snapshot, en bevat die daadwerkelijk bouwdelen/installaties? Geëxporteerd, zie controleerKlant hierboven. */
+export function controleerMjop({ mjopSnapshot }) {
   if (!mjopSnapshot) {
     return { status: HEALTH_STATUS.ONTBREEKT, reden: 'Geen MJOP gekoppeld aan dit dossier.' }
   }

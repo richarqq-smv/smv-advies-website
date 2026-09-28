@@ -21,7 +21,7 @@ import { euro, formatDatumNl } from '../../lib/klantOmgeving/factuur'
  * voor in de plaats kan komen zonder de rest van de factuurarchitectuur
  * te hoeven aanpassen.
  */
-export function FactuurDocument({ factuur, instellingen }) {
+export function FactuurDocument({ factuur, instellingen, toonNotitie = true }) {
   const { klant, contactpersoon } = factuur.klant_snapshot ?? {}
   const regels = Array.isArray(factuur.regels) ? factuur.regels : []
 
@@ -137,7 +137,16 @@ export function FactuurDocument({ factuur, instellingen }) {
             <dd className="text-primary">{euro(factuur.totaal_incl_btw)}</dd>
           </div>
         </dl>
-        {factuur.notitie ? (
+        {/*
+          toonNotitie (Klantomgeving-uitbreiding, 2026-09-28): notitie is
+          een vrij invoerveld voor de admin, bedoeld als interne
+          kanttekening bij het opstellen — nooit automatisch aan de klant
+          tonen (zie opdracht: "klant mag geen interne notities zien"),
+          ook al zou getFactuur() de kolom zelf wel meegeven. Admin-alleen
+          weergave, default true zodat de bestaande admin-weergave
+          (FactuurDetail.jsx onder /admin/facturen/:id) ongewijzigd blijft.
+        */}
+        {toonNotitie && factuur.notitie ? (
           <p className="mt-4 text-primary">
             <span className="font-medium">Notitie: </span>
             {factuur.notitie}
