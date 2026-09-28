@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { createAdviespunt, createSignaalBevroren } from './adviespunt.js'
+import { createAdviespunt, createSignaalBevroren, createEnergieSignaalBevroren } from './adviespunt.js'
 
 // Fictieve insight zoals deriveComponentInsight()/buildInsights() in
 // lib/mjop/linking.js die zou opleveren — hier letterlijk nagebouwd in
@@ -57,6 +57,75 @@ test('createSignaalBevroren staat relevantYear: null toe (geen verzonnen jaar)',
 
 test('createSignaalBevroren vereist een insight', () => {
   assert.throws(() => createSignaalBevroren(null))
+})
+
+// --- createEnergieSignaalBevroren (Energie-indicatie Fase 4) ---------------
+
+function fictieveEnergieInsight(overrides = {}) {
+  return {
+    energieMaatregelId: 'Dakisolatie',
+    herkomst: 'energie',
+    onderwerp: 'Energie-indicatie: Dakisolatie',
+    reden: 'fictieve toelichting',
+    maatregelNaam: 'Dakisolatie',
+    besparingEuro: 1820,
+    investeringLaag: 9000,
+    investeringHoog: 14000,
+    terugverdientijd: 6.3,
+    uitgevoerdOp: '2026-09-20T10:15:00.000Z',
+    ...overrides,
+  }
+}
+
+test('createEnergieSignaalBevroren bevat exact de acht afgesproken velden', () => {
+  const bevroren = createEnergieSignaalBevroren(fictieveEnergieInsight())
+  assert.deepEqual(
+    Object.keys(bevroren).sort(),
+    ['herkomst', 'energieMaatregelId', 'maatregelNaam', 'besparingEuro', 'investeringLaag', 'investeringHoog', 'terugverdientijd', 'uitgevoerdOp'].sort(),
+  )
+  assert.equal(bevroren.herkomst, 'energie')
+  assert.equal(bevroren.energieMaatregelId, 'Dakisolatie')
+  assert.equal(bevroren.maatregelNaam, 'Dakisolatie')
+  assert.equal(bevroren.besparingEuro, 1820)
+})
+
+test('createEnergieSignaalBevroren neemt nooit onderwerp/reden over (die horen bij het adviespunt zelf, niet bij het bevroren spoor)', () => {
+  const bevroren = createEnergieSignaalBevroren(fictieveEnergieInsight())
+  assert.equal('onderwerp' in bevroren, false)
+  assert.equal('reden' in bevroren, false)
+})
+
+test('createEnergieSignaalBevroren levert een bevroren object op', () => {
+  const bevroren = createEnergieSignaalBevroren(fictieveEnergieInsight())
+  assert.equal(Object.isFrozen(bevroren), true)
+  assert.throws(() => {
+    bevroren.besparingEuro = 0
+  })
+})
+
+test('createEnergieSignaalBevroren staat null toe voor ontbrekende optionele bedragen', () => {
+  const bevroren = createEnergieSignaalBevroren(fictieveEnergieInsight({ besparingEuro: null, investeringLaag: null, investeringHoog: null, terugverdientijd: null }))
+  assert.equal(bevroren.besparingEuro, null)
+  assert.equal(bevroren.investeringLaag, null)
+  assert.equal(bevroren.terugverdientijd, null)
+})
+
+test('createEnergieSignaalBevroren vereist een insight', () => {
+  assert.throws(() => createEnergieSignaalBevroren(null))
+})
+
+test('een gepromoveerd Energie-signaal is voor createAdviespunt een gewoon signaalBevroren-object, geen aparte regel nodig', () => {
+  const signaalBevroren = createEnergieSignaalBevroren(fictieveEnergieInsight())
+  const advies = createAdviespunt({
+    onderwerp: 'Energie-indicatie: Dakisolatie',
+    herkomst: 'automatisch',
+    adviesStatus: 'nu_onderzoeken',
+    toelichting: 'Besproken met de klant, samen met de dakvervanging in te plannen.',
+    signaalBevroren,
+  })
+  assert.equal(advies.herkomst, 'automatisch')
+  assert.equal(advies.signaalBevroren.herkomst, 'energie')
+  assert.equal(advies.signaalBevroren.energieMaatregelId, 'Dakisolatie')
 })
 
 // --- createAdviespunt: verplichte velden -----------------------------------

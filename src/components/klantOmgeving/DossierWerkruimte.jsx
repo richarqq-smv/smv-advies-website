@@ -3,7 +3,8 @@ import { CheckCircle, WarningCircle, SpinnerGap } from '@phosphor-icons/react'
 import { Button } from '../ui/Button'
 import { STATUSES } from '../../lib/mjop/constants'
 import { buildInsights } from '../../lib/mjop/linking'
-import { createSignaalBevroren } from '../../lib/dossier/adviespunt'
+import { createSignaalBevroren, createEnergieSignaalBevroren } from '../../lib/dossier/adviespunt'
+import { buildEnergieInsights } from '../../lib/dossier/energieInsights'
 import { groepeerAdviespunten } from '../../lib/dossier/adviesresultaat'
 import { AdviesStatusBadge, HerkomstBadge, AdviespuntKaart } from '../dossier/AdviesBeheer'
 import { addAdviespunt, updateAdviespunt, removeAdviespunt, completeDossier } from '../../lib/klantOmgeving/api'
@@ -123,6 +124,25 @@ function KandidaatItem({ insight, onKies }) {
   )
 }
 
+// Zelfde visuele opzet als KandidaatItem hierboven, voor een Energie-insight
+// (lib/dossier/energieInsights.js) — een eigen component omdat de velden
+// niet overeenkomen (onderwerp/reden i.p.v. componentLabel/statusLabel/
+// relevantYear), bewust geen hergebruik van KandidaatItem om het bestaande
+// MJOP-pad op geen enkele manier te hoeven aanraken.
+function EnergieKandidaatItem({ insight, onKies }) {
+  return (
+    <li className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-dashed border-border px-4 py-3">
+      <div>
+        <p className="text-sm font-medium text-primary">{insight.onderwerp}</p>
+        <p className="text-xs text-foreground-muted">{insight.reden}</p>
+      </div>
+      <Button type="button" variant="outline" size="sm" onClick={() => onKies(insight)}>
+        Als adviespunt toevoegen
+      </Button>
+    </li>
+  )
+}
+
 /** Resultaatweergave (groepering per status) — alleen getoond bij een afgerond Dossier of desgewenst ernaast. */
 function Resultaat({ adviespunten }) {
   const { groepen, totaal } = groepeerAdviespunten(adviespunten.map((a) => ({ ...a, adviesStatus: a.advies_status, adviespuntId: a.adviespunt_id })))
@@ -144,7 +164,7 @@ function Resultaat({ adviespunten }) {
   )
 }
 
-export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: initieleAdviespunten, mjopSnapshot = null, onDossierChange, magBewerken = true }) {
+export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: initieleAdviespunten, mjopSnapshot = null, energieSnapshot = null, onDossierChange, magBewerken = true }) {
   const [dossier, setDossier] = useState(initieelDossier)
   const [adviespunten, setAdviespunten] = useState(initieleAdviespunten)
   const [nieuwBron, setNieuwBron] = useState(null) // null | 'handmatig' | insight-object
@@ -166,6 +186,17 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
   const kandidatenMetSignaal = kandidaten.filter((i) => i.status !== 'onvoldoende_informatie')
   const kandidatenOnbekend = kandidaten.filter((i) => i.status === 'onvoldoende_informatie')
 
+  // Zelfde opzet als hierboven, voor Energie-indicatie (Fase 4): altijd
+  // berekend uit de bevroren energieSnapshot van dít Dossier (zie
+  // lib/dossier/energieInsights.js) — nooit uit een live herberekening.
+  // Eigen dedup-set, want een Energie-signaal heeft geen componentId: de
+  // maatregelnaam zelf (energieMaatregelId) is hier de stabiele identiteit.
+  const energieInsights = useMemo(() => buildEnergieInsights(energieSnapshot), [energieSnapshot])
+  const gebruikteEnergieIds = new Set(
+    adviespunten.filter((a) => a.signaal_bevroren?.herkomst === 'energie').map((a) => a.signaal_bevroren.energieMaatregelId),
+  )
+  const energieKandidaten = energieInsights.filter((i) => !gebruikteEnergieIds.has(i.energieMaatregelId))
+
   function startHandmatig() {
     setNieuwBron('handmatig')
     setNieuwWaarde(LEEG_FORMULIER)
@@ -175,6 +206,16 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
   function startVanuitSignaal(insight) {
     setNieuwBron(insight)
     setNieuwWaarde({ onderwerp: insight.componentLabel, adviesStatus: insight.status, toelichting: '', herbeoordelenBij: '' })
+    setFout(null)
+  }
+
+  // Bewust géén vooringevulde adviesStatus (in tegenstelling tot
+  // startVanuitSignaal hierboven voor MJOP): een Energie-kandidaat heeft
+  // zelf geen adviesstatus (zie energieInsights.js) — Richard kiest die
+  // hier altijd zelf, precies zoals bij een handmatig adviespunt.
+  function startVanuitEnergieSignaal(insight) {
+    setNieuwBron(insight)
+    setNieuwWaarde({ onderwerp: insight.onderwerp, adviesStatus: '', toelichting: '', herbeoordelenBij: '' })
     setFout(null)
   }
 
@@ -191,13 +232,14 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
     setBezig(true)
     try {
       const isSignaal = nieuwBron && nieuwBron !== 'handmatig'
+      const isEnergieSignaal = isSignaal && nieuwBron.herkomst === 'energie'
       const nieuw = await addAdviespunt(dossier.dossier_id, {
         onderwerp: nieuwWaarde.onderwerp,
         herkomst: isSignaal ? 'automatisch' : 'handmatig',
         adviesStatus: nieuwWaarde.adviesStatus,
         toelichting: nieuwWaarde.toelichting,
         herbeoordelenBij: nieuwWaarde.herbeoordelenBij,
-        signaalBevroren: isSignaal ? createSignaalBevroren(nieuwBron) : null,
+        signaalBevroren: isSignaal ? (isEnergieSignaal ? createEnergieSignaalBevroren(nieuwBron) : createSignaalBevroren(nieuwBron)) : null,
       })
       setAdviespunten((v) => [...v, nieuw])
       setNieuwBron(null)
@@ -345,6 +387,17 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
               <ul className="flex flex-col gap-2">
                 {kandidatenOnbekend.map((insight) => (
                   <KandidaatItem key={insight.componentId} insight={insight} onKies={startVanuitSignaal} />
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {energieKandidaten.length > 0 ? (
+            <div>
+              <p className="mb-2 text-sm font-medium text-primary">Automatisch beschikbare signalen uit Energie-indicatie</p>
+              <ul className="flex flex-col gap-2">
+                {energieKandidaten.map((insight) => (
+                  <EnergieKandidaatItem key={insight.energieMaatregelId} insight={insight} onKies={startVanuitEnergieSignaal} />
                 ))}
               </ul>
             </div>

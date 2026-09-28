@@ -73,7 +73,7 @@ export function StepContact({ values, errors, setValue, onSubmit, onBack, isSubm
           {isSubmitting ? (
             <SpinnerGap size={18} weight="bold" className="animate-spin motion-reduce:animate-none" />
           ) : null}
-          {isSubmitting ? 'Bezig met berekenen…' : 'Bekijk mijn volledige rapport'}
+          {isSubmitting ? 'Bezig met berekenen…' : 'Bekijk mijn indicatie'}
         </Button>
       </div>
     </div>

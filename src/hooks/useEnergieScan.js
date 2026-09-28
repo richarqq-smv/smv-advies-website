@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react'
 import { berekenResultaat } from '../lib/energieScan/calculations'
 import { buildEmailParams } from '../lib/energieScan/emailParams'
+import { buildInterneLeadParams, buildKlantBevestigingParams } from '../lib/energieScan/emailAudiences'
 import { prepareCalculationInput, validateStep1, validateStep2, validateStep3, validateStep4 } from '../lib/energieScan/validation'
 import { BUSINESS_EMAIL, EMAILJS_TEMPLATE_CONFIRM, EMAILJS_TEMPLATE_LEAD, sendEmail } from '../lib/emailjs'
 
@@ -135,8 +136,8 @@ export function useEnergieScan() {
       // the confirmation mail's outcome, matching the original's
       // `sentNote`, which was also wired to that mail only.
       const emailParams = buildEmailParams(state.values, result)
-      const leadParams = { ...emailParams, to_email: BUSINESS_EMAIL, maatregelen: emailParams.maatregelen_intern }
-      const confirmParams = { ...emailParams, to_email: state.values.email, maatregelen: emailParams.maatregelen_klant }
+      const leadParams = buildInterneLeadParams(emailParams, BUSINESS_EMAIL)
+      const confirmParams = buildKlantBevestigingParams(emailParams, result, state.values.email)
 
       sendEmail(EMAILJS_TEMPLATE_LEAD, leadParams).catch(() => {})
       sendEmail(EMAILJS_TEMPLATE_CONFIRM, confirmParams)

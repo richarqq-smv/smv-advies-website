@@ -11,6 +11,7 @@
  * geen eigen autorisatielogica toe, alleen dataverkeer.
  */
 import { supabase } from '../supabaseClient'
+import { isValidEnergieSnapshot } from '../dossier/energieAdapter.js'
 
 function throwOnError({ data, error }) {
   if (error) throw error
@@ -205,6 +206,26 @@ export async function removeAdviespunt(adviespuntId) {
 
 export async function completeDossier(dossierId) {
   return throwOnError(await supabase.from('dossiers').update({ status: 'afgerond' }).eq('dossier_id', dossierId).select('*, panden(*)').single())
+}
+
+/**
+ * Slaat een Energie-indicatie-snapshot op bij een bestaand Dossier
+ * (Energie-indicatie Fase 2). Kale update van precies één kolom — nooit
+ * ongecontroleerde extra velden, geen live calculator-state. RLS
+ * (dossiers_update, 0001_init.sql) is de enige toegangsgrens: dezelfde
+ * regel als voor elke andere Dossier-wijziging (eigen klant + open
+ * Dossier, of admin). Een afgerond Dossier wordt hier niet apart
+ * gecontroleerd — bewaak_dossier_integriteit() blokkeert dat al voor élke
+ * kolom, dus deze functie hoeft die regel niet te dupliceren.
+ */
+export async function saveEnergieSnapshot(dossierId, snapshot) {
+  if (!dossierId) throw new Error('saveEnergieSnapshot vereist een geldig dossier-ID.')
+  if (!isValidEnergieSnapshot(snapshot)) {
+    throw new Error('saveEnergieSnapshot vereist een geldige Energie-snapshot (versie, invoer, resultaat).')
+  }
+  return throwOnError(
+    await supabase.from('dossiers').update({ energie_snapshot: snapshot }).eq('dossier_id', dossierId).select('*, panden(*)').single(),
+  )
 }
 
 // --- Offerte -----------------------------------------------------------------

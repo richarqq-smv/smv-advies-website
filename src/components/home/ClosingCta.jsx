@@ -13,14 +13,14 @@ export function ClosingCta() {
           <div>
             <h2 className="text-3xl text-white sm:text-4xl">Klaar voor de eerste stap?</h2>
             <p className="mt-3 max-w-[50ch] text-white/70">
-              Begin vrijblijvend met de gratis energie-indicatie of neem direct contact op.{' '}
+              Bespreek vrijblijvend uw bedrijfspand, of doe eerst de gratis energie-indicatie.{' '}
               {COMPANY.responseTime}.
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap gap-3">
-            <Button to={ROUTES.energieIndicatie}>Start de energie-indicatie</Button>
-            <Button to={ROUTES.contact} variant="outline" className="border-white/30 text-white hover:bg-white/10">
-              Neem contact op
+            <Button to={ROUTES.contact}>Bespreek uw bedrijfspand</Button>
+            <Button to={ROUTES.energieIndicatie} variant="outline" className="border-white/30 text-white hover:bg-white/10">
+              Start de energie-indicatie
             </Button>
           </div>
         </Reveal>

@@ -41,6 +41,40 @@ export function createSignaalBevroren(insight) {
   return Object.freeze(snapshot)
 }
 
+// Vaste, minimale vorm van een bevroren Energie-signaal (Energie-indicatie
+// Fase 4) — zelfde rol als SIGNAAL_BEVROREN_FIELDS hierboven, met eigen
+// velden: een Energie-kandidaat (zie lib/dossier/energieInsights.js) heeft
+// geen componentId/status/relevantYear, wel een maatregelnaam en de
+// bijbehorende bevroren bedragen. `herkomst: 'energie'` maakt een
+// gepromoveerd signaal ondubbelzinnig herkenbaar t.o.v. een MJOP-signaal,
+// waarvan het bevroren spoor dit veld niet heeft (zie AdviespuntKaart in
+// components/dossier/AdviesBeheer.jsx).
+const ENERGIE_SIGNAAL_BEVROREN_FIELDS = [
+  'herkomst',
+  'energieMaatregelId',
+  'maatregelNaam',
+  'besparingEuro',
+  'investeringLaag',
+  'investeringHoog',
+  'terugverdientijd',
+  'uitgevoerdOp',
+]
+
+/**
+ * Bouwt de bevroren signaalkopie uit een Energie-insight (het resultaat
+ * van buildEnergieInsights() in lib/dossier/energieInsights.js). Zelfde
+ * garantie als createSignaalBevroren(): een pure waardekopie, geen live
+ * referentie naar de Energie-snapshot — een later vervangen of gewijzigde
+ * snapshot kan dit bevroren spoor dus nooit met terugwerkende kracht
+ * veranderen.
+ */
+export function createEnergieSignaalBevroren(insight) {
+  if (!insight) throw new Error('createEnergieSignaalBevroren vereist een insight (het resultaat van buildEnergieInsights()).')
+  const snapshot = {}
+  for (const field of ENERGIE_SIGNAAL_BEVROREN_FIELDS) snapshot[field] = insight[field] ?? null
+  return Object.freeze(snapshot)
+}
+
 function isValidAdviesStatus(status) {
   return typeof status === 'string' && status in STATUSES
 }

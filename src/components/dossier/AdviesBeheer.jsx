@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { CheckCircle, WarningCircle, SpinnerGap } from '@phosphor-icons/react'
 import { Button } from '../ui/Button'
+import { euro } from '../../lib/energieScan/calculations'
 import { STATUSES } from '../../lib/mjop/constants'
 import { buildInsights } from '../../lib/mjop/linking'
 import {
@@ -73,10 +74,17 @@ export function AdviespuntKaart({ advies, actions }) {
       <p className="text-sm leading-relaxed text-foreground-muted">{advies.toelichting}</p>
       {advies.herbeoordelenBij ? <p className="mt-2 text-xs text-foreground-muted">Opnieuw beoordelen: {advies.herbeoordelenBij}</p> : null}
       {advies.signaalBevroren ? (
-        <p className="mt-2 text-xs text-foreground-muted">
-          Oorspronkelijk MJOP-signaal: {advies.signaalBevroren.statusLabel}
-          {advies.signaalBevroren.relevantYear ? ` (${advies.signaalBevroren.relevantYear})` : ''}
-        </p>
+        advies.signaalBevroren.herkomst === 'energie' ? (
+          <p className="mt-2 text-xs text-foreground-muted">
+            Oorspronkelijk Energie-signaal: {advies.signaalBevroren.maatregelNaam}
+            {advies.signaalBevroren.besparingEuro != null ? ` (${euro(advies.signaalBevroren.besparingEuro)}/jaar)` : ''}
+          </p>
+        ) : (
+          <p className="mt-2 text-xs text-foreground-muted">
+            Oorspronkelijk MJOP-signaal: {advies.signaalBevroren.statusLabel}
+            {advies.signaalBevroren.relevantYear ? ` (${advies.signaalBevroren.relevantYear})` : ''}
+          </p>
+        )
       ) : null}
       {actions ? <div className="mt-3 flex flex-wrap gap-3">{actions}</div> : null}
     </div>

@@ -15,14 +15,14 @@ export function Hero() {
             Verduurzaam uw bedrijfspand zonder onnodig te investeren.
           </h1>
           <p className="mt-5 max-w-[52ch] text-lg leading-relaxed text-foreground-muted">
-            Onafhankelijk advies voor mkb-bedrijfspanden. Wij brengen in kaart welke maatregelen
-            technisch en financieel interessant zijn — zodat u weet wat u wél, en juist niet,
-            hoeft te doen.
+            Eerst weten wat verstandig is, daarna pas investeren. Wij kijken naar energie,
+            onderhoud en het juiste investeringsmoment — zodat u weet wat nu moet, wat kan
+            wachten, en wat eerst onderzocht moet worden.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button to={ROUTES.energieIndicatie}>Gratis energiecheck</Button>
-            <Button href="#pakketten" variant="outline">
-              Bekijk de adviespakketten
+            <Button to={ROUTES.contact}>Bespreek uw bedrijfspand</Button>
+            <Button to={ROUTES.energieIndicatie} variant="outline">
+              Gratis energiecheck
             </Button>
           </div>
           <p className="mt-5 text-sm font-medium text-foreground-muted">

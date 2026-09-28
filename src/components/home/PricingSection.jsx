@@ -10,7 +10,7 @@ export function PricingSection() {
       <Container>
         <SectionHeading
           title="Drie pakketten, één doel: een toekomstbestendig bedrijfspand"
-          description="Van een snelle QuickScan tot volledige begeleiding van A tot Z. Geen abonnement, geen kleine lettertjes, wel een helder rapport dat u verder helpt."
+          description="Van een snelle QuickScan tot ontzorging binnen een vooraf afgebakende scope. Geen abonnement, geen kleine lettertjes, wel een helder rapport dat u verder helpt."
           className="mb-12"
         />
 

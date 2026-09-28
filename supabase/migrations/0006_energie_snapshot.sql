@@ -1,0 +1,20 @@
+-- Energie-indicatie → Dossier (V1): een optionele, losstaande
+-- momentopname naast pand_snapshot/mjop_snapshot, exact dezelfde
+-- architectuur als de bestaande mjop_snapshot-kolom.
+--
+-- Geen nieuwe tabel, geen nieuwe RLS-policy en geen trigger-wijziging
+-- nodig:
+--   - dossiers_select/dossiers_update (0001_init.sql) gelden per rij, dus
+--     automatisch ook voor deze kolom — een klant ziet/wijzigt zijn eigen
+--     open Dossier, een andere klant ziet niets, admin ziet alles.
+--   - bewaak_dossier_integriteit() (0001_init.sql) blokkeert nu al elke
+--     UPDATE op een afgerond Dossier, ongeacht kolom — energie_snapshot
+--     wordt daardoor automatisch immutable zodra het Dossier is afgerond,
+--     en blijft vrij vervangbaar (bij een nieuwe meting) zolang het
+--     Dossier open is, precies zoals mjop_snapshot nu al werkt.
+--
+-- Nullable: bestaande Dossiers blijven geldig zonder Energie-indicatie.
+-- Maximaal één actuele snapshot per Dossier in V1 — een nieuwe meting
+-- vervangt de vorige, bewust geen historie-tabel (zie de V1-afweging in
+-- de bouwprompt: geen tweede entiteit zonder expliciete noodzaak).
+alter table public.dossiers add column energie_snapshot jsonb;

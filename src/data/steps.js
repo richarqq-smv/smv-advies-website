@@ -24,7 +24,7 @@ export const STEPS = [
     number: '04',
     title: 'Begeleiding & uitvoering',
     description:
-      'Vanaf het Premium Pakket helpen we met vervolgstappen. Bij Gold begeleiden we offertes en uitvoering van A tot Z.',
+      'Vanaf het Premium Pakket helpen we met vervolgstappen. Bij Gold begeleiden we u binnen een vooraf afgebakende scope: van offertevergelijking tot en met een visuele opleveringscheck.',
     duration: 'afhankelijk van planning',
   },
 ]

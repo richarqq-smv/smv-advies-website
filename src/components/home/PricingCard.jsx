@@ -24,9 +24,10 @@ export function PricingCard({ pkg, delay = 0 }) {
         <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">{pkg.mindset}</p>
       ) : null}
       <h3 className="mt-1 text-xl font-semibold text-primary">{pkg.name}</h3>
+      {pkg.tagline ? <p className="mt-1 text-sm font-medium text-primary">{pkg.tagline}</p> : null}
       <p className="mt-1 text-sm text-foreground-muted">{pkg.subtitle}</p>
 
-      <p className="mt-5 text-3xl text-primary">{pkg.price}</p>
+      <p className="mt-5 text-3xl text-primary">{pkg.priceDisplay}</p>
       <p className="text-xs text-foreground-muted">{pkg.priceNote}</p>
 
       <p className="mt-4 text-sm leading-relaxed text-foreground-muted">{pkg.description}</p>
@@ -39,6 +40,8 @@ export function PricingCard({ pkg, delay = 0 }) {
           </li>
         ))}
       </ul>
+
+      {pkg.scopeNote ? <p className="mt-4 text-xs text-foreground-muted">{pkg.scopeNote}</p> : null}
 
       <Button to={pkg.ctaTo} variant={pkg.featured ? 'primary' : 'outline'} className="mt-8 w-full">
         {pkg.cta}

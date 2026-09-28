@@ -28,7 +28,7 @@ const ADDRESS_LINE = `${COMPANY.address.street}, ${COMPANY.address.postalCode} $
 // dezelfde versie-aanduiding in een offerte-snapshot kan vastleggen zonder
 // een tweede plek te creëren waar deze datum zou moeten kloppen — zie
 // src/lib/klantOmgeving/offerte.js.
-export const LAST_UPDATED = '26 augustus 2026'
+export const LAST_UPDATED = '27 september 2026'
 
 export const PRIVACY_CONTENT = {
   intro:
@@ -134,7 +134,7 @@ export const PRIVACY_CONTENT = {
 
 export const VOORWAARDEN_CONTENT = {
   intro:
-    `SMV Advies (Steen en Mortel Verbetering), eenmanszaak gevestigd te ${COMPANY.address.city}${KVK_CLAUSE}. Versie augustus 2026. ` +
+    `SMV Advies (Steen en Mortel Verbetering), eenmanszaak gevestigd te ${COMPANY.address.city}${KVK_CLAUSE}. Versie september 2026. ` +
     'Deze voorwaarden zijn geschreven voor een advies- en begeleidingsbureau — SMV Advies voert zelf geen bouwkundige of installatietechnische werkzaamheden uit; die worden verricht door de klant of via SMV Advies gecontracteerde installateurs en aannemers.',
   sections: [
     {
@@ -179,7 +179,7 @@ export const VOORWAARDEN_CONTENT = {
       content: [
         'SMV Advies voert de opdracht naar beste inzicht, kennis en kunde uit, conform de eisen van goed vakmanschap, op basis van een inspanningsverplichting.',
         'De in rapporten genoemde bedragen (investeringen, besparingen, terugverdientijden) zijn indicatief en gebaseerd op kentallen, aangeleverde gegevens en/of een visuele opname. Hieraan kunnen geen rechten worden ontleend; voor een sluitend uitvoeringsbudget zijn offertes van uitvoerende partijen noodzakelijk.',
-        'SMV Advies voert zelf geen bouwkundige, installatietechnische of andere uitvoerende werkzaamheden uit. Bij het Gold Pakket begeleidt SMV Advies de klant bij het opvragen, vergelijken en beoordelen van offertes van derde partijen en bij de kwaliteitscontrole tijdens uitvoering, maar de daadwerkelijke uitvoering en de contractuele relatie met de uitvoerende partij komen tot stand tussen de klant en die derde partij.',
+        'SMV Advies voert zelf geen bouwkundige, installatietechnische of andere uitvoerende werkzaamheden uit. Bij het Gold Pakket ondersteunt SMV Advies de klant bij het opvragen, vergelijken en beoordelen van offertes van derde partijen binnen de overeengekomen scope, is SMV Advies aanwezig bij één kickoffgesprek met de uitvoerende partij, en voert SMV Advies bij afronding één visuele, documentaire oplevercheck uit. Deze oplevercheck omvat geen technische keuring en geen bouwkundige inspectie, en houdt geen garantie op de uitvoeringskwaliteit in. De daadwerkelijke uitvoering en de contractuele relatie met de uitvoerende partij komen tot stand tussen de klant en die derde partij; SMV Advies is niet verantwoordelijk voor de uitvoeringskwaliteit van die derde partij.',
         'Genoemde termijnen (levertijd rapport, doorlooptijd project) zijn indicatief en gelden niet als fatale termijn, tenzij uitdrukkelijk schriftelijk anders overeengekomen.',
       ],
     },

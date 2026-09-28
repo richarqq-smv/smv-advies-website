@@ -1,5 +1,5 @@
 /**
- * Pure offerte-logica: bedragberekening, prijsrange-parsing en de
+ * Pure offerte-logica: bedragberekening, prijstier-bepaling en de
  * snapshotopbouw — geen I/O (zie api.js voor de Supabase-aanroep zelf).
  * Zelfde scheiding als lib/energieScan/calculations.js vs. de hook die
  * 'm aanroept.
@@ -12,6 +12,9 @@
  */
 export const BTW_PERCENTAGE = 21
 
+/** Standaard meerwerktarief (Fase 6, commerciële waarheid) — vult alleen een nieuwe meerwerkregel voor, de adviseur kan dit per regel altijd overschrijven. */
+export const MEERWERK_UURTARIEF = 95
+
 /** Vaste tekst uit SMV-Advies Offerte.docx — geen dynamisch profielveld (er is één adviseur). */
 export const OPGESTELD_DOOR_NAAM = 'Richard Schipper'
 
@@ -20,15 +23,35 @@ export function euro(n) {
 }
 
 /**
- * Leest de min/max-bandbreedte uit een bestaand `packages.js`-prijsveld
- * (bijv. "€ 1.495 - € 2.495") — geen tweede, los bijgehouden getallenpaar.
- * Nederlandse duizendtallen-punt wordt verwijderd vóór het parsen; deze
- * prijsvelden bevatten nooit centen.
+ * Bepaalt de van toepassing zijnde prijstier uit `pakket.priceTiers` (zie
+ * packages.js), op basis van de vloeroppervlakte van het pand op dit
+ * moment. Tiers zijn niet-overlappend en dekken elk oppervlak: de eerste
+ * tier waarvan `maxOppervlak` de oppervlakte niet overschrijdt wint (dus
+ * exact op de grens, bijv. 1000 m², hoort bij de tier mét die grens — "tot
+ * 1.000 m²"), en een oppervlakte die boven de hoogste vaste grens uitkomt
+ * — of onbekend is (`null`/`undefined`) — valt terug op de laatste tier
+ * ('op aanvraag', met `prijs: null`): daarvoor stelt de adviseur zelf een
+ * bedrag vast, er wordt nooit een bedrag verzonnen.
  */
-export function parsePrijsRange(priceText) {
-  const matches = priceText?.match(/[\d.]+/g) ?? []
-  const [min, max] = matches.map((m) => Number(m.replace(/\./g, '')))
-  return { min: min ?? null, max: max ?? null }
+export function bepaalPrijsTier(pakket, oppervlakte) {
+  const tiers = pakket?.priceTiers
+  if (!Array.isArray(tiers) || tiers.length === 0) return null
+  const opAanvraagTier = tiers[tiers.length - 1]
+  if (oppervlakte == null) return opAanvraagTier
+  return tiers.find((tier) => tier.maxOppervlak != null && oppervlakte <= tier.maxOppervlak) ?? opAanvraagTier
+}
+
+/**
+ * Of een ingevuld offertebedrag afwijkt van de standaardprijs van de
+ * gekozen tier — puur informatief (Richard kan altijd bewust afwijken),
+ * nooit een harde blokkade. Geeft `false` als er geen vaste standaardprijs
+ * is (tier ontbreekt, of tier.prijs is `null` — "op aanvraag": daar bestaat
+ * per definitie geen standaardprijs om van af te wijken) of als er nog
+ * geen bedrag is ingevuld.
+ */
+export function bedragWijktAfVanStandaardprijs(tier, bedrag) {
+  if (!tier || tier.prijs == null || bedrag == null) return false
+  return bedrag !== tier.prijs
 }
 
 /** Rond af op centen — voorkomt drijvende-kommafouten bij optellen van bedragen. */
@@ -80,7 +103,7 @@ export function berekenOfferteBedragen({ bedrag, meerwerk = [], btwPercentage = 
  * zie DATABASE_ARCHITECTURE.md): een offerte heeft het volledige,
  * fysieke pandadres nodig, dat het Dossier-snapshot niet vastlegt.
  */
-export function bouwOfferteSnapshot({ klant, contactpersoon, pand, pakket, bedrag, meerwerk, financieel, voorwaardenVersie }) {
+export function bouwOfferteSnapshot({ klant, contactpersoon, pand, pakket, tier, bedrag, meerwerk, financieel, voorwaardenVersie }) {
   return {
     klant: {
       naam: klant.naam ?? null,
@@ -109,7 +132,11 @@ export function bouwOfferteSnapshot({ klant, contactpersoon, pand, pakket, bedra
       id: pakket.id,
       naam: pakket.name,
       subtitle: pakket.subtitle,
-      prijsrange: pakket.price,
+      // Kopie, geen referentie naar het levende tier-object uit
+      // packages.js — legt vast welke tier gold, bij welke oppervlakte-
+      // grens, en tegen welke standaardprijs, onafhankelijk van eventuele
+      // latere prijswijzigingen in packages.js.
+      prijstier: tier ? { label: tier.label, maxOppervlak: tier.maxOppervlak, standaardprijs: tier.prijs } : null,
       omschrijving: pakket.description,
       // Kopie, geen referentie: pakket.features wijst naar de levende
       // packages.js-array. Zonder kopie zou een latere wijziging aan die

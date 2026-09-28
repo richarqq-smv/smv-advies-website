@@ -19,12 +19,12 @@ export const FAQ_CATEGORIES = [
       {
         question: 'Wat is het verschil tussen de drie pakketten?',
         answer:
-          "Het Basis Pakket (QuickScan) geeft u op afstand een eerste, betrouwbare indicatie inclusief een indicatie van EIA/ISDE-subsidiemogelijkheden. Het Premium Pakket voegt een fysieke opname, een gedetailleerde bouwkundige en installatietechnische analyse en een financieel overzicht met scenario's toe. Het Gold Pakket is volledige ontzorging: wij begeleiden ook het opvragen en beoordelen van offertes en de kwaliteitscontrole tijdens uitvoering.",
+          'Het Basis Pakket (QuickScan) geeft u op afstand een eerste, betrouwbare indicatie inclusief een indicatie van EIA/ISDE-subsidiemogelijkheden. Het Premium Pakket voegt een fysieke opname, een gedetailleerde bouwkundige en installatietechnische analyse en een financieel overzicht met scenario\'s toe. Het Gold Pakket ontzorgt binnen een vooraf afgebakende scope: maximaal 3 geselecteerde maatregelen, offertes bij maximaal 3 aanbieders per maatregel en één visuele opleveringscheck bij afronding.',
       },
       {
         question: 'Wat kost een verduurzamingsadvies?',
         answer:
-          'Het Basis Pakket (QuickScan) kost € 495 tot € 795, het Premium Pakket € 895 tot € 1.495 en het Gold Pakket € 1.495 tot € 2.495. De exacte prijs binnen de bandbreedte hangt af van de oppervlakte en complexiteit van uw pand.',
+          'Het Basis Pakket kost € 495 (tot 1.000 m²) of € 695 (1.000–2.500 m²), het Premium Pakket € 995 of € 1.295 en het Gold Pakket € 2.495 of € 2.995 — steeds afhankelijk van de oppervlakte van uw pand. Voor grotere of complexere panden stellen we een prijs op aanvraag vast.',
       },
       {
         question: 'Zijn de genoemde besparingen en investeringen bindend?',

@@ -5,9 +5,19 @@ import { PACKAGES } from '../../data/packages'
 import { LAST_UPDATED as VOORWAARDEN_VERSIE } from '../../data/legalContent'
 import { createOfferte } from '../../lib/klantOmgeving/api'
 import { ROUTES } from '../../lib/routes'
-import { BTW_PERCENTAGE, euro, parsePrijsRange, rond2, standaardGeldigTot, berekenOfferteBedragen, bouwOfferteSnapshot } from '../../lib/klantOmgeving/offerte'
+import {
+  BTW_PERCENTAGE,
+  MEERWERK_UURTARIEF,
+  euro,
+  bepaalPrijsTier,
+  bedragWijktAfVanStandaardprijs,
+  rond2,
+  standaardGeldigTot,
+  berekenOfferteBedragen,
+  bouwOfferteSnapshot,
+} from '../../lib/klantOmgeving/offerte'
 
-const LEGE_MEERWERKREGEL = { omschrijving: '', aantal: 1, eenheidsprijs: 0 }
+const LEGE_MEERWERKREGEL = { omschrijving: '', aantal: 1, eenheidsprijs: MEERWERK_UURTARIEF }
 const inputClass =
   'w-full rounded-lg border border-border bg-white px-3.5 py-2.5 text-sm text-primary focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none'
 
@@ -63,8 +73,8 @@ function MeerwerkRegelRij({ regel, index, onWijzig, onVerwijder }) {
  * (offertenummer + kerngegevens), genoeg om te weten dat het gelukt is.
  *
  * Pakketdata komt uitsluitend uit src/data/packages.js — geen tweede
- * bron. De bandbreedte-waarschuwing wordt uit datzelfde `price`-veld
- * geparsed (parsePrijsRange), niet als los getallenpaar bijgehouden.
+ * bron. De standaardprijs komt uit de tier die bij de vloeroppervlakte van
+ * dit pand hoort (bepaalPrijsTier) — geen losse bandbreedte meer.
  */
 export function OfferteEditor({ klant, contactpersoon, pand, dossier, onOpgeslagen }) {
   const [open, setOpen] = useState(false)
@@ -77,9 +87,13 @@ export function OfferteEditor({ klant, contactpersoon, pand, dossier, onOpgeslag
   const [resultaat, setResultaat] = useState(null)
 
   const pakket = PACKAGES.find((p) => p.id === pakketId) ?? null
-  const range = pakket ? parsePrijsRange(pakket.price) : null
+  const tier = pakket ? bepaalPrijsTier(pakket, pand.vloeroppervlak ?? null) : null
   const bedragGetal = bedrag === '' ? null : Number(bedrag)
-  const buitenRange = pakket && bedragGetal != null && range?.min != null && (bedragGetal < range.min || bedragGetal > range.max)
+  // Alleen een informatieve afwijking-melding als er een vaste
+  // standaardprijs is (dus niet bij "op aanvraag", tier.prijs === null) —
+  // sinds Fase 6 zijn dit vaste tierprijzen, geen bandbreedte meer, dus dit
+  // blokkeert nooit, het maakt alleen zichtbaar dat bewust wordt afgeweken.
+  const wijktAfVanStandaardprijs = bedragWijktAfVanStandaardprijs(tier, bedragGetal)
 
   const meerwerkVoorBerekening = meerwerk.map((r) => ({
     ...r,
@@ -129,6 +143,7 @@ export function OfferteEditor({ klant, contactpersoon, pand, dossier, onOpgeslag
         contactpersoon,
         pand,
         pakket,
+        tier,
         bedrag: bedragGetal,
         meerwerk: meerwerkVoorBerekening,
         financieel,
@@ -229,7 +244,7 @@ export function OfferteEditor({ klant, contactpersoon, pand, dossier, onOpgeslag
               >
                 <span className="block font-medium text-primary">{p.name}</span>
                 <span className="block text-xs text-foreground-muted">{p.subtitle}</span>
-                <span className="mt-1 block text-xs font-medium text-accent">{p.price}</span>
+                <span className="mt-1 block text-xs font-medium text-accent">{p.priceDisplay}</span>
               </button>
             ))}
           </div>
@@ -241,6 +256,13 @@ export function OfferteEditor({ klant, contactpersoon, pand, dossier, onOpgeslag
               Offertebedrag (excl. btw)
               <span className="ml-1 text-accent">*</span>
             </label>
+            {tier ? (
+              <p className="mb-1.5 text-xs text-foreground-muted">
+                Van toepassing: {tier.label}
+                {pand.vloeroppervlak ? ` (pand: ${pand.vloeroppervlak} m²)` : ' (oppervlakte onbekend)'} —{' '}
+                {tier.prijs != null ? `standaardprijs ${euro(tier.prijs)}` : 'op aanvraag, bepaal zelf het bedrag'}
+              </p>
+            ) : null}
             <input
               id="offerte-bedrag"
               type="number"
@@ -248,13 +270,13 @@ export function OfferteEditor({ klant, contactpersoon, pand, dossier, onOpgeslag
               step="0.01"
               value={bedrag}
               onChange={(e) => setBedrag(e.target.value)}
-              placeholder={`Standaard: ${pakket.price}`}
+              placeholder={tier?.prijs != null ? `Standaard: ${euro(tier.prijs)}` : 'Op aanvraag — vul zelf een bedrag in'}
               className={inputClass}
             />
-            {buitenRange ? (
+            {wijktAfVanStandaardprijs ? (
               <p className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-accent">
                 <WarningCircle size={14} weight="fill" />
-                Dit bedrag valt buiten de standaardprijsrange van dit pakket ({pakket.price}).
+                Dit bedrag wijkt af van de standaardprijs voor deze tier ({euro(tier.prijs)}).
               </p>
             ) : null}
           </div>

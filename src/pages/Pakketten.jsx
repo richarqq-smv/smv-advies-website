@@ -4,6 +4,7 @@ import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { SectionHeading } from '../components/ui/SectionHeading'
+import { Button } from '../components/ui/Button'
 import { PricingCard } from '../components/home/PricingCard'
 import { ComparisonTable } from '../components/pakketten/ComparisonTable'
 import { DecisionCta } from '../components/pakketten/DecisionCta'
@@ -18,7 +19,7 @@ export default function Pakketten() {
     <>
       <Seo
         title="Pakketten"
-        description="Drie pakketten, één doel: een toekomstbestendig bedrijfspand. Van een snelle QuickScan tot volledige begeleiding van A tot Z."
+        description="Drie pakketten, één doel: een toekomstbestendig bedrijfspand. Van een snelle QuickScan tot ontzorging binnen een vooraf afgebakende scope."
         structuredData={[getBreadcrumbSchema([{ name: 'Pakketten', path: ROUTES.pakketten }])]}
       />
 
@@ -27,8 +28,8 @@ export default function Pakketten() {
         title="Drie manieren om te beginnen"
         description={
           <>
-            Van een snelle indicatie op afstand tot volledige ontzorging van A tot Z. Kies het pakket dat past
-            bij uw pand, uw doelen en uw budget — geen abonnement, geen kleine lettertjes. Denk aan{' '}
+            Van een snelle indicatie op afstand tot ontzorging binnen een vooraf afgebakende scope. Kies het pakket
+            dat past bij uw pand, uw doelen en uw budget — geen abonnement, geen kleine lettertjes. Denk aan{' '}
             <Link to={ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand')} className={LINK_CLASSNAME}>
               dakisolatie
             </Link>
@@ -55,6 +56,17 @@ export default function Pakketten() {
 
       <Section tone="white" noTopPadding>
         <Container>
+          <div className="mb-8 flex flex-col items-start justify-between gap-4 rounded-xl border border-dashed border-border bg-muted/40 p-6 sm:flex-row sm:items-center">
+            <div>
+              <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Stap 0 · gratis</p>
+              <p className="mt-1 text-base font-semibold text-primary">Energie Indicatie — Hoe staat mijn pand er globaal voor?</p>
+              <p className="mt-1 text-sm text-foreground-muted">Nog geen idee waar u staat? Begin hier, geheel vrijblijvend.</p>
+            </div>
+            <Button to={ROUTES.energieIndicatie} variant="outline" className="shrink-0">
+              Naar de energie-indicatie
+            </Button>
+          </div>
+
           <h2 className="sr-only">Onze pakketten</h2>
           <div className="grid gap-6 lg:grid-cols-3 lg:items-stretch">
             {PACKAGES.map((pkg, index) => (

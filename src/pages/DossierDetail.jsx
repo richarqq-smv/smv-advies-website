@@ -5,6 +5,7 @@ import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { DossierWerkruimte } from '../components/klantOmgeving/DossierWerkruimte'
+import { EnergieSnapshot } from '../components/klantOmgeving/EnergieSnapshot'
 import { OfferteEditor } from '../components/klantOmgeving/OfferteEditor'
 import { OffertesHistorie } from '../components/klantOmgeving/OffertesHistorie'
 import { getDossier, listAdviespunten } from '../lib/klantOmgeving/api'
@@ -68,7 +69,14 @@ export default function DossierDetail() {
             </p>
           ) : (
             <div className="flex flex-col gap-6">
-              <DossierWerkruimte dossier={dossier} adviespunten={adviespunten} mjopSnapshot={dossier.mjop_snapshot} onDossierChange={setDossier} />
+              <DossierWerkruimte
+                dossier={dossier}
+                adviespunten={adviespunten}
+                mjopSnapshot={dossier.mjop_snapshot}
+                energieSnapshot={dossier.energie_snapshot}
+                onDossierChange={setDossier}
+              />
+              <EnergieSnapshot snapshot={dossier.energie_snapshot} />
               <OffertesHistorie dossierId={dossier.dossier_id} refreshSignal={offerteRefresh} />
               <OfferteEditor
                 klant={dossier.klanten}

@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { rond2, parsePrijsRange, berekenOfferteBedragen, bouwOfferteSnapshot, OPGESTELD_DOOR_NAAM } from './offerte.js'
+import { rond2, bepaalPrijsTier, bedragWijktAfVanStandaardprijs, berekenOfferteBedragen, bouwOfferteSnapshot, OPGESTELD_DOOR_NAAM } from './offerte.js'
 
 // Lokale, minimale fixtures — bewust geen import van src/data/packages.js:
 // bouwOfferteSnapshot() en berekenOfferteBedragen() zijn pure functies die
@@ -60,9 +60,15 @@ function pakketFixture(overrides = {}) {
     id: 'premium',
     name: 'Premium Pakket',
     mindset: 'Beslissen',
+    tagline: 'Wat moet ik nu doen?',
     subtitle: 'Volledige analyse · met locatiebezoek',
-    price: '€ 895 - € 1.495',
-    priceNote: 'excl. btw · indicatieve bandbreedte',
+    priceTiers: [
+      { id: 'tot-1000m2', label: 'Tot 1.000 m²', maxOppervlak: 1000, prijs: 995 },
+      { id: '1000-2500m2', label: '1.000 – 2.500 m²', maxOppervlak: 2500, prijs: 1295 },
+      { id: 'op-aanvraag', label: 'Groter of complexer pand', maxOppervlak: null, prijs: null },
+    ],
+    priceDisplay: 'Vanaf € 995',
+    priceNote: 'excl. btw · afhankelijk van oppervlakte',
     description: 'Een volledig onderbouwd plan.',
     features: ['Fysieke opname ter plaatse', 'Stappenplan met fasering'],
     cta: 'Premium advies aanvragen',
@@ -140,50 +146,69 @@ test('berekenOfferteBedragen: centafronding voorkomt drijvendekommafouten', () =
   assert.equal(totaal, 121.01)
 })
 
-// --- parsePrijsRange ---------------------------------------------------------
+// --- bepaalPrijsTier ----------------------------------------------------------
 
-test('parsePrijsRange: Basis Pakket ("€ 495 - € 795")', () => {
-  const range = parsePrijsRange('€ 495 - € 795')
-  assert.deepEqual(range, { min: 495, max: 795 })
+test('bepaalPrijsTier: oppervlakte precies op de eerste grens (1000) hoort bij "tot 1.000 m²"', () => {
+  const tier = bepaalPrijsTier(pakketFixture(), 1000)
+  assert.equal(tier.id, 'tot-1000m2')
+  assert.equal(tier.prijs, 995)
 })
 
-test('parsePrijsRange: Premium Pakket ("€ 895 - € 1.495") — duizendtal-punt wordt verwijderd', () => {
-  const range = parsePrijsRange('€ 895 - € 1.495')
-  assert.deepEqual(range, { min: 895, max: 1495 })
+test('bepaalPrijsTier: oppervlakte net boven de eerste grens (1001) hoort bij de tweede tier', () => {
+  const tier = bepaalPrijsTier(pakketFixture(), 1001)
+  assert.equal(tier.id, '1000-2500m2')
+  assert.equal(tier.prijs, 1295)
 })
 
-test('parsePrijsRange: Gold Pakket ("€ 1.495 - € 2.495")', () => {
-  const range = parsePrijsRange('€ 1.495 - € 2.495')
-  assert.deepEqual(range, { min: 1495, max: 2495 })
+test('bepaalPrijsTier: oppervlakte precies op de tweede grens (2500) hoort nog bij de tweede tier', () => {
+  const tier = bepaalPrijsTier(pakketFixture(), 2500)
+  assert.equal(tier.id, '1000-2500m2')
 })
 
-test('parsePrijsRange: minimum is het eerste, laagste bedrag in de tekst', () => {
-  assert.equal(parsePrijsRange('€ 1.495 - € 2.495').min, 1495)
+test('bepaalPrijsTier: oppervlakte boven de hoogste grens (2501) valt terug op "op aanvraag" — geen bedrag verzonnen', () => {
+  const tier = bepaalPrijsTier(pakketFixture(), 2501)
+  assert.equal(tier.id, 'op-aanvraag')
+  assert.equal(tier.prijs, null)
 })
 
-test('parsePrijsRange: maximum is het tweede, hoogste bedrag in de tekst', () => {
-  assert.equal(parsePrijsRange('€ 1.495 - € 2.495').max, 2495)
+test('bepaalPrijsTier: een kleine oppervlakte (bijv. 500) hoort bij de eerste tier', () => {
+  const tier = bepaalPrijsTier(pakketFixture(), 500)
+  assert.equal(tier.id, 'tot-1000m2')
 })
 
-test('parsePrijsRange: een bedrag binnen de range wordt als zodanig herkend (inclusief de grenzen zelf)', () => {
-  const { min, max } = parsePrijsRange('€ 895 - € 1.495')
-  const binnenRange = (bedrag) => bedrag >= min && bedrag <= max
-  assert.equal(binnenRange(1000), true)
-  assert.equal(binnenRange(min), true)
-  assert.equal(binnenRange(max), true)
+test('bepaalPrijsTier: onbekende oppervlakte (null/undefined) valt terug op "op aanvraag" — geen bedrag verzonnen', () => {
+  assert.equal(bepaalPrijsTier(pakketFixture(), null).id, 'op-aanvraag')
+  assert.equal(bepaalPrijsTier(pakketFixture(), undefined).id, 'op-aanvraag')
 })
 
-test('parsePrijsRange: een bedrag buiten de range wordt als zodanig herkend', () => {
-  const { min, max } = parsePrijsRange('€ 895 - € 1.495')
-  const binnenRange = (bedrag) => bedrag >= min && bedrag <= max
-  assert.equal(binnenRange(min - 1), false)
-  assert.equal(binnenRange(max + 1), false)
-  assert.equal(binnenRange(3000), false)
+test('bepaalPrijsTier: een pakket zonder priceTiers crasht niet en levert null op', () => {
+  assert.equal(bepaalPrijsTier({ id: 'x' }, 500), null)
+  assert.equal(bepaalPrijsTier(null, 500), null)
 })
 
-test('parsePrijsRange: lege of ontbrekende tekst crasht niet en levert null-min/max op', () => {
-  assert.deepEqual(parsePrijsRange(''), { min: null, max: null })
-  assert.deepEqual(parsePrijsRange(undefined), { min: null, max: null })
+// --- bedragWijktAfVanStandaardprijs (Fase 6 — ongeldige/afwijkende prijs) ----
+
+test('bedragWijktAfVanStandaardprijs: gelijk aan de standaardprijs wijkt niet af', () => {
+  const tier = { id: 'tot-1000m2', label: 'Tot 1.000 m²', maxOppervlak: 1000, prijs: 995 }
+  assert.equal(bedragWijktAfVanStandaardprijs(tier, 995), false)
+})
+
+test('bedragWijktAfVanStandaardprijs: een afwijkend bedrag (hoger of lager) wijkt wél af', () => {
+  const tier = { id: 'tot-1000m2', label: 'Tot 1.000 m²', maxOppervlak: 1000, prijs: 995 }
+  assert.equal(bedragWijktAfVanStandaardprijs(tier, 1200), true)
+  assert.equal(bedragWijktAfVanStandaardprijs(tier, 500), true)
+})
+
+test('bedragWijktAfVanStandaardprijs: "op aanvraag" (tier.prijs is null) kent per definitie geen afwijking', () => {
+  const opAanvraagTier = { id: 'op-aanvraag', label: 'Groter of complexer pand', maxOppervlak: null, prijs: null }
+  assert.equal(bedragWijktAfVanStandaardprijs(opAanvraagTier, 3500), false)
+  assert.equal(bedragWijktAfVanStandaardprijs(opAanvraagTier, 0), false)
+})
+
+test('bedragWijktAfVanStandaardprijs: geen tier, of nog geen bedrag ingevuld, wijkt niet af (nog niets om te vergelijken)', () => {
+  const tier = { id: 'tot-1000m2', label: 'Tot 1.000 m²', maxOppervlak: 1000, prijs: 995 }
+  assert.equal(bedragWijktAfVanStandaardprijs(null, 995), false)
+  assert.equal(bedragWijktAfVanStandaardprijs(tier, null), false)
 })
 
 // --- bouwOfferteSnapshot -----------------------------------------------------
@@ -263,27 +288,83 @@ test('bouwOfferteSnapshot: pand bevat alleen de zeven bedoelde velden', () => {
   assert.equal(snapshot.pand.plaats, 'Oud-Beijerland')
 })
 
-test('bouwOfferteSnapshot: pakket bevat alleen id/naam/subtitle/prijsrange/omschrijving/features', () => {
+test('bouwOfferteSnapshot: pakket bevat alleen id/naam/subtitle/prijstier/omschrijving/features', () => {
+  const pakket = pakketFixture()
+  const tier = bepaalPrijsTier(pakket, 500)
+  const snapshot = bouwOfferteSnapshot({
+    klant: klantFixture(),
+    contactpersoon: null,
+    pand: pandFixture(),
+    pakket,
+    tier,
+    bedrag: 995,
+    meerwerk: [],
+    financieel: { subtotaal: 995, btwBedrag: 208.95, totaal: 1203.95 },
+    voorwaardenVersie: '26 augustus 2026',
+  })
+
+  assert.deepEqual(Object.keys(snapshot.pakket).sort(), ['features', 'id', 'naam', 'omschrijving', 'prijstier', 'subtitle'])
+  assert.equal(snapshot.pakket.id, 'premium')
+  assert.equal(snapshot.pakket.naam, 'Premium Pakket') // komt van pakket.name
+  assert.deepEqual(snapshot.pakket.prijstier, { label: 'Tot 1.000 m²', maxOppervlak: 1000, standaardprijs: 995 })
+  assert.deepEqual(snapshot.pakket.features, ['Fysieke opname ter plaatse', 'Stappenplan met fasering'])
+  // cta/ctaTo/featured/badge/mindset/tagline/priceNote horen niet in de snapshot
+  assert.equal('cta' in snapshot.pakket, false)
+  assert.equal('featured' in snapshot.pakket, false)
+  assert.equal('mindset' in snapshot.pakket, false)
+  assert.equal('tagline' in snapshot.pakket, false)
+})
+
+test('bouwOfferteSnapshot: zonder tier (bijv. onbekend) blijft prijstier expliciet null, geen leeg object', () => {
   const snapshot = bouwOfferteSnapshot({
     klant: klantFixture(),
     contactpersoon: null,
     pand: pandFixture(),
     pakket: pakketFixture(),
+    tier: null,
     bedrag: 1000,
     meerwerk: [],
     financieel: { subtotaal: 1000, btwBedrag: 210, totaal: 1210 },
     voorwaardenVersie: '26 augustus 2026',
   })
+  assert.equal(snapshot.pakket.prijstier, null)
+})
 
-  assert.deepEqual(Object.keys(snapshot.pakket).sort(), ['features', 'id', 'naam', 'omschrijving', 'prijsrange', 'subtitle'])
-  assert.equal(snapshot.pakket.id, 'premium')
-  assert.equal(snapshot.pakket.naam, 'Premium Pakket') // komt van pakket.name
-  assert.equal(snapshot.pakket.prijsrange, '€ 895 - € 1.495') // komt van pakket.price
-  assert.deepEqual(snapshot.pakket.features, ['Fysieke opname ter plaatse', 'Stappenplan met fasering'])
-  // cta/ctaTo/featured/badge/mindset/priceNote horen niet in de snapshot
-  assert.equal('cta' in snapshot.pakket, false)
-  assert.equal('featured' in snapshot.pakket, false)
-  assert.equal('mindset' in snapshot.pakket, false)
+test('bouwOfferteSnapshot: "op aanvraag"-tier (prijs: null) wordt letterlijk vastgelegd, geen verzonnen bedrag', () => {
+  const pakket = pakketFixture()
+  const tier = bepaalPrijsTier(pakket, 5000) // ruim boven de hoogste vaste grens
+  const snapshot = bouwOfferteSnapshot({
+    klant: klantFixture(),
+    contactpersoon: null,
+    pand: pandFixture(),
+    pakket,
+    tier,
+    bedrag: 3500, // door de adviseur zelf bepaald, niet afgeleid
+    meerwerk: [],
+    financieel: { subtotaal: 3500, btwBedrag: 735, totaal: 4235 },
+    voorwaardenVersie: '26 augustus 2026',
+  })
+  assert.equal(snapshot.pakket.prijstier.standaardprijs, null)
+  assert.equal(snapshot.gekozen_bedrag, 3500)
+})
+
+test('bouwOfferteSnapshot: prijstier wordt gekopieerd, geen gedeelde referentie naar het tier-object uit packages.js', () => {
+  const pakket = pakketFixture()
+  const tier = bepaalPrijsTier(pakket, 500)
+  const snapshot = bouwOfferteSnapshot({
+    klant: klantFixture(),
+    contactpersoon: null,
+    pand: pandFixture(),
+    pakket,
+    tier,
+    bedrag: 995,
+    meerwerk: [],
+    financieel: { subtotaal: 995, btwBedrag: 208.95, totaal: 1203.95 },
+    voorwaardenVersie: '26 augustus 2026',
+  })
+  assert.notEqual(snapshot.pakket.prijstier, tier)
+  tier.prijs = 999999 // wijzig het bron-tier-object ná het bouwen van de snapshot
+  assert.equal(snapshot.pakket.prijstier.standaardprijs, 995)
 })
 
 test('bouwOfferteSnapshot: meerwerk wordt letterlijk overgenomen', () => {
@@ -414,4 +495,83 @@ test('bouwOfferteSnapshot: pakket.features wordt gekopieerd, geen gedeelde refer
 
   assert.equal(snapshot.pakket.features.includes('LATER TOEGEVOEGDE FEATURE'), false)
   assert.equal(snapshot.pakket.features[0], 'Fysieke opname ter plaatse')
+})
+
+// --- Backward compatibility: offerte-snapshots van vóór Fase 6 --------------
+//
+// Vóór Fase 6 bouwde bouwOfferteSnapshot() een pakket-snapshot met de vorm
+// { id, naam, subtitle, prijsrange, omschrijving, features } — een
+// bandbreedte-string (`prijsrange`, van pakket.price), geen `prijstier`.
+// Zo'n rij bestaat al (of kan bestaan) in de database en moet voor altijd
+// correct blijven, ook nadat packages.js/offerte.js voor nieuwe offertes is
+// omgebouwd naar tiered pricing. Er bestaat geen functie die een bestaande
+// offerte bijwerkt (zie api.js: alleen createOfferte/getOfferte/
+// getOffertesVoorDossier/deleteOfferte — geen updateOfferte), dus een oud
+// snapshot wordt door niets in deze codebase ooit herschreven of opnieuw
+// opgebouwd; deze tests bevestigen dat de vorm zelf ook nog probleemloos te
+// gebruiken is door de bestaande weergave.
+
+function oudPakketSnapshotFixture() {
+  return {
+    id: 'premium',
+    naam: 'Premium Pakket',
+    subtitle: 'Volledige analyse · met locatiebezoek',
+    prijsrange: '€ 895 - € 1.495', // vóór Fase 6: een bandbreedte-string, geen tier
+    omschrijving: 'Een volledig onderbouwd plan.',
+    features: ['Fysieke opname ter plaatse', 'Stappenplan met fasering'],
+  }
+}
+
+test('Backward compatibility: een oud pakket-snapshot heeft geen prijstier, en dat is onschadelijk — geen enkel weergavecomponent leest dat veld', () => {
+  const oud = oudPakketSnapshotFixture()
+  assert.equal('prijstier' in oud, false)
+  // Exact de velden die OfferteDocument.jsx daadwerkelijk rendert (zie
+  // components/klantOmgeving/OfferteDocument.jsx): naam, subtitle,
+  // omschrijving, features — allemaal nog aanwezig en bruikbaar.
+  assert.equal(oud.naam, 'Premium Pakket')
+  assert.equal(oud.subtitle, 'Volledige analyse · met locatiebezoek')
+  assert.equal(oud.omschrijving, 'Een volledig onderbouwd plan.')
+  assert.ok(Array.isArray(oud.features) && oud.features.length > 0)
+})
+
+test('Backward compatibility: een oud snapshot behoudt zijn oorspronkelijke prijsinformatie (prijsrange) — niet geconverteerd naar een tier', () => {
+  const oud = oudPakketSnapshotFixture()
+  assert.equal(oud.prijsrange, '€ 895 - € 1.495')
+  assert.equal('standaardprijs' in oud, false) // geen nieuw prijstier-veld toegevoegd
+})
+
+test('Backward compatibility: het opbouwen van een nieuwe offerte-snapshot leest, wijzigt of overschrijft nooit een bestaand (oud) snapshot-object', () => {
+  const oud = oudPakketSnapshotFixture()
+  const oudVoorAanroep = JSON.parse(JSON.stringify(oud))
+
+  // Een niet-gerelateerde nieuwe offerte bouwen (nieuwe pakket + tier) mag
+  // het losstaande 'oude' object hierboven op geen enkele manier raken —
+  // bouwOfferteSnapshot() krijgt het immers nooit als argument mee.
+  const pakket = pakketFixture()
+  const tier = bepaalPrijsTier(pakket, 500)
+  const nieuw = bouwOfferteSnapshot({
+    klant: klantFixture(),
+    contactpersoon: null,
+    pand: pandFixture(),
+    pakket,
+    tier,
+    bedrag: 995,
+    meerwerk: [],
+    financieel: { subtotaal: 995, btwBedrag: 208.95, totaal: 1203.95 },
+    voorwaardenVersie: '26 augustus 2026',
+  })
+
+  assert.deepEqual(oud, oudVoorAanroep) // volledig ongewijzigd
+  assert.ok('prijstier' in nieuw.pakket) // de nieuwe offerte krijgt wél de nieuwe vorm
+})
+
+test('Backward compatibility: een prijswijziging in packages.js raakt nooit de prijsinformatie van een reeds opgeslagen (oud) snapshot', () => {
+  const oud = oudPakketSnapshotFixture()
+  // Simuleer een latere prijswijziging: een geheel nieuw pakket-object met
+  // een compleet andere prijs, losstaand van het oude snapshot hierboven.
+  const gewijzigdPakket = pakketFixture({
+    priceTiers: [{ id: 'tot-1000m2', label: 'Tot 1.000 m²', maxOppervlak: 1000, prijs: 999999 }],
+  })
+  assert.equal(oud.prijsrange, '€ 895 - € 1.495') // ongewijzigd, ondanks de "latere" prijswijziging
+  assert.notEqual(bepaalPrijsTier(gewijzigdPakket, 500).prijs, oud.prijsrange)
 })

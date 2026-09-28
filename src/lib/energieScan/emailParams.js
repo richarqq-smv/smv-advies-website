@@ -1,54 +1,29 @@
 import { LABELS } from './fieldOptions'
 import { euro, euroRange, jaren } from './calculations'
+import { buildPubliekeMaatregelenTekst } from './publiekeWeergave'
 
 /**
  * Ported 1-op-1 uit de originele energie-indicatietool
  * (SMV_Advies_Energietool_index3.html — formatMaatregelRegel /
- * buildMaatregelenTekstIntern / buildMaatregelenTekstKlant /
- * buildEmailParams). Zelfde merge-fieldnamen, zodat de bestaande
- * EmailJS-templates (EMAILJS_TEMPLATE_LEAD / _CONFIRM) ongewijzigd
- * kunnen blijven.
+ * buildMaatregelenTekstIntern / buildEmailParams). Zelfde merge-fieldnamen,
+ * zodat de bestaande EmailJS-templates (EMAILJS_TEMPLATE_LEAD / _CONFIRM)
+ * ongewijzigd kunnen blijven.
  */
-function formatMaatregelRegel(m, i, kort) {
-  const investeringTekst = kort
-    ? `investering vanaf ${euro(m.investeringLaag)}`
-    : `investering ${euroRange(m.investeringLaag, m.investeringHoog)}`
+function formatMaatregelRegel(m, i) {
   const besparingUnitsTekst = m.isElektrisch
     ? `${Math.round(m.besparingKwh).toLocaleString('nl-NL')} kWh/jaar`
     : `${Math.round(m.besparingM3).toLocaleString('nl-NL')} m³ gas/jaar`
-  // Zelfde vier gegevens als de maatregelkaart die de gebruiker tijdens het
-  // invullen ziet (MeasureCard.jsx: toelichting, investering,
-  // terugverdientijd, besparing in m³/kWh) plus de besparing in euro/jaar —
-  // eerder ontbraken toelichting en de fysieke besparingseenheid hier, dus
-  // was de mail een minder volledige samenvatting dan wat de tool toonde.
   return (
     `${i + 1}. ${m.naam} — besparing ca. ${euro(m.besparingEuro)}/jaar (${besparingUnitsTekst}), ` +
-    `${investeringTekst}, terugverdientijd ${jaren(m.terugverdientijd)}\n   ${m.toelichting}`
+    `investering ${euroRange(m.investeringLaag, m.investeringHoog)}, terugverdientijd ${jaren(m.terugverdientijd)}\n   ${m.toelichting}`
   )
 }
 
-// Volledige lijst — voor de interne leadmail naar SMV Advies zelf.
+// Volledige lijst, inclusief bedragen — uitsluitend voor de interne
+// leadmail naar SMV Advies zelf (EMAILJS_TEMPLATE_LEAD). Fase 6 laat dit
+// bewust ongewijzigd: SMV mag intern de volledige berekening blijven zien.
 function buildMaatregelenTekstIntern(maatregelen) {
-  return maatregelen.map((m, i) => formatMaatregelRegel(m, i, false)).join('\n')
-}
-
-// Top 3 + teaser over de rest — voor de automatische bevestigingsmail aan de lead.
-function buildMaatregelenTekstKlant(maatregelen) {
-  const top3 = maatregelen.slice(0, 3)
-  const rest = maatregelen.slice(3)
-
-  let tekst = top3.map((m, i) => formatMaatregelRegel(m, i, true)).join('\n')
-
-  if (rest.length > 0) {
-    const restBesparing = rest.reduce((sum, m) => sum + m.besparingEuro, 0)
-    tekst +=
-      `\n\nDit zijn de ${top3.length} grootste kansen uit jouw scan. Er ligg` +
-      (rest.length === 1 ? 't nog 1 andere verbetermaatregel' : `en nog ${rest.length} andere verbetermaatregelen`) +
-      ` klaar, goed voor samen nog eens zo'n ${euro(restBesparing)} aan jaarlijkse besparing.` +
-      `\n\nBenieuwd wat dat concreet voor jouw pand betekent? Stuur ons een mail — we denken graag vrijblijvend met je mee.`
-  }
-
-  return tekst
+  return maatregelen.map((m, i) => formatMaatregelRegel(m, i)).join('\n')
 }
 
 export function buildEmailParams(values, result) {
@@ -78,7 +53,11 @@ export function buildEmailParams(values, result) {
     totale_besparing: euro(result.totaleBesparing),
     co2_besparing: `${Math.round(result.co2).toLocaleString('nl-NL')} kg / jaar`,
     maatregelen_intern: buildMaatregelenTekstIntern(result.maatregelen),
-    maatregelen_klant: buildMaatregelenTekstKlant(result.maatregelen),
+    // Publieke variant (Fase 6): geen bedragen, zelfde beperking als de
+    // publieke resultaatweergave (zie useEnergieScan.js, dat de overige
+    // klant-gerichte velden — huidige_kosten/totale_besparing/co2_besparing
+    // — voor de bevestigingsmail apart overschrijft).
+    maatregelen_klant: buildPubliekeMaatregelenTekst(result.maatregelen),
     ingevuld_op: new Date().toLocaleString('nl-NL'),
   }
 }
