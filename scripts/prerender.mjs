@@ -62,6 +62,8 @@ const ROUTES = [
   // achter RequireAuth/RequireAdmin, dat een echt bestand nodig heeft voor
   // een directe load/refresh op GitHub Pages (werkfase Fase 8).
   ROUTE_PATHS.watKanWachten,
+  // Zelfde reden als watKanWachten hierboven (admin-feature, 2026-09-28).
+  ROUTE_PATHS.archief,
 ]
 
 function escapeHtml(str) {

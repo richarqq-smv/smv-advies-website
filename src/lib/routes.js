@@ -36,6 +36,9 @@ export const ROUTES = {
   admin: '/admin',
   // Werkfase Fase 8 — dossier-overstijgend, admin-only, geen klantroute.
   watKanWachten: '/admin/wat-kan-wachten',
+  // Dossier-archief (admin-feature, 2026-09-28) — zelfde behandeling als
+  // watKanWachten hierboven: admin-only, geen klantroute.
+  archief: '/admin/archief',
   // Offerte-preview/print (Fase 3) — buiten MainLayout gerouteerd (geen
   // header/nav/footer), zodat de printweergave nooit sitenavigatie bevat.
   // Zelfde reden als /dossier/:id om niet in scripts/prerender.mjs te

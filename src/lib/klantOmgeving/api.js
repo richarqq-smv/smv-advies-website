@@ -218,6 +218,46 @@ export async function completeDossier(dossierId) {
 }
 
 /**
+ * Archiveert een Dossier — geen delete, uitsluitend het losse
+ * `gearchiveerd_op`-tijdstip zetten (0010_dossier_archief.sql), orthogonaal
+ * aan `status`. `.is('gearchiveerd_op', null)` voorkomt een dubbele
+ * archivering (en dus een verrassende gearchiveerd_op-overschrijving).
+ * RLS (dossiers_update) is de enige echte toegangsgrens: een admin kan elk
+ * dossier archiveren, een klant alleen een eigen open dossier — maar de UI
+ * toont deze actie uitsluitend in de adminomgeving (zie Admin.jsx). Een
+ * al-afgerond Dossier wordt hier niet apart gecontroleerd:
+ * bewaak_dossier_integriteit() blokkeert sowieso elke wijziging zodra
+ * status='afgerond', dus archiveren is structureel al beperkt tot actieve
+ * (open) dossiers — precies zoals bedoeld.
+ */
+export async function archiveerDossier(dossierId) {
+  if (!dossierId) throw new Error('archiveerDossier vereist een geldig dossier-ID.')
+  return throwOnError(
+    await supabase
+      .from('dossiers')
+      .update({ gearchiveerd_op: new Date().toISOString() })
+      .eq('dossier_id', dossierId)
+      .is('gearchiveerd_op', null)
+      .select('*, panden(*)')
+      .single(),
+  )
+}
+
+/** Herstelt een gearchiveerd Dossier — zet `gearchiveerd_op` terug naar null, `status` blijft ongewijzigd (zie archiveerDossier hierboven). */
+export async function herstelDossier(dossierId) {
+  if (!dossierId) throw new Error('herstelDossier vereist een geldig dossier-ID.')
+  return throwOnError(
+    await supabase
+      .from('dossiers')
+      .update({ gearchiveerd_op: null })
+      .eq('dossier_id', dossierId)
+      .not('gearchiveerd_op', 'is', null)
+      .select('*, panden(*)')
+      .single(),
+  )
+}
+
+/**
  * Slaat een Energie-indicatie-snapshot op bij een bestaand Dossier
  * (Energie-indicatie Fase 2). Kale update van precies één kolom — nooit
  * ongecontroleerde extra velden, geen live calculator-state. RLS
@@ -358,6 +398,14 @@ export async function adminListKlanten() {
   return throwOnError(await supabase.from('klanten').select('*, contactpersonen(count), dossiers(count)').order('created_at', { ascending: false }))
 }
 
+/**
+ * Alleen actieve (niet-gearchiveerde) dossiers — het admin-overzicht op
+ * /admin ("Klanten en dossiers"), en daarmee ook alles dat op die lijst
+ * bouwt (VandaagOverzicht.jsx). Een gearchiveerd dossier staat uitsluitend
+ * nog in adminListGearchiveerdeDossiers() hieronder — nooit in allebei
+ * tegelijk, want `.is('gearchiveerd_op', null)` en `.not(...)` zijn elkaars
+ * exacte tegenpolen op precies dezelfde kolom.
+ */
 export async function adminListDossiers() {
   return throwOnError(
     // `adviespunten(count)` (werkfase Fase 5 — "Vandaag voor SMV"): een
@@ -365,7 +413,22 @@ export async function adminListDossiers() {
     // N+1) — nodig om feitelijk te kunnen zeggen of een open dossier al
     // enig adviespunt heeft, zonder de volledige adviespunten-inhoud van
     // ieder dossier mee te moeten sturen.
-    await supabase.from('dossiers').select('*, klanten(naam, bedrijfsnaam), panden(*), adviespunten(count)').order('created_at', { ascending: false }),
+    await supabase
+      .from('dossiers')
+      .select('*, klanten(naam, bedrijfsnaam), panden(*), adviespunten(count)')
+      .is('gearchiveerd_op', null)
+      .order('created_at', { ascending: false }),
+  )
+}
+
+/** Spiegelbeeld van adminListDossiers() hierboven — uitsluitend voor de Archiefpagina (Archief.jsx). */
+export async function adminListGearchiveerdeDossiers() {
+  return throwOnError(
+    await supabase
+      .from('dossiers')
+      .select('*, klanten(naam, bedrijfsnaam), panden(*), adviespunten(count)')
+      .not('gearchiveerd_op', 'is', null)
+      .order('gearchiveerd_op', { ascending: false }),
   )
 }
 

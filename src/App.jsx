@@ -30,6 +30,7 @@ const DossierDetail = lazy(() => import('./pages/DossierDetail'))
 const OffertePreview = lazy(() => import('./pages/OffertePreview'))
 const Klantgesprek = lazy(() => import('./pages/Klantgesprek'))
 const WatKanWachten = lazy(() => import('./pages/WatKanWachten'))
+const Archief = lazy(() => import('./pages/Archief'))
 const Admin = lazy(() => import('./pages/Admin'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
@@ -98,6 +99,7 @@ export default function App() {
             <Route element={<RequireAdmin />}>
               <Route path={ROUTES.admin} element={<Admin />} />
               <Route path={ROUTES.watKanWachten} element={<WatKanWachten />} />
+              <Route path={ROUTES.archief} element={<Archief />} />
             </Route>
           </Route>
 

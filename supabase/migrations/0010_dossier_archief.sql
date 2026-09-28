@@ -1,0 +1,19 @@
+-- Admin-archief voor dossiers (2026-09-28): een prullenbakknop op het
+-- adminoverzicht die een dossier uit de actieve lijst haalt zonder het te
+-- verwijderen ("archiveren", geen destructieve delete).
+--
+-- Bewust GEEN derde waarde toegevoegd aan dossiers.status
+-- (check (status in ('open','afgerond'))): die kolom drukt de
+-- advies-workflowfase uit (loopt het dossier nog, of is het advies
+-- afgerond) — "gearchiveerd" is daar orthogonaal aan (is dit dossier uit
+-- het actieve adminoverzicht gehaald, ongeacht workflowfase) en zou die
+-- betekenis vermengen. In plaats daarvan een los, optioneel datumveld
+-- ernaast — zelfde aanpak als 0008_adviespunt_herbeoordelen_datum.sql.
+--
+-- Geen RLS-wijziging nodig: dossiers_update (0001_init.sql) staat een
+-- admin al toe elk dossier te updaten, en bewaak_dossier_integriteit()
+-- blokkeert sowieso elke wijziging zodra status='afgerond' — archiveren
+-- is daardoor structureel al beperkt tot actieve (open) dossiers, precies
+-- zoals bedoeld. `gearchiveerd_op` (i.p.v. een boolean) geeft er
+-- "gratis" een datum bij voor de Archiefpagina, zonder een tweede kolom.
+alter table public.dossiers add column gearchiveerd_op timestamptz;
