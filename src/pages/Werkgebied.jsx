@@ -129,6 +129,14 @@ export default function Werkgebied() {
             bedrijventerreinen, betekent dat we de bouwperiodes en het type bedrijfspand in de regio goed kennen
             — dat scheelt in de praktijk tijd en giswerk.
           </p>
+          <img
+            src="/werkgebied-hoeksche-waard.png"
+            alt="Illustratieve kaart van de Hoeksche Waard met de vestigingsplaats van SMV Advies en de kernen Oud-Beijerland, Heinenoord, Puttershoek, Maasdam, Zuid-Beijerland, Mijnsheerenland, 's-Gravendeel, Klaaswaal, Strijen en Numansdorp"
+            width="1672"
+            height="941"
+            loading="lazy"
+            className="mt-8 w-full rounded-xl border border-border"
+          />
         </Container>
       </Section>
 
