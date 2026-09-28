@@ -1,5 +1,6 @@
 import { CheckCircle, WarningCircle, XCircle } from '@phosphor-icons/react'
 import { HEALTH_STATUS, HEALTH_CATEGORIE_LABELS } from '../../lib/klantOmgeving/dossierHealthCheck'
+import { Button } from '../ui/Button'
 
 /**
  * Zichtbare weergave van bouwDossierHealthCheck() (werkfase Fase 6). Puur
@@ -45,10 +46,17 @@ export function DossierHealthCheck({ healthCheck, className = '' }) {
           return (
             <li key={key} className={`flex items-start gap-2 rounded-lg border px-3 py-2.5 text-sm ${STATUS_CLASSES[categorie.status]}`}>
               <span className="mt-0.5 shrink-0">{STATUS_ICOON[categorie.status]}</span>
-              <span>
+              <span className="flex-1">
                 <span className="font-medium text-primary">{HEALTH_CATEGORIE_LABELS[key]}</span>
                 <br />
                 <span className="text-foreground-muted">{categorie.reden}</span>
+                {categorie.actie ? (
+                  <span className="mt-2 block">
+                    <Button {...(categorie.actie.href ? { href: categorie.actie.href } : { to: categorie.actie.to })} variant="outline" size="sm">
+                      {categorie.actie.label}
+                    </Button>
+                  </span>
+                ) : null}
               </span>
             </li>
           )

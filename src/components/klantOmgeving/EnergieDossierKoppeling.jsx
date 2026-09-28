@@ -8,6 +8,7 @@ import { ROUTES } from '../../lib/routes'
 import { energieScanResultToSnapshot } from '../../lib/dossier/energieAdapter'
 import { prepareCalculationInput } from '../../lib/energieScan/validation'
 import { getMijnKlant, listDossiersVoorKlant, listPandenVoorKlant, maakPandEnKoppel, openOfHergebruikDossier, saveEnergieSnapshot } from '../../lib/klantOmgeving/api'
+import { kiesVoorkeursDossier } from '../../lib/klantOmgeving/dossierNavigatie'
 
 const LEEG_PAND = { omschrijving: '', adres: '', postcode: '', plaats: '' }
 
@@ -25,8 +26,19 @@ const LEEG_PAND = { omschrijving: '', adres: '', postcode: '', plaats: '' }
  * dossierflow. `openOfHergebruikDossier` opent/hergebruikt zoals altijd;
  * het opslaan van de snapshot zelf gaat via de eigen, kleine
  * saveEnergieSnapshot()-aanroep (Fase 2), met de dan bekende dossier_id.
+ *
+ * `voorkeurDossierId` (optioneel, Energie/MJOP/Advies-werkronde): als de
+ * pagina vanuit een Adviesdossier is geopend (?dossierId=... op
+ * ROUTES.energieIndicatie, zie EnergieIndicatie.jsx), wordt dat Dossier
+ * hier automatisch voorgeselecteerd — mits het daadwerkelijk in
+ * `openDossiers` voorkomt, dezelfde al tenant-veilige lijst
+ * (listDossiersVoorKlant is altijd al gescoped op de EIGEN klant_id, zie
+ * RLS dossiers_select). Een ongeldig of niet-eigen ID matcht simpelweg
+ * niets in die lijst en valt terug op het bestaande standaardgedrag —
+ * geen aparte lookup, geen nieuwe manier om een dossier_id te
+ * vertrouwen.
  */
-export function EnergieDossierKoppeling({ values, result }) {
+export function EnergieDossierKoppeling({ values, result, voorkeurDossierId = null }) {
   const { user, laden: authLaden } = useAuth()
 
   const [status, setStatus] = useState('laden') // 'laden' | 'geen-klant' | 'klaar'
@@ -66,14 +78,14 @@ export function EnergieDossierKoppeling({ values, result }) {
         const openDossiers = alleDossiers.filter((d) => d.status === 'open')
         setDossiers(openDossiers)
         setPanden(allePanden)
-        setGekozenDossierId(openDossiers.length > 0 ? openDossiers[0].dossier_id : 'nieuw')
+        setGekozenDossierId(kiesVoorkeursDossier(openDossiers, voorkeurDossierId))
         setStatus('klaar')
       })
       .catch(() => actief && setStatus('geen-klant'))
     return () => {
       actief = false
     }
-  }, [authLaden, user])
+  }, [authLaden, user, voorkeurDossierId])
 
   // Niet ingelogd, of nog bezig met bepalen of er een sessie is: helemaal
   // niets tonen — de publieke tool blijft daarmee pixel-voor-pixel

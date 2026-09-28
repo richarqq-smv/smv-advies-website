@@ -1,8 +1,13 @@
+import { useSearchParams } from 'react-router-dom'
+import { ArrowLeft } from '@phosphor-icons/react'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
+import { Button } from '../components/ui/Button'
 import { MjopTool as MjopToolWidget } from '../components/mjop/MjopTool'
+import { ROUTES } from '../lib/routes'
+import { leesDossierContext } from '../lib/klantOmgeving/dossierNavigatie'
 
 /**
  * Intern adviesinstrument (MJOP & verduurzamingsplanning), bewust niet
@@ -14,6 +19,9 @@ import { MjopTool as MjopToolWidget } from '../components/mjop/MjopTool'
  * onderdeel van de publieke contentstructuur.
  */
 export default function MjopTool() {
+  const [searchParams] = useSearchParams()
+  const dossierId = leesDossierContext(searchParams)
+
   return (
     <>
       <Seo
@@ -30,6 +38,13 @@ export default function MjopTool() {
 
       <Section tone="white" noTopPadding>
         <Container className="max-w-3xl">
+          {/* Alleen zichtbaar als deze pagina vanuit een Adviesdossier is geopend (Health Check-actie "Pand aanvullen"/"MJOP koppelen") — zie dossierNavigatie.js. */}
+          {dossierId ? (
+            <Button to={ROUTES.dossier(dossierId)} variant="ghost" size="sm" className="-ml-3 mb-6">
+              <ArrowLeft size={16} />
+              Terug naar dossier
+            </Button>
+          ) : null}
           <MjopToolWidget />
         </Container>
       </Section>

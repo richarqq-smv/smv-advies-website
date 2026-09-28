@@ -16,7 +16,16 @@
  * dat zelf nooit opnieuw uit. `null`/`undefined` betekent "niet
  * geëvalueerd" (bijv. in een lichter overzicht dat niet elk dossier se
  * signalen herberekent), niet "geen open signalen".
+ *
+ * Sinds de Energie/MJOP/Advies-werkronde: elke categorie krijgt ook een
+ * `actie` (`{ label, to }` of `{ label, href }`, of `null` als er niets
+ * zinvols te doen valt) — zie bepaalActie() hieronder. Blijft feitelijk:
+ * de actie is altijd "waar dit al bestaande scherm staat", nooit een
+ * inhoudelijk advies ("doe dit eerst").
  */
+
+import { ROUTES } from '../routes.js'
+import { voegDossierContextToe } from './dossierNavigatie.js'
 
 export const HEALTH_STATUS = {
   GEREED: 'gereed',
@@ -118,14 +127,66 @@ function controleerOfferte({ offertes = [] }) {
 }
 
 /**
+ * Bepaalt de directe actie (indien zinvol) bij een niet-`gereed`-categorie
+ * — uitsluitend navigatie naar al bestaande routes/schermen, nooit een
+ * nieuw scherm. De bestemming is steeds waar die informatie in de
+ * bestaande architectuur daadwerkelijk wordt beheerd:
+ * - klant: Account.jsx, de bestaande hub voor bedrijfsgegevens (zelfde
+ *   bestemming als de bestaande "rond eerst uw bedrijfsgegevens
+ *   af"-meldingen in EnergieDossierKoppeling.jsx/MjopKlantKoppeling.jsx).
+ * - pand: ook de MJOP-tool — Account.jsx's "Pand toevoegen"-formulier legt
+ *   geen `gebruikstype` vast, dat gebeurt uitsluitend via de bestaande
+ *   MJOP-koppeling (MjopKlantKoppeling.jsx → updatePand()).
+ * - energie: de bestaande publieke Energie-indicatiepagina, met
+ *   dossiercontext (zie voegDossierContextToe) zodat het resultaat direct
+ *   aan dit Dossier gekoppeld kan worden (EnergieDossierKoppeling.jsx).
+ * - mjop: de bestaande MJOP-tool.
+ * - advies: geen actie — wordt al direct op dezelfde dossierpagina beheerd.
+ * - offerte: al direct zichtbaar verderop op dezelfde dossierpagina, dus
+ *   een anchor (`href`) in plaats van een routewijziging (`to`).
+ */
+function bepaalActie(categorieKey, status, dossierId) {
+  if (status === HEALTH_STATUS.GEREED) return null
+  switch (categorieKey) {
+    case 'klant':
+      return { label: 'Klant aanvullen', to: voegDossierContextToe(ROUTES.account, dossierId) }
+    case 'pand':
+      return { label: 'Pand aanvullen', to: voegDossierContextToe(ROUTES.mjopTool, dossierId) }
+    case 'energie':
+      return { label: 'Energie-indicatie toevoegen', to: voegDossierContextToe(ROUTES.energieIndicatie, dossierId) }
+    case 'mjop':
+      return { label: 'MJOP koppelen', to: voegDossierContextToe(ROUTES.mjopTool, dossierId) }
+    case 'offerte':
+      return { label: 'Offerte bekijken', href: '#offertes-sectie' }
+    default:
+      return null
+  }
+}
+
+/**
  * Bouwt de volledige Health Check: één resultaat per categorie
  * (KLANT/PAND/ENERGIE/MJOP/ADVIES/OFFERTE), in die vaste volgorde, plus een
  * `algemeen`-samenvatting die uitsluitend de aanwezige statussen telt —
  * nooit een score. `algemeen` is `ontbreekt` zodra minstens één categorie
  * `ontbreekt` is, anders `aandacht` zodra minstens één categorie
  * `aandacht` is, anders `gereed`.
+ *
+ * `dossierId` (optioneel) is uitsluitend nodig om de `actie`-link van elke
+ * categorie te kunnen bouwen (zie bepaalActie) — zonder `dossierId` krijgt
+ * elke niet-gereed-categorie nog steeds een actie, alleen dan zonder
+ * dossiercontext-querystring.
  */
-export function bouwDossierHealthCheck({ klant, contactpersoon, pand, energieSnapshot, mjopSnapshot, adviespunten = [], offertes = [], openSignalenAantal = null }) {
+export function bouwDossierHealthCheck({
+  klant,
+  contactpersoon,
+  pand,
+  energieSnapshot,
+  mjopSnapshot,
+  adviespunten = [],
+  offertes = [],
+  openSignalenAantal = null,
+  dossierId = null,
+}) {
   const categorieen = {
     klant: controleerKlant({ klant, contactpersoon }),
     pand: controleerPand({ pand }),
@@ -133,6 +194,10 @@ export function bouwDossierHealthCheck({ klant, contactpersoon, pand, energieSna
     mjop: controleerMjop({ mjopSnapshot }),
     advies: controleerAdvies({ adviespunten, openSignalenAantal }),
     offerte: controleerOfferte({ offertes }),
+  }
+
+  for (const [key, resultaat] of Object.entries(categorieen)) {
+    resultaat.actie = bepaalActie(key, resultaat.status, dossierId)
   }
 
   const statussen = Object.values(categorieen).map((c) => c.status)

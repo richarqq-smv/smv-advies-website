@@ -19,7 +19,7 @@ function buildGesprekMailto(values, result) {
   return `mailto:${COMPANY.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
 }
 
-export function ResultsView({ result, values, leadStatus, onRestart }) {
+export function ResultsView({ result, values, leadStatus, onRestart, voorkeurDossierId = null }) {
   return (
     <div>
       <div className="mx-auto max-w-lg text-center">
@@ -80,7 +80,7 @@ export function ResultsView({ result, values, leadStatus, onRestart }) {
         <LeadStatusNote status={leadStatus} />
       </div>
 
-      <EnergieDossierKoppeling values={values} result={result} />
+      <EnergieDossierKoppeling values={values} result={result} voorkeurDossierId={voorkeurDossierId} />
 
       <div className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
         <button

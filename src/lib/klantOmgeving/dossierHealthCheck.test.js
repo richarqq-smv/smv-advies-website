@@ -1,6 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { bouwDossierHealthCheck, HEALTH_STATUS } from './dossierHealthCheck.js'
+import { ROUTES } from '../routes.js'
 
 function volledigeFixture() {
   return {
@@ -119,4 +120,60 @@ test('geeft nooit een score of percentage terug — alleen categorie-status en e
     assert.equal('score' in categorie, false)
     assert.equal('percentage' in categorie, false)
   }
+})
+
+// --- Acties (Energie/MJOP/Advies-werkronde) ---------------------------------
+
+test('ACTIE: een gereed-categorie krijgt nooit een actie', () => {
+  const { categorieen } = bouwDossierHealthCheck({ ...volledigeFixture(), dossierId: 'd-1' })
+  for (const categorie of Object.values(categorieen)) {
+    assert.equal(categorie.status, HEALTH_STATUS.GEREED)
+    assert.equal(categorie.actie, null)
+  }
+})
+
+test('ACTIE: energie ontbreekt geeft een link naar de Energie-indicatiepagina mét dossiercontext', () => {
+  const fixture = { ...volledigeFixture(), energieSnapshot: null, dossierId: 'd-42' }
+  const { categorieen } = bouwDossierHealthCheck(fixture)
+  assert.equal(categorieen.energie.status, HEALTH_STATUS.ONTBREEKT)
+  assert.deepEqual(categorieen.energie.actie, {
+    label: 'Energie-indicatie toevoegen',
+    to: `${ROUTES.energieIndicatie}?dossierId=d-42`,
+  })
+})
+
+test('ACTIE: energie aanwezig geeft geen actie', () => {
+  const { categorieen } = bouwDossierHealthCheck({ ...volledigeFixture(), dossierId: 'd-42' })
+  assert.equal(categorieen.energie.actie, null)
+})
+
+test('ACTIE: zonder dossierId blijft de energie-actie werken, alleen zonder querystring', () => {
+  const fixture = { ...volledigeFixture(), energieSnapshot: null, dossierId: null }
+  const { categorieen } = bouwDossierHealthCheck(fixture)
+  assert.deepEqual(categorieen.energie.actie, { label: 'Energie-indicatie toevoegen', to: ROUTES.energieIndicatie })
+})
+
+test('ACTIE: mjop ontbreekt verwijst naar de MJOP-tool', () => {
+  const fixture = { ...volledigeFixture(), mjopSnapshot: null, dossierId: 'd-1' }
+  const { categorieen } = bouwDossierHealthCheck(fixture)
+  assert.deepEqual(categorieen.mjop.actie, { label: 'MJOP koppelen', to: `${ROUTES.mjopTool}?dossierId=d-1` })
+})
+
+test('ACTIE: klant en pand verwijzen naar bestaande schermen (Account.jsx / MJOP-tool), geen nieuwe route', () => {
+  const fixture = { ...volledigeFixture(), contactpersoon: null, pand: {}, dossierId: 'd-1' }
+  const { categorieen } = bouwDossierHealthCheck(fixture)
+  assert.equal(categorieen.klant.actie.to, `${ROUTES.account}?dossierId=d-1`)
+  assert.equal(categorieen.pand.actie.to, `${ROUTES.mjopTool}?dossierId=d-1`)
+})
+
+test('ACTIE: offerte-actie is een anchor op dezelfde pagina, geen routewijziging', () => {
+  const fixture = { ...volledigeFixture(), offertes: [{ id: 'o1', status: 'concept' }], dossierId: 'd-1' }
+  const { categorieen } = bouwDossierHealthCheck(fixture)
+  assert.deepEqual(categorieen.offerte.actie, { label: 'Offerte bekijken', href: '#offertes-sectie' })
+})
+
+test('ACTIE: advies krijgt nooit een actie, ook niet als adviespunten ontbreken', () => {
+  const { categorieen } = bouwDossierHealthCheck({ ...volledigeFixture(), adviespunten: [], dossierId: 'd-1' })
+  assert.equal(categorieen.advies.status, HEALTH_STATUS.ONTBREEKT)
+  assert.equal(categorieen.advies.actie, null)
 })

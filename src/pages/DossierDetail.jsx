@@ -10,6 +10,7 @@ import { ROUTES } from '../lib/routes'
 import { DossierWerkruimte } from '../components/klantOmgeving/DossierWerkruimte'
 import { DossierHealthCheck } from '../components/klantOmgeving/DossierHealthCheck'
 import { EnergieSnapshot } from '../components/klantOmgeving/EnergieSnapshot'
+import { EnergieUitnodiging } from '../components/klantOmgeving/EnergieUitnodiging'
 import { OfferteEditor } from '../components/klantOmgeving/OfferteEditor'
 import { OffertesHistorie } from '../components/klantOmgeving/OffertesHistorie'
 import { getDossier, listAdviespunten, getOffertesVoorDossier, checkIsAdmin } from '../lib/klantOmgeving/api'
@@ -124,6 +125,7 @@ export default function DossierDetail() {
       adviespunten,
       offertes: offertesVoorHealthCheck,
       openSignalenAantal,
+      dossierId: dossier.dossier_id,
     })
   }, [dossier, adviespunten, offertesVoorHealthCheck, openSignalenAantal])
 
@@ -179,24 +181,30 @@ export default function DossierDetail() {
                 energieSnapshot={dossier.energie_snapshot}
                 onDossierChange={setDossier}
               />
-              <EnergieSnapshot snapshot={dossier.energie_snapshot} />
-              <OffertesHistorie dossierId={dossier.dossier_id} refreshSignal={offerteRefresh} magBeheren={isAdmin} />
-              {/*
-                Werkfase Fase 3: alleen admin ziet/gebruikt het opstelformulier
-                — een klant mag offertes uitsluitend bekijken (RLS staat een
-                klant sowieso geen INSERT toe, offertes_insert_admin vereist
-                is_admin(); dit verbergt alleen het formulier dat voor een
-                klant toch altijd zou falen).
-              */}
-              {isAdmin ? (
-                <OfferteEditor
-                  klant={dossier.klanten}
-                  contactpersoon={dossier.contactpersonen}
-                  pand={dossier.panden}
-                  dossier={dossier}
-                  onOpgeslagen={() => setOfferteRefresh((n) => n + 1)}
-                />
+              {isAdmin && !dossier.energie_snapshot ? (
+                <EnergieUitnodiging dossierId={dossier.dossier_id} klant={dossier.klanten} />
               ) : null}
+              <EnergieSnapshot snapshot={dossier.energie_snapshot} />
+              {/* Anchor voor de Health Check-offerteactie hieronder ("Offerte bekijken") — geen routewijziging nodig, dit staat al op dezelfde pagina. */}
+              <div id="offertes-sectie" className="flex flex-col gap-6">
+                <OffertesHistorie dossierId={dossier.dossier_id} refreshSignal={offerteRefresh} magBeheren={isAdmin} />
+                {/*
+                  Werkfase Fase 3: alleen admin ziet/gebruikt het opstelformulier
+                  — een klant mag offertes uitsluitend bekijken (RLS staat een
+                  klant sowieso geen INSERT toe, offertes_insert_admin vereist
+                  is_admin(); dit verbergt alleen het formulier dat voor een
+                  klant toch altijd zou falen).
+                */}
+                {isAdmin ? (
+                  <OfferteEditor
+                    klant={dossier.klanten}
+                    contactpersoon={dossier.contactpersonen}
+                    pand={dossier.panden}
+                    dossier={dossier}
+                    onOpgeslagen={() => setOfferteRefresh((n) => n + 1)}
+                  />
+                ) : null}
+              </div>
             </div>
           )}
         </Container>

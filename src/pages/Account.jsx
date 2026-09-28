@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
+import { ArrowLeft } from '@phosphor-icons/react'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
@@ -11,6 +12,7 @@ import { UitloggenKnop } from '../components/auth/UitloggenKnop'
 import { ROUTES } from '../lib/routes'
 import { getMijnKlant, registreerKlant, listPandenVoorKlant, maakPandEnKoppel, listDossiersVoorKlant, openOfHergebruikDossier } from '../lib/klantOmgeving/api'
 import { valideerKlantRegistratie } from '../lib/klantOmgeving/klantValidatie'
+import { leesDossierContext } from '../lib/klantOmgeving/dossierNavigatie'
 
 const LEEG_PAND = { omschrijving: '', adres: '', postcode: '', plaats: '', gebruikstype: '' }
 
@@ -24,6 +26,8 @@ const LEEG_PAND = { omschrijving: '', adres: '', postcode: '', plaats: '', gebru
  */
 export default function Account() {
   const { user } = useAuth()
+  const [searchParams] = useSearchParams()
+  const dossierId = leesDossierContext(searchParams)
   const [laden, setLaden] = useState(true)
   const [klant, setKlant] = useState(null)
   const [panden, setPanden] = useState([])
@@ -111,7 +115,16 @@ export default function Account() {
       <PageHero eyebrow="Account" title="Mijn account" description="Uw bedrijfsgegevens, panden en adviesdossiers op één plek." />
       <Section tone="white" noTopPadding>
         <Container className="max-w-2xl">
-          <div className="mb-4 flex justify-end">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            {/* Alleen zichtbaar als deze pagina vanuit een Adviesdossier is geopend (Health Check-actie "Klant aanvullen") — zie dossierNavigatie.js. */}
+            {dossierId ? (
+              <Button to={ROUTES.dossier(dossierId)} variant="ghost" size="sm" className="-ml-3">
+                <ArrowLeft size={16} />
+                Terug naar dossier
+              </Button>
+            ) : (
+              <span />
+            )}
             <UitloggenKnop />
           </div>
           {laden ? (

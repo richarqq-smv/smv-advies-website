@@ -8,7 +8,7 @@ import { StepContact } from './StepContact'
 import { ResultsView } from './ResultsView'
 import { Toast } from './Toast'
 
-export function EnergieScanTool() {
+export function EnergieScanTool({ voorkeurDossierId = null }) {
   const scan = useEnergieScan()
   const cardRef = useRef(null)
   const hasMounted = useRef(false)
@@ -27,7 +27,7 @@ export function EnergieScanTool() {
   return (
     <div ref={cardRef} className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-10">
       {scan.result ? (
-        <ResultsView result={scan.result} values={scan.values} leadStatus={scan.leadStatus} onRestart={scan.restart} />
+        <ResultsView result={scan.result} values={scan.values} leadStatus={scan.leadStatus} onRestart={scan.restart} voorkeurDossierId={voorkeurDossierId} />
       ) : (
         <>
           <StepIndicator currentStep={scan.step} />
