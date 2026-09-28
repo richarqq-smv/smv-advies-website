@@ -58,6 +58,18 @@
     line-height: 1.15;
     letter-spacing: -0.01em;
     text-wrap: balance;
+    /*
+     * A single long word (e.g. "Verduurzamingsadvies" in Werkgebied.jsx's
+     * H1) can be wider than the available inline space on a narrow mobile
+     * viewport. `overflow-wrap: normal` (the default) never breaks such a
+     * word, so the heading's own content silently overflows its box —
+     * confirmed root cause of a ~19px horizontal document overflow on
+     * /werkgebied at 375px width (h1.scrollWidth 378px > h1.clientWidth
+     * 343px, isolated down to this exact word). `break-word` only kicks in
+     * once a word genuinely doesn't fit, so normal-length headings
+     * (everywhere else on the site) are unaffected.
+     */
+    overflow-wrap: break-word;
   }
 
   p {
