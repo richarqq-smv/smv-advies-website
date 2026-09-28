@@ -28,6 +28,8 @@ const WachtwoordVergeten = lazy(() => import('./pages/WachtwoordVergeten'))
 const Account = lazy(() => import('./pages/Account'))
 const DossierDetail = lazy(() => import('./pages/DossierDetail'))
 const OffertePreview = lazy(() => import('./pages/OffertePreview'))
+const Klantgesprek = lazy(() => import('./pages/Klantgesprek'))
+const WatKanWachten = lazy(() => import('./pages/WatKanWachten'))
 const Admin = lazy(() => import('./pages/Admin'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
@@ -46,13 +48,25 @@ export default function App() {
         Buiten <MainLayout />: de offerte-preview/print-pagina mag nooit
         site-header/nav/footer bevatten, ook niet als printCSS die zou
         moeten wegwerken — dus geen gedeelde layout hier, alleen de
-        auth-/admin-guards (die zijn layout-agnostisch, zie RequireAuth/
-        RequireAdmin).
+        auth-guard (layout-agnostisch, zie RequireAuth).
+        Werkfase Fase 3 (SMV-audit-opvolging): geen RequireAdmin meer — een
+        klant mag zijn eigen offerte nu ook bekijken (RLS-policy
+        offertes_select_klant, 0007_offertes_klant_select.sql, is de enige
+        echte toegangsgrens: is_member_of_klant() geeft alleen de eigen
+        offerte terug, nooit die van een andere klant; getOfferte() in
+        OffertePreview.jsx behandelt "geen rij" al als "niet gevonden").
       */}
       <Route element={<LazyBoundary />}>
         <Route element={<RequireAuth />}>
+          <Route path="/dossier/:dossierId/offerte/:offerteId" element={<OffertePreview />} />
+          {/*
+            Werkfase Fase 7: "Klaar voor klantgesprek" is een
+            voorbereidingsscherm voor de adviseur, geen klantfunctie —
+            daarom wél RequireAdmin (in tegenstelling tot de offerte-preview
+            hierboven, die sinds Fase 3 bewust breder is).
+          */}
           <Route element={<RequireAdmin />}>
-            <Route path="/dossier/:dossierId/offerte/:offerteId" element={<OffertePreview />} />
+            <Route path="/dossier/:dossierId/klantgesprek" element={<Klantgesprek />} />
           </Route>
         </Route>
       </Route>
@@ -83,6 +97,7 @@ export default function App() {
             <Route path="/dossier/:dossierId" element={<DossierDetail />} />
             <Route element={<RequireAdmin />}>
               <Route path={ROUTES.admin} element={<Admin />} />
+              <Route path={ROUTES.watKanWachten} element={<WatKanWachten />} />
             </Route>
           </Route>
 

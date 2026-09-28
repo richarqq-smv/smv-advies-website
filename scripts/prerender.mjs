@@ -58,6 +58,10 @@ const ROUTES = [
   // werkt alleen via client-side routing (zie routes.js).
   ROUTE_PATHS.account,
   ROUTE_PATHS.admin,
+  // Zelfde reden als /admin hierboven: een statisch pad zonder parameter,
+  // achter RequireAuth/RequireAdmin, dat een echt bestand nodig heeft voor
+  // een directe load/refresh op GitHub Pages (werkfase Fase 8).
+  ROUTE_PATHS.watKanWachten,
 ]
 
 function escapeHtml(str) {

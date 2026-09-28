@@ -10,7 +10,6 @@ import { StepKoppeling } from './StepKoppeling'
 import { StepPlanning } from './StepPlanning'
 import { StepAdvies } from './StepAdvies'
 import { Toast } from '../energieIndicatie/Toast'
-import { KlantDossierFlow } from '../dossier/KlantDossierFlow'
 import { MjopKlantKoppeling } from '../klantOmgeving/MjopKlantKoppeling'
 
 export function MjopTool() {
@@ -79,17 +78,20 @@ export function MjopTool() {
         ) : null}
       </div>
 
-      {mjop.savedPand ? (
-        <div className="mt-6 print:hidden">
-          <KlantDossierFlow pand={mjop.savedPand} building={mjop.building} />
-        </div>
-      ) : null}
-
       {/*
-        Auth-bewuste brug naar de echte, Supabase-backed klantomgeving —
-        losstaand van de KlantDossierFlow hierboven (die blijft het interne/
-        prototype pad zonder account). Rendert zelf niets wanneer er geen
-        sessie is, dus geen wijziging voor anoniem/intern gebruik.
+        Enige actieve brug naar een Adviesdossier (werkfase, Fase 1 van de
+        SMV-audit-opvolging): de oude, localStorage-gebaseerde
+        KlantDossierFlow/AdviesBeheer/AdviesResultaat-wizard (voorheen hier
+        gerenderd zodra mjop.savedPand gezet was) draaide *tegelijk* met deze
+        Supabase-brug op deze pagina — bevestigd risico op twee losse,
+        nooit-gekoppelde registraties van hetzelfde pand. De Supabase-flow is
+        nu de enige, primaire bron van waarheid; de oude flow is bewust niet
+        verwijderd (zie components/dossier/KlantDossierFlow.jsx voor de
+        toelichting) omdat eventuele al bestaande lokale demodata via de
+        bestaande import in /admin (adminImporteerKlant) benaderbaar moet
+        blijven — alleen het *live tonen als tweede workflow* is gestopt.
+        MjopKlantKoppeling toont zelf een duidelijke melding zowel zonder
+        sessie als zonder gekoppelde Klant (zie dat bestand).
       */}
       <MjopKlantKoppeling building={mjop.building} />
 

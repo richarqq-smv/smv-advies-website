@@ -32,7 +32,7 @@ import { addAdviespunt, updateAdviespunt, removeAdviespunt, completeDossier } fr
  * adviespunten-integriteitstriggers in 0001_init.sql).
  */
 
-const LEEG_FORMULIER = { onderwerp: '', adviesStatus: '', toelichting: '', herbeoordelenBij: '' }
+const LEEG_FORMULIER = { onderwerp: '', adviesStatus: '', toelichting: '', herbeoordelenBij: '', herbeoordelenDatum: '' }
 const STATUS_KEYS = Object.keys(STATUSES)
 
 function Veld({ id, label, verplicht, kind }) {
@@ -77,16 +77,31 @@ function AdviesFormulier({ idPrefix = 'advies', waarde, onWijzig, onOpslaan, onA
           className={inputClass}
         />
       </div>
-      <div>
-        <Veld id={`${idPrefix}-herbeoordelen`} label="Wanneer opnieuw beoordelen?" kind="optioneel" />
-        <input
-          id={`${idPrefix}-herbeoordelen`}
-          type="text"
-          value={waarde.herbeoordelenBij}
-          onChange={(e) => onWijzig({ ...waarde, herbeoordelenBij: e.target.value })}
-          placeholder="Bijv. bij vervanging van de cv-ketel, over twee jaar"
-          className={inputClass}
-        />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <Veld id={`${idPrefix}-herbeoordelen`} label="Wanneer opnieuw beoordelen?" kind="optioneel" />
+          <input
+            id={`${idPrefix}-herbeoordelen`}
+            type="text"
+            value={waarde.herbeoordelenBij}
+            onChange={(e) => onWijzig({ ...waarde, herbeoordelenBij: e.target.value })}
+            placeholder="Bijv. bij vervanging van de cv-ketel, over twee jaar"
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <Veld id={`${idPrefix}-herbeoordelen-datum`} label="Herbeoordelingsdatum" kind="optioneel" />
+          <input
+            id={`${idPrefix}-herbeoordelen-datum`}
+            type="date"
+            value={waarde.herbeoordelenDatum}
+            onChange={(e) => onWijzig({ ...waarde, herbeoordelenDatum: e.target.value })}
+            className={inputClass}
+          />
+          <p className="mt-1 text-xs text-foreground-muted">
+            Alleen invullen als er een concrete datum bekend is — de tekst hiernaast blijft de toelichting, ook zonder datum.
+          </p>
+        </div>
       </div>
       {fout ? (
         <p role="alert" className="flex items-center gap-1.5 text-sm font-medium text-error">
@@ -205,7 +220,7 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
 
   function startVanuitSignaal(insight) {
     setNieuwBron(insight)
-    setNieuwWaarde({ onderwerp: insight.componentLabel, adviesStatus: insight.status, toelichting: '', herbeoordelenBij: '' })
+    setNieuwWaarde({ onderwerp: insight.componentLabel, adviesStatus: insight.status, toelichting: '', herbeoordelenBij: '', herbeoordelenDatum: '' })
     setFout(null)
   }
 
@@ -215,7 +230,7 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
   // hier altijd zelf, precies zoals bij een handmatig adviespunt.
   function startVanuitEnergieSignaal(insight) {
     setNieuwBron(insight)
-    setNieuwWaarde({ onderwerp: insight.onderwerp, adviesStatus: '', toelichting: '', herbeoordelenBij: '' })
+    setNieuwWaarde({ onderwerp: insight.onderwerp, adviesStatus: '', toelichting: '', herbeoordelenBij: '', herbeoordelenDatum: '' })
     setFout(null)
   }
 
@@ -239,6 +254,7 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
         adviesStatus: nieuwWaarde.adviesStatus,
         toelichting: nieuwWaarde.toelichting,
         herbeoordelenBij: nieuwWaarde.herbeoordelenBij,
+        herbeoordelenDatum: nieuwWaarde.herbeoordelenDatum,
         signaalBevroren: isSignaal ? (isEnergieSignaal ? createEnergieSignaalBevroren(nieuwBron) : createSignaalBevroren(nieuwBron)) : null,
       })
       setAdviespunten((v) => [...v, nieuw])
@@ -257,6 +273,7 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
       adviesStatus: advies.advies_status,
       toelichting: advies.toelichting,
       herbeoordelenBij: advies.herbeoordelen_bij ?? '',
+      herbeoordelenDatum: advies.herbeoordelen_datum ?? '',
     })
     setFout(null)
   }
@@ -276,6 +293,7 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
         adviesStatus: bewerkWaarde.adviesStatus,
         toelichting: bewerkWaarde.toelichting,
         herbeoordelenBij: bewerkWaarde.herbeoordelenBij,
+        herbeoordelenDatum: bewerkWaarde.herbeoordelenDatum,
       })
       setAdviespunten((v) => v.map((a) => (a.adviespunt_id === bijgewerkt.adviespunt_id ? bijgewerkt : a)))
       setBewerkId(null)
@@ -347,6 +365,7 @@ export function DossierWerkruimte({ dossier: initieelDossier, adviespunten: init
                     adviesStatus: advies.advies_status,
                     toelichting: advies.toelichting,
                     herbeoordelenBij: advies.herbeoordelen_bij,
+                    herbeoordelenDatum: advies.herbeoordelen_datum,
                     signaalBevroren: advies.signaal_bevroren,
                   }}
                   actions={

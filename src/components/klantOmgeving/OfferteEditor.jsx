@@ -15,6 +15,7 @@ import {
   standaardGeldigTot,
   berekenOfferteBedragen,
   bouwOfferteSnapshot,
+  beoordeelGoldMeerwerk,
 } from '../../lib/klantOmgeving/offerte'
 
 const LEGE_MEERWERKREGEL = { omschrijving: '', aantal: 1, eenheidsprijs: MEERWERK_UURTARIEF }
@@ -102,6 +103,10 @@ export function OfferteEditor({ klant, contactpersoon, pand, dossier, onOpgeslag
     totaal: rond2((Number(r.aantal) || 0) * (Number(r.eenheidsprijs) || 0)),
   }))
   const bedragen = pakket && bedragGetal != null ? berekenOfferteBedragen({ bedrag: bedragGetal, meerwerk: meerwerkVoorBerekening }) : null
+  // Werkfase Fase 11 — eenvoudige Gold-scopebewaking: alleen een feitelijk
+  // signaal wanneer relevant (Gold + meerwerk aanwezig), geen teller die
+  // los van bestaande data iets bijhoudt.
+  const goldMeerwerkSignaal = beoordeelGoldMeerwerk({ pakketId, meerwerk: meerwerkVoorBerekening })
 
   function nieuweOfferteStarten() {
     setOpen(true)
@@ -250,6 +255,21 @@ export function OfferteEditor({ klant, contactpersoon, pand, dossier, onOpgeslag
           </div>
         </div>
 
+        {pakket?.id === 'gold' && Array.isArray(pakket.features) && pakket.features.length > 0 ? (
+          <div className="rounded-lg border border-accent/30 bg-accent/5 px-4 py-3">
+            <p className="mb-1.5 text-xs font-semibold tracking-[0.1em] text-accent uppercase">Gold-scope — ter herinnering</p>
+            <ul className="flex flex-col gap-1 text-sm text-primary">
+              {pakket.features.map((feature, i) => (
+                <li key={i} className="flex gap-2">
+                  <span className="text-accent">·</span>
+                  {feature}
+                </li>
+              ))}
+            </ul>
+            {pakket.scopeNote ? <p className="mt-2 text-xs text-foreground-muted">{pakket.scopeNote}</p> : null}
+          </div>
+        ) : null}
+
         {pakket ? (
           <div>
             <label htmlFor="offerte-bedrag" className="mb-1.5 block text-sm font-medium text-primary">
@@ -304,6 +324,13 @@ export function OfferteEditor({ klant, contactpersoon, pand, dossier, onOpgeslag
           ) : (
             <p className="text-sm text-foreground-muted">Geen meerwerkregels.</p>
           )}
+          {goldMeerwerkSignaal.relevant ? (
+            <p className="mt-2 flex items-start gap-1.5 text-xs font-medium text-accent">
+              <WarningCircle size={14} weight="fill" className="mt-0.5 shrink-0" />
+              {goldMeerwerkSignaal.aantalRegels} meerwerkregel{goldMeerwerkSignaal.aantalRegels === 1 ? '' : 'en'} ({euro(goldMeerwerkSignaal.totaal)}) bij
+              deze Gold-offerte — controleer of dit bewust werk buiten de afgesproken Gold-scope betreft (zie hierboven).
+            </p>
+          ) : null}
         </div>
 
         <div>

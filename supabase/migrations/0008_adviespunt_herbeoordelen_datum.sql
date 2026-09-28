@@ -1,0 +1,15 @@
+-- Werkfase Fase 9 (SMV-audit-opvolging, 2026-09-28): `herbeoordelen_bij`
+-- (bestaande, vrije tekst) blijft ONGEWIJZIGD — de audit stelde vast dat
+-- dit veld al her en der wordt gebruikt als toelichting ("bij vervanging
+-- van de cv-ketel, over twee jaar") die zich niet betrouwbaar laat
+-- terugvertalen naar een datum zonder te gokken. Bestaande waarden worden
+-- dus NIET gemigreerd — dat zou precies de fout zijn die de audit wilde
+-- voorkomen.
+--
+-- In plaats daarvan: een nieuw, optioneel datumveld ERNAAST, uitsluitend
+-- voor nieuwe/toekomstige adviespunten waarbij de adviseur bewust een
+-- concrete datum wil vastleggen (bijv. voor een dashboard/.ics-export die
+-- wél op datum kan sorteren/herinneren). De vrije tekst blijft altijd
+-- bruikbaar als toelichting, ook naast een ingevulde datum — geen van
+-- beide velden vervangt het andere.
+alter table public.adviespunten add column herbeoordelen_datum date;

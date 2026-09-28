@@ -172,7 +172,10 @@ export async function openOfHergebruikDossier({ klantId, pandId, pand, primaireC
   return { dossier, hergebruikt: false }
 }
 
-export async function addAdviespunt(dossierId, { onderwerp, herkomst, adviesStatus, toelichting, herbeoordelenBij = null, signaalBevroren = null }) {
+export async function addAdviespunt(
+  dossierId,
+  { onderwerp, herkomst, adviesStatus, toelichting, herbeoordelenBij = null, herbeoordelenDatum = null, signaalBevroren = null },
+) {
   return throwOnError(
     await supabase
       .from('adviespunten')
@@ -183,6 +186,11 @@ export async function addAdviespunt(dossierId, { onderwerp, herkomst, adviesStat
         advies_status: adviesStatus,
         toelichting: toelichting.trim(),
         herbeoordelen_bij: herbeoordelenBij?.trim() || null,
+        // Werkfase Fase 9: los, optioneel structureel datumveld naast de
+        // bestaande vrije tekst — zie 0008_adviespunt_herbeoordelen_datum.sql.
+        // Nooit uit herbeoordelenBij afgeleid: dat zou precies het gokken
+        // zijn dat de migratie bewust vermijdt.
+        herbeoordelen_datum: herbeoordelenDatum || null,
         signaal_bevroren: signaalBevroren,
       })
       .select('*')
@@ -190,12 +198,13 @@ export async function addAdviespunt(dossierId, { onderwerp, herkomst, adviesStat
   )
 }
 
-export async function updateAdviespunt(adviespuntId, { onderwerp, adviesStatus, toelichting, herbeoordelenBij }) {
+export async function updateAdviespunt(adviespuntId, { onderwerp, adviesStatus, toelichting, herbeoordelenBij, herbeoordelenDatum }) {
   const changes = {}
   if (onderwerp !== undefined) changes.onderwerp = onderwerp.trim()
   if (adviesStatus !== undefined) changes.advies_status = adviesStatus
   if (toelichting !== undefined) changes.toelichting = toelichting.trim()
   if (herbeoordelenBij !== undefined) changes.herbeoordelen_bij = herbeoordelenBij?.trim() || null
+  if (herbeoordelenDatum !== undefined) changes.herbeoordelen_datum = herbeoordelenDatum || null
   return throwOnError(await supabase.from('adviespunten').update(changes).eq('adviespunt_id', adviespuntId).select('*').single())
 }
 
@@ -311,6 +320,27 @@ export async function deleteOfferte(offerteId) {
   if (!data || data.length === 0) throw new Error('Verwijderen is niet toegestaan voor deze offerte.')
 }
 
+/**
+ * Wijzigt uitsluitend de `status`-kolom van een offerte. Nooit gecombineerd
+ * met een inhoudelijke wijziging in dezelfde aanroep: de trigger
+ * `bewaak_offerte_integriteit` staat dat sowieso niet toe (een
+ * statusovergang bevriest bedrag/meerwerk/snapshot/etc. op hetzelfde
+ * moment) — vandaar dat dit `.update()` uitsluitend `status` meestuurt,
+ * zodat alle overige kolommen ongewijzigd blijven (NEW = OLD) en de trigger
+ * nooit ten onrechte "inhoud + status tegelijk gewijzigd" ziet.
+ *
+ * Een ongeldige overgang (bijv. concept → geaccepteerd, of een overgang
+ * vanuit een terminale status) geeft geen rij terug — RLS' `offertes_
+ * update_admin` laat de UPDATE door (admin mag altijd proberen), maar de
+ * `WITH CHECK`/trigger-combinatie wijst 'm af met een Postgres-foutmelding
+ * (`raise exception`), die hier als gewone `error` naar boven komt.
+ */
+export async function updateOfferteStatus(offerteId, nieuweStatus) {
+  return throwOnError(
+    await supabase.from('offertes').update({ status: nieuweStatus }).eq('id', offerteId).select('*').single(),
+  )
+}
+
 // --- Admin -------------------------------------------------------------------
 //
 // Geen aparte adminfuncties nodig voor lezen: elke policy hierboven staat
@@ -330,7 +360,47 @@ export async function adminListKlanten() {
 
 export async function adminListDossiers() {
   return throwOnError(
-    await supabase.from('dossiers').select('*, klanten(naam, bedrijfsnaam), panden(*)').order('created_at', { ascending: false }),
+    // `adviespunten(count)` (werkfase Fase 5 — "Vandaag voor SMV"): een
+    // PostgREST-embedded aggregaat, geen aparte query per dossier (geen
+    // N+1) — nodig om feitelijk te kunnen zeggen of een open dossier al
+    // enig adviespunt heeft, zonder de volledige adviespunten-inhoud van
+    // ieder dossier mee te moeten sturen.
+    await supabase.from('dossiers').select('*, klanten(naam, bedrijfsnaam), panden(*), adviespunten(count)').order('created_at', { ascending: false }),
+  )
+}
+
+/**
+ * Alle offertes, admin-breed (werkfase Fase 5 — "Vandaag voor SMV" en Fase
+ * 10 — offerte-opvolging). Zelfde `offertes_select_admin`-policy als de
+ * bestaande per-dossier `getOffertesVoorDossier()`, hier zonder
+ * `dossier_id`-filter. Embedt net genoeg dossier/klant/pand-context om een
+ * regel in het overzicht te kunnen tonen en doorklikken, zonder een tweede
+ * ronde queries per offerte.
+ */
+export async function adminListOffertes() {
+  return throwOnError(
+    await supabase
+      .from('offertes')
+      .select('*, dossiers(dossier_id, klanten(naam, bedrijfsnaam), panden(omschrijving, adres))')
+      .order('created_at', { ascending: false }),
+  )
+}
+
+/**
+ * Alle adviespunten, admin-breed (werkfase Fase 8 — "Wat kan wachten?" als
+ * dossier-overstijgende SMV-functie). Zelfde `adviespunten_select`-policy
+ * (0001_init.sql, staat ook `is_admin()` toe) als de bestaande per-dossier
+ * `listAdviespunten()`, hier zonder `dossier_id`-filter. Filtering op
+ * "alleen open dossiers" gebeurt bewust client-side (in
+ * WatKanWachten.jsx) — geen embedded-filter op een geneste relatie nodig
+ * voor dit datavolume, en dit houdt de query zelf eenvoudig.
+ */
+export async function adminListAdviespunten() {
+  return throwOnError(
+    await supabase
+      .from('adviespunten')
+      .select('*, dossiers(dossier_id, status, klanten(naam, bedrijfsnaam), panden(omschrijving, adres))')
+      .order('created_at', { ascending: true }),
   )
 }
 

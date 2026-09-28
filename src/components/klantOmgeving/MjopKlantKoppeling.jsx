@@ -9,13 +9,19 @@ import { getMijnKlant, listPandenVoorKlant, maakPandEnKoppel, updatePand, openOf
 
 /**
  * De auth-bewuste "brug" tussen de MJOP-tool en de échte, Supabase-backed
- * klantomgeving — losstaand van en aanvullend op
- * lib/dossier/mjopKoppeling.js (localStorage), dat ongewijzigd blijft voor
- * het interne/prototype gebruik zonder account (zie DATABASE_ARCHITECTURE.md,
- * "Klantomgeving en adminoverzicht"). Alleen zichtbaar wanneer er een echte
- * sessie is — geen concurrentie met de bestaande, altijd-zichtbare
- * "MJOP opslaan bij dit pand"-actie in StepAdvies, die voor iedereen
- * (ingelogd of niet) blijft werken zoals hij al werkte.
+ * klantomgeving. Sinds de werkfase-opvolging op de SMV-audit (Fase 1,
+ * 2026-09-28) is dit de ENIGE actieve weg van een MJOP-building naar een
+ * Adviesdossier — de oude, localStorage-gebaseerde KlantDossierFlow is
+ * teruggetrokken uit MjopTool.jsx (zie components/dossier/KlantDossierFlow.jsx
+ * voor de volledige toelichting waarom dat bestand niet is verwijderd).
+ *
+ * Toont nu altijd iets zinvols in plaats van zichzelf te verbergen:
+ * - geen sessie: een duidelijke uitnodiging om in te loggen/registreren
+ *   (voorheen: render niets, waardoor een uitgelogde gebruiker stilzwijgend
+ *   terugviel op de oude flow hieronder — die optie bestaat niet meer).
+ * - sessie zonder gekoppelde Klant: bestaande "rond eerst uw bedrijfsgegevens
+ *   af"-melding (ongewijzigd).
+ * - sessie met Klant: het bestaande koppelformulier (ongewijzigd).
  *
  * Hergebruikt bewust dezelfde pure adapterfuncties als de bestaande
  * localStorage-koppeling (buildingToPandInput/createMjopSnapshotFromBuilding
@@ -54,7 +60,20 @@ export function MjopKlantKoppeling({ building }) {
     }
   }, [authLaden, user])
 
-  if (authLaden || !user) return null
+  if (authLaden) return null
+
+  if (!user) {
+    return (
+      <div className="mt-6 rounded-2xl border border-accent/30 bg-accent/5 p-6 text-sm print:hidden">
+        <p className="text-primary">
+          <Link to={ROUTES.inloggen} className="font-medium text-accent hover:underline">Log in</Link> of{' '}
+          <Link to={ROUTES.registreren} className="font-medium text-accent hover:underline">maak een account</Link> om deze MJOP-gegevens te koppelen aan een
+          Adviesdossier — dit is de enige weg naar een dossier, ook voor intern gebruik.
+        </p>
+      </div>
+    )
+  }
+
   if (status === 'laden') return null
 
   if (status === 'geen-klant') {

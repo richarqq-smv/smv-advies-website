@@ -1,6 +1,16 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { rond2, bepaalPrijsTier, bedragWijktAfVanStandaardprijs, berekenOfferteBedragen, bouwOfferteSnapshot, OPGESTELD_DOOR_NAAM } from './offerte.js'
+import {
+  rond2,
+  bepaalPrijsTier,
+  bedragWijktAfVanStandaardprijs,
+  berekenOfferteBedragen,
+  bouwOfferteSnapshot,
+  OPGESTELD_DOOR_NAAM,
+  OFFERTE_TOEGESTANE_OVERGANGEN,
+  magOvergangNaar,
+  beoordeelGoldMeerwerk,
+} from './offerte.js'
 
 // Lokale, minimale fixtures — bewust geen import van src/data/packages.js:
 // bouwOfferteSnapshot() en berekenOfferteBedragen() zijn pure functies die
@@ -574,4 +584,73 @@ test('Backward compatibility: een prijswijziging in packages.js raakt nooit de p
   })
   assert.equal(oud.prijsrange, '€ 895 - € 1.495') // ongewijzigd, ondanks de "latere" prijswijziging
   assert.notEqual(bepaalPrijsTier(gewijzigdPakket, 500).prijs, oud.prijsrange)
+})
+
+// --- Statusovergangen (werkfase Fase 2 — offerte-lifecycle) ---------------
+// Deze tests bevriezen alleen de VORM van OFFERTE_TOEGESTANE_OVERGANGEN, niet
+// de daadwerkelijke handhaving (die gebeurt door de database-trigger
+// bewaak_offerte_integriteit, supabase/migrations/0005_offertes.sql — zie de
+// live security-regressietests voor de daadwerkelijke DB-verificatie). Bij
+// een toekomstige wijziging in de migratie moet deze constante bewust worden
+// meegewijzigd, niet per ongeluk uit de pas lopen.
+
+test('magOvergangNaar: concept mag naar verstuurd of geannuleerd, niet direct naar geaccepteerd/afgewezen', () => {
+  assert.equal(magOvergangNaar('concept', 'verstuurd'), true)
+  assert.equal(magOvergangNaar('concept', 'geannuleerd'), true)
+  assert.equal(magOvergangNaar('concept', 'geaccepteerd'), false)
+  assert.equal(magOvergangNaar('concept', 'afgewezen'), false)
+  assert.equal(magOvergangNaar('concept', 'concept'), false)
+})
+
+test('magOvergangNaar: verstuurd mag naar geaccepteerd, afgewezen of geannuleerd', () => {
+  assert.equal(magOvergangNaar('verstuurd', 'geaccepteerd'), true)
+  assert.equal(magOvergangNaar('verstuurd', 'afgewezen'), true)
+  assert.equal(magOvergangNaar('verstuurd', 'geannuleerd'), true)
+  assert.equal(magOvergangNaar('verstuurd', 'concept'), false)
+})
+
+test('magOvergangNaar: elke terminale status (geaccepteerd/afgewezen/geannuleerd) staat geen enkele overgang meer toe', () => {
+  for (const terminaal of ['geaccepteerd', 'afgewezen', 'geannuleerd']) {
+    for (const doel of ['concept', 'verstuurd', 'geaccepteerd', 'afgewezen', 'geannuleerd']) {
+      assert.equal(magOvergangNaar(terminaal, doel), false, `${terminaal} -> ${doel} hoort niet toegestaan te zijn`)
+    }
+  }
+})
+
+test('magOvergangNaar: onbekende status geeft nooit een toegestane overgang', () => {
+  assert.equal(magOvergangNaar('onbekend', 'verstuurd'), false)
+})
+
+test('OFFERTE_TOEGESTANE_OVERGANGEN dekt exact de vijf bestaande statussen als bron- of doelstatus, geen extra verzonnen status', () => {
+  const alleGenoemdeStatussen = new Set([
+    ...Object.keys(OFFERTE_TOEGESTANE_OVERGANGEN),
+    ...Object.values(OFFERTE_TOEGESTANE_OVERGANGEN).flat(),
+  ])
+  for (const status of alleGenoemdeStatussen) {
+    assert.ok(['concept', 'verstuurd', 'geaccepteerd', 'afgewezen', 'geannuleerd'].includes(status), `onverwachte status: ${status}`)
+  }
+})
+
+// --- Gold scope control (werkfase Fase 11) --------------------------------
+
+test('beoordeelGoldMeerwerk: niet relevant voor basis/premium, ongeacht meerwerk', () => {
+  const meerwerk = [{ omschrijving: 'Extra', aantal: 1, eenheidsprijs: 95, totaal: 95 }]
+  assert.equal(beoordeelGoldMeerwerk({ pakketId: 'basis', meerwerk }).relevant, false)
+  assert.equal(beoordeelGoldMeerwerk({ pakketId: 'premium', meerwerk }).relevant, false)
+})
+
+test('beoordeelGoldMeerwerk: niet relevant voor Gold zonder meerwerk', () => {
+  const { relevant } = beoordeelGoldMeerwerk({ pakketId: 'gold', meerwerk: [] })
+  assert.equal(relevant, false)
+})
+
+test('beoordeelGoldMeerwerk: relevant voor Gold met meerwerk, telt regels en totaal correct op', () => {
+  const meerwerk = [
+    { omschrijving: 'Extra locatiebezoek', aantal: 1, eenheidsprijs: 95, totaal: 95 },
+    { omschrijving: 'Extra contactmoment', aantal: 2, eenheidsprijs: 95, totaal: 190 },
+  ]
+  const resultaat = beoordeelGoldMeerwerk({ pakketId: 'gold', meerwerk })
+  assert.equal(resultaat.relevant, true)
+  assert.equal(resultaat.aantalRegels, 2)
+  assert.equal(resultaat.totaal, 285)
 })

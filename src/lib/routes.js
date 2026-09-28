@@ -34,10 +34,16 @@ export const ROUTES = {
   account: '/account',
   dossier: (dossierId) => `/dossier/${dossierId}`,
   admin: '/admin',
+  // Werkfase Fase 8 — dossier-overstijgend, admin-only, geen klantroute.
+  watKanWachten: '/admin/wat-kan-wachten',
   // Offerte-preview/print (Fase 3) — buiten MainLayout gerouteerd (geen
   // header/nav/footer), zodat de printweergave nooit sitenavigatie bevat.
   // Zelfde reden als /dossier/:id om niet in scripts/prerender.mjs te
   // staan: bestaat pas na het aanmaken van een offerte, per definitie
   // klant-/offertespecifiek.
   offertePreview: (dossierId, offerteId) => `/dossier/${dossierId}/offerte/${offerteId}`,
+  // Klaar-voor-klantgesprek (werkfase Fase 7) — admin-only voorbereidingsscherm
+  // voor de adviseur, geen klantroute. Zelfde reden als offertePreview om niet
+  // in scripts/prerender.mjs te staan: bestaat pas na aanmaken, dossierspecifiek.
+  klantgesprek: (dossierId) => `/dossier/${dossierId}/klantgesprek`,
 }

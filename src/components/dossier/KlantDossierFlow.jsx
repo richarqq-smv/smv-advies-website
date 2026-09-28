@@ -16,6 +16,31 @@ import { AdviesBeheer } from './AdviesBeheer'
 import { AdviesResultaat } from './AdviesResultaat'
 
 /**
+ * RETIRED van live gebruik (werkfase, Fase 1 — SMV-audit-opvolging,
+ * 2026-09-28): dit component werd voorheen in components/mjop/MjopTool.jsx
+ * gerenderd zodra een Pand was opgeslagen, *tegelijk* met de nieuwe
+ * Supabase-brug (MjopKlantKoppeling.jsx) — bevestigd risico op twee losse,
+ * nooit-gekoppelde registraties van hetzelfde pand/dezelfde klant. De
+ * Supabase-backed flow (lib/klantOmgeving/api.js) is nu de enige, primaire
+ * bron van waarheid voor Klant/Pand/Dossier/Advies.
+ *
+ * Dit bestand is BEWUST NIET verwijderd — alleen de import/render in
+ * MjopTool.jsx is weggehaald:
+ *   - de onderliggende localStorage-domeinfuncties (lib/dossier/*) die dit
+ *     component gebruikt, blijven ongewijzigd bestaan en werken, want
+ *     src/pages/Admin.jsx importeert diezelfde functies (loadAllKlanten/
+ *     loadAllPanden/loadAllDossiers/loadAllKlantPandRelaties) nog steeds om
+ *     eventuele bestaande lokale demo-/testdata eenmalig naar Supabase te
+ *     kunnen importeren (adminImporteerKlant) — die databron mag niet
+ *     onbereikbaar worden;
+ *   - niemand kan vanaf hier verifiëren wat in een specifieke browser aan
+ *     localStorage-data staat, dus verwijderen "omdat het er toch leeg
+ *     uitziet" zou een aanname zijn, geen controle.
+ * Dit component (en AdviesResultaat.jsx, dat alleen hierdoor werd gebruikt)
+ * wordt nergens meer geïmporteerd of gerenderd. Zie DATABASE_ARCHITECTURE.md,
+ * "Klantomgeving en adminoverzicht", voor de bijgewerkte toelichting.
+ *
+ * Oorspronkelijke moduledoc, ongewijzigd gelaten voor context:
  * Interne flow "Bestaand Pand → Klant koppelen → Contactpersoon kiezen/maken
  * → Dossier openen" (ontwerpdocument "Klant → Pand → Dossier implementeren").
  * Bewust géén CRM en géén klantportaal: alleen de vier stappen die nodig

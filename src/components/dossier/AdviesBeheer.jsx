@@ -72,7 +72,13 @@ export function AdviespuntKaart({ advies, actions }) {
         </div>
       </div>
       <p className="text-sm leading-relaxed text-foreground-muted">{advies.toelichting}</p>
-      {advies.herbeoordelenBij ? <p className="mt-2 text-xs text-foreground-muted">Opnieuw beoordelen: {advies.herbeoordelenBij}</p> : null}
+      {advies.herbeoordelenBij || advies.herbeoordelenDatum ? (
+        <p className="mt-2 text-xs text-foreground-muted">
+          Opnieuw beoordelen
+          {advies.herbeoordelenDatum ? ` op ${new Date(advies.herbeoordelenDatum).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' })}` : ''}
+          {advies.herbeoordelenBij ? `: ${advies.herbeoordelenBij}` : ''}
+        </p>
+      ) : null}
       {advies.signaalBevroren ? (
         advies.signaalBevroren.herkomst === 'energie' ? (
           <p className="mt-2 text-xs text-foreground-muted">

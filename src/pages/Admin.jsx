@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { DownloadSimple } from '@phosphor-icons/react'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
@@ -7,8 +8,10 @@ import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
 import { UitloggenKnop } from '../components/auth/UitloggenKnop'
 import { ROUTES } from '../lib/routes'
-import { adminListKlanten, adminListDossiers, adminImporteerKlant } from '../lib/klantOmgeving/api'
+import { adminListKlanten, adminListDossiers, adminListOffertes, adminImporteerKlant } from '../lib/klantOmgeving/api'
 import { loadAllKlanten, loadAllPanden, loadAllDossiers, loadAllKlantPandRelaties } from '../lib/dossier'
+import { VandaagOverzicht } from '../components/klantOmgeving/VandaagOverzicht'
+import { bouwDossiersCsv, triggerCsvDownload } from '../lib/klantOmgeving/csvExport'
 
 /**
  * Adminoverzicht — uitsluitend bereikbaar voor een echte admin (RequireAdmin
@@ -26,6 +29,7 @@ export default function Admin() {
   const [laden, setLaden] = useState(true)
   const [klanten, setKlanten] = useState([])
   const [dossiers, setDossiers] = useState([])
+  const [offertes, setOffertes] = useState([]) // werkfase Fase 5 — "Vandaag voor SMV"
   const [zoekterm, setZoekterm] = useState('')
 
   const [lokaleKlanten, setLokaleKlanten] = useState([])
@@ -41,9 +45,10 @@ export default function Admin() {
   async function laadAlles() {
     setLaden(true)
     try {
-      const [k, d] = await Promise.all([adminListKlanten(), adminListDossiers()])
+      const [k, d, o] = await Promise.all([adminListKlanten(), adminListDossiers(), adminListOffertes()])
       setKlanten(k)
       setDossiers(d)
+      setOffertes(o)
     } finally {
       setLaden(false)
     }
@@ -93,13 +98,18 @@ export default function Admin() {
       <PageHero eyebrow="Beheer" title="Klanten en dossiers" description="Overzicht van alle klanten, panden en adviesdossiers." />
       <Section tone="white" noTopPadding>
         <Container className="max-w-3xl">
-          <div className="mb-4 flex justify-end">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <Button as="link" to={ROUTES.watKanWachten} variant="outline" size="sm">
+              Wat kan wachten?
+            </Button>
             <UitloggenKnop />
           </div>
           {laden ? (
             <p className="text-sm text-foreground-muted">Bezig met laden...</p>
           ) : (
             <div className="flex flex-col gap-8">
+              <VandaagOverzicht dossiers={dossiers} offertes={offertes} />
+
               {lokaleKlanten.length > 0 ? (
                 <div className="rounded-2xl border border-accent/30 bg-accent/5 p-6">
                   <h2 className="text-lg text-primary">Lokale demogegevens gevonden</h2>
@@ -146,7 +156,19 @@ export default function Admin() {
                     {gefilterdeKlanten.map((k) => (
                       <li key={k.klant_id} className="rounded-lg border border-border bg-white px-4 py-3 text-sm">
                         <p className="font-medium text-primary">{k.naam || k.bedrijfsnaam || 'Naamloze klant'}</p>
-                        {k.email ? <p className="text-foreground-muted">{k.email}</p> : null}
+                        {/* Werkfase Fase 14: klikbaar bellen/mailen — direct bruikbaar op mobiel, geen extra stap via kopiëren. */}
+                        <div className="flex flex-wrap gap-x-3 text-foreground-muted">
+                          {k.email ? (
+                            <a href={`mailto:${k.email}`} className="hover:text-accent hover:underline">
+                              {k.email}
+                            </a>
+                          ) : null}
+                          {k.telefoon ? (
+                            <a href={`tel:${k.telefoon}`} className="hover:text-accent hover:underline">
+                              {k.telefoon}
+                            </a>
+                          ) : null}
+                        </div>
                       </li>
                     ))}
                   </ul>
@@ -154,7 +176,19 @@ export default function Admin() {
               </div>
 
               <div>
-                <h2 className="mb-3 text-lg text-primary">Dossiers ({dossiers.length})</h2>
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                  <h2 className="text-lg text-primary">Dossiers ({dossiers.length})</h2>
+                  {dossiers.length > 0 ? (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => triggerCsvDownload(bouwDossiersCsv(dossiers), 'smv-dossiers.csv')}
+                    >
+                      <DownloadSimple size={15} /> Exporteer CSV
+                    </Button>
+                  ) : null}
+                </div>
                 {dossiers.length === 0 ? (
                   <p className="rounded-lg border border-dashed border-border px-5 py-6 text-center text-sm text-foreground-muted">Nog geen dossiers.</p>
                 ) : (

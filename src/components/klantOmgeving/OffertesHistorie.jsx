@@ -2,8 +2,24 @@ import { useEffect, useState } from 'react'
 import { FileText, Trash, WarningCircle } from '@phosphor-icons/react'
 import { Button } from '../ui/Button'
 import { ROUTES } from '../../lib/routes'
-import { getOffertesVoorDossier, deleteOfferte } from '../../lib/klantOmgeving/api'
-import { euro, formatDatumNl } from '../../lib/klantOmgeving/offerte'
+import { getOffertesVoorDossier, deleteOfferte, updateOfferteStatus } from '../../lib/klantOmgeving/api'
+import { euro, formatDatumNl, OFFERTE_TOEGESTANE_OVERGANGEN } from '../../lib/klantOmgeving/offerte'
+
+// Knoptekst per mogelijke volgende status — alleen de overgangen die
+// OFFERTE_TOEGESTANE_OVERGANGEN daadwerkelijk toestaat komen ooit in beeld
+// (zie STATUS_ACTIES hieronder), dus deze labels hoeven geen ongeldige
+// combinatie te dekken.
+const OVERGANG_LABEL = {
+  verstuurd: 'Markeer als verstuurd',
+  geaccepteerd: 'Markeer als geaccepteerd',
+  afgewezen: 'Markeer als afgewezen',
+  geannuleerd: 'Annuleren',
+}
+
+// Overgangen die de offerte in een terminale status zetten (geen weg
+// terug — zie bewaak_offerte_integriteit in 0005_offertes.sql) krijgen een
+// expliciete bevestigingsstap, zelfde patroon als "Verwijderen" hieronder.
+const TERMINALE_STATUSSEN = new Set(['geaccepteerd', 'afgewezen', 'geannuleerd'])
 
 const STATUS_LABELS = {
   concept: 'Concept',
@@ -50,14 +66,31 @@ function isVerlopen(offerte) {
  * `refreshSignal` (van DossierDetail, opgehoogd door OfferteEditor na een
  * geslaagde opslag) laat deze lijst herladen zodra een nieuwe offerte is
  * aangemaakt, zonder dat de twee componenten elkaars interne state kennen.
+ *
+ * `magBeheren` (werkfase Fase 3, default false — veiligste kant): alleen
+ * waar/wanneer de aanroeper al heeft vastgesteld dat dit een admin-sessie
+ * is worden de status-overgang- en verwijderknoppen getoond. Sinds
+ * offertes_select_klant (0007_offertes_klant_select.sql) ziet een klant
+ * deze lijst ook voor zijn eigen dossier — RLS zou een mutatiepoging toch
+ * al weigeren (offertes_update_admin/offertes_delete_admin_concept vereisen
+ * is_admin()), dit verbergt alleen knoppen die voor een klant toch altijd
+ * zouden falen. "Bekijken" blijft voor iedereen zichtbaar.
  */
-export function OffertesHistorie({ dossierId, refreshSignal }) {
+export function OffertesHistorie({ dossierId, refreshSignal, magBeheren = false }) {
   const [laden, setLaden] = useState(true)
   const [fout, setFout] = useState(null)
   const [offertes, setOffertes] = useState([])
   const [verwijderId, setVerwijderId] = useState(null) // id in bevestigingsstap
   const [verwijderBezig, setVerwijderBezig] = useState(false)
   const [verwijderFoutId, setVerwijderFoutId] = useState(null)
+
+  // Statusovergang (Fase 2 — offerte-lifecycle): welke offerte een
+  // bevestigingsstap toont (alleen voor terminale overgangen, zie
+  // TERMINALE_STATUSSEN), welke net bezig is, en een foutmelding per id —
+  // zelfde lichte aanpak als de bestaande verwijder-flow hierboven.
+  const [overgangBevestigId, setOvergangBevestigId] = useState(null) // `${offerteId}:${nieuweStatus}` in bevestigingsstap
+  const [overgangBezigId, setOvergangBezigId] = useState(null)
+  const [overgangFoutId, setOvergangFoutId] = useState(null)
 
   useEffect(() => {
     let actief = true
@@ -92,6 +125,27 @@ export function OffertesHistorie({ dossierId, refreshSignal }) {
     }
   }
 
+  /**
+   * Voert een statusovergang uit. De database (`bewaak_offerte_integriteit`,
+   * 0005_offertes.sql) is de enige echte handhaving van welke overgangen
+   * geldig zijn — deze functie stuurt alleen wat de UI al aanbiedt via
+   * OFFERTE_TOEGESTANE_OVERGANGEN, maar vertrouwt daar niet blind op: een
+   * afwijzing door de database komt hier gewoon als fout naar boven.
+   */
+  async function voerOvergangUit(offerteId, nieuweStatus) {
+    setOvergangBezigId(offerteId)
+    setOvergangFoutId(null)
+    try {
+      const bijgewerkt = await updateOfferteStatus(offerteId, nieuweStatus)
+      setOffertes((rows) => rows.map((o) => (o.id === offerteId ? bijgewerkt : o)))
+      setOvergangBevestigId(null)
+    } catch {
+      setOvergangFoutId(offerteId)
+    } finally {
+      setOvergangBezigId(null)
+    }
+  }
+
   return (
     <div className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
       <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Offertes</p>
@@ -106,7 +160,7 @@ export function OffertesHistorie({ dossierId, refreshSignal }) {
         </p>
       ) : offertes.length === 0 ? (
         <p className="text-sm text-foreground-muted">
-          Nog geen offertes. Gebruik "Offerte maken" hieronder om de eerste offerte voor dit dossier op te stellen.
+          {magBeheren ? 'Nog geen offertes. Gebruik "Offerte maken" hieronder om de eerste offerte voor dit dossier op te stellen.' : 'Nog geen offertes voor dit dossier.'}
         </p>
       ) : (
         <div className="flex flex-col gap-3">
@@ -126,13 +180,14 @@ export function OffertesHistorie({ dossierId, refreshSignal }) {
                 <div>
                   <p className="text-lg font-medium text-primary">{euro(offerte.totaal)}</p>
                   <p className="text-xs text-foreground-muted">
+                    {offerte.verzonden_op ? <>Verstuurd op {formatDatumNl(offerte.verzonden_op.slice(0, 10))} · </> : null}
                     Geldig tot {formatDatumNl(offerte.geldig_tot)}
                     {isVerlopen(offerte) ? <span className="ml-1.5 font-medium text-error">Verlopen</span> : null}
                   </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  {verwijderId === offerte.id ? (
+                  {magBeheren && verwijderId === offerte.id ? (
                     <>
                       <span className="text-xs text-foreground-muted">Weet u het zeker?</span>
                       <Button type="button" variant="ghost" size="sm" onClick={() => bevestigVerwijderen(offerte.id)} disabled={verwijderBezig}>
@@ -142,12 +197,46 @@ export function OffertesHistorie({ dossierId, refreshSignal }) {
                         Annuleren
                       </Button>
                     </>
+                  ) : magBeheren && overgangBevestigId?.startsWith(`${offerte.id}:`) ? (
+                    <>
+                      <span className="text-xs text-foreground-muted">Dit kan niet ongedaan worden gemaakt. Weet u het zeker?</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => voerOvergangUit(offerte.id, overgangBevestigId.slice(offerte.id.length + 1))}
+                        disabled={overgangBezigId === offerte.id}
+                      >
+                        Ja, doorvoeren
+                      </Button>
+                      <Button type="button" variant="ghost" size="sm" onClick={() => setOvergangBevestigId(null)} disabled={overgangBezigId === offerte.id}>
+                        Annuleren
+                      </Button>
+                    </>
                   ) : (
                     <>
                       <Button as="link" to={ROUTES.offertePreview(dossierId, offerte.id)} variant="ghost" size="sm">
                         <FileText size={15} /> Bekijken
                       </Button>
-                      {offerte.status === 'concept' ? (
+                      {magBeheren
+                        ? (OFFERTE_TOEGESTANE_OVERGANGEN[offerte.status] ?? []).map((nieuweStatus) => (
+                            <Button
+                              key={nieuweStatus}
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              disabled={overgangBezigId === offerte.id}
+                              onClick={() =>
+                                TERMINALE_STATUSSEN.has(nieuweStatus)
+                                  ? setOvergangBevestigId(`${offerte.id}:${nieuweStatus}`)
+                                  : voerOvergangUit(offerte.id, nieuweStatus)
+                              }
+                            >
+                              {OVERGANG_LABEL[nieuweStatus]}
+                            </Button>
+                          ))
+                        : null}
+                      {magBeheren && offerte.status === 'concept' ? (
                         <Button type="button" variant="ghost" size="sm" onClick={() => setVerwijderId(offerte.id)}>
                           <Trash size={15} /> Verwijderen
                         </Button>
@@ -157,10 +246,16 @@ export function OffertesHistorie({ dossierId, refreshSignal }) {
                 </div>
               </div>
 
-              {verwijderFoutId === offerte.id ? (
+              {magBeheren && verwijderFoutId === offerte.id ? (
                 <p role="alert" className="mt-2 flex items-center gap-1.5 text-xs font-medium text-error">
                   <WarningCircle size={13} weight="fill" />
                   Verwijderen is niet gelukt. Probeer het opnieuw.
+                </p>
+              ) : null}
+              {magBeheren && overgangFoutId === offerte.id ? (
+                <p role="alert" className="mt-2 flex items-center gap-1.5 text-xs font-medium text-error">
+                  <WarningCircle size={13} weight="fill" />
+                  Statuswijziging is niet gelukt. Probeer het opnieuw.
                 </p>
               ) : null}
             </div>

@@ -12,6 +12,46 @@
  */
 export const BTW_PERCENTAGE = 21
 
+/**
+ * Toegestane statusovergangen (werkfase Fase 2 — offerte-lifecycle). Moet
+ * exact overeenkomen met `toegestane_overgangen` in
+ * bewaak_offerte_integriteit() (supabase/migrations/0005_offertes.sql) —
+ * hier als pure, testbare data zodat zowel de UI (welke knoppen tonen) als
+ * api.js (welke aanroep proberen) uit precies dezelfde bron putten. De
+ * database blijft de enige echte handhaving: een overgang die hier per
+ * ongeluk te ruim zou zijn, wordt alsnog door de trigger geweigerd (zie
+ * magOvergangNaar() hieronder, en updateOfferteStatus() in api.js).
+ */
+export const OFFERTE_TOEGESTANE_OVERGANGEN = {
+  concept: ['verstuurd', 'geannuleerd'],
+  verstuurd: ['geaccepteerd', 'afgewezen', 'geannuleerd'],
+}
+
+/** Of een statusovergang volgens OFFERTE_TOEGESTANE_OVERGANGEN geldig is — pure afgeleide, geen eigen bron van waarheid. */
+export function magOvergangNaar(huidigeStatus, nieuweStatus) {
+  return (OFFERTE_TOEGESTANE_OVERGANGEN[huidigeStatus] ?? []).includes(nieuweStatus)
+}
+
+/**
+ * Gold-scope-signaal (werkfase Fase 11 — eenvoudige interne scopebewaking,
+ * geen projectmanagement/urenregistratie/CRM). Gold's scope is en blijft
+ * vaste tekst in packages.js (features/scopeNote) — dit voegt geen nieuwe
+ * databasevelden toe en telt niets bij aan een teller. Het signaleert
+ * uitsluitend het feitelijke moment waarop scope-overschrijding al zichtbaar
+ * wordt in bestaande data: een Gold-offerte met meerwerkregels. Volgens
+ * packages.js' eigen `scopeNote` IS meerwerk precies het mechanisme voor
+ * werk buiten de afgesproken Gold-scope — dit maakt dat moment alleen
+ * zichtbaar voor Richard, in plaats van dat het stilzwijgend gebeurt.
+ * Geen oordeel of het terecht is: alleen een feitelijke constatering.
+ */
+export function beoordeelGoldMeerwerk({ pakketId, meerwerk = [] }) {
+  if (pakketId !== 'gold' || meerwerk.length === 0) {
+    return { relevant: false, aantalRegels: 0, totaal: 0 }
+  }
+  const totaal = rond2(meerwerk.reduce((som, regel) => som + (regel.totaal ?? 0), 0))
+  return { relevant: true, aantalRegels: meerwerk.length, totaal }
+}
+
 /** Standaard meerwerktarief (Fase 6, commerciële waarheid) — vult alleen een nieuwe meerwerkregel voor, de adviseur kan dit per regel altijd overschrijven. */
 export const MEERWERK_UURTARIEF = 95
 

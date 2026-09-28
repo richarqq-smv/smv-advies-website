@@ -14,9 +14,10 @@ import { getMijnKlant, registreerKlant, listPandenVoorKlant, maakPandEnKoppel, l
 const LEEG_PAND = { omschrijving: '', adres: '', postcode: '', plaats: '', gebruikstype: '' }
 
 /**
- * Echte klantomgeving: Account → Bedrijf → Pand → Dossier. Losstaand van
- * de interne MJOP-Tool-demoflow (components/dossier/KlantDossierFlow.jsx,
- * nog steeds localStorage-gebaseerd) — hier hoort een bezoeker eerst een
+ * Echte klantomgeving: Account → Bedrijf → Pand → Dossier. De oude,
+ * localStorage-gebaseerde MJOP-Tool-demoflow (components/dossier/
+ * KlantDossierFlow.jsx) is sinds de werkfase-opvolging (Fase 1) teruggetrokken
+ * uit live gebruik — hier hoort een bezoeker eerst een
  * account te hebben (afgedwongen door RequireAuth in App.jsx), en is er
  * precies één Klant per account (afgedwongen door registreer_klant()).
  */

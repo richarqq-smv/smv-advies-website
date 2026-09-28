@@ -39,6 +39,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Test
+        # Werkfase Fase 4 (SMV-audit-opvolging, 2026-09-28): de audit had
+        # vastgesteld dat de 276+ tests in `npm test` niet meededen in CI —
+        # alleen lint+build gaven groen licht, dus een regressie in bestaande
+        # logica (dossier/MJOP/energiescan/offerte/pakketten) blokkeerde een
+        # deploy niet. `npm test` draait `node --test` (package.json) — geen
+        # extra tooling, geen aparte testrunner-dependency nodig. Vóór Lint:
+        # snelste, goedkoopste check eerst faalt het eerst.
+        run: npm test
+
       - name: Lint
         run: npm run lint
 
