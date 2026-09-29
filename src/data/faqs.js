@@ -24,7 +24,7 @@ export const FAQ_CATEGORIES = [
       {
         question: 'Wat kost een verduurzamingsadvies?',
         answer:
-          'Het Basis Pakket kost € 495 (tot 1.000 m²) of € 695 (1.000–2.500 m²), het Premium Pakket € 995 of € 1.295 en het Gold Pakket € 2.495 of € 2.995 — steeds afhankelijk van de oppervlakte van uw pand. Voor grotere of complexere panden stellen we een prijs op aanvraag vast.',
+          'Het Basis Pakket kost € 495 (tot 1.000 m²) of € 695 (1.000–2.500 m²), het Premium Pakket € 995 of € 1.295 en het Gold Pakket € 2.495 of € 2.995, steeds excl. btw en afhankelijk van de oppervlakte van uw pand. Voor grotere of complexere panden stellen we een prijs op aanvraag vast.',
       },
       {
         question: 'Zijn de genoemde besparingen en investeringen bindend?',
@@ -50,6 +50,16 @@ export const FAQ_CATEGORIES = [
         question: 'Bieden jullie ook onderhoud of monitoring na de uitvoering?',
         answer:
           'SMV Advies richt zich op advies en begeleiding. Voor onderhoud en monitoring van installaties verwijzen we u naar uw installateur. In het Gold Pakket verzorgen we wel de eindafname en eindrapportage na uitvoering.',
+      },
+      {
+        question: 'Ik werk al met een vaste installateur, kan ik dan nog bij SMV Advies terecht?',
+        answer:
+          'Ja. Wij voeren zelf geen installatiewerk uit en hebben geen belang bij een bepaalde installateur. Ons advies staat los van wie de uitvoering doet: u kunt de uitkomst gebruiken bij uw eigen installateur, of wij denken mee bij de keuze.',
+      },
+      {
+        question: 'Ik heb al een meerjarenonderhoudsplan (MJOP), heeft een advies van SMV dan nog zin?',
+        answer:
+          'Een MJOP richt zich op onderhoud en vervanging van bouwdelen en installaties. Ons advies kijkt specifiek naar verduurzamingsmaatregelen zoals energie, isolatie en installaties, en hoe die zich verhouden tot al geplande onderhoudsmomenten. Beide vullen elkaar aan, ze vervangen elkaar niet.',
       },
     ],
   },

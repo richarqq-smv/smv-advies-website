@@ -15,7 +15,7 @@ export function DecisionCta() {
             uw pand. Aan de hand daarvan adviseren we welk pakket het beste past.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <Button to={ROUTES.energieIndicatie}>Naar de energie-indicatie</Button>
+            <Button to={ROUTES.energieIndicatie}>Start de gratis energie-indicatie</Button>
             <Button to={ROUTES.contact} variant="ghost">
               Stel uw vraag
             </Button>

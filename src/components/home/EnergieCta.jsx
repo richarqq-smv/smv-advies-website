@@ -33,7 +33,7 @@ export function EnergieCta() {
           </ul>
 
           <div className="mt-8">
-            <Button to={ROUTES.energieIndicatie}>Start de energie-indicatie</Button>
+            <Button to={ROUTES.energieIndicatie}>Start de gratis energie-indicatie</Button>
           </div>
         </Reveal>
       </Container>

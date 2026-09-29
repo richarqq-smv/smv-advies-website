@@ -22,7 +22,7 @@ export function Hero() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Button to={ROUTES.contact}>Bespreek uw bedrijfspand</Button>
             <Button to={ROUTES.energieIndicatie} variant="outline">
-              Gratis energiecheck
+              Start de gratis energie-indicatie
             </Button>
           </div>
           <p className="mt-5 text-sm font-medium text-foreground-muted">

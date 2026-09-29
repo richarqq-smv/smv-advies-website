@@ -69,15 +69,26 @@ test('ResultsView.jsx: bevat nergens meer result.totaleBesparing/co2 — ook nie
 test('Hero.jsx: primaire CTA is "Bespreek uw bedrijfspand", Energie Indicatie is secundair', () => {
   const bron = leesZonderComments('..', '..', 'components', 'home', 'Hero.jsx')
   const primaryIndex = bron.indexOf('Bespreek uw bedrijfspand')
-  const secondaryIndex = bron.indexOf('Gratis energiecheck')
+  const secondaryIndex = bron.indexOf('Start de gratis energie-indicatie')
   assert.ok(primaryIndex > -1)
   assert.ok(secondaryIndex > -1)
   assert.ok(primaryIndex < secondaryIndex) // primaire knop staat vóór de secundaire in de bron
-  assert.match(bron, /variant="outline"[^]*Gratis energiecheck/) // de secundaire knop is expliciet 'outline'
+  assert.match(bron, /variant="outline"[^]*Start de gratis energie-indicatie/) // de secundaire knop is expliciet 'outline'
 })
 
 test('ClosingCta.jsx: primaire CTA is "Bespreek uw bedrijfspand", energie-indicatie is secundair/outline', () => {
   const bron = leesZonderComments('..', '..', 'components', 'home', 'ClosingCta.jsx')
   assert.match(bron, /Bespreek uw bedrijfspand/)
-  assert.match(bron, /variant="outline"[^]*Start de energie-indicatie/)
+  assert.match(bron, /variant="outline"[^]*Start de gratis energie-indicatie/)
+})
+
+test('CTA-tekst voor de gratis tool is overal uniform "Start de gratis energie-indicatie"', () => {
+  for (const bestand of [
+    ['..', '..', 'components', 'home', 'EnergieCta.jsx'],
+    ['..', '..', 'components', 'pakketten', 'DecisionCta.jsx'],
+    ['..', '..', 'pages', 'Pakketten.jsx'],
+  ]) {
+    const bron = leesZonderComments(...bestand)
+    assert.match(bron, /Start de gratis energie-indicatie/, bestand.join('/'))
+  }
 })

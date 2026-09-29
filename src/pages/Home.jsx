@@ -7,6 +7,7 @@ import { EnergieCta } from '../components/home/EnergieCta'
 import { HowItWorks } from '../components/home/HowItWorks'
 import { RegionalBand } from '../components/home/RegionalBand'
 import { Independence } from '../components/home/Independence'
+import { AdviesEerst } from '../components/home/AdviesEerst'
 import { ClosingCta } from '../components/home/ClosingCta'
 
 export default function Home() {
@@ -25,6 +26,7 @@ export default function Home() {
       <HowItWorks />
       <RegionalBand />
       <Independence />
+      <AdviesEerst />
       <ClosingCta />
     </>
   )

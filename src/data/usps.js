@@ -13,8 +13,8 @@ export const USPS = [
   },
   {
     icon: Buildings,
-    title: 'Pragmatisch verduurzamen',
-    description: 'Elke stap maakt verschil. We beginnen met de maatregelen met de snelste terugverdientijd.',
+    title: 'Wat nu, wat kan wachten',
+    description: 'Niet elke maatregel hoeft meteen. We geven aan wat prioriteit heeft en wat u zonder risico kunt uitstellen.',
   },
   {
     icon: FileText,

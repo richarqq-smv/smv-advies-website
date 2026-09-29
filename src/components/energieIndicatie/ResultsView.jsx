@@ -1,9 +1,11 @@
 import { ArrowClockwise, CheckCircle, Printer, SpinnerGap, WarningCircle } from '@phosphor-icons/react'
+import { Link } from 'react-router-dom'
 import { EnergyScale } from './EnergyScale'
 import { Button } from '../ui/Button'
 import { EnergieDossierKoppeling } from '../klantOmgeving/EnergieDossierKoppeling'
 import { buildPubliekeAandachtspunten, formatKostenBandbreedte, WAT_WEET_DEZE_INDICATIE_NIET } from '../../lib/energieScan/publiekeWeergave'
 import { COMPANY } from '../../data/company'
+import { ROUTES } from '../../lib/routes'
 
 // Deze mailto-conceptmail gaat NAAR SMV Advies zelf, maar de href staat
 // gewoon in de publieke pagina-HTML (zichtbaar via "pagina-bron bekijken",
@@ -74,6 +76,12 @@ export function ResultsView({ result, values, leadStatus, onRestart, voorkeurDos
           </Button>
         </div>
         <p className="mt-4 text-xs text-white/60">15 minuten, geen verplichtingen. Gewoon een goed gesprek.</p>
+        <p className="mt-5 text-sm text-white/70">
+          Liever eerst zelf de vervolgstappen en prijzen bekijken?{' '}
+          <Link to={ROUTES.pakketten} className="font-medium text-white underline underline-offset-2 hover:text-white/80">
+            Bekijk de pakketten
+          </Link>
+        </p>
       </div>
 
       <div className="mt-6 flex justify-center">

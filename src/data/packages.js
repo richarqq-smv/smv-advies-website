@@ -33,7 +33,7 @@ export const PACKAGES = [
       'Indicatie van EIA/ISDE-subsidiemogelijkheden',
     ],
     cta: 'QuickScan aanvragen',
-    ctaTo: ROUTES.contact,
+    ctaTo: `${ROUTES.contact}?pakket=basis`,
     featured: false,
   },
   {
@@ -54,10 +54,11 @@ export const PACKAGES = [
       'Alles uit het Basis Pakket',
       'Fysieke opname ter plaatse',
       'Bouwkundige en installatietechnische analyse in detail',
+      'Advies over het juiste investeringsmoment, ook in samenhang met onderhoud',
       'Stappenplan met fasering en financieel overzicht',
     ],
     cta: 'Premium advies aanvragen',
-    ctaTo: ROUTES.contact,
+    ctaTo: `${ROUTES.contact}?pakket=premium`,
     featured: true,
     badge: 'Aanbevolen',
   },
@@ -92,7 +93,7 @@ export const PACKAGES = [
     // aanwezig is.
     scopeNote: `Werkzaamheden buiten deze scope voeren we als meerwerk uit, tegen € ${MEERWERK_UURTARIEF} excl. btw per uur.`,
     cta: 'Gold traject aanvragen',
-    ctaTo: ROUTES.contact,
+    ctaTo: `${ROUTES.contact}?pakket=gold`,
     featured: false,
   },
 ]

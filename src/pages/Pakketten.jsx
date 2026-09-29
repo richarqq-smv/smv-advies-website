@@ -60,10 +60,14 @@ export default function Pakketten() {
             <div>
               <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Stap 0 · gratis</p>
               <p className="mt-1 text-base font-semibold text-primary">Energie Indicatie — Hoe staat mijn pand er globaal voor?</p>
-              <p className="mt-1 text-sm text-foreground-muted">Nog geen idee waar u staat? Begin hier, geheel vrijblijvend.</p>
+              <p className="mt-1 text-sm text-foreground-muted">
+                Nog geen idee waar u staat? Begin hier, geheel vrijblijvend — een geautomatiseerde
+                indicatie, zonder bedragen per maatregel. Voor een rapport mét investering,
+                besparing en terugverdientijd per maatregel is het Basis Pakket de eerste stap.
+              </p>
             </div>
             <Button to={ROUTES.energieIndicatie} variant="outline" className="shrink-0">
-              Naar de energie-indicatie
+              Start de gratis energie-indicatie
             </Button>
           </div>
 

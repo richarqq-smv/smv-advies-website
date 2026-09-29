@@ -20,7 +20,7 @@ export function ClosingCta() {
           <div className="flex shrink-0 flex-wrap gap-3">
             <Button to={ROUTES.contact}>Bespreek uw bedrijfspand</Button>
             <Button to={ROUTES.energieIndicatie} variant="outline" className="border-white/30 text-white hover:bg-white/10">
-              Start de energie-indicatie
+              Start de gratis energie-indicatie
             </Button>
           </div>
         </Reveal>

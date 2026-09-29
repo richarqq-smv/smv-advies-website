@@ -80,6 +80,11 @@ export function ComparisonTable() {
       </div>
 
       <p className="mt-4 text-xs text-foreground-muted">{COMPARISON_NOTE}</p>
+      {PACKAGES.filter((pkg) => pkg.scopeNote).map((pkg) => (
+        <p key={pkg.id} className="mt-1 text-xs text-foreground-muted">
+          {pkg.name}: {pkg.scopeNote}
+        </p>
+      ))}
     </Reveal>
   )
 }

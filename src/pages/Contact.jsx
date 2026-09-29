@@ -1,13 +1,32 @@
+import { useSearchParams } from 'react-router-dom'
 import { EnvelopeSimple, MapPin, Phone } from '@phosphor-icons/react'
 import { Seo } from '../components/seo/Seo'
 import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
 import { COMPANY } from '../data/company'
+import { PACKAGES } from '../data/packages'
 import { getBreadcrumbSchema } from '../lib/structuredData'
 import { ROUTES } from '../lib/routes'
 
+// `pakket` in de query string komt uitsluitend voor als publieke pakketnaam
+// (basis/premium/gold, hetzelfde id als in data/packages.js) — nooit een
+// interne id. We slaan de ruwe queryparameter nergens op en tonen hem nooit
+// letterlijk: alleen een exacte match met PACKAGES levert een naam op die we
+// tonen, dus een onbekende/gemanipuleerde waarde toont simpelweg niets (geen
+// XSS-oppervlak, geen foutmelding nodig).
+function usePakketContext() {
+  const [searchParams] = useSearchParams()
+  const pakketId = searchParams.get('pakket')
+  return PACKAGES.find((pkg) => pkg.id === pakketId) ?? null
+}
+
 export default function Contact() {
+  const pakket = usePakketContext()
+  const mailtoHref = pakket
+    ? `mailto:${COMPANY.contactEmail}?subject=${encodeURIComponent(`Aanvraag ${pakket.name} Pakket`)}`
+    : `mailto:${COMPANY.contactEmail}`
+
   return (
     <>
       <Seo
@@ -17,13 +36,18 @@ export default function Contact() {
       />
       <Section>
         <Container className="max-w-2xl text-center">
+          {pakket ? (
+            <p className="mx-auto mb-4 inline-flex items-center rounded-full bg-accent/10 px-4 py-1.5 text-sm font-semibold text-accent">
+              Uw aanvraag: {pakket.name} Pakket
+            </p>
+          ) : null}
           <h1 className="text-4xl text-primary sm:text-5xl">Laten we uw pand toekomstbestendig maken</h1>
           <p className="mx-auto mt-4 max-w-[50ch] text-base leading-relaxed text-foreground-muted">
             Een vraag, een aanvraag of gewoon sparren? {COMPANY.responseTime}.
           </p>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <Button href={`mailto:${COMPANY.contactEmail}`} variant="primary">
+            <Button href={mailtoHref} variant="primary">
               <EnvelopeSimple size={18} weight="bold" />
               {COMPANY.contactEmail}
             </Button>
