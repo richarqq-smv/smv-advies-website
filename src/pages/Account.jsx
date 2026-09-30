@@ -647,6 +647,11 @@ function MijnAdvies({ dossiers, adviespuntenPerDossier }) {
                             herbeoordelenBij: advies.herbeoordelen_bij,
                             herbeoordelenDatum: advies.herbeoordelen_datum,
                             signaalBevroren: advies.signaal_bevroren,
+                            investeringLaag: advies.investering_laag,
+                            investeringHoog: advies.investering_hoog,
+                            besparingEuro: advies.besparing_euro,
+                            terugverdientijdJaren: advies.terugverdientijd_jaren,
+                            prioriteit: advies.prioriteit,
                           }}
                         />
                       </li>

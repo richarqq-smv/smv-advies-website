@@ -14,6 +14,7 @@ import { EnergieUitnodiging } from '../components/klantOmgeving/EnergieUitnodigi
 import { CommercieleKansSectie } from '../components/klantOmgeving/CommercieleKansSectie'
 import { OfferteEditor } from '../components/klantOmgeving/OfferteEditor'
 import { OffertesHistorie } from '../components/klantOmgeving/OffertesHistorie'
+import { AdviesrapportGenerator } from '../components/klantOmgeving/AdviesrapportGenerator'
 import {
   getDossier,
   listAdviespunten,
@@ -225,6 +226,7 @@ export default function DossierDetail() {
                 onDossierChange={setDossier}
                 magBeheren={isAdmin}
               />
+              {isAdmin ? <AdviesrapportGenerator dossier={dossier} adviespunten={adviespunten} /> : null}
               {isAdmin && !dossier.energie_snapshot ? (
                 <EnergieUitnodiging dossierId={dossier.dossier_id} klant={dossier.klanten} />
               ) : null}

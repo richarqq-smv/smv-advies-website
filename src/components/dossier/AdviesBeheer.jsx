@@ -72,6 +72,23 @@ export function AdviespuntKaart({ advies, actions }) {
         </div>
       </div>
       <p className="text-sm leading-relaxed text-foreground-muted">{advies.toelichting}</p>
+      {advies.investeringLaag != null || advies.besparingEuro != null || advies.terugverdientijdJaren != null ? (
+        <p className="mt-2 text-xs text-foreground-muted">
+          {advies.investeringLaag != null ? (
+            <>
+              Investering {euro(advies.investeringLaag)}
+              {advies.investeringHoog != null && advies.investeringHoog !== advies.investeringLaag ? ` – ${euro(advies.investeringHoog)}` : ''}
+              {advies.besparingEuro != null || advies.terugverdientijdJaren != null ? ' · ' : ''}
+            </>
+          ) : null}
+          {advies.besparingEuro != null ? (
+            <>
+              Besparing {euro(advies.besparingEuro)}/jaar{advies.terugverdientijdJaren != null ? ' · ' : ''}
+            </>
+          ) : null}
+          {advies.terugverdientijdJaren != null ? `Terugverdientijd ${advies.terugverdientijdJaren} jaar` : ''}
+        </p>
+      ) : null}
       {advies.herbeoordelenBij || advies.herbeoordelenDatum ? (
         <p className="mt-2 text-xs text-foreground-muted">
           Opnieuw beoordelen

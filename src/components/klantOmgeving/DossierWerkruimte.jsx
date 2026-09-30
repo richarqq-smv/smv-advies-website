@@ -32,7 +32,31 @@ import { addAdviespunt, updateAdviespunt, removeAdviespunt, completeDossier } fr
  * adviespunten-integriteitstriggers in 0001_init.sql).
  */
 
-const LEEG_FORMULIER = { onderwerp: '', adviesStatus: '', toelichting: '', herbeoordelenBij: '', herbeoordelenDatum: '' }
+// investeringLaag/investeringHoog/besparingEuro/terugverdientijdJaren/prioriteit
+// (Adviesrapport-ronde, 0024_adviespunten_financiele_indicatie.sql): altijd
+// optioneel — voeden uitsluitend de maatregelentabel in een gegenereerd
+// adviesrapport, nooit verplicht voor "geen actie nodig"/"onvoldoende
+// informatie". Als tekst-strings in formulierstate (net als de rest van dit
+// formulier), pas bij opslaan omgezet naar getal-of-null.
+const LEEG_FORMULIER = {
+  onderwerp: '',
+  adviesStatus: '',
+  toelichting: '',
+  herbeoordelenBij: '',
+  herbeoordelenDatum: '',
+  investeringLaag: '',
+  investeringHoog: '',
+  besparingEuro: '',
+  terugverdientijdJaren: '',
+  prioriteit: '',
+}
+
+/** Lege string -> null, anders Number(...) — voor de vijf optionele financiële formuliervelden bij opslaan. */
+function getalOfNull(waarde) {
+  if (waarde === '' || waarde === null || waarde === undefined) return null
+  const n = Number(waarde)
+  return Number.isFinite(n) ? n : null
+}
 const STATUS_KEYS = Object.keys(STATUSES)
 
 function Veld({ id, label, verplicht, kind }) {
@@ -101,6 +125,67 @@ function AdviesFormulier({ idPrefix = 'advies', waarde, onWijzig, onOpslaan, onA
           <p className="mt-1 text-xs text-foreground-muted">
             Alleen invullen als er een concrete datum bekend is — de tekst hiernaast blijft de toelichting, ook zonder datum.
           </p>
+        </div>
+      </div>
+      <div className="border-t border-border pt-4">
+        <p className="mb-3 text-sm font-medium text-primary">
+          Financiële indicatie <span className="font-normal text-foreground-muted">(optioneel — voor de maatregelentabel in een adviesrapport)</span>
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <div>
+            <Veld id={`${idPrefix}-investering-laag`} label="Investering vanaf (€, excl. btw)" kind="optioneel" />
+            <input
+              id={`${idPrefix}-investering-laag`}
+              type="number"
+              min="0"
+              value={waarde.investeringLaag}
+              onChange={(e) => onWijzig({ ...waarde, investeringLaag: e.target.value })}
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <Veld id={`${idPrefix}-investering-hoog`} label="Investering tot (€, excl. btw)" kind="optioneel" />
+            <input
+              id={`${idPrefix}-investering-hoog`}
+              type="number"
+              min="0"
+              value={waarde.investeringHoog}
+              onChange={(e) => onWijzig({ ...waarde, investeringHoog: e.target.value })}
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <Veld id={`${idPrefix}-besparing`} label="Besparing per jaar (€)" kind="optioneel" />
+            <input
+              id={`${idPrefix}-besparing`}
+              type="number"
+              min="0"
+              value={waarde.besparingEuro}
+              onChange={(e) => onWijzig({ ...waarde, besparingEuro: e.target.value })}
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <Veld id={`${idPrefix}-terugverdientijd`} label="Terugverdientijd (jaar)" kind="optioneel" />
+            <input
+              id={`${idPrefix}-terugverdientijd`}
+              type="number"
+              min="0"
+              step="0.5"
+              value={waarde.terugverdientijdJaren}
+              onChange={(e) => onWijzig({ ...waarde, terugverdientijdJaren: e.target.value })}
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <Veld id={`${idPrefix}-prioriteit`} label="Prioriteit" kind="optioneel" />
+            <select id={`${idPrefix}-prioriteit`} value={waarde.prioriteit} onChange={(e) => onWijzig({ ...waarde, prioriteit: e.target.value })} className={inputClass}>
+              <option value="">Geen</option>
+              <option value="1">1 — hoog</option>
+              <option value="2">2 — gemiddeld</option>
+              <option value="3">3 — laag</option>
+            </select>
+          </div>
         </div>
       </div>
       {fout ? (
@@ -237,7 +322,9 @@ export function DossierWerkruimte({
 
   function startVanuitSignaal(insight) {
     setNieuwBron(insight)
-    setNieuwWaarde({ onderwerp: insight.componentLabel, adviesStatus: insight.status, toelichting: '', herbeoordelenBij: '', herbeoordelenDatum: '' })
+    // Geen investering/besparing vooringevuld: een MJOP-signaal bevat die
+    // data niet (zie lib/mjop/linking.js) — alleen status/jaartal.
+    setNieuwWaarde({ ...LEEG_FORMULIER, onderwerp: insight.componentLabel, adviesStatus: insight.status })
     setFout(null)
   }
 
@@ -245,9 +332,20 @@ export function DossierWerkruimte({
   // startVanuitSignaal hierboven voor MJOP): een Energie-kandidaat heeft
   // zelf geen adviesstatus (zie energieInsights.js) — Richard kiest die
   // hier altijd zelf, precies zoals bij een handmatig adviespunt.
+  // investeringLaag/investeringHoog/besparingEuro/terugverdientijdJaren WEL
+  // vooringevuld: die bedragen staan al, bevroren, in de Energie-snapshot
+  // (buildEnergieInsights()) — hier alleen overnemen, nooit herberekenen.
+  // De adviseur ziet en kan ze altijd nog aanpassen vóór opslaan.
   function startVanuitEnergieSignaal(insight) {
     setNieuwBron(insight)
-    setNieuwWaarde({ onderwerp: insight.onderwerp, adviesStatus: '', toelichting: '', herbeoordelenBij: '', herbeoordelenDatum: '' })
+    setNieuwWaarde({
+      ...LEEG_FORMULIER,
+      onderwerp: insight.onderwerp,
+      investeringLaag: insight.investeringLaag ?? '',
+      investeringHoog: insight.investeringHoog ?? '',
+      besparingEuro: insight.besparingEuro ?? '',
+      terugverdientijdJaren: insight.terugverdientijd ?? '',
+    })
     setFout(null)
   }
 
@@ -273,6 +371,11 @@ export function DossierWerkruimte({
         herbeoordelenBij: nieuwWaarde.herbeoordelenBij,
         herbeoordelenDatum: nieuwWaarde.herbeoordelenDatum,
         signaalBevroren: isSignaal ? (isEnergieSignaal ? createEnergieSignaalBevroren(nieuwBron) : createSignaalBevroren(nieuwBron)) : null,
+        investeringLaag: getalOfNull(nieuwWaarde.investeringLaag),
+        investeringHoog: getalOfNull(nieuwWaarde.investeringHoog),
+        besparingEuro: getalOfNull(nieuwWaarde.besparingEuro),
+        terugverdientijdJaren: getalOfNull(nieuwWaarde.terugverdientijdJaren),
+        prioriteit: getalOfNull(nieuwWaarde.prioriteit),
       })
       setAdviespunten((v) => [...v, nieuw])
       setNieuwBron(null)
@@ -291,6 +394,11 @@ export function DossierWerkruimte({
       toelichting: advies.toelichting,
       herbeoordelenBij: advies.herbeoordelen_bij ?? '',
       herbeoordelenDatum: advies.herbeoordelen_datum ?? '',
+      investeringLaag: advies.investering_laag ?? '',
+      investeringHoog: advies.investering_hoog ?? '',
+      besparingEuro: advies.besparing_euro ?? '',
+      terugverdientijdJaren: advies.terugverdientijd_jaren ?? '',
+      prioriteit: advies.prioriteit ?? '',
     })
     setFout(null)
   }
@@ -311,6 +419,11 @@ export function DossierWerkruimte({
         toelichting: bewerkWaarde.toelichting,
         herbeoordelenBij: bewerkWaarde.herbeoordelenBij,
         herbeoordelenDatum: bewerkWaarde.herbeoordelenDatum,
+        investeringLaag: getalOfNull(bewerkWaarde.investeringLaag),
+        investeringHoog: getalOfNull(bewerkWaarde.investeringHoog),
+        besparingEuro: getalOfNull(bewerkWaarde.besparingEuro),
+        terugverdientijdJaren: getalOfNull(bewerkWaarde.terugverdientijdJaren),
+        prioriteit: getalOfNull(bewerkWaarde.prioriteit),
       })
       setAdviespunten((v) => v.map((a) => (a.adviespunt_id === bijgewerkt.adviespunt_id ? bijgewerkt : a)))
       setBewerkId(null)
@@ -388,6 +501,11 @@ export function DossierWerkruimte({
                     herbeoordelenBij: advies.herbeoordelen_bij,
                     herbeoordelenDatum: advies.herbeoordelen_datum,
                     signaalBevroren: advies.signaal_bevroren,
+                    investeringLaag: advies.investering_laag,
+                    investeringHoog: advies.investering_hoog,
+                    besparingEuro: advies.besparing_euro,
+                    terugverdientijdJaren: advies.terugverdientijd_jaren,
+                    prioriteit: advies.prioriteit,
                   }}
                   actions={
                     open && magBeheren ? (

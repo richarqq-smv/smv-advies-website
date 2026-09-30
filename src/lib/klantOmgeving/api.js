@@ -175,7 +175,20 @@ export async function openOfHergebruikDossier({ klantId, pandId, pand, primaireC
 /** Uitsluitend admin sinds de security-hardeningsronde (2026-09-28, adviespunten_insert/update/delete): alleen SMV zet een signaal om naar definitief advies. UI toont deze actie alleen bij magBeheren (zie DossierWerkruimte.jsx). */
 export async function addAdviespunt(
   dossierId,
-  { onderwerp, herkomst, adviesStatus, toelichting, herbeoordelenBij = null, herbeoordelenDatum = null, signaalBevroren = null },
+  {
+    onderwerp,
+    herkomst,
+    adviesStatus,
+    toelichting,
+    herbeoordelenBij = null,
+    herbeoordelenDatum = null,
+    signaalBevroren = null,
+    investeringLaag = null,
+    investeringHoog = null,
+    besparingEuro = null,
+    terugverdientijdJaren = null,
+    prioriteit = null,
+  },
 ) {
   return throwOnError(
     await supabase
@@ -193,19 +206,34 @@ export async function addAdviespunt(
         // zijn dat de migratie bewust vermijdt.
         herbeoordelen_datum: herbeoordelenDatum || null,
         signaal_bevroren: signaalBevroren,
+        // Adviesrapport-ronde (0024_adviespunten_financiele_indicatie.sql):
+        // altijd optioneel, nooit een verzonnen bedrag — zie moduledoc daar.
+        investering_laag: investeringLaag,
+        investering_hoog: investeringHoog,
+        besparing_euro: besparingEuro,
+        terugverdientijd_jaren: terugverdientijdJaren,
+        prioriteit,
       })
       .select('*')
       .single(),
   )
 }
 
-export async function updateAdviespunt(adviespuntId, { onderwerp, adviesStatus, toelichting, herbeoordelenBij, herbeoordelenDatum }) {
+export async function updateAdviespunt(
+  adviespuntId,
+  { onderwerp, adviesStatus, toelichting, herbeoordelenBij, herbeoordelenDatum, investeringLaag, investeringHoog, besparingEuro, terugverdientijdJaren, prioriteit },
+) {
   const changes = {}
   if (onderwerp !== undefined) changes.onderwerp = onderwerp.trim()
   if (adviesStatus !== undefined) changes.advies_status = adviesStatus
   if (toelichting !== undefined) changes.toelichting = toelichting.trim()
   if (herbeoordelenBij !== undefined) changes.herbeoordelen_bij = herbeoordelenBij?.trim() || null
   if (herbeoordelenDatum !== undefined) changes.herbeoordelen_datum = herbeoordelenDatum || null
+  if (investeringLaag !== undefined) changes.investering_laag = investeringLaag
+  if (investeringHoog !== undefined) changes.investering_hoog = investeringHoog
+  if (besparingEuro !== undefined) changes.besparing_euro = besparingEuro
+  if (terugverdientijdJaren !== undefined) changes.terugverdientijd_jaren = terugverdientijdJaren
+  if (prioriteit !== undefined) changes.prioriteit = prioriteit
   return throwOnError(await supabase.from('adviespunten').update(changes).eq('adviespunt_id', adviespuntId).select('*').single())
 }
 
