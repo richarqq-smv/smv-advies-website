@@ -38,6 +38,17 @@ export const ROUTES = {
   // adminDossiers hieronder (was voorheen de inhoud van /admin zelf).
   admin: '/admin',
   adminDossiers: '/admin/dossiers',
+  // Mobiele-opnameronde (2026-09-30) — /dossier/:id (hieronder, ongewijzigd)
+  // blijft de klant-eigen route onder MainLayout; een admin die vanuit
+  // /admin/dossiers doorklikt komt nu hier terecht: dezelfde DossierDetail-
+  // pagina/component, maar gerouteerd onder AdminLayout (geen publieke
+  // header/footer) — zie App.jsx. bepaalDossierOverzichtRoute(isAdmin) en
+  // "Terug naar dossiers" blijven ongewijzigd naar adminDossiers wijzen.
+  adminDossierDetail: (dossierId) => `/admin/dossiers/${dossierId}`,
+  // De eigenlijke mobiele opnameflow — altijd in dossiercontext (Admin ->
+  // Dossiers -> dossier -> Opnames -> nieuwe/bestaande opname), nooit een
+  // dossieroverstijgende lijst (die bestaat bewust niet, zie opdracht §14).
+  adminOpname: (dossierId, opnameId) => `/admin/dossiers/${dossierId}/opnames/${opnameId}`,
   adminPlanning: '/admin/planning',
   adminKansen: '/admin/kansen',
   // Werkfase Fase 8 — dossier-overstijgend, admin-only, geen klantroute.

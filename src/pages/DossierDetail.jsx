@@ -15,7 +15,7 @@ import { CommercieleKansSectie } from '../components/klantOmgeving/CommercieleKa
 import { OfferteEditor } from '../components/klantOmgeving/OfferteEditor'
 import { OffertesHistorie } from '../components/klantOmgeving/OffertesHistorie'
 import { AdviesrapportGenerator } from '../components/klantOmgeving/AdviesrapportGenerator'
-import { OpnamesPlaceholder } from '../components/klantOmgeving/OpnamesPlaceholder'
+import { OpnamesSectie } from '../components/klantOmgeving/OpnamesSectie'
 import { PakketControle } from '../components/klantOmgeving/PakketControle'
 import { BouwkundigeAnalyse } from '../components/klantOmgeving/BouwkundigeAnalyse'
 import { DossierTaken } from '../components/klantOmgeving/DossierTaken'
@@ -232,7 +232,7 @@ export default function DossierDetail() {
                 magBeheren={isAdmin}
               />
               <BouwkundigeAnalyse dossier={dossier} onDossierChange={setDossier} magBeheren={isAdmin} />
-              {isAdmin ? <OpnamesPlaceholder /> : null}
+              {isAdmin ? <OpnamesSectie dossierId={dossier.dossier_id} /> : null}
               {isAdmin ? <AdviesrapportGenerator dossier={dossier} adviespunten={adviespunten} /> : null}
               {isAdmin && dossier.pakket_id === 'gold' ? <DossierTaken dossierId={dossier.dossier_id} pakketId={dossier.pakket_id} magBeheren={isAdmin} /> : null}
               {isAdmin && !dossier.energie_snapshot ? (

@@ -878,6 +878,106 @@ export async function getDocumentenVoorDossier(dossierId) {
   )
 }
 
+// --- Opnames (mobiele opnameflow, 0029/0030) --------------------------------
+// Admin-only door de hele keten (RLS), dunne wrappers zoals de rest van deze
+// module — zie src/lib/klantOmgeving/opname.js voor de checklist-/onderdeel-
+// content en de pure compleetheids-/statuslogica.
+
+export async function listOpnamesVoorDossier(dossierId) {
+  return throwOnError(
+    await supabase.from('opnames').select('*').eq('dossier_id', dossierId).order('created_at', { ascending: false }),
+  )
+}
+
+export async function getOpname(opnameId) {
+  return throwOnError(await supabase.from('opnames').select('*').eq('opname_id', opnameId).single())
+}
+
+export async function createOpname(dossierId, { planningAfspraakId = null, opnameDatum = null } = {}) {
+  return throwOnError(
+    await supabase
+      .from('opnames')
+      .insert({ dossier_id: dossierId, planning_afspraak_id: planningAfspraakId, opname_datum: opnameDatum })
+      .select('*')
+      .single(),
+  )
+}
+
+/**
+ * Basisgegevens/algemene-opmerkingen bijwerken (autosave vanuit de
+ * Basisgegevens- en Afronden-stap). Faalt met de database-integriteitsfout
+ * als de opname al is afgerond (bewaak_opname_integriteit) — de UI moet dan
+ * eerst expliciet heropenen (updateOpnameStatus), geen stille val-through.
+ */
+export async function updateOpname(opnameId, { opnameDatum, notitie } = {}) {
+  const changes = {}
+  if (opnameDatum !== undefined) changes.opname_datum = opnameDatum || null
+  if (notitie !== undefined) changes.notitie = notitie?.trim() || null
+  if (Object.keys(changes).length === 0) return null
+  return throwOnError(await supabase.from('opnames').update(changes).eq('opname_id', opnameId).select('*').single())
+}
+
+/** Statusovergang (concept/opgeslagen/afgerond) — ook het expliciete "heropenen"-pad (afgerond -> opgeslagen), zie 0030-migratie voor de trigger die dit toestaat/afdwingt. */
+export async function updateOpnameStatus(opnameId, status) {
+  return throwOnError(await supabase.from('opnames').update({ status }).eq('opname_id', opnameId).select('*').single())
+}
+
+export async function listOpnameWaarnemingen(opnameId) {
+  return throwOnError(
+    await supabase.from('opname_waarnemingen').select('*').eq('opname_id', opnameId).order('created_at', { ascending: true }),
+  )
+}
+
+export async function addOpnameWaarneming(opnameId, onderdeel) {
+  return throwOnError(
+    await supabase.from('opname_waarnemingen').insert({ opname_id: opnameId, onderdeel }).select('*').single(),
+  )
+}
+
+const OPNAME_WAARNEMING_VELDEN = ['huidige_situatie', 'beoordeling', 'maatvoering', 'aandachtspunt', 'mogelijke_maatregel', 'opmerkingen']
+
+/** Autosave van één waarnemingsregel — alleen de daadwerkelijk meegegeven velden worden gewijzigd, precies zoals updateDossierTaak dat al doet. */
+export async function updateOpnameWaarneming(waarnemingId, velden) {
+  const changes = {}
+  OPNAME_WAARNEMING_VELDEN.forEach((veld) => {
+    if (velden[veld] !== undefined) changes[veld] = velden[veld]?.trim() || null
+  })
+  if (Object.keys(changes).length === 0) return null
+  return throwOnError(await supabase.from('opname_waarnemingen').update(changes).eq('waarneming_id', waarnemingId).select('*').single())
+}
+
+export async function removeOpnameWaarneming(waarnemingId) {
+  const { error } = await supabase.from('opname_waarnemingen').delete().eq('waarneming_id', waarnemingId)
+  if (error) throw error
+}
+
+export async function listOpnameChecklistItems(opnameId) {
+  return throwOnError(
+    await supabase.from('opname_checklist_items').select('*').eq('opname_id', opnameId),
+  )
+}
+
+/** Vinkt een checklist-item aan/uit — upsert op (opname_id, item_code), zodat de eerste keer aanvinken geen aparte "rij bestaat al?"-check nodig heeft. */
+export async function setOpnameChecklistItem(opnameId, itemCode, afgevinkt) {
+  return throwOnError(
+    await supabase
+      .from('opname_checklist_items')
+      .upsert(
+        { opname_id: opnameId, item_code: itemCode, afgevinkt, afgevinkt_op: afgevinkt ? new Date().toISOString() : null },
+        { onConflict: 'opname_id,item_code' },
+      )
+      .select('*')
+      .single(),
+  )
+}
+
+/** Documenten (foto's/bijlagen) van één Opname — opname-breed, ongeacht of ze aan een specifieke waarneming hangen. */
+export async function getDocumentenVoorOpname(opnameId) {
+  return throwOnError(
+    await supabase.from('documenten').select('*').eq('opname_id', opnameId).order('created_at', { ascending: false }),
+  )
+}
+
 /**
  * Maakt een nieuwe factuur aan. `factuurnummer` wordt nooit meegegeven —
  * die komt altijd uit de kolom-DEFAULT (genereer_factuur_nummer()), dus
@@ -1151,7 +1251,16 @@ const DOCUMENTEN_BUCKET = 'klant-documenten'
  * voor iedereen (dezelfde RLS geldt voor de lijst); geen lek, alleen
  * ongebruikte opslag.
  */
-export async function uploadDocument({ klantId, dossierId = null, file, omschrijving = null }) {
+/**
+ * `opnameId`/`opnameWaarnemingId` (optioneel, mobiele-opnameronde 2026-09-30):
+ * een opnamefoto is ook gewoon een document in dezelfde privébucket, met de
+ * bestaande `documenten.opname_id`/`opname_waarneming_id`-koppeling erbij —
+ * geen aparte foto-opslag (zie opdracht §6). Storage-autorisatie verandert
+ * niet: nog steeds hetzelfde `${klantId}/...`-pad, admin uploadt hier altijd
+ * onder de klant_id van het dossier waar de opname bij hoort (is_admin()
+ * geeft toegang tot elk klant-pad, zie 0018_documenten.sql).
+ */
+export async function uploadDocument({ klantId, dossierId = null, opnameId = null, opnameWaarnemingId = null, file, omschrijving = null }) {
   const veiligeNaam = file.name.replace(/[^a-zA-Z0-9.\-_]+/g, '-')
   const storagePath = `${klantId}/${crypto.randomUUID()}-${veiligeNaam}`
   const { error: uploadError } = await supabase.storage.from(DOCUMENTEN_BUCKET).upload(storagePath, file)
@@ -1162,6 +1271,8 @@ export async function uploadDocument({ klantId, dossierId = null, file, omschrij
       .insert({
         klant_id: klantId,
         dossier_id: dossierId,
+        opname_id: opnameId,
+        opname_waarneming_id: opnameWaarnemingId,
         bestandsnaam: file.name,
         storage_path: storagePath,
         omschrijving: omschrijving?.trim() || null,

@@ -46,6 +46,7 @@ const AdminResultaat = lazy(() => import('./pages/AdminResultaat'))
 const AdminKosten = lazy(() => import('./pages/AdminKosten'))
 const AdminBtw = lazy(() => import('./pages/AdminBtw'))
 const AdminInstellingen = lazy(() => import('./pages/AdminInstellingen'))
+const AdminOpname = lazy(() => import('./pages/AdminOpname'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 function LazyBoundary() {
@@ -106,6 +107,16 @@ export default function App() {
               <Route path={ROUTES.admin} element={<Admin />} />
               <Route path={ROUTES.adminPlanning} element={<AdminPlanning />} />
               <Route path={ROUTES.adminDossiers} element={<AdminDossiers />} />
+              {/*
+                Mobiele-opnameronde: hergebruikt letterlijk hetzelfde
+                DossierDetail-component als /dossier/:dossierId hieronder
+                (zelfde interne isAdmin-check, zelfde secties) — alleen nu
+                gerouteerd onder AdminLayout in plaats van MainLayout, dus
+                geen publieke header/footer meer als een admin vanuit
+                /admin/dossiers doorklikt. Geen inhoud gedupliceerd.
+              */}
+              <Route path="/admin/dossiers/:dossierId" element={<DossierDetail />} />
+              <Route path="/admin/dossiers/:dossierId/opnames/:opnameId" element={<AdminOpname />} />
               <Route path={ROUTES.watKanWachten} element={<WatKanWachten />} />
               <Route path={ROUTES.archief} element={<Archief />} />
               <Route path={ROUTES.adminKansen} element={<AdminKansen />} />

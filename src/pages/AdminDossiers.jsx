@@ -229,7 +229,7 @@ export default function AdminDossiers() {
                         <li key={d.dossier_id}>
                           <div className="flex items-stretch gap-2">
                             <Link
-                              to={ROUTES.dossier(d.dossier_id)}
+                              to={ROUTES.adminDossierDetail(d.dossier_id)}
                               className="flex flex-1 flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-white px-4 py-3 text-sm hover:border-accent hover:bg-muted"
                             >
                               <span className="font-medium text-primary">{d.klanten?.naam || d.klanten?.bedrijfsnaam || 'Onbekende klant'}</span>
