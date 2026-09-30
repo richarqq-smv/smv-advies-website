@@ -767,8 +767,8 @@ function MijnDocumenten({ klant, documenten, setDocumenten, dossiers }) {
           {documenten.map((d) => (
             <li key={d.document_id} className="rounded-lg border border-border bg-white px-4 py-3 text-sm">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <div>
-                  <p className="font-medium text-primary">{d.bestandsnaam}</p>
+                <div className="min-w-0">
+                  <p className="font-medium break-words text-primary">{d.bestandsnaam}</p>
                   <p className="text-xs text-foreground-muted">
                     {formatDatumNl(d.created_at?.slice(0, 10))}
                     {d.omschrijving ? ` · ${d.omschrijving}` : ''}

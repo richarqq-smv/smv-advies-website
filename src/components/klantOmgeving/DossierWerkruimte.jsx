@@ -360,12 +360,16 @@ export function DossierWerkruimte({
       </div>
       <p className="-mt-4 text-sm text-foreground-muted">
         {open
-          ? 'Leg hier vast wat u met de klant bespreekt — ook "geen actie nodig" of "later opnieuw beoordelen" zijn volwaardige uitkomsten.'
+          ? magBeheren
+            ? 'Leg hier vast wat u met de klant bespreekt — ook "geen actie nodig" of "later opnieuw beoordelen" zijn volwaardige uitkomsten.'
+            : 'Hier verschijnt het advies zodra SMV dit voor dit dossier heeft vastgelegd.'
           : 'Dit dossier is afgerond. Het advies hieronder is definitief vastgelegd en kan niet meer worden gewijzigd.'}
       </p>
 
       {adviespunten.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border px-5 py-6 text-center text-sm text-foreground-muted">Nog geen adviespunten vastgelegd.</p>
+        <p className="rounded-lg border border-dashed border-border px-5 py-6 text-center text-sm text-foreground-muted">
+          {magBeheren ? 'Nog geen adviespunten vastgelegd.' : 'Er is voor dit dossier nog geen definitief advies beschikbaar.'}
+        </p>
       ) : (
         <ul className="flex flex-col gap-3">
           {adviespunten.map((advies) =>

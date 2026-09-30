@@ -281,37 +281,42 @@ export default function DossierDetail() {
  * dossier_id i.p.v. klant_id). Zichtbaar voor admin én de eigen klant.
  */
 function DocumentenBijDossier({ documenten, downloaden, downloadFoutId }) {
-  if (documenten.length === 0) return null
   return (
     <div className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
       <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Documenten</p>
       <h3 className="mb-4 text-xl text-primary">Documenten bij dit dossier</h3>
-      <ul className="flex flex-col gap-2">
-        {documenten.map((d) => (
-          <li key={d.document_id} className="rounded-lg border border-border bg-white px-4 py-3 text-sm">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <FileText size={16} className="shrink-0 text-foreground-muted" />
-                <div>
-                  <p className="font-medium text-primary">{d.bestandsnaam}</p>
-                  <p className="text-xs text-foreground-muted">
-                    {formatDatumNl(d.created_at?.slice(0, 10))}
-                    {d.omschrijving ? ` · ${d.omschrijving}` : ''}
-                  </p>
+      {documenten.length === 0 ? (
+        <p className="rounded-lg border border-dashed border-border px-5 py-6 text-center text-sm text-foreground-muted">
+          Er zijn nog geen documenten aan dit dossier gekoppeld.
+        </p>
+      ) : (
+        <ul className="flex flex-col gap-2">
+          {documenten.map((d) => (
+            <li key={d.document_id} className="rounded-lg border border-border bg-white px-4 py-3 text-sm">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <FileText size={16} className="shrink-0 text-foreground-muted" />
+                  <div className="min-w-0">
+                    <p className="font-medium break-words text-primary">{d.bestandsnaam}</p>
+                    <p className="text-xs text-foreground-muted">
+                      {formatDatumNl(d.created_at?.slice(0, 10))}
+                      {d.omschrijving ? ` · ${d.omschrijving}` : ''}
+                    </p>
+                  </div>
                 </div>
+                <Button type="button" variant="ghost" size="sm" onClick={() => downloaden(d)}>
+                  <DownloadSimple size={15} /> Downloaden
+                </Button>
               </div>
-              <Button type="button" variant="ghost" size="sm" onClick={() => downloaden(d)}>
-                <DownloadSimple size={15} /> Downloaden
-              </Button>
-            </div>
-            {downloadFoutId === d.document_id ? (
-              <p role="alert" className="mt-1.5 text-xs font-medium text-error">
-                Downloaden is niet gelukt. Probeer het opnieuw.
-              </p>
-            ) : null}
-          </li>
-        ))}
-      </ul>
+              {downloadFoutId === d.document_id ? (
+                <p role="alert" className="mt-1.5 text-xs font-medium text-error">
+                  Downloaden is niet gelukt. Probeer het opnieuw.
+                </p>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
@@ -325,29 +330,34 @@ function DocumentenBijDossier({ documenten, downloaden, downloadFoutId }) {
  * die Account.jsx/AdminFacturen.jsx al gebruiken, geen nieuwe.
  */
 function FacturenBijDossier({ facturen, isAdmin }) {
-  if (facturen.length === 0) return null
   return (
     <div className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
       <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Facturen</p>
       <h3 className="mb-4 text-xl text-primary">Facturen bij dit dossier</h3>
-      <ul className="flex flex-col gap-2">
-        {facturen.map((f) => (
-          <li key={f.factuur_id}>
-            <Link
-              to={isAdmin ? ROUTES.adminFactuurDetail(f.factuur_id) : ROUTES.mijnFactuur(f.factuur_id)}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-white px-4 py-2.5 text-sm hover:border-accent hover:bg-muted"
-            >
-              <span className="flex items-center gap-2 font-medium text-primary">
-                <Receipt size={16} className="shrink-0 text-foreground-muted" />
-                {f.factuurnummer}
-              </span>
-              <span className="text-xs text-foreground-muted">{FACTUUR_STATUS_LABELS[f.status] ?? f.status}</span>
-              <span className="text-xs text-foreground-muted">Vervalt {formatDatumNl(f.vervaldatum)}</span>
-              <span className="text-primary">{euro(f.totaal_incl_btw)}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      {facturen.length === 0 ? (
+        <p className="rounded-lg border border-dashed border-border px-5 py-6 text-center text-sm text-foreground-muted">
+          Nog geen facturen voor dit dossier.
+        </p>
+      ) : (
+        <ul className="flex flex-col gap-2">
+          {facturen.map((f) => (
+            <li key={f.factuur_id}>
+              <Link
+                to={isAdmin ? ROUTES.adminFactuurDetail(f.factuur_id) : ROUTES.mijnFactuur(f.factuur_id)}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-white px-4 py-2.5 text-sm hover:border-accent hover:bg-muted"
+              >
+                <span className="flex min-w-0 items-center gap-2 font-medium text-primary">
+                  <Receipt size={16} className="shrink-0 text-foreground-muted" />
+                  <span className="truncate">{f.factuurnummer}</span>
+                </span>
+                <span className="text-xs text-foreground-muted">{FACTUUR_STATUS_LABELS[f.status] ?? f.status}</span>
+                <span className="text-xs text-foreground-muted">Vervalt {formatDatumNl(f.vervaldatum)}</span>
+                <span className="text-primary">{euro(f.totaal_incl_btw)}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
