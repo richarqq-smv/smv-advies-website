@@ -38,6 +38,18 @@
     <link rel="apple-touch-icon" href="/favicon-180.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#16293A" />
+    <!--
+      Mobiele-adminronde (2026-09-30) — minimale, veilige iOS "Add to Home
+      Screen"-voorbereiding (zie het PWA-onderzoek in het gespreksverslag):
+      alleen meta-tags, geen manifest.json/service worker. Deze twee regels
+      wijzigen niets aan gewoon browsen (ze doen pas iets zodra iemand
+      expliciet "Zet op beginscherm" kiest in Safari), dus geen risico voor
+      de publieke site. site-wide (dit bestand is de enige HTML-template,
+      ook voor /admin) — dat is hier geen probleem: alleen wie zelf vanaf
+      /admin "Zet op beginscherm" kiest, ziet het effect.
+    -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="SMV Advies" />
     <meta name="description" content="SMV Advies levert onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in de Hoeksche Waard. Heldere rapportage, praktisch toepasbaar, stap voor stap." />
     <meta name="robots" content="index, follow" />
     <meta property="og:type" content="website" />

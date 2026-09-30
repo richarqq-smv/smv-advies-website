@@ -86,6 +86,44 @@ export default function App() {
         </Route>
       </Route>
 
+      {/*
+        Admin-webapp (mobiele-adminronde, 2026-09-30) — een bewuste,
+        volledig aparte routetak, GEEN kind van <MainLayout /> meer: de
+        vorige opzet nestte deze admin-routes binnen MainLayout, waardoor
+        elke adminpagina de publieke site-Header/MobileNav/Footer/
+        ContactFab/CookieBanner meekreeg. AdminLayout is nu zelf de
+        volledige shell (eigen topbar/navigatie, zie
+        components/admin/AdminLayout.jsx) — precies zoals gevraagd: /admin
+        is een eigen ingang, geen publieke navigatie eromheen. Zelfde
+        RequireAuth -> RequireAdmin-bewaking als voorheen, ongewijzigd
+        (RLS blijft de echte toegangsgrens, zie SECURITY_MODEL.md); alleen
+        de laag ERBOVEN (welke layout de routes omringt) is verplaatst.
+      */}
+      <Route element={<LazyBoundary />}>
+        <Route element={<RequireAuth />}>
+          <Route element={<RequireAdmin />}>
+            <Route element={<AdminLayout />}>
+              <Route path={ROUTES.admin} element={<Admin />} />
+              <Route path={ROUTES.adminPlanning} element={<AdminPlanning />} />
+              <Route path={ROUTES.adminDossiers} element={<AdminDossiers />} />
+              <Route path={ROUTES.watKanWachten} element={<WatKanWachten />} />
+              <Route path={ROUTES.archief} element={<Archief />} />
+              <Route path={ROUTES.adminKansen} element={<AdminKansen />} />
+              <Route path={ROUTES.adminOffertes} element={<AdminOffertes />} />
+              <Route path={ROUTES.adminFacturen} element={<AdminFacturen />} />
+              <Route path="/admin/facturen/:factuurId" element={<FactuurDetail />} />
+              <Route path={ROUTES.adminAdministratie} element={<AdminAdministratie />} />
+              <Route path={ROUTES.adminOmzet} element={<AdminOmzet />} />
+              <Route path={ROUTES.adminOpenstaand} element={<AdminOpenstaand />} />
+              <Route path={ROUTES.adminResultaat} element={<AdminResultaat />} />
+              <Route path={ROUTES.adminKosten} element={<AdminKosten />} />
+              <Route path={ROUTES.adminBtw} element={<AdminBtw />} />
+              <Route path={ROUTES.adminInstellingen} element={<AdminInstellingen />} />
+            </Route>
+          </Route>
+        </Route>
+      </Route>
+
       <Route element={<MainLayout />}>
         <Route path={ROUTES.home} element={<Home />} />
 
@@ -112,51 +150,24 @@ export default function App() {
             {/*
               Klantomgeving-uitbreiding (2026-09-28) — "Mijn facturen":
               hergebruikt FactuurDetail.jsx (zelfde component als de
-              admin-route hieronder), maar bewust BUITEN de RequireAdmin-
+              admin-route hierboven), maar bewust BUITEN de RequireAdmin-
               boom: RLS (facturen_select_klant, 0017) is de toegangsgrens,
               FactuurDetail.jsx verbergt de admin-acties zelf al via een
               eigen isAdmin-check.
             */}
             <Route path="/account/facturen/:factuurId" element={<FactuurDetail />} />
-            <Route path="/dossier/:dossierId" element={<DossierDetail />} />
             {/*
-              Admin-ronde (2026-09-28): AdminLayout geeft elke admin-
-              subpagina dezelfde navigatiebalk (Dashboard/Planning/
-              Klanten & dossiers/Wat kan wachten/Archief) — dat is ook de
-              "terug naar Admin Dashboard"-mogelijkheid, dus de losse
-              pagina's hoeven daar zelf niets meer voor te bouwen.
+              /dossier/:id blijft bewust hier, ONDER MainLayout — dit is een
+              gedeelde route (dezelfde DossierDetail.jsx voor zowel de eigen
+              klant als een admin die een dossier bekijkt, met een interne
+              isAdmin-check die admin-only secties toont). Een klant die
+              zijn eigen dossier bekijkt hoort de gewone site-chrome te
+              zien, dus deze route kan niet zomaar naar de Admin-shell
+              verhuizen — AdminDossiers.jsx linkt er gewoon naartoe (zelfde
+              gedrag als voorheen), en "Terug naar dossiers" wijst een
+              admin terug naar /admin/dossiers (bepaalDossierOverzichtRoute).
             */}
-            <Route element={<RequireAdmin />}>
-              <Route element={<AdminLayout />}>
-                <Route path={ROUTES.admin} element={<Admin />} />
-                <Route path={ROUTES.adminPlanning} element={<AdminPlanning />} />
-                <Route path={ROUTES.adminDossiers} element={<AdminDossiers />} />
-                <Route path={ROUTES.watKanWachten} element={<WatKanWachten />} />
-                <Route path={ROUTES.archief} element={<Archief />} />
-                <Route path={ROUTES.adminKansen} element={<AdminKansen />} />
-                {/*
-                  Administratie-uitbreiding (2026-09-28): zelfde
-                  RequireAuth -> RequireAdmin -> AdminLayout-boom als hierboven
-                  — geen enkele van deze routes staat buiten die bewaking
-                  (zie opdracht sectie 16, "elke admin-route hoort achter
-                  RequireAuth + RequireAdmin"). /admin/facturen/:id staat
-                  bewust WEL binnen deze boom (in tegenstelling tot
-                  offertePreview hierboven) — het is puur admin, geen
-                  klantfunctie, dus de gedeelde adminnavigatie hoort hier
-                  logisch bij.
-                */}
-                <Route path={ROUTES.adminOffertes} element={<AdminOffertes />} />
-                <Route path={ROUTES.adminFacturen} element={<AdminFacturen />} />
-                <Route path="/admin/facturen/:factuurId" element={<FactuurDetail />} />
-                <Route path={ROUTES.adminAdministratie} element={<AdminAdministratie />} />
-                <Route path={ROUTES.adminOmzet} element={<AdminOmzet />} />
-                <Route path={ROUTES.adminOpenstaand} element={<AdminOpenstaand />} />
-                <Route path={ROUTES.adminResultaat} element={<AdminResultaat />} />
-                <Route path={ROUTES.adminKosten} element={<AdminKosten />} />
-                <Route path={ROUTES.adminBtw} element={<AdminBtw />} />
-                <Route path={ROUTES.adminInstellingen} element={<AdminInstellingen />} />
-              </Route>
-            </Route>
+            <Route path="/dossier/:dossierId" element={<DossierDetail />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />

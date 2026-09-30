@@ -1,75 +1,93 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { List } from '@phosphor-icons/react'
 import { ROUTES } from '../../lib/routes'
 import { UitloggenKnop } from '../auth/UitloggenKnop'
 import { Container } from '../ui/Container'
+import { useMediaQuery } from '../../hooks/useMediaQuery'
+import { ADMIN_BEHEER_NAV_ITEMS, ADMIN_ADMINISTRATIE_NAV_ITEMS } from '../../data/adminNavigation'
+import { AdminMobileNav } from './AdminMobileNav'
 
 /**
- * Gedeelde navigatie voor de hele Admin-omgeving (Admin-ronde, 2026-09-28;
- * uitgebreid met Offertes/Facturen/Administratie in de Administratie-
- * ronde, en met een expliciete "Beheer"/"Administratie"-groepering in de
- * Klantomgeving-/Administratie-detailronde) — bewust een extra, dunne laag
- * BINNEN de bestaande MainLayout (site-header/footer blijven ongewijzigd,
- * zie App.jsx), niet een vervanging daarvan. Elke admin-subpagina staat
- * hierdoor altijd één klik bij elkaar vandaan — dit is dus ook de
- * "← Admin Dashboard"-mogelijkheid die de losse pagina's zelf niet meer
- * apart hoeven te bouwen.
+ * Admin-shell (mobiele-adminronde, 2026-09-30) — de volledige, eigen
+ * omgeving voor /admin/*, met een eigen topbar/navigatie in plaats van de
+ * publieke site-header/footer (zie App.jsx: dit staat sinds deze ronde
+ * BUITEN <MainLayout />, niet meer erbinnen — de vorige opzet liet elke
+ * admin-pagina onder de publieke Header/MobileNav/Footer/ContactFab/
+ * CookieBanner renderen, wat precies is wat deze ronde oplost).
  *
- * Twee groepen (zoals expliciet gevraagd), zelfde platte <nav> — puur een
- * visuele scheiding via een verticale streep, geen geneste navigatie.
- * Omzet/Openstaand/Resultaat/Instellingen staan bewust NIET in deze balk —
- * die blijven bereikbaar via klikbare kaarten op /admin/administratie
- * (zelfde "compact/overzichtelijk"-afweging als Commerciële kansen).
- *
- * `end` op de Dashboard-link: zonder die vlag zou NavLink "/admin" als
- * prefix ook op elke sub-pagina (/admin/planning, /admin/dossiers, ...)
- * als actief markeren.
+ * Mobile-first: onder lg (1024px) een hamburger die AdminMobileNav opent
+ * (zelfde bewezen drawer-patroon als de publieke MobileNav); vanaf lg een
+ * platte horizontale balk, zelfde twee groepen/volgorde als voorheen.
+ * Zelfde bestaande designtaal (kleuren/typografie/Container) als de rest
+ * van de site — geen nieuw visueel merk.
  */
-const BEHEER_NAV_ITEMS = [
-  { to: ROUTES.admin, label: 'Dashboard', end: true },
-  { to: ROUTES.adminPlanning, label: 'Planning' },
-  { to: ROUTES.adminDossiers, label: 'Klanten & dossiers' },
-  { to: ROUTES.watKanWachten, label: 'Wat kan wachten' },
-  { to: ROUTES.archief, label: 'Archief' },
-]
-
-const ADMINISTRATIE_NAV_ITEMS = [
-  { to: ROUTES.adminAdministratie, label: 'Administratie' },
-  { to: ROUTES.adminOffertes, label: 'Offertes' },
-  { to: ROUTES.adminFacturen, label: 'Facturen' },
-  { to: ROUTES.adminKosten, label: 'Kosten' },
-  { to: ROUTES.adminBtw, label: 'BTW' },
-]
-
 function navLinkClassName({ isActive }) {
-  return `rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
+  return `flex min-h-9 items-center rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
     isActive ? 'bg-primary text-white' : 'text-foreground-muted hover:bg-muted hover:text-primary'
   }`
 }
 
 export function AdminLayout() {
+  const { pathname } = useLocation()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const isDesktop = useMediaQuery('(min-width: 1024px)')
+  const mobileNavOpen = menuOpen && !isDesktop
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+
   return (
-    <>
-      <div className="border-b border-border bg-white print:hidden">
+    <div className="flex min-h-dvh flex-col bg-muted/40">
+      <a
+        href="#admin-main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[200] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-white"
+      >
+        Direct naar inhoud
+      </a>
+
+      <header className="sticky top-0 z-40 border-b border-border bg-white">
         <Container className="max-w-5xl">
-          <div className="flex flex-wrap items-center justify-between gap-3 py-3">
-            <nav aria-label="Admin" className="flex flex-wrap items-center gap-1">
-              {BEHEER_NAV_ITEMS.map((item) => (
+          <div className="flex h-14 items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setMenuOpen(true)}
+                aria-label="Menu openen"
+                className="-ml-2 flex min-h-11 min-w-11 items-center justify-center rounded-md text-primary hover:bg-muted lg:hidden"
+              >
+                <List size={24} />
+              </button>
+              <NavLink to={ROUTES.admin} className="truncate font-heading text-base font-semibold text-primary">
+                SMV Advies <span className="text-accent">Admin</span>
+              </NavLink>
+            </div>
+
+            <nav aria-label="Admin" className="hidden items-center gap-1 lg:flex">
+              {ADMIN_BEHEER_NAV_ITEMS.map((item) => (
                 <NavLink key={item.to} to={item.to} end={item.end} className={navLinkClassName}>
                   {item.label}
                 </NavLink>
               ))}
               <span className="mx-1.5 h-5 w-px bg-border" aria-hidden="true" />
-              {ADMINISTRATIE_NAV_ITEMS.map((item) => (
+              {ADMIN_ADMINISTRATIE_NAV_ITEMS.map((item) => (
                 <NavLink key={item.to} to={item.to} end={item.end} className={navLinkClassName}>
                   {item.label}
                 </NavLink>
               ))}
             </nav>
-            <UitloggenKnop />
+
+            <UitloggenKnop className="hidden shrink-0 lg:inline-flex" />
           </div>
         </Container>
-      </div>
-      <Outlet />
-    </>
+      </header>
+
+      <AdminMobileNav open={mobileNavOpen} onClose={() => setMenuOpen(false)} />
+
+      <main id="admin-main-content" className="flex-1">
+        <Outlet />
+      </main>
+    </div>
   )
 }
