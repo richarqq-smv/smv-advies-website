@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { ArrowLeft, DownloadSimple } from '@phosphor-icons/react'
+import { useParams, Link } from 'react-router-dom'
+import { ArrowLeft, DownloadSimple, FileText, Receipt } from '@phosphor-icons/react'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
@@ -14,10 +14,20 @@ import { EnergieUitnodiging } from '../components/klantOmgeving/EnergieUitnodigi
 import { CommercieleKansSectie } from '../components/klantOmgeving/CommercieleKansSectie'
 import { OfferteEditor } from '../components/klantOmgeving/OfferteEditor'
 import { OffertesHistorie } from '../components/klantOmgeving/OffertesHistorie'
-import { getDossier, listAdviespunten, getOffertesVoorDossier, checkIsAdmin } from '../lib/klantOmgeving/api'
+import {
+  getDossier,
+  listAdviespunten,
+  getOffertesVoorDossier,
+  getFacturenVoorDossier,
+  getDocumentenVoorDossier,
+  getDocumentDownloadUrl,
+  checkIsAdmin,
+} from '../lib/klantOmgeving/api'
 import { bouwDossierHealthCheck } from '../lib/klantOmgeving/dossierHealthCheck'
 import { bepaalDossierOverzichtRoute } from '../lib/klantOmgeving/dossierNavigatie'
 import { triggerDossierJsonDownload } from '../lib/klantOmgeving/dossierExport'
+import { euro, formatDatumNl } from '../lib/klantOmgeving/offerte'
+import { FACTUUR_STATUS_LABELS } from '../lib/klantOmgeving/factuur'
 import { buildInsights } from '../lib/mjop/linking'
 import { buildEnergieInsights } from '../lib/dossier/energieInsights'
 
@@ -57,6 +67,14 @@ export default function DossierDetail() {
   // beoordelen. Zelfde RLS (offertes_select_klant/offertes_select_admin),
   // dus nooit meer zichtbaar dan wat deze sessie al mag zien.
   const [offertesVoorHealthCheck, setOffertesVoorHealthCheck] = useState([])
+  // Klantreis-ronde: documenten/facturen die al aan dit dossier gekoppeld
+  // zijn zichtbaar maken op de dossierpagina zelf — hergebruikt de
+  // bestaande, al RLS-beveiligde queries (zelfde functies als /account),
+  // hier alleen gefilterd op dossier_id. Uitsluitend lezen: uploaden/
+  // verwijderen blijft gecentraliseerd op /account, geen tweede upload-UI.
+  const [documentenVoorDossier, setDocumentenVoorDossier] = useState([])
+  const [facturenVoorDossier, setFacturenVoorDossier] = useState([])
+  const [downloadFoutId, setDownloadFoutId] = useState(null)
 
   useEffect(() => {
     let actief = true
@@ -95,6 +113,29 @@ export default function DossierDetail() {
       actief = false
     }
   }, [dossierId, offerteRefresh])
+
+  useEffect(() => {
+    let actief = true
+    getDocumentenVoorDossier(dossierId)
+      .then((rows) => actief && setDocumentenVoorDossier(rows))
+      .catch(() => {}) // Zelfde veilige stiltefout als hierboven — blokkeert nooit de rest van de pagina.
+    getFacturenVoorDossier(dossierId)
+      .then((rows) => actief && setFacturenVoorDossier(rows))
+      .catch(() => {})
+    return () => {
+      actief = false
+    }
+  }, [dossierId, offerteRefresh])
+
+  async function downloaden(document) {
+    setDownloadFoutId(null)
+    try {
+      const url = await getDocumentDownloadUrl(document.storage_path)
+      window.open(url, '_blank', 'noopener')
+    } catch {
+      setDownloadFoutId(document.document_id)
+    }
+  }
 
   // Zelfde regellogica als DossierWerkruimte.jsx gebruikt om kandidaten te
   // bepalen (buildInsights/buildEnergieInsights, beide pure functies) —
@@ -188,6 +229,7 @@ export default function DossierDetail() {
                 <EnergieUitnodiging dossierId={dossier.dossier_id} klant={dossier.klanten} />
               ) : null}
               <EnergieSnapshot snapshot={dossier.energie_snapshot} />
+              <DocumentenBijDossier documenten={documentenVoorDossier} downloaden={downloaden} downloadFoutId={downloadFoutId} />
               {/* Anchor voor de Health Check-offerteactie hieronder ("Offerte bekijken") — geen routewijziging nodig, dit staat al op dezelfde pagina. */}
               <div id="offertes-sectie" className="flex flex-col gap-6">
                 <OffertesHistorie
@@ -214,6 +256,7 @@ export default function DossierDetail() {
                   />
                 ) : null}
               </div>
+              <FacturenBijDossier facturen={facturenVoorDossier} isAdmin={isAdmin} />
               {/*
                 Admin-ronde (2026-09-28): uitsluitend interne
                 admininformatie — nooit voor een klant. Zowel de UI-gate
@@ -227,5 +270,84 @@ export default function DossierDetail() {
         </Container>
       </Section>
     </>
+  )
+}
+
+/**
+ * Documenten die aan dit dossier gekoppeld zijn — uploaden/verwijderen
+ * blijft uitsluitend op /account (Mijn documenten), dit is een read-only
+ * spiegel van dezelfde rijen (getDocumentenVoorDossier hergebruikt exact
+ * dezelfde `documenten`-tabel/RLS/storage-flow, alleen gefilterd op
+ * dossier_id i.p.v. klant_id). Zichtbaar voor admin én de eigen klant.
+ */
+function DocumentenBijDossier({ documenten, downloaden, downloadFoutId }) {
+  if (documenten.length === 0) return null
+  return (
+    <div className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
+      <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Documenten</p>
+      <h3 className="mb-4 text-xl text-primary">Documenten bij dit dossier</h3>
+      <ul className="flex flex-col gap-2">
+        {documenten.map((d) => (
+          <li key={d.document_id} className="rounded-lg border border-border bg-white px-4 py-3 text-sm">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <FileText size={16} className="shrink-0 text-foreground-muted" />
+                <div>
+                  <p className="font-medium text-primary">{d.bestandsnaam}</p>
+                  <p className="text-xs text-foreground-muted">
+                    {formatDatumNl(d.created_at?.slice(0, 10))}
+                    {d.omschrijving ? ` · ${d.omschrijving}` : ''}
+                  </p>
+                </div>
+              </div>
+              <Button type="button" variant="ghost" size="sm" onClick={() => downloaden(d)}>
+                <DownloadSimple size={15} /> Downloaden
+              </Button>
+            </div>
+            {downloadFoutId === d.document_id ? (
+              <p role="alert" className="mt-1.5 text-xs font-medium text-error">
+                Downloaden is niet gelukt. Probeer het opnieuw.
+              </p>
+            ) : null}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+/**
+ * Facturen die al aan dit dossier gekoppeld zijn — hergebruikt
+ * getFacturenVoorDossier (RLS: facturen_select_klant/facturen_select_admin),
+ * zelfde functie die OffertesHistorie.jsx al gebruikt om "Factuur maken" te
+ * verbergen. Doorklikroute verschilt per rol: de eigen klant gebruikt
+ * /account/facturen/:id, admin /admin/facturen/:id — dezelfde twee routes
+ * die Account.jsx/AdminFacturen.jsx al gebruiken, geen nieuwe.
+ */
+function FacturenBijDossier({ facturen, isAdmin }) {
+  if (facturen.length === 0) return null
+  return (
+    <div className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
+      <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Facturen</p>
+      <h3 className="mb-4 text-xl text-primary">Facturen bij dit dossier</h3>
+      <ul className="flex flex-col gap-2">
+        {facturen.map((f) => (
+          <li key={f.factuur_id}>
+            <Link
+              to={isAdmin ? ROUTES.adminFactuurDetail(f.factuur_id) : ROUTES.mijnFactuur(f.factuur_id)}
+              className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-white px-4 py-2.5 text-sm hover:border-accent hover:bg-muted"
+            >
+              <span className="flex items-center gap-2 font-medium text-primary">
+                <Receipt size={16} className="shrink-0 text-foreground-muted" />
+                {f.factuurnummer}
+              </span>
+              <span className="text-xs text-foreground-muted">{FACTUUR_STATUS_LABELS[f.status] ?? f.status}</span>
+              <span className="text-xs text-foreground-muted">Vervalt {formatDatumNl(f.vervaldatum)}</span>
+              <span className="text-primary">{euro(f.totaal_incl_btw)}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }

@@ -735,10 +735,28 @@ export async function getFacturenVoorOfferte(offerteId) {
   )
 }
 
-/** Alle facturen van één Dossier (OffertesHistorie.jsx: "Bekijk factuur" per offerte, één query voor het hele dossier i.p.v. één per offerte — zichtbaar voor admin én de eigen klant) — nieuwste eerst. Alleen wat een link nodig heeft. */
+/**
+ * Alle facturen van één Dossier — zichtbaar voor admin én de eigen klant
+ * (RLS: facturen_select_admin/facturen_select_klant). Twee aanroeppunten:
+ * OffertesHistorie.jsx (alleen offerte_id nodig, om "Factuur maken" te
+ * verbergen zodra er al een factuur is) en DossierDetail.jsx (toont de
+ * factuur zelf, dus de volledige klantveilige kolomset nodig — zelfde
+ * kolommen als getFacturenVoorKlant(), hier alleen anders gefilterd).
+ */
 export async function getFacturenVoorDossier(dossierId) {
   return throwOnError(
-    await supabase.from('facturen').select('factuur_id, factuurnummer, offerte_id').eq('dossier_id', dossierId).order('created_at', { ascending: false }),
+    await supabase
+      .from('facturen')
+      .select('factuur_id, factuurnummer, offerte_id, status, factuurdatum, vervaldatum, totaal_incl_btw')
+      .eq('dossier_id', dossierId)
+      .order('created_at', { ascending: false }),
+  )
+}
+
+/** Documenten van één Dossier ("Mijn documenten" op /account laat een document optioneel aan een dossier koppelen — dit toont die koppeling terug op de dossierpagina zelf). RLS (documenten_select) is de enige toegangsgrens, zelfde tabel/kolommen als getMijnDocumenten(). */
+export async function getDocumentenVoorDossier(dossierId) {
+  return throwOnError(
+    await supabase.from('documenten').select('*').eq('dossier_id', dossierId).order('created_at', { ascending: false }),
   )
 }
 
