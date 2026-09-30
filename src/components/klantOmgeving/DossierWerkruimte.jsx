@@ -6,6 +6,7 @@ import { buildInsights } from '../../lib/mjop/linking'
 import { createSignaalBevroren, createEnergieSignaalBevroren } from '../../lib/dossier/adviespunt'
 import { buildEnergieInsights } from '../../lib/dossier/energieInsights'
 import { groepeerAdviespunten } from '../../lib/dossier/adviesresultaat'
+import { magAdviespuntToevoegen, pakketLimietMelding } from '../../lib/dossier/pakketLimiet'
 import { AdviesStatusBadge, HerkomstBadge, AdviespuntKaart } from '../dossier/AdviesBeheer'
 import { addAdviespunt, updateAdviespunt, removeAdviespunt, completeDossier } from '../../lib/klantOmgeving/api'
 
@@ -314,6 +315,12 @@ export function DossierWerkruimte({
   )
   const energieKandidaten = energieInsights.filter((i) => !gebruikteEnergieIds.has(i.energieMaatregelId))
 
+  // Productworkflow-ronde (0025_dossiers_pakket_id.sql): Gold staat
+  // maximaal 3 adviespunten toe (packages.js). Hier alleen zichtbaar
+  // gemaakt vóór de insert — de database-trigger
+  // bewaak_adviespunten_pakketlimiet blijft de echte handhaving.
+  const pakketLimiet = pakketLimietMelding({ pakketId: dossier.pakket_id, huidigAantal: adviespunten.length })
+
   function startHandmatig() {
     setNieuwBron('handmatig')
     setNieuwWaarde(LEEG_FORMULIER)
@@ -359,6 +366,12 @@ export function DossierWerkruimte({
     if (!nieuwWaarde.onderwerp.trim()) return setFout('Vul een onderwerp in.')
     if (!nieuwWaarde.adviesStatus) return setFout('Kies een status.')
     if (!nieuwWaarde.toelichting.trim()) return setFout('Vul een toelichting in.')
+    // Veiligheidsnet vlak vóór de insert (bijv. een tweede open tabblad) —
+    // de database-trigger weigert dit sowieso, dit geeft alleen een
+    // duidelijkere melding dan de ruwe databasefout.
+    if (!magAdviespuntToevoegen({ pakketId: dossier.pakket_id, huidigAantal: adviespunten.length })) {
+      return setFout(pakketLimietMelding({ pakketId: dossier.pakket_id, huidigAantal: adviespunten.length }))
+    }
     setBezig(true)
     try {
       const isSignaal = nieuwBron && nieuwBron !== 'handmatig'
@@ -528,47 +541,53 @@ export function DossierWerkruimte({
 
       {open && magBeheren ? (
         <div className="flex flex-col gap-4 border-t border-border pt-6">
-          {kandidatenMetSignaal.length > 0 ? (
-            <div>
-              <p className="mb-2 text-sm font-medium text-primary">Automatisch beschikbare signalen uit MJOP</p>
-              <ul className="flex flex-col gap-2">
-                {kandidatenMetSignaal.map((insight) => (
-                  <KandidaatItem key={insight.componentId} insight={insight} onKies={startVanuitSignaal} />
-                ))}
-              </ul>
-            </div>
-          ) : null}
-
-          {kandidatenOnbekend.length > 0 ? (
-            <div>
-              <p className="mb-2 text-sm font-medium text-primary">Aanvullende informatie nodig</p>
-              <ul className="flex flex-col gap-2">
-                {kandidatenOnbekend.map((insight) => (
-                  <KandidaatItem key={insight.componentId} insight={insight} onKies={startVanuitSignaal} />
-                ))}
-              </ul>
-            </div>
-          ) : null}
-
-          {energieKandidaten.length > 0 ? (
-            <div>
-              <p className="mb-2 text-sm font-medium text-primary">Automatisch beschikbare signalen uit Energie-indicatie</p>
-              <ul className="flex flex-col gap-2">
-                {energieKandidaten.map((insight) => (
-                  <EnergieKandidaatItem key={insight.energieMaatregelId} insight={insight} onKies={startVanuitEnergieSignaal} />
-                ))}
-              </ul>
-            </div>
-          ) : null}
-
-          {nieuwBron ? (
-            <AdviesFormulier idPrefix="nieuw" waarde={nieuwWaarde} onWijzig={setNieuwWaarde} onOpslaan={bevestigNieuw} onAnnuleer={annuleerNieuw} bezig={bezig} fout={fout} />
+          {pakketLimiet && !nieuwBron ? (
+            <p className="rounded-lg border border-dashed border-border px-4 py-3 text-sm text-foreground-muted">{pakketLimiet}</p>
           ) : (
-            <div>
-              <Button type="button" variant="outline" size="sm" onClick={startHandmatig}>
-                Handmatig adviespunt toevoegen
-              </Button>
-            </div>
+            <>
+              {kandidatenMetSignaal.length > 0 ? (
+                <div>
+                  <p className="mb-2 text-sm font-medium text-primary">Automatisch beschikbare signalen uit MJOP</p>
+                  <ul className="flex flex-col gap-2">
+                    {kandidatenMetSignaal.map((insight) => (
+                      <KandidaatItem key={insight.componentId} insight={insight} onKies={startVanuitSignaal} />
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
+              {kandidatenOnbekend.length > 0 ? (
+                <div>
+                  <p className="mb-2 text-sm font-medium text-primary">Aanvullende informatie nodig</p>
+                  <ul className="flex flex-col gap-2">
+                    {kandidatenOnbekend.map((insight) => (
+                      <KandidaatItem key={insight.componentId} insight={insight} onKies={startVanuitSignaal} />
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
+              {energieKandidaten.length > 0 ? (
+                <div>
+                  <p className="mb-2 text-sm font-medium text-primary">Automatisch beschikbare signalen uit Energie-indicatie</p>
+                  <ul className="flex flex-col gap-2">
+                    {energieKandidaten.map((insight) => (
+                      <EnergieKandidaatItem key={insight.energieMaatregelId} insight={insight} onKies={startVanuitEnergieSignaal} />
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
+              {nieuwBron ? (
+                <AdviesFormulier idPrefix="nieuw" waarde={nieuwWaarde} onWijzig={setNieuwWaarde} onOpslaan={bevestigNieuw} onAnnuleer={annuleerNieuw} bezig={bezig} fout={fout} />
+              ) : (
+                <div>
+                  <Button type="button" variant="outline" size="sm" onClick={startHandmatig}>
+                    Handmatig adviespunt toevoegen
+                  </Button>
+                </div>
+              )}
+            </>
           )}
 
           <div className="border-t border-border pt-4">

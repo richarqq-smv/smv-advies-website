@@ -3,6 +3,7 @@ import { FileArrowDown, DownloadSimple, WarningCircle } from '@phosphor-icons/re
 import { Button } from '../ui/Button'
 import { genereerAdviesrapportDocx, downloadAdviesrapportBlob, bouwAdviesrapportBestandsnaam } from '../../lib/klantOmgeving/adviesrapportDocx'
 import { PAKKET_RAPPORT_LABELS } from '../../lib/klantOmgeving/adviesrapport'
+import { listDossierTaken } from '../../lib/klantOmgeving/api'
 
 const PAKKET_KNOPPEN = [
   { id: 'basis', label: 'QuickScan-rapport' },
@@ -30,12 +31,21 @@ export function AdviesrapportGenerator({ dossier, adviespunten }) {
   const [fout, setFout] = useState(null)
   const [resultaat, setResultaat] = useState(null)
 
+  // Productworkflow-ronde (0025_dossiers_pakket_id.sql): zodra het dossier
+  // een bekend pakket heeft, is dat de bron van waarheid — de adviseur
+  // hoeft niet opnieuw te kiezen. "Nog te bepalen" (pakket_id null) valt
+  // terug op de oorspronkelijke 3 losse knoppen.
+  const knoppen = dossier.pakket_id ? PAKKET_KNOPPEN.filter((p) => p.id === dossier.pakket_id) : PAKKET_KNOPPEN
+
   async function genereer(pakketId) {
     setFout(null)
     setResultaat(null)
     setBezigMet(pakketId)
     try {
-      const data = await genereerAdviesrapportDocx({ dossier, adviespunten, pakketId, adviseurNaam: adviseurNaam.trim() || null })
+      // Subsidiebegeleidingsplan (Gold) komt uit dossier_taken — alleen
+      // opgehaald wanneer relevant, geen onnodige aanroep voor Basis/Premium.
+      const subsidieTaken = pakketId === 'gold' ? (await listDossierTaken(dossier.dossier_id)).filter((t) => t.categorie === 'subsidie') : []
+      const data = await genereerAdviesrapportDocx({ dossier, adviespunten, pakketId, adviseurNaam: adviseurNaam.trim() || null, subsidieTaken })
       setResultaat({ ...data, pakketId })
     } catch {
       setFout('Het genereren van het rapport is niet gelukt. Probeer het opnieuw.')
@@ -74,7 +84,7 @@ export function AdviesrapportGenerator({ dossier, adviespunten }) {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {PAKKET_KNOPPEN.map((p) => (
+        {knoppen.map((p) => (
           <Button key={p.id} type="button" variant="outline" size="sm" onClick={() => genereer(p.id)} disabled={bezigMet !== null}>
             <FileArrowDown size={15} />
             {bezigMet === p.id ? 'Bezig...' : `${p.label} (.docx)`}

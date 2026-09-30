@@ -137,3 +137,48 @@ test('bouwSamenvatting: lege lijst geeft duidelijke melding, geen crash', () => 
   assert.deepEqual(bouwSamenvatting([]), ['Voor dit dossier is nog geen definitief advies vastgelegd.'])
   assert.deepEqual(bouwSamenvatting(null), ['Voor dit dossier is nog geen definitief advies vastgelegd.'])
 })
+
+test('bouwAdviesrapportData: bouwkundige analyse vult de 4 vaste rijen uit dossier.bouwkundige_analyse', () => {
+  const dossier = dossierFixture({
+    bouwkundige_analyse: {
+      gevel: { waarde: '0,35', eenheid: 'Rc', beoordeling: 'Onvoldoende', opmerking: 'Spouw ongeïsoleerd' },
+      dak: { waarde: '2,5', eenheid: 'Rc', beoordeling: 'Voldoet', opmerking: '' },
+    },
+  })
+  const data = bouwAdviesrapportData({ dossier, adviespunten: [], pakketId: 'premium' })
+  assert.equal(data.bouwkundigeAnalyse.length, 4)
+  assert.equal(data.bouwkundigeAnalyse[0].label, 'Gevel (spouwmuur)')
+  assert.equal(data.bouwkundigeAnalyse[0].waarde, '0,35 Rc')
+  assert.equal(data.bouwkundigeAnalyse[0].beoordeling, 'Onvoldoende')
+  assert.equal(data.bouwkundigeAnalyse[2].waarde, null)
+})
+
+test('bouwAdviesrapportData: ontbrekende bouwkundige analyse wordt alleen gemarkeerd bij premium/gold', () => {
+  const dossier = dossierFixture()
+  const basis = bouwAdviesrapportData({ dossier, adviespunten: [], pakketId: 'basis' })
+  assert.ok(!basis.ontbrekendeVelden.includes('bouwkundige analyse (Rc/U-waarden)'))
+
+  const premium = bouwAdviesrapportData({ dossier, adviespunten: [], pakketId: 'premium' })
+  assert.ok(premium.ontbrekendeVelden.includes('bouwkundige analyse (Rc/U-waarden)'))
+})
+
+test('bouwAdviesrapportData: subsidiestappen worden gesorteerd op volgorde en gedateerd geformatteerd', () => {
+  const subsidieTaken = [
+    { omschrijving: 'ISDE-aanvraag', verantwoordelijke: 'SMV Advies', volgorde: 1, deadline: '2026-06-01' },
+    { omschrijving: 'EIA-melding', verantwoordelijke: 'SMV Advies', volgorde: 0, deadline: null },
+  ]
+  const data = bouwAdviesrapportData({ dossier: dossierFixture(), adviespunten: [], pakketId: 'gold', subsidieTaken })
+  assert.equal(data.subsidieStappen.length, 2)
+  assert.equal(data.subsidieStappen[0].actie, 'EIA-melding')
+  assert.equal(data.subsidieStappen[0].deadline, null)
+  assert.equal(data.subsidieStappen[1].actie, 'ISDE-aanvraag')
+  assert.equal(data.subsidieStappen[1].deadline, '01-06-2026')
+})
+
+test('bouwAdviesrapportData: lege subsidiestappen worden alleen bij gold gemarkeerd als ontbrekend', () => {
+  const premium = bouwAdviesrapportData({ dossier: dossierFixture(), adviespunten: [], pakketId: 'premium' })
+  assert.ok(!premium.ontbrekendeVelden.includes('subsidiebegeleidingsplan'))
+
+  const gold = bouwAdviesrapportData({ dossier: dossierFixture(), adviespunten: [], pakketId: 'gold' })
+  assert.ok(gold.ontbrekendeVelden.includes('subsidiebegeleidingsplan'))
+})

@@ -15,6 +15,9 @@ import { CommercieleKansSectie } from '../components/klantOmgeving/CommercieleKa
 import { OfferteEditor } from '../components/klantOmgeving/OfferteEditor'
 import { OffertesHistorie } from '../components/klantOmgeving/OffertesHistorie'
 import { AdviesrapportGenerator } from '../components/klantOmgeving/AdviesrapportGenerator'
+import { PakketControle } from '../components/klantOmgeving/PakketControle'
+import { BouwkundigeAnalyse } from '../components/klantOmgeving/BouwkundigeAnalyse'
+import { DossierTaken } from '../components/klantOmgeving/DossierTaken'
 import {
   getDossier,
   listAdviespunten,
@@ -218,6 +221,7 @@ export default function DossierDetail() {
                 ) : null}
               </div>
               {healthCheck ? <DossierHealthCheck healthCheck={healthCheck} /> : null}
+              <PakketControle dossier={dossier} onDossierChange={setDossier} magBeheren={isAdmin} />
               <DossierWerkruimte
                 dossier={dossier}
                 adviespunten={adviespunten}
@@ -226,7 +230,9 @@ export default function DossierDetail() {
                 onDossierChange={setDossier}
                 magBeheren={isAdmin}
               />
+              <BouwkundigeAnalyse dossier={dossier} onDossierChange={setDossier} magBeheren={isAdmin} />
               {isAdmin ? <AdviesrapportGenerator dossier={dossier} adviespunten={adviespunten} /> : null}
+              {isAdmin && dossier.pakket_id === 'gold' ? <DossierTaken dossierId={dossier.dossier_id} pakketId={dossier.pakket_id} magBeheren={isAdmin} /> : null}
               {isAdmin && !dossier.energie_snapshot ? (
                 <EnergieUitnodiging dossierId={dossier.dossier_id} klant={dossier.klanten} />
               ) : null}

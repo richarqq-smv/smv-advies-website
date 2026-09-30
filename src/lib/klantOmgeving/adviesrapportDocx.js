@@ -145,19 +145,107 @@ function vulMaatregelenTabel(doc, maatregelen) {
   return { gevuld: Math.min(maatregelen.length, dataRijen.length), waarschuwingen }
 }
 
+/** De bouwkundige-analyse-tabel (Premium/Gold) is herkenbaar aan de header "Bouwdeel"/"Huidige Rc- / U-waarde (schatting)". */
+function vindBouwkundigeAnalyseTabel(doc) {
+  const tabellen = Array.from(doc.getElementsByTagNameNS(W_NS, 'tbl'))
+  return (
+    tabellen.find((tabel) => {
+      const eersteRij = tabel.getElementsByTagNameNS(W_NS, 'tr')[0]
+      if (!eersteRij) return false
+      const headerCellen = Array.from(eersteRij.getElementsByTagNameNS(W_NS, 'tc')).map((tc) => elementTekst(tc).trim())
+      return headerCellen[0] === 'Bouwdeel' && headerCellen[1]?.startsWith('Huidige Rc')
+    }) ?? null
+  )
+}
+
+/**
+ * Vult de 4 vaste rijen (Gevel/Dak/Vloer/Beglazing) op basis van het rij-
+ * label, niet op positie — de 5e rij ("Installaties") heeft vaste
+ * "n.v.t."-waarden i.p.v. een Rc/U-kolom en blijft bewust ongemoeid (zie
+ * adviesrapport.js). Alleen aanwezig in Premium/Gold; ontbreekt de tabel
+ * (Basis), dan gebeurt er simpelweg niets.
+ */
+function vulBouwkundigeAnalyseTabel(doc, bouwkundigeAnalyse) {
+  const tabel = vindBouwkundigeAnalyseTabel(doc)
+  if (!tabel) return
+  const rijen = Array.from(tabel.getElementsByTagNameNS(W_NS, 'tr')).slice(1)
+  const perLabel = new Map(bouwkundigeAnalyse.map((r) => [r.label, r]))
+
+  rijen.forEach((rij) => {
+    const cellen = Array.from(rij.getElementsByTagNameNS(W_NS, 'tc'))
+    const label = elementTekst(cellen[0]).trim()
+    const gegevens = perLabel.get(label)
+    if (!gegevens) return // "Installaties (verwarming/ventilatie)" — bewust niet aangeraakt.
+    zetEersteRunTekst(cellen[1], gegevens.waarde ?? '')
+    zetEersteRunTekst(cellen[3], gegevens.beoordeling ?? '')
+    zetEersteRunTekst(cellen[4], gegevens.opmerking ?? '')
+  })
+}
+
+/** De subsidiebegeleidingsplan-tabel (uitsluitend Gold) is herkenbaar aan de header "Stap"/"Actie"/"Verantwoordelijke". */
+function vindSubsidieplanTabel(doc) {
+  const tabellen = Array.from(doc.getElementsByTagNameNS(W_NS, 'tbl'))
+  return (
+    tabellen.find((tabel) => {
+      const eersteRij = tabel.getElementsByTagNameNS(W_NS, 'tr')[0]
+      if (!eersteRij) return false
+      const headerCellen = Array.from(eersteRij.getElementsByTagNameNS(W_NS, 'tc')).map((tc) => elementTekst(tc).trim())
+      return headerCellen[0] === 'Stap' && headerCellen[1] === 'Actie'
+    }) ?? null
+  )
+}
+
+/**
+ * Vervangt alle databaserijen door de daadwerkelijke stappen uit
+ * dossier_taken (categorie='subsidie') — in tegenstelling tot de
+ * maatregelentabel staan hier in het sjabloon al 3 voorbeeldrijen met
+ * tekst; die tekst is nu net zo goed "sjabloon", geen eigen bron van
+ * waarheid meer zodra de adviseur de taken heeft aangepast. Rijen die
+ * ontbreken/overtollig zijn worden verwijderd/toegevoegd door de
+ * eerste rij te klonen als sjabloon voor stijl.
+ */
+function vulSubsidieplanTabel(doc, subsidieStappen) {
+  const tabel = vindSubsidieplanTabel(doc)
+  if (!tabel) return { waarschuwingen: [] }
+  const rijen = Array.from(tabel.getElementsByTagNameNS(W_NS, 'tr'))
+  const dataRijen = rijen.slice(1)
+  if (dataRijen.length === 0) return { waarschuwingen: [] }
+  const rijSjabloon = dataRijen[0]
+  const waarschuwingen = []
+
+  subsidieStappen.forEach((stap, i) => {
+    let rij = dataRijen[i]
+    if (!rij) {
+      rij = rijSjabloon.cloneNode(true)
+      tabel.appendChild(rij)
+    }
+    const cellen = Array.from(rij.getElementsByTagNameNS(W_NS, 'tc'))
+    zetEersteRunTekst(cellen[0], String(stap.stap))
+    zetEersteRunTekst(cellen[1], stap.actie)
+    zetEersteRunTekst(cellen[2], stap.verantwoordelijke ?? '')
+    zetEersteRunTekst(cellen[3], stap.deadline ?? '')
+  })
+
+  for (let i = subsidieStappen.length; i < dataRijen.length; i++) {
+    dataRijen[i].parentNode.removeChild(dataRijen[i])
+  }
+
+  return { waarschuwingen }
+}
+
 /**
  * Bouwt de gevulde .docx als Blob. Geeft naast de blob ook de
  * ontbrekende/afgekapte velden terug, zodat de adviseur vóór verzending
  * kan zien wat nog handmatig moet worden aangevuld (randvoorwaarde 14 —
  * reproduceerbaar en controleerbaar).
  */
-export async function genereerAdviesrapportDocx({ dossier, adviespunten = [], pakketId, adviseurNaam = null, datum = null }) {
+export async function genereerAdviesrapportDocx({ dossier, adviespunten = [], pakketId, adviseurNaam = null, datum = null, subsidieTaken = [] }) {
   const templateUrl = TEMPLATE_URLS[pakketId]
   if (!templateUrl) {
     throw new Error(`Onbekend pakket "${pakketId}" — geen sjabloon beschikbaar.`)
   }
 
-  const data = bouwAdviesrapportData({ dossier, adviespunten, pakketId, adviseurNaam, datum })
+  const data = bouwAdviesrapportData({ dossier, adviespunten, pakketId, adviseurNaam, datum, subsidieTaken })
 
   const respons = await fetch(templateUrl)
   if (!respons.ok) throw new Error('Kon het rapportsjabloon niet laden.')
@@ -176,7 +264,10 @@ export async function genereerAdviesrapportDocx({ dossier, adviespunten = [], pa
 
   vulMetatabel(doc, data.meta)
   vulSamenvatting(doc, data.samenvatting)
-  const { waarschuwingen } = vulMaatregelenTabel(doc, data.maatregelen)
+  const { waarschuwingen: maatregelWaarschuwingen } = vulMaatregelenTabel(doc, data.maatregelen)
+  vulBouwkundigeAnalyseTabel(doc, data.bouwkundigeAnalyse)
+  const { waarschuwingen: subsidieWaarschuwingen } = vulSubsidieplanTabel(doc, data.subsidieStappen)
+  const waarschuwingen = [...maatregelWaarschuwingen, ...subsidieWaarschuwingen]
 
   const serializer = new XMLSerializer()
   let nieuweXml = serializer.serializeToString(doc)
@@ -227,8 +318,8 @@ export function downloadAdviesrapportBlob(blob, bestandsnaam) {
 }
 
 /** Genereert het rapport en start meteen de download — voor gebruik zonder tussenliggende preview. */
-export async function triggerAdviesrapportDocxDownload({ dossier, adviespunten, pakketId, adviseurNaam, datum }) {
-  const resultaat = await genereerAdviesrapportDocx({ dossier, adviespunten, pakketId, adviseurNaam, datum })
+export async function triggerAdviesrapportDocxDownload({ dossier, adviespunten, pakketId, adviseurNaam, datum, subsidieTaken }) {
+  const resultaat = await genereerAdviesrapportDocx({ dossier, adviespunten, pakketId, adviseurNaam, datum, subsidieTaken })
   downloadAdviesrapportBlob(resultaat.blob, bouwAdviesrapportBestandsnaam({ dossier, pakketId }))
   return resultaat
 }

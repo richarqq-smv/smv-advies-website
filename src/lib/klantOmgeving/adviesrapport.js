@@ -129,6 +129,50 @@ export function bouwSamenvatting(adviespunten) {
   return paragraphs
 }
 
+// Vaste rijen/labels/eis-tekst uit de Premium/Gold-rapporttemplate — zie
+// 0027_dossiers_bouwkundige_analyse.sql. "Installaties" heeft in de
+// template vaste "n.v.t."-waarden en wordt hier niet gevuld.
+const BOUWDEEL_RIJEN = [
+  { key: 'gevel', label: 'Gevel (spouwmuur)' },
+  { key: 'dak', label: 'Dak' },
+  { key: 'vloer', label: 'Vloer / bodem' },
+  { key: 'beglazing', label: 'Beglazing' },
+]
+
+/** Bouwt de 4 vaste bouwkundige-analyse-rijen uit dossier.bouwkundige_analyse — ontbrekende waarden blijven leeg, nooit geschat. */
+function bouwBouwkundigeAnalyse(bouwkundigeAnalyse) {
+  const bron = bouwkundigeAnalyse ?? {}
+  return BOUWDEEL_RIJEN.map((rij) => {
+    const ingevuld = bron[rij.key] ?? {}
+    const waarde = ingevuld.waarde ? `${ingevuld.waarde} ${ingevuld.eenheid ?? ''}`.trim() : null
+    return {
+      label: rij.label,
+      waarde,
+      beoordeling: ingevuld.beoordeling || null,
+      opmerking: ingevuld.opmerking || null,
+    }
+  })
+}
+
+function formatTaakDeadline(deadline) {
+  if (!deadline) return null
+  const datum = new Date(deadline)
+  if (Number.isNaN(datum.getTime())) return null
+  return datum.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}
+
+/** Bouwt de subsidiebegeleidingsplan-rijen uit dossier_taken (categorie='subsidie') — puur weergave, geen eigen bron van waarheid. */
+function bouwSubsidieStappen(subsidieTaken) {
+  return [...(subsidieTaken ?? [])]
+    .sort((a, b) => (a.volgorde ?? 0) - (b.volgorde ?? 0))
+    .map((taak, index) => ({
+      stap: index + 1,
+      actie: taak.omschrijving,
+      verantwoordelijke: taak.verantwoordelijke || null,
+      deadline: formatTaakDeadline(taak.deadline),
+    }))
+}
+
 /**
  * Bouwt de volledige, sjabloon-onafhankelijke data voor één adviesrapport.
  * `pakketId` bepaalt uitsluitend het label in de metatabel — de adviseur
@@ -139,11 +183,13 @@ export function bouwSamenvatting(adviespunten) {
  * de adviseur dit bewust kan aanvullen vóór het document de deur uit gaat
  * — nooit een verzonnen waarde in plaats daarvan.
  */
-export function bouwAdviesrapportData({ dossier, adviespunten = [], pakketId, adviseurNaam = null, datum = null }) {
+export function bouwAdviesrapportData({ dossier, adviespunten = [], pakketId, adviseurNaam = null, datum = null, subsidieTaken = [] }) {
   const { klantnaam, pandadres } = bouwKlantgegevens(dossier)
   const gesorteerd = sorteerAdviespunten(adviespunten)
   const maatregelen = gesorteerd.map(bouwMaatregelRegel)
   const samenvatting = bouwSamenvatting(adviespunten)
+  const bouwkundigeAnalyse = bouwBouwkundigeAnalyse(dossier?.bouwkundige_analyse)
+  const subsidieStappen = bouwSubsidieStappen(subsidieTaken)
 
   const ontbrekendeVelden = []
   if (!klantnaam) ontbrekendeVelden.push('klantnaam')
@@ -156,6 +202,12 @@ export function bouwAdviesrapportData({ dossier, adviespunten = [], pakketId, ad
     if (regel.terugverdientijd == null) ontbrekendeVelden.push(`maatregel ${regel.nummer}: terugverdientijd`)
     if (regel.prioriteit == null) ontbrekendeVelden.push(`maatregel ${regel.nummer}: prioriteit`)
   })
+  if ((pakketId === 'premium' || pakketId === 'gold') && bouwkundigeAnalyse.every((r) => !r.waarde)) {
+    ontbrekendeVelden.push('bouwkundige analyse (Rc/U-waarden)')
+  }
+  if (pakketId === 'gold' && subsidieStappen.length === 0) {
+    ontbrekendeVelden.push('subsidiebegeleidingsplan')
+  }
 
   return {
     meta: {
@@ -167,6 +219,8 @@ export function bouwAdviesrapportData({ dossier, adviespunten = [], pakketId, ad
     },
     samenvatting,
     maatregelen,
+    bouwkundigeAnalyse,
+    subsidieStappen,
     ontbrekendeVelden,
   }
 }

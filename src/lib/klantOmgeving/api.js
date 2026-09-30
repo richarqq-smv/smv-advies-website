@@ -142,7 +142,7 @@ async function vindOpenDossier(klantId, pandId) {
  * Dossier legt vast wat gold toen het werd geopend, niet wat er later
  * verandert aan het Pand of de MJOP-data.
  */
-export async function openOfHergebruikDossier({ klantId, pandId, pand, primaireContactpersoonId = null, mjopSnapshot = null }) {
+export async function openOfHergebruikDossier({ klantId, pandId, pand, primaireContactpersoonId = null, mjopSnapshot = null, pakketId = null }) {
   const bestaand = await vindOpenDossier(klantId, pandId)
   if (bestaand) return { dossier: bestaand, hergebruikt: true }
 
@@ -165,11 +165,42 @@ export async function openOfHergebruikDossier({ klantId, pandId, pand, primaireC
         primaire_contactpersoon_id: primaireContactpersoonId,
         pand_snapshot: pandSnapshot,
         mjop_snapshot: mjopSnapshot,
+        // Productworkflow-ronde (0025_dossiers_pakket_id.sql): optioneel,
+        // "nog te bepalen" (null) blijft mogelijk — zie moduledoc daar.
+        pakket_id: pakketId,
       })
       .select('*, panden(*)')
       .single(),
   )
   return { dossier, hergebruikt: false }
+}
+
+/**
+ * Uitsluitend admin: het pakket wordt na dossieraanmaak bron van waarheid
+ * voor workflow/rapportkeuze/pakketgrenzen (0025_dossiers_pakket_id.sql).
+ * bewaak_dossier_integriteit() staat een niet-admin sowieso alleen
+ * energie_snapshot toe, dus dit werkt voor een klant nooit — de UI toont
+ * deze actie daarom uitsluitend bij magBeheren.
+ */
+export async function updateDossierPakket(dossierId, pakketId) {
+  if (!dossierId) throw new Error('updateDossierPakket vereist een geldig dossier-ID.')
+  return throwOnError(
+    await supabase.from('dossiers').update({ pakket_id: pakketId }).eq('dossier_id', dossierId).select('*, panden(*)').single(),
+  )
+}
+
+/**
+ * Uitsluitend admin: Rc/U-waarden voor de bouwkundige analyse
+ * (0027_dossiers_bouwkundige_analyse.sql) — vakinhoudelijk door de
+ * adviseur ingevuld, nooit berekend. `analyse` is het volledige object
+ * (alle 4 bouwdelen tegelijk), geen los-veld-patch: de adviseur bewerkt
+ * dit altijd als geheel vanuit één formulier.
+ */
+export async function updateDossierBouwkundigeAnalyse(dossierId, analyse) {
+  if (!dossierId) throw new Error('updateDossierBouwkundigeAnalyse vereist een geldig dossier-ID.')
+  return throwOnError(
+    await supabase.from('dossiers').update({ bouwkundige_analyse: analyse }).eq('dossier_id', dossierId).select('*, panden(*)').single(),
+  )
 }
 
 /** Uitsluitend admin sinds de security-hardeningsronde (2026-09-28, adviespunten_insert/update/delete): alleen SMV zet een signaal om naar definitief advies. UI toont deze actie alleen bij magBeheren (zie DossierWerkruimte.jsx). */
@@ -239,6 +270,65 @@ export async function updateAdviespunt(
 
 export async function removeAdviespunt(adviespuntId) {
   const { error } = await supabase.from('adviespunten').delete().eq('adviespunt_id', adviespuntId)
+  if (error) throw error
+}
+
+/**
+ * ============================================================
+ * DOSSIER_TAKEN (0026_dossier_taken.sql) — generieke taakstructuur voor
+ * subsidiebegeleiding en opleveringchecklist. Volledig admin-only (RLS),
+ * zelfde patroon als planning_afspraken/dossier_commerciele_kansen.
+ * ============================================================
+ */
+
+export async function listDossierTaken(dossierId) {
+  return throwOnError(
+    await supabase.from('dossier_taken').select('*').eq('dossier_id', dossierId).order('categorie').order('volgorde'),
+  )
+}
+
+export async function addDossierTaak(dossierId, { adviespuntId = null, categorie, omschrijving, verantwoordelijke = null, deadline = null, volgorde = 0 }) {
+  return throwOnError(
+    await supabase
+      .from('dossier_taken')
+      .insert({
+        dossier_id: dossierId,
+        adviespunt_id: adviespuntId,
+        categorie,
+        omschrijving: omschrijving.trim(),
+        verantwoordelijke: verantwoordelijke?.trim() || null,
+        deadline: deadline || null,
+        volgorde,
+      })
+      .select('*')
+      .single(),
+  )
+}
+
+/** Voegt de standaardset (bouwStandaardTaken() in lib/dossier/dossierTaken.js) in één keer toe — de aanroeper bepaalt zelf of dat zinvol is (bijv. alleen als de categorie nog leeg is), deze functie voegt gewoon toe wat wordt meegegeven. */
+export async function addDossierTakenBulk(dossierId, taken) {
+  if (!taken || taken.length === 0) return []
+  return throwOnError(
+    await supabase
+      .from('dossier_taken')
+      .insert(taken.map((t) => ({ dossier_id: dossierId, categorie: t.categorie, omschrijving: t.omschrijving, verantwoordelijke: t.verantwoordelijke, volgorde: t.volgorde })))
+      .select('*'),
+  )
+}
+
+export async function updateDossierTaak(taakId, { omschrijving, verantwoordelijke, deadline, status, notitie, documentId }) {
+  const changes = {}
+  if (omschrijving !== undefined) changes.omschrijving = omschrijving.trim()
+  if (verantwoordelijke !== undefined) changes.verantwoordelijke = verantwoordelijke?.trim() || null
+  if (deadline !== undefined) changes.deadline = deadline || null
+  if (status !== undefined) changes.status = status
+  if (notitie !== undefined) changes.notitie = notitie?.trim() || null
+  if (documentId !== undefined) changes.document_id = documentId
+  return throwOnError(await supabase.from('dossier_taken').update(changes).eq('taak_id', taakId).select('*').single())
+}
+
+export async function removeDossierTaak(taakId) {
+  const { error } = await supabase.from('dossier_taken').delete().eq('taak_id', taakId)
   if (error) throw error
 }
 
