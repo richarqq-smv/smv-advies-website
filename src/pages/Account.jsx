@@ -20,6 +20,7 @@ import {
   updatePand,
   listDossiersVoorKlant,
   openOfHergebruikDossier,
+  listAdviespunten,
   getOffertesVoorKlant,
   getFacturenVoorKlant,
   getMijnDocumenten,
@@ -27,6 +28,7 @@ import {
   getDocumentDownloadUrl,
   verwijderDocument,
 } from '../lib/klantOmgeving/api'
+import { AdviespuntKaart } from '../components/dossier/AdviesBeheer'
 import { valideerKlantRegistratie } from '../lib/klantOmgeving/klantValidatie'
 import { leesDossierContext } from '../lib/klantOmgeving/dossierNavigatie'
 import { bouwAccountActies } from '../lib/klantOmgeving/accountActies'
@@ -48,6 +50,7 @@ const SECTIES = [
   { id: 'bedrijf', label: 'Mijn bedrijf' },
   { id: 'panden', label: 'Mijn panden' },
   { id: 'dossiers', label: 'Mijn dossiers' },
+  { id: 'advies', label: 'Mijn advies' },
   { id: 'documenten', label: 'Mijn documenten' },
   { id: 'offertes', label: 'Mijn offertes' },
   { id: 'facturen', label: 'Mijn facturen' },
@@ -84,6 +87,7 @@ export default function Account() {
   const [contactpersoon, setContactpersoon] = useState(null)
   const [panden, setPanden] = useState([])
   const [dossiers, setDossiers] = useState([])
+  const [adviespuntenPerDossier, setAdviespuntenPerDossier] = useState({})
   const [offertes, setOffertes] = useState([])
   const [facturen, setFacturen] = useState([])
   const [documenten, setDocumenten] = useState([])
@@ -119,6 +123,17 @@ export default function Account() {
         setOffertes(offertesLijst)
         setFacturen(facturenLijst)
         setDocumenten(documentenLijst)
+
+        // "Mijn advies" hergebruikt exact dezelfde listAdviespunten()-call als
+        // DossierDetail.jsx (geen tweede adviesquery/datamodel) — RLS
+        // (adviespunten_select) levert per dossier alleen al bestaande,
+        // definitieve adviespunt-rijen; een ruw automatisch signaal is nooit
+        // een rij in deze tabel (zie 0020_account_security_hardening.sql),
+        // dus er is hier niets extra te filteren.
+        const adviesPerDossierEntries = await Promise.all(
+          dossiersLijst.map(async (d) => [d.dossier_id, await listAdviespunten(d.dossier_id)]),
+        )
+        setAdviespuntenPerDossier(Object.fromEntries(adviesPerDossierEntries))
       }
     } finally {
       setLaden(false)
@@ -196,6 +211,7 @@ export default function Account() {
               <MijnBedrijf klant={klant} onOpgeslagen={setKlant} />
               <MijnPanden panden={panden} setPanden={setPanden} klant={klant} setDossiers={setDossiers} />
               <MijnDossiers dossiers={dossiers} />
+              <MijnAdvies dossiers={dossiers} adviespuntenPerDossier={adviespuntenPerDossier} />
               <MijnDocumenten klant={klant} documenten={documenten} setDocumenten={setDocumenten} dossiers={dossiers} />
               <MijnOffertes offertes={offertes} />
               <MijnFacturen facturen={facturen} />
@@ -584,6 +600,62 @@ function MijnDossiers({ dossiers }) {
               </Link>
             </li>
           ))}
+        </ul>
+      )}
+    </Kaart>
+  )
+}
+
+// --- Mijn advies --------------------------------------------------
+
+/**
+ * Toont per dossier uitsluitend de al bestaande, definitieve adviespunten
+ * (dezelfde AdviespuntKaart als DossierDetail.jsx/DossierWerkruimte.jsx,
+ * hier zonder `actions` — dus altijd read-only, een klant kan hier niets
+ * aanpassen). Geen ruwe automatische signalen: die zijn geen rij in
+ * `adviespunten` en komen dus sowieso niet in adviespuntenPerDossier terecht
+ * (zie moduledoc bij listAdviespunten()-aanroep in laadAlles()). Geen
+ * interne velden (commerciële kans, planning, interne notities/uren/kosten)
+ * — die tabellen worden hier niet bevraagd.
+ */
+function MijnAdvies({ dossiers, adviespuntenPerDossier }) {
+  return (
+    <Kaart id="advies" titel="Mijn advies" omschrijving="Het definitieve advies per dossier, zodra SMV dit heeft vastgesteld.">
+      {dossiers.length === 0 ? (
+        <p className="rounded-lg border border-dashed border-border px-5 py-6 text-center text-sm text-foreground-muted">Nog geen dossier, dus nog geen advies.</p>
+      ) : (
+        <ul className="flex flex-col gap-6">
+          {dossiers.map((d) => {
+            const adviespunten = adviespuntenPerDossier[d.dossier_id] ?? []
+            return (
+              <li key={d.dossier_id}>
+                <Link to={ROUTES.dossier(d.dossier_id)} className="text-sm font-medium text-primary hover:underline">
+                  {d.panden?.omschrijving || d.panden?.adres || 'Adviesdossier'}
+                </Link>
+                {adviespunten.length === 0 ? (
+                  <p className="mt-2 text-sm text-foreground-muted">Er is voor dit dossier nog geen definitief advies beschikbaar.</p>
+                ) : (
+                  <ul className="mt-3 flex flex-col gap-3">
+                    {adviespunten.map((advies) => (
+                      <li key={advies.adviespunt_id}>
+                        <AdviespuntKaart
+                          advies={{
+                            onderwerp: advies.onderwerp,
+                            herkomst: advies.herkomst,
+                            adviesStatus: advies.advies_status,
+                            toelichting: advies.toelichting,
+                            herbeoordelenBij: advies.herbeoordelen_bij,
+                            herbeoordelenDatum: advies.herbeoordelen_datum,
+                            signaalBevroren: advies.signaal_bevroren,
+                          }}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            )
+          })}
         </ul>
       )}
     </Kaart>
