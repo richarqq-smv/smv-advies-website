@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, DownloadSimple, FileText, Receipt } from '@phosphor-icons/react'
+import { useParams, useNavigate, Link } from 'react-router-dom'
+import { ArrowLeft, DownloadSimple, FileText, Receipt, Archive } from '@phosphor-icons/react'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
@@ -28,7 +28,9 @@ import {
   getDocumentenVoorDossier,
   getDocumentDownloadUrl,
   checkIsAdmin,
+  archiveerDossier,
 } from '../lib/klantOmgeving/api'
+import { magDossierArchiveren } from '../lib/klantOmgeving/dossierArchief'
 import { bouwDossierHealthCheck } from '../lib/klantOmgeving/dossierHealthCheck'
 import { bepaalDossierOverzichtRoute } from '../lib/klantOmgeving/dossierNavigatie'
 import { triggerDossierJsonDownload } from '../lib/klantOmgeving/dossierExport'
@@ -52,6 +54,7 @@ import { buildEnergieInsights } from '../lib/dossier/energieInsights'
  */
 export default function DossierDetail() {
   const { dossierId } = useParams()
+  const navigate = useNavigate()
   const [laden, setLaden] = useState(true)
   const [nietGevonden, setNietGevonden] = useState(false)
   const [dossier, setDossier] = useState(null)
@@ -81,6 +84,12 @@ export default function DossierDetail() {
   const [documentenVoorDossier, setDocumentenVoorDossier] = useState([])
   const [facturenVoorDossier, setFacturenVoorDossier] = useState([])
   const [downloadFoutId, setDownloadFoutId] = useState(null)
+  // Dossier-archiveren (zelfde inline-bevestigingspatroon als AdminDossiers.jsx
+  // zijn prullenbakknop — geen los modal-systeem, hergebruikt de bestaande
+  // gearchiveerd_op-architectuur (archiveerDossier() in api.js).
+  const [archiveerBevestiging, setArchiveerBevestiging] = useState(false)
+  const [archiveerBezig, setArchiveerBezig] = useState(false)
+  const [archiveerFout, setArchiveerFout] = useState(false)
 
   useEffect(() => {
     let actief = true
@@ -140,6 +149,26 @@ export default function DossierDetail() {
       window.open(url, '_blank', 'noopener')
     } catch {
       setDownloadFoutId(document.document_id)
+    }
+  }
+
+  /**
+   * Zet uitsluitend `gearchiveerd_op` (zie archiveerDossier() in api.js) —
+   * geen delete, geen cascade. Alle gekoppelde data (adviespunten,
+   * offertes, facturen, documenten, planning, dossier_taken, opnames)
+   * blijft gewoon aan dit dossier_id hangen; die tabellen worden hier niet
+   * aangeraakt. Na succes naar het bestaande Archief, waar het dossier nu
+   * zichtbaar is met een herstelknop.
+   */
+  async function naarArchief() {
+    setArchiveerFout(false)
+    setArchiveerBezig(true)
+    try {
+      await archiveerDossier(dossier.dossier_id)
+      navigate(ROUTES.archief)
+    } catch {
+      setArchiveerFout(true)
+      setArchiveerBezig(false)
     }
   }
 
@@ -221,7 +250,34 @@ export default function DossierDetail() {
                     Klaar voor klantgesprek
                   </Button>
                 ) : null}
+                {isAdmin && magDossierArchiveren(dossier) ? (
+                  <Button type="button" variant="ghost" size="sm" onClick={() => setArchiveerBevestiging(true)}>
+                    <Archive size={15} /> Naar archief
+                  </Button>
+                ) : null}
               </div>
+
+              {archiveerBevestiging ? (
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-accent/40 bg-accent/5 px-4 py-3 text-sm">
+                  <span className="text-primary">
+                    Dossier naar archief verplaatsen? Het dossier wordt niet verwijderd — het verdwijnt uit het actieve overzicht, blijft volledig
+                    bewaard (inclusief advies, offertes, facturen, documenten en overige gekoppelde gegevens) en kan later worden hersteld.
+                  </span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Button type="button" variant="ghost" size="sm" onClick={naarArchief} disabled={archiveerBezig}>
+                      {archiveerBezig ? 'Bezig...' : 'Ja, naar archief'}
+                    </Button>
+                    <Button type="button" variant="ghost" size="sm" onClick={() => setArchiveerBevestiging(false)} disabled={archiveerBezig}>
+                      Annuleren
+                    </Button>
+                  </div>
+                </div>
+              ) : null}
+              {archiveerFout ? (
+                <p role="alert" className="text-sm font-medium text-error">
+                  Archiveren is niet gelukt. Probeer het opnieuw.
+                </p>
+              ) : null}
               {healthCheck ? (
                 <Accordion title="Voortgang" defaultOpen>
                   <DossierHealthCheck healthCheck={healthCheck} />

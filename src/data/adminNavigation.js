@@ -30,3 +30,12 @@ export const ADMIN_ADMINISTRATIE_NAV_ITEMS = [
   { to: ROUTES.adminKosten, label: 'Kosten' },
   { to: ROUTES.adminBtw, label: 'BTW' },
 ]
+
+/**
+ * Externe links in de mobiele admin-navigatie — geen interne route, dus
+ * geen `to`/NavLink zoals hierboven, maar een gewone `href` die in een
+ * nieuw tabblad opent. Vooralsnog alleen de Porkbun-webmail (geen iframe,
+ * geen eigen mailpagina — zie AdminMobileNav.jsx): de admin-gebruiker
+ * verlaat de SMV-admin niet, die blijft gewoon open in het andere tabblad.
+ */
+export const ADMIN_EXTERNE_NAV_ITEMS = [{ href: 'https://webmail.porkbun.com/?_task=mail&_mbox=INBOX', label: 'E-mail' }]

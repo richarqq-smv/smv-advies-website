@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
-import { X } from '@phosphor-icons/react'
+import { X, ArrowSquareOut } from '@phosphor-icons/react'
 import { UitloggenKnop } from '../auth/UitloggenKnop'
-import { ADMIN_BEHEER_NAV_ITEMS, ADMIN_ADMINISTRATIE_NAV_ITEMS } from '../../data/adminNavigation'
+import { ADMIN_BEHEER_NAV_ITEMS, ADMIN_ADMINISTRATIE_NAV_ITEMS, ADMIN_EXTERNE_NAV_ITEMS } from '../../data/adminNavigation'
 import { useLockBodyScroll } from '../../hooks/useLockBodyScroll'
 import { cn } from '../../lib/cn'
 
@@ -65,6 +65,27 @@ export function AdminMobileNav({ open, onClose }) {
             >
               {item.label}
             </NavLink>
+          ))}
+
+          {/*
+            Externe links (vooralsnog alleen Porkbun-webmail) — bewust geen
+            NavLink (dat is voor interne routes met active-state): een
+            gewone <a target="_blank"> die in een nieuw tabblad opent, zodat
+            de admin-gebruiker deze drawer/sessie niet kwijtraakt. Zelfde
+            touch-target/padding/tekststijl als de route-items hierboven.
+          */}
+          {ADMIN_EXTERNE_NAV_ITEMS.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={onClose}
+              className="flex min-h-11 items-center justify-between gap-2 rounded-md px-3.5 py-3 text-base font-medium text-primary hover:bg-muted"
+            >
+              {item.label}
+              <ArrowSquareOut size={18} className="shrink-0 text-foreground-muted" />
+            </a>
           ))}
         </nav>
 
