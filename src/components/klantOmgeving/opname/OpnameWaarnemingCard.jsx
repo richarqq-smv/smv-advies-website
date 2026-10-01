@@ -3,6 +3,8 @@ import { useLatestRef } from '../../../hooks/useLatestRef'
 import { Camera, Trash, WarningCircle } from '@phosphor-icons/react'
 import { debounce } from '../../../lib/klantOmgeving/debounce'
 import { updateOpnameWaarneming, removeOpnameWaarneming, uploadDocument } from '../../../lib/klantOmgeving/api'
+import { waarnemingHeeftInhoud, waarnemingSamenvatting } from '../../../lib/klantOmgeving/opname'
+import { OpnameAccordionItem } from './OpnameAccordionItem'
 
 const VELD_LABELS = [
   { veld: 'huidige_situatie', label: 'Huidige situatie', multiline: true },
@@ -14,25 +16,32 @@ const VELD_LABELS = [
 ]
 
 const INPUT_CLASSNAME =
-  'w-full rounded-lg border border-border px-3.5 py-2.5 text-base text-primary focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none disabled:bg-muted disabled:text-foreground-muted'
+  'w-full max-w-full rounded-lg border border-border px-3.5 py-2.5 text-base text-primary focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none disabled:bg-muted disabled:text-foreground-muted box-border'
 
 /**
  * Eén waarnemingsregel uit het opnameformulier (mobiele-opnameronde) —
  * exact de 6 tekstvelden uit het brondocument ("Foto nr." is vervangen
  * door echte fotokoppeling hieronder, zie 0030-migratie/eindrapport).
+ *
+ * UX-ronde (2026-10-01): nu een accordion-item, dichtgeklapt bij het
+ * tonen van bestaande inhoud (de compacte samenvatting volstaat dan),
+ * standaard open voor een net aangemaakte lege waarneming — zie
+ * waarnemingHeeftInhoud(). Alleen de visuele weergave is veranderd, geen
+ * velden/autosave/datamodel.
+ *
  * Autosave: elke veldwijziging wordt 800ms na de laatste toetsaanslag
  * weggeschreven (gedebounced per waarneming, niet per veld — één PATCH
  * met alle op dat moment gewijzigde velden), met flush bij het verlaten
- * van het veld (blur) of het verlaten van de pagina/stap (zie
- * OpnameOnderdeelStap, dat cleanup via de returned flush-functie
- * afdwingt). Een korte verbindingsonderbreking kan dus hoogstens de
+ * van het veld (blur), het dichtklappen van de kaart, of het verlaten van
+ * de pagina/stap. Een korte verbindingsonderbreking kan dus hoogstens de
  * laatste, nog niet weggeschreven toetsaanslagen raken — nooit al
  * bevestigd opgeslagen gegevens (zie opdracht §5/§16, geen aparte
  * offline-queue: geen concrete aanleiding om aan te nemen dat inspecteurs
  * structureel zonder dekking werken).
  */
-export function OpnameWaarnemingCard({ waarneming, magBewerken, documenten, klantId, opnameId, onWaarnemingChange, onVerwijderd, onDocumentGeupload }) {
+export function OpnameWaarnemingCard({ index, waarneming, magBewerken, documenten, klantId, opnameId, onWaarnemingChange, onVerwijderd, onDocumentGeupload }) {
   const [velden, setVelden] = useState(() => Object.fromEntries(VELD_LABELS.map((v) => [v.veld, waarneming[v.veld] ?? ''])))
+  const [open, setOpen] = useState(() => waarnemingHeeftInhoud(waarneming) === false)
   const [opslaanStatus, setOpslaanStatus] = useState('opgeslagen') // 'opgeslagen' | 'bezig' | 'fout'
   const [verwijderBevestiging, setVerwijderBevestiging] = useState(false)
   const [uploadBezig, setUploadBezig] = useState(false)
@@ -74,6 +83,14 @@ export function OpnameWaarnemingCard({ waarneming, magBewerken, documenten, klan
     opslaan()
   }
 
+  function toggleOpen() {
+    // Dichtklappen flusht direct (niet pas bij unmount) — de kaart blijft
+    // gemonteerd, alleen de body wordt niet getoond, dus de unmount-flush
+    // hierboven zou hier niet vanzelf afgaan.
+    if (open) opslaan.flush()
+    setOpen((v) => !v)
+  }
+
   async function verwijderen() {
     try {
       await removeOpnameWaarneming(waarneming.waarneming_id)
@@ -99,8 +116,19 @@ export function OpnameWaarnemingCard({ waarneming, magBewerken, documenten, klan
     }
   }
 
+  const aandachtspunt = velden.aandachtspunt?.trim()
+  const samenvattingDelen = [waarnemingSamenvatting(velden)]
+  if (eigenDocumenten.length > 0) samenvattingDelen.push(`Foto's: ${eigenDocumenten.length}`)
+
   return (
-    <div className="rounded-xl border border-border bg-white p-4">
+    <OpnameAccordionItem
+      level="waarneming"
+      title={`Waarneming ${index + 1}`}
+      subtitle={aandachtspunt ? `! ${aandachtspunt}` : samenvattingDelen.join(' · ')}
+      subtitleTone={aandachtspunt ? 'accent' : 'muted'}
+      open={open}
+      onToggle={toggleOpen}
+    >
       <div className="mb-3 flex items-center justify-between gap-2">
         <span className="text-xs font-medium text-foreground-muted">
           {opslaanStatus === 'bezig' ? 'Bezig met opslaan...' : opslaanStatus === 'fout' ? 'Opslaan mislukt' : 'Opgeslagen'}
@@ -166,9 +194,9 @@ export function OpnameWaarnemingCard({ waarneming, magBewerken, documenten, klan
           </ul>
         ) : null}
         {magBewerken ? (
-          <label className="flex min-h-11 w-fit cursor-pointer items-center gap-2 rounded-md border border-border px-3.5 py-2 text-sm font-medium text-primary hover:bg-muted">
-            <Camera size={18} />
-            {uploadBezig ? 'Bezig met uploaden...' : "Foto toevoegen"}
+          <label className="flex min-h-11 w-fit max-w-full cursor-pointer items-center gap-2 rounded-md border border-border px-3.5 py-2 text-sm font-medium text-primary hover:bg-muted">
+            <Camera size={18} className="shrink-0" />
+            <span className="truncate">{uploadBezig ? 'Bezig met uploaden...' : "Foto toevoegen"}</span>
             <input type="file" accept="image/*" capture="environment" className="sr-only" onChange={fotoToevoegen} disabled={uploadBezig} />
           </label>
         ) : null}
@@ -178,6 +206,6 @@ export function OpnameWaarnemingCard({ waarneming, magBewerken, documenten, klan
           </p>
         ) : null}
       </div>
-    </div>
+    </OpnameAccordionItem>
   )
 }

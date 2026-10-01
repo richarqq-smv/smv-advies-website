@@ -166,3 +166,21 @@ export function groepeerWaarnemingenPerOnderdeel(waarnemingen) {
     })
   return groepen
 }
+
+// --- UI-weergavehulp (mobiele-UX-ronde, 2026-10-01) — puur presentatie,
+// geen nieuwe data/velden: alleen hoe de al bestaande 6 waarnemingsvelden
+// compact samengevat worden in een dichtgeklapte accordion-kaart. ---
+
+const WAARNEMING_TEKSTVELDEN = ['huidige_situatie', 'beoordeling', 'maatvoering', 'aandachtspunt', 'mogelijke_maatregel', 'opmerkingen']
+
+/** Heeft deze waarneming al iets ingevuld? Bepaalt of een nieuw aangemaakte (nog lege) waarneming standaard opengeklapt start. */
+export function waarnemingHeeftInhoud(waarneming) {
+  return WAARNEMING_TEKSTVELDEN.some((veld) => Boolean(waarneming?.[veld]?.trim?.()))
+}
+
+/** Korte, dichtgeklapte samenvatting van een waarneming — toont de huidige situatie (of anders de beoordeling) als preview, nooit lege labels. */
+export function waarnemingSamenvatting(waarneming) {
+  if (waarneming?.huidige_situatie?.trim()) return waarneming.huidige_situatie.trim()
+  if (waarneming?.beoordeling?.trim()) return waarneming.beoordeling.trim()
+  return 'Nog niets ingevuld'
+}

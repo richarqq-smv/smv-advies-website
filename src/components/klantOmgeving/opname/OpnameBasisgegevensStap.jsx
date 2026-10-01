@@ -2,18 +2,19 @@ import { useEffect, useRef, useState } from 'react'
 import { debounce } from '../../../lib/klantOmgeving/debounce'
 import { updateOpname } from '../../../lib/klantOmgeving/api'
 import { useLatestRef } from '../../../hooks/useLatestRef'
-import { OpnameChecklistStap } from './OpnameChecklistStap'
 
 const INPUT_CLASSNAME =
-  'w-full rounded-lg border border-border px-3.5 py-2.5 text-base text-primary focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none disabled:bg-muted disabled:text-foreground-muted'
+  'w-full max-w-full rounded-lg border border-border px-3.5 py-2.5 text-base text-primary focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none disabled:bg-muted disabled:text-foreground-muted box-border'
 
 /**
  * Basisgegevens (Pand/klant/adres/adviseur — hergebruikt uit het dossier
  * i.p.v. opnieuw ingetypt, opdracht §20) + Datum bezoek (bewerkbaar,
- * autosave) + de "Voorbereiding"-fase van de checklist (logisch een
- * pre-bezoek-stap, dus hier in plaats van in de Checklist-stap verderop).
+ * autosave). De "Voorbereiding"-checklistfase staat sinds de UX-ronde
+ * (2026-10-01) niet meer hier, maar samen met de andere 5 fasen in de
+ * Checklist-stap (opdracht §8: alle 6 fasen als één consistente
+ * accordion-sectie).
  */
-export function OpnameBasisgegevensStap({ opname, dossier, adviseurNaam, magBewerken, checklistItems, onOpnameChange, onChecklistToggle }) {
+export function OpnameBasisgegevensStap({ opname, dossier, adviseurNaam, magBewerken, onOpnameChange }) {
   const [datum, setDatum] = useState(opname.opname_datum ?? '')
   const pendingRef = useRef(null)
   const onOpnameChangeRef = useLatestRef(onOpnameChange)
@@ -50,13 +51,13 @@ export function OpnameBasisgegevensStap({ opname, dossier, adviseurNaam, magBewe
       <div className="flex flex-col gap-3">
         <div>
           <span className="mb-1 block text-xs font-medium text-foreground-muted">Pand / klant</span>
-          <p className="rounded-lg border border-border bg-muted px-3.5 py-2.5 text-base text-primary">
+          <p className="rounded-lg border border-border bg-muted px-3.5 py-2.5 text-base break-words text-primary">
             {dossier.klanten?.naam || dossier.klanten?.bedrijfsnaam || 'Onbekende klant'}
           </p>
         </div>
         <div>
           <span className="mb-1 block text-xs font-medium text-foreground-muted">Adres</span>
-          <p className="rounded-lg border border-border bg-muted px-3.5 py-2.5 text-base text-primary">
+          <p className="rounded-lg border border-border bg-muted px-3.5 py-2.5 text-base break-words text-primary">
             {dossier.panden?.adres || dossier.panden?.omschrijving || 'Onbekend adres'}
           </p>
         </div>
@@ -66,11 +67,9 @@ export function OpnameBasisgegevensStap({ opname, dossier, adviseurNaam, magBewe
         </label>
         <div>
           <span className="mb-1 block text-xs font-medium text-foreground-muted">Adviseur</span>
-          <p className="rounded-lg border border-border bg-muted px-3.5 py-2.5 text-base text-primary">{adviseurNaam || 'Onbekend'}</p>
+          <p className="rounded-lg border border-border bg-muted px-3.5 py-2.5 text-base break-words text-primary">{adviseurNaam || 'Onbekend'}</p>
         </div>
       </div>
-
-      <OpnameChecklistStap title="Voorbereiding" checklistItems={checklistItems} fasen={['voorbereiding']} magBewerken={magBewerken} onToggle={onChecklistToggle} />
     </div>
   )
 }

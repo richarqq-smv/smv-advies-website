@@ -13,29 +13,30 @@ import {
   setOpnameChecklistItem,
   getMijnProfiel,
 } from '../lib/klantOmgeving/api'
-import { OPNAME_ONDERDELEN, magOpnameBewerken, OPNAME_STATUS_LABELS } from '../lib/klantOmgeving/opname'
+import { magOpnameBewerken, OPNAME_STATUS_LABELS, berekenChecklistVoortgang, groepeerWaarnemingenPerOnderdeel, OPNAME_ONDERDEEL_CODES } from '../lib/klantOmgeving/opname'
 import { OpnameStapper } from '../components/klantOmgeving/opname/OpnameStapper'
 import { OpnameBasisgegevensStap } from '../components/klantOmgeving/opname/OpnameBasisgegevensStap'
-import { OpnameOnderdeelStap } from '../components/klantOmgeving/opname/OpnameOnderdeelStap'
+import { OpnameOnderdelenStap } from '../components/klantOmgeving/opname/OpnameOnderdelenStap'
 import { OpnameChecklistStap } from '../components/klantOmgeving/opname/OpnameChecklistStap'
 import { OpnameAfrondenStap } from '../components/klantOmgeving/opname/OpnameAfrondenStap'
 
 const STAPPEN = [
   { key: 'basis', label: 'Basisgegevens' },
-  ...OPNAME_ONDERDELEN.map((o) => ({ key: o.onderdeel, label: o.label })),
+  { key: 'onderdelen', label: 'Onderdelen' },
   { key: 'checklist', label: 'Checklist' },
   { key: 'afronden', label: 'Afronden' },
 ]
 
 /**
- * De mobiele opnameflow zelf (mobiele-opnameronde, 2026-09-30) —
- * `/admin/dossiers/:dossierId/opnames/:opnameId`, altijd onder AdminLayout
- * (geen publieke chrome, opdracht §14). Eén stap tegelijk (opdracht §4):
- * Basisgegevens -> 17 onderdelen (Dak t/m Energieverbruik, exacte
- * volgorde uit het opnameformulier) -> Checklist (de overige 5 fasen,
- * Voorbereiding staat al in Basisgegevens) -> Afronden. Alle content komt
- * uit src/lib/klantOmgeving/opname.js, letterlijk overgenomen uit de
- * brondocumenten.
+ * De mobiele opnameflow zelf (mobiele-opnameronde 2026-09-30, compacte
+ * accordion-UX-ronde 2026-10-01) — `/admin/dossiers/:dossierId/opnames/
+ * :opnameId`, altijd onder AdminLayout (geen publieke chrome, opdracht
+ * §14 van de vorige ronde). Vier stappen: Basisgegevens -> Onderdelen
+ * (alle 17 als accordion, opdracht §1) -> Checklist (alle 6 fasen als
+ * accordion, opdracht §8) -> Afronden. Alle content komt uit
+ * src/lib/klantOmgeving/opname.js, letterlijk overgenomen uit de
+ * brondocumenten — deze ronde verandert uitsluitend de visuele
+ * presentatie, geen data/velden/database.
  */
 export default function AdminOpname() {
   const { dossierId, opnameId } = useParams()
@@ -78,24 +79,16 @@ export default function AdminOpname() {
 
   const magBewerken = magOpnameBewerken(opname)
 
-  const waarnemingenPerOnderdeel = useMemo(() => {
-    const groepen = {}
-    waarnemingen.forEach((w) => {
-      if (!groepen[w.onderdeel]) groepen[w.onderdeel] = []
-      groepen[w.onderdeel].push(w)
-    })
-    return groepen
-  }, [waarnemingen])
+  const waarnemingenPerOnderdeel = useMemo(() => groepeerWaarnemingenPerOnderdeel(waarnemingen), [waarnemingen])
 
   const voltooideIndices = useMemo(() => {
     const set = new Set()
-    STAPPEN.forEach((stap, index) => {
-      if (stap.key === 'basis' && opname?.opname_datum) set.add(index)
-      else if (stap.key === 'afronden' && opname?.status === 'afgerond') set.add(index)
-      else if ((waarnemingenPerOnderdeel[stap.key]?.length ?? 0) > 0) set.add(index)
-    })
+    if (opname?.opname_datum) set.add(0)
+    if (OPNAME_ONDERDEEL_CODES.every((code) => (waarnemingenPerOnderdeel[code]?.length ?? 0) > 0)) set.add(1)
+    if (berekenChecklistVoortgang(checklistItems).compleet) set.add(2)
+    if (opname?.status === 'afgerond') set.add(3)
     return set
-  }, [opname, waarnemingenPerOnderdeel])
+  }, [opname, waarnemingenPerOnderdeel, checklistItems])
 
   function springNaarStap(key) {
     const index = STAPPEN.findIndex((s) => s.key === key)
@@ -137,7 +130,7 @@ export default function AdminOpname() {
 
   if (laden) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-8">
+      <div className="mx-auto max-w-3xl px-4 py-8">
         <p className="text-sm text-foreground-muted">Bezig met laden...</p>
       </div>
     )
@@ -145,7 +138,7 @@ export default function AdminOpname() {
 
   if (nietGevonden || !dossier || !opname) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-8">
+      <div className="mx-auto max-w-3xl px-4 py-8">
         <Button to={ROUTES.adminDossierDetail(dossierId)} variant="ghost" size="sm" className="-ml-3 mb-4">
           <ArrowLeft size={16} /> Terug naar dossier
         </Button>
@@ -161,11 +154,11 @@ export default function AdminOpname() {
   return (
     <>
       <Seo title="Opname" description="Opnameflow locatiebezoek." noindex />
-      <div className="border-b border-border bg-white px-4 py-3">
+      <div className="border-b border-border bg-white px-4 py-2">
         <Button to={ROUTES.adminDossierDetail(dossierId)} variant="ghost" size="sm" className="-ml-3">
           <ArrowLeft size={16} /> Terug naar dossier
         </Button>
-        <p className="mt-1 text-xs text-foreground-muted">
+        <p className="mt-0.5 text-xs text-foreground-muted">
           Status: <span className="font-medium text-primary">{OPNAME_STATUS_LABELS[opname.status] ?? opname.status}</span>
           {!magBewerken ? ' — bewerken uitgeschakeld (afgerond)' : ''}
         </p>
@@ -173,39 +166,12 @@ export default function AdminOpname() {
 
       <OpnameStapper stappen={STAPPEN} huidigeIndex={huidigeIndex} voltooideIndices={voltooideIndices} onSpringNaar={setHuidigeIndex} />
 
-      <div className="mx-auto max-w-2xl px-4 py-6 pb-24">
+      <div className="mx-auto max-w-3xl px-4 py-6 pb-28">
         {huidigeStap.key === 'basis' ? (
-          <OpnameBasisgegevensStap
-            opname={opname}
-            dossier={dossier}
-            adviseurNaam={adviseurNaam}
-            magBewerken={magBewerken}
-            checklistItems={checklistItems}
-            onOpnameChange={setOpname}
-            onChecklistToggle={checklistToggle}
-          />
-        ) : huidigeStap.key === 'checklist' ? (
-          <OpnameChecklistStap
-            title="Checklist locatiebezoek"
-            checklistItems={checklistItems}
-            fasen={['bouwkundig', 'installaties', 'verbruik', 'fotos', 'afronding']}
-            magBewerken={magBewerken}
-            onToggle={checklistToggle}
-          />
-        ) : huidigeStap.key === 'afronden' ? (
-          <OpnameAfrondenStap
-            opname={opname}
-            checklistItems={checklistItems}
-            waarnemingen={waarnemingen}
-            magBewerken={magBewerken}
-            onOpnameChange={setOpname}
-            onGaNaarStap={springNaarStap}
-          />
-        ) : (
-          <OpnameOnderdeelStap
-            onderdeel={huidigeStap.key}
-            label={huidigeStap.label}
-            waarnemingen={waarnemingenPerOnderdeel[huidigeStap.key] ?? []}
+          <OpnameBasisgegevensStap opname={opname} dossier={dossier} adviseurNaam={adviseurNaam} magBewerken={magBewerken} onOpnameChange={setOpname} />
+        ) : huidigeStap.key === 'onderdelen' ? (
+          <OpnameOnderdelenStap
+            waarnemingenPerOnderdeel={waarnemingenPerOnderdeel}
             magBewerken={magBewerken}
             opnameId={opnameId}
             klantId={dossier.klant_id}
@@ -215,10 +181,24 @@ export default function AdminOpname() {
             onWaarnemingVerwijderd={waarnemingVerwijderd}
             onDocumentGeupload={documentGeupload}
           />
+        ) : huidigeStap.key === 'checklist' ? (
+          <OpnameChecklistStap checklistItems={checklistItems} magBewerken={magBewerken} onToggle={checklistToggle} />
+        ) : (
+          <OpnameAfrondenStap
+            opname={opname}
+            checklistItems={checklistItems}
+            waarnemingen={waarnemingen}
+            magBewerken={magBewerken}
+            onOpnameChange={setOpname}
+            onGaNaarStap={springNaarStap}
+          />
         )}
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 flex gap-2 border-t border-border bg-white px-4 py-3">
+      <div
+        className="fixed inset-x-0 bottom-0 z-30 flex gap-2 border-t border-border bg-white px-4 pt-3"
+        style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+      >
         <Button type="button" variant="outline" onClick={vorige} disabled={huidigeIndex === 0} className="min-h-11 flex-1">
           <ArrowLeft size={16} /> Vorige
         </Button>

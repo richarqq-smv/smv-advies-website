@@ -10,6 +10,8 @@ import {
   groepeerChecklistPerFase,
   telWaarnemingenPerOnderdeel,
   groepeerWaarnemingenPerOnderdeel,
+  waarnemingHeeftInhoud,
+  waarnemingSamenvatting,
 } from './opname.js'
 
 test('OPNAME_CHECKLIST_ITEMS: precies 38 items, exact de brondocument-telling per fase (5+8+8+5+7+5)', () => {
@@ -108,4 +110,19 @@ test('groepeerWaarnemingenPerOnderdeel: groepeert en sorteert op created_at binn
   assert.equal(groepen.dak[0].huidige_situatie, 'eerste')
   assert.equal(groepen.dak[1].huidige_situatie, 'tweede')
   assert.equal(groepen.onbekend_onderdeel, undefined)
+})
+
+test('waarnemingHeeftInhoud: false voor een volledig lege waarneming (nieuw aangemaakt), true zodra één veld iets bevat', () => {
+  assert.equal(waarnemingHeeftInhoud({}), false)
+  assert.equal(waarnemingHeeftInhoud({ huidige_situatie: '', beoordeling: null }), false)
+  assert.equal(waarnemingHeeftInhoud({ huidige_situatie: '   ' }), false)
+  assert.equal(waarnemingHeeftInhoud({ huidige_situatie: 'Pannendak, redelijke staat' }), true)
+  assert.equal(waarnemingHeeftInhoud({ opmerkingen: 'alleen een opmerking' }), true)
+})
+
+test('waarnemingSamenvatting: toont huidige_situatie, valt terug op beoordeling, dan op een duidelijke lege-staat-tekst', () => {
+  assert.equal(waarnemingSamenvatting({ huidige_situatie: 'Pannendak', beoordeling: 'Redelijk' }), 'Pannendak')
+  assert.equal(waarnemingSamenvatting({ huidige_situatie: '', beoordeling: 'Redelijk' }), 'Redelijk')
+  assert.equal(waarnemingSamenvatting({}), 'Nog niets ingevuld')
+  assert.equal(waarnemingSamenvatting({ huidige_situatie: '   ' }), 'Nog niets ingevuld')
 })

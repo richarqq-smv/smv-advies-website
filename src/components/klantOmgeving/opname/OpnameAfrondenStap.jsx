@@ -93,7 +93,7 @@ export function OpnameAfrondenStap({ opname, checklistItems, waarnemingen, magBe
           disabled={!magBewerken}
           onChange={(e) => notitieChange(e.target.value)}
           onBlur={() => opslaan.flush()}
-          className="w-full rounded-lg border border-border px-3.5 py-2.5 text-base text-primary focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none disabled:bg-muted disabled:text-foreground-muted"
+          className="w-full max-w-full rounded-lg border border-border px-3.5 py-2.5 text-base text-primary focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none disabled:bg-muted disabled:text-foreground-muted box-border"
         />
       </label>
 
