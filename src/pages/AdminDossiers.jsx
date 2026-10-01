@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { DownloadSimple, Trash, WarningCircle } from '@phosphor-icons/react'
+import { Archive, DownloadSimple, Trash, WarningCircle } from '@phosphor-icons/react'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
@@ -8,8 +8,9 @@ import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
 import { AdminTerugKnop } from '../components/admin/AdminTerugKnop'
 import { ROUTES } from '../lib/routes'
-import { adminListKlanten, adminListDossiers, adminImporteerKlant, archiveerDossier } from '../lib/klantOmgeving/api'
+import { adminListKlanten, adminListDossiers, adminImporteerKlant, archiveerDossier, archiveerKlant } from '../lib/klantOmgeving/api'
 import { magDossierArchiveren } from '../lib/klantOmgeving/dossierArchief'
+import { magKlantArchiveren, dossiersDieMeeArchiveren } from '../lib/klantOmgeving/klantArchief'
 import { loadAllKlanten, loadAllPanden, loadAllDossiers, loadAllKlantPandRelaties } from '../lib/dossier'
 import { bouwDossiersCsv, triggerCsvDownload } from '../lib/klantOmgeving/csvExport'
 
@@ -42,6 +43,13 @@ export default function AdminDossiers() {
   const [archiveerId, setArchiveerId] = useState(null) // dossier_id in bevestigingsstap
   const [archiveerBezig, setArchiveerBezig] = useState(false)
   const [archiveerFoutId, setArchiveerFoutId] = useState(null)
+
+  // Klant-archiveren (2026-10-01) — zelfde inline-bevestigingspatroon,
+  // eigen state omdat dit zowel een klant_id als, voor de bevestigingstekst,
+  // de meegearchiveerde dossiers van die klant nodig heeft.
+  const [archiveerKlantId, setArchiveerKlantId] = useState(null)
+  const [archiveerKlantBezig, setArchiveerKlantBezig] = useState(false)
+  const [archiveerKlantFoutId, setArchiveerKlantFoutId] = useState(null)
 
   useEffect(() => {
     laadAlles()
@@ -112,6 +120,32 @@ export default function AdminDossiers() {
     }
   }
 
+  /**
+   * adminListKlanten() geeft alleen actieve (niet-gearchiveerde) klanten
+   * terug (zie api.js) — een geslaagde archivering hoeft dus alleen
+   * lokaal uit `klanten` te worden gefilterd. Dezelfde cascade-dossiers
+   * die archiveerKlant() in de database meearchiveert, filteren we hier
+   * ook lokaal uit `dossiers` (zelfde dossiersDieMeeArchiveren()-logica
+   * als de bevestigingstekst gebruikte) — geen herlaad-ronde nodig, en de
+   * klant/dossiers zelf blijven intact in de database, zichtbaar op
+   * Archief.jsx.
+   */
+  async function bevestigKlantArchiveren(klantId) {
+    setArchiveerKlantBezig(true)
+    setArchiveerKlantFoutId(null)
+    try {
+      await archiveerKlant(klantId)
+      const meegearchiveerdeIds = new Set(dossiersDieMeeArchiveren(dossiers.filter((d) => d.klant_id === klantId)).map((d) => d.dossier_id))
+      setDossiers((rows) => rows.filter((d) => !meegearchiveerdeIds.has(d.dossier_id)))
+      setKlanten((rows) => rows.filter((k) => k.klant_id !== klantId))
+      setArchiveerKlantId(null)
+    } catch {
+      setArchiveerKlantFoutId(klantId)
+    } finally {
+      setArchiveerKlantBezig(false)
+    }
+  }
+
   const gefilterdeKlanten = klanten.filter((k) => {
     const q = zoekterm.trim().toLowerCase()
     if (!q) return true
@@ -172,24 +206,69 @@ export default function AdminDossiers() {
                   <p className="rounded-lg border border-dashed border-border px-5 py-6 text-center text-sm text-foreground-muted">Geen klanten gevonden.</p>
                 ) : (
                   <ul className="flex flex-col gap-2">
-                    {gefilterdeKlanten.map((k) => (
-                      <li key={k.klant_id} className="rounded-lg border border-border bg-white px-4 py-3 text-sm">
-                        <p className="font-medium text-primary">{k.naam || k.bedrijfsnaam || 'Naamloze klant'}</p>
-                        {/* Werkfase Fase 14: klikbaar bellen/mailen — direct bruikbaar op mobiel, geen extra stap via kopiëren. */}
-                        <div className="flex flex-wrap gap-x-3 text-foreground-muted">
-                          {k.email ? (
-                            <a href={`mailto:${k.email}`} className="hover:text-accent hover:underline">
-                              {k.email}
-                            </a>
+                    {gefilterdeKlanten.map((k) =>
+                      archiveerKlantId === k.klant_id ? (
+                        <li key={k.klant_id}>
+                          <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-accent/40 bg-accent/5 px-4 py-3 text-sm">
+                            <span className="text-primary">
+                              {(() => {
+                                const n = dossiersDieMeeArchiveren(dossiers.filter((d) => d.klant_id === k.klant_id)).length
+                                return `Klant naar archief verplaatsen? De klant wordt niet definitief verwijderd. ${
+                                  n > 0 ? `De ${n} actieve dossier(s) van deze klant gaan mee naar het archief. ` : ''
+                                }Alle gegevens blijven bewaard en kunnen later worden hersteld.`
+                              })()}
+                            </span>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <Button type="button" variant="ghost" size="sm" onClick={() => bevestigKlantArchiveren(k.klant_id)} disabled={archiveerKlantBezig}>
+                                {archiveerKlantBezig ? 'Bezig...' : 'Ja, naar archief'}
+                              </Button>
+                              <Button type="button" variant="ghost" size="sm" onClick={() => setArchiveerKlantId(null)} disabled={archiveerKlantBezig}>
+                                Annuleren
+                              </Button>
+                            </div>
+                          </div>
+                        </li>
+                      ) : (
+                        <li key={k.klant_id} className="rounded-lg border border-border bg-white px-4 py-3 text-sm">
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <p className="font-medium text-primary">{k.naam || k.bedrijfsnaam || 'Naamloze klant'}</p>
+                              {/* Werkfase Fase 14: klikbaar bellen/mailen — direct bruikbaar op mobiel, geen extra stap via kopiëren. */}
+                              <div className="flex flex-wrap gap-x-3 text-foreground-muted">
+                                {k.email ? (
+                                  <a href={`mailto:${k.email}`} className="hover:text-accent hover:underline">
+                                    {k.email}
+                                  </a>
+                                ) : null}
+                                {k.telefoon ? (
+                                  <a href={`tel:${k.telefoon}`} className="hover:text-accent hover:underline">
+                                    {k.telefoon}
+                                  </a>
+                                ) : null}
+                              </div>
+                            </div>
+                            {magKlantArchiveren(k) ? (
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setArchiveerKlantId(k.klant_id)}
+                                aria-label="Klant naar archief"
+                                title="Klant naar archief"
+                              >
+                                <Archive size={16} />
+                              </Button>
+                            ) : null}
+                          </div>
+                          {archiveerKlantFoutId === k.klant_id ? (
+                            <p role="alert" className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-error">
+                              <WarningCircle size={13} weight="fill" />
+                              Archiveren is niet gelukt. Probeer het opnieuw.
+                            </p>
                           ) : null}
-                          {k.telefoon ? (
-                            <a href={`tel:${k.telefoon}`} className="hover:text-accent hover:underline">
-                              {k.telefoon}
-                            </a>
-                          ) : null}
-                        </div>
-                      </li>
-                    ))}
+                        </li>
+                      ),
+                    )}
                   </ul>
                 )}
               </div>

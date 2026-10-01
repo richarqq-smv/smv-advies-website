@@ -378,6 +378,56 @@ export async function herstelDossier(dossierId) {
 }
 
 /**
+ * Archiveert een Klant EN cascade al zijn actieve dossiers mee (expliciete
+ * productbeslissing, 0031_klant_archief.sql) — geen delete, alleen
+ * `gearchiveerd_op`-tijdstippen zetten. Volgorde is bewust eerst de
+ * dossiers, dan pas de klant: als de dossier-cascade onverhoopt faalt,
+ * gooien we vóórdat de klant zelf gearchiveerd wordt, zodat er nooit een
+ * tussenstaat "klant gearchiveerd, dossiers nog actief" blijft staan. Een
+ * dossier dat al los was gearchiveerd (`.is('gearchiveerd_op', null)`) of
+ * waarvan status='afgerond' is (bewaak_dossier_integriteit() blokkeert
+ * elke wijziging op zo'n dossier sowieso) wordt bewust NIET meegenomen —
+ * `gearchiveerd_via_klant: true` markeert alleen de dossiers die
+ * daadwerkelijk via deze cascade zijn gearchiveerd, zodat herstelKlant()
+ * hieronder weet welke dossiers bij het herstellen horen.
+ */
+export async function archiveerKlant(klantId) {
+  if (!klantId) throw new Error('archiveerKlant vereist een geldig klant-ID.')
+  const nu = new Date().toISOString()
+  const { error: dossiersError } = await supabase
+    .from('dossiers')
+    .update({ gearchiveerd_op: nu, gearchiveerd_via_klant: true })
+    .eq('klant_id', klantId)
+    .eq('status', 'open')
+    .is('gearchiveerd_op', null)
+  if (dossiersError) throw dossiersError
+  return throwOnError(
+    await supabase.from('klanten').update({ gearchiveerd_op: nu }).eq('klant_id', klantId).is('gearchiveerd_op', null).select('*').single(),
+  )
+}
+
+/**
+ * Herstelt een gearchiveerde Klant — spiegelbeeld van archiveerKlant()
+ * hierboven. Herstelt uitsluitend de dossiers die via déze klant-cascade
+ * zijn gearchiveerd (`gearchiveerd_via_klant = true`); een dossier dat al
+ * vóór of los van de klant-archivering apart was gearchiveerd
+ * (archiveerDossier(), `gearchiveerd_via_klant` blijft daar `false`) blijft
+ * gewoon gearchiveerd — dat was nooit onderdeel van deze actie.
+ */
+export async function herstelKlant(klantId) {
+  if (!klantId) throw new Error('herstelKlant vereist een geldig klant-ID.')
+  const { error: dossiersError } = await supabase
+    .from('dossiers')
+    .update({ gearchiveerd_op: null, gearchiveerd_via_klant: false })
+    .eq('klant_id', klantId)
+    .eq('gearchiveerd_via_klant', true)
+  if (dossiersError) throw dossiersError
+  return throwOnError(
+    await supabase.from('klanten').update({ gearchiveerd_op: null }).eq('klant_id', klantId).not('gearchiveerd_op', 'is', null).select('*').single(),
+  )
+}
+
+/**
  * Slaat een Energie-indicatie-snapshot op bij een bestaand Dossier
  * (Energie-indicatie Fase 2). Kale update van precies één kolom — nooit
  * ongecontroleerde extra velden, geen live calculator-state. RLS
@@ -523,8 +573,29 @@ export async function checkIsAdmin() {
   return throwOnError(await supabase.rpc('is_admin'))
 }
 
+/**
+ * Alleen actieve (niet-gearchiveerde) klanten — zelfde `.is(...)`-filter als
+ * adminListDossiers() hieronder, nu op `klanten.gearchiveerd_op`
+ * (0031_klant_archief.sql). Een gearchiveerde klant staat uitsluitend nog
+ * in adminListGearchiveerdeKlanten() — dit is ook de klantenlijst die
+ * AdminPlanning.jsx gebruikt om een afspraak aan te koppelen, dus een
+ * gearchiveerde klant verschijnt daar terecht niet meer als keuze.
+ */
 export async function adminListKlanten() {
-  return throwOnError(await supabase.from('klanten').select('*, contactpersonen(count), dossiers(count)').order('created_at', { ascending: false }))
+  return throwOnError(
+    await supabase.from('klanten').select('*, contactpersonen(count), dossiers(count)').is('gearchiveerd_op', null).order('created_at', { ascending: false }),
+  )
+}
+
+/** Spiegelbeeld van adminListKlanten() hierboven — uitsluitend voor de Archiefpagina (Archief.jsx). */
+export async function adminListGearchiveerdeKlanten() {
+  return throwOnError(
+    await supabase
+      .from('klanten')
+      .select('*, contactpersonen(count), dossiers(count)')
+      .not('gearchiveerd_op', 'is', null)
+      .order('gearchiveerd_op', { ascending: false }),
+  )
 }
 
 /**
