@@ -1,4 +1,3 @@
-import { COMPANY } from '../../data/company'
 import { euro, formatDatumNl } from '../../lib/klantOmgeving/offerte'
 
 /**
@@ -14,34 +13,43 @@ import { euro, formatDatumNl } from '../../lib/klantOmgeving/offerte'
  * historisch correct, ook als die brondata later wijzigt (zie
  * OfferteEditor/bouwOfferteSnapshot voor waar de snapshot vandaan komt).
  *
+ * Bedrijfsgegevens-bronronde: het titelblok gebruikt sinds deze ronde
+ * `instellingen` (factuur_instellingen, door OffertePreview.jsx live
+ * opgehaald) i.p.v. de statische data/company.js — exact hetzelfde
+ * principe als FactuurDocument.jsx. data/company.js blijft uitsluitend de
+ * bron voor de publieke website (zie het moduledoc van FactuurDocument.jsx
+ * en data/company.js); dit was tot nu toe de ene plek die daarvan afweek,
+ * waardoor een wijziging in Administratie Instellingen niet in nieuwe
+ * offertes doorkwam.
+ *
  * Toont uitsluitend velden die een klant mag zien — geen id's, RLS-status,
  * MJOP-snapshots, adviespunten of overige interne metadata.
  */
-export function OfferteDocument({ offerte }) {
+export function OfferteDocument({ offerte, instellingen }) {
   const { snapshot } = offerte
   const heeftMeerwerk = Array.isArray(offerte.meerwerk) && offerte.meerwerk.length > 0
 
   return (
     <article className="offerte-document bg-white text-[13.5px] leading-relaxed text-foreground print:text-[11.5pt]">
       {/* 1. Titelblok */}
-      <header className="offerte-blok mb-8 flex items-start justify-between gap-6 border-b border-border pb-6 break-inside-avoid">
-        <div>
-          <img src="/logo-header.png" alt="SMV Advies" width="149" height="84" className="mb-4 h-14 w-auto" />
+      <header className="offerte-blok mb-8 flex flex-wrap items-start justify-between gap-x-6 gap-y-4 border-b border-border pb-6 break-inside-avoid">
+        <div className="min-w-0 break-words">
+          <img src="/logo-header.png" alt={instellingen.bedrijfsnaam} width="149" height="84" className="mb-4 h-14 w-auto" />
           <p className="text-foreground-muted">
-            {COMPANY.address.street}
+            {instellingen.adres}
             <br />
-            {COMPANY.address.postalCode} {COMPANY.address.city}
+            {instellingen.postcode} {instellingen.plaats}
             <br />
-            {COMPANY.phone} · {COMPANY.email}
-            {COMPANY.kvk ? (
+            {instellingen.telefoon} · {instellingen.email}
+            {instellingen.kvk_nummer ? (
               <>
                 <br />
-                KvK {COMPANY.kvk}
+                KvK {instellingen.kvk_nummer}
               </>
             ) : null}
           </p>
         </div>
-        <div className="text-right">
+        <div className="min-w-0 text-right">
           <h1 className="font-heading text-2xl text-primary">Offerte</h1>
           <dl className="mt-2 flex flex-col gap-0.5 text-foreground-muted">
             <div>
@@ -181,10 +189,10 @@ export function OfferteDocument({ offerte }) {
       <section className="offerte-blok mb-7 break-inside-avoid">
         <h2 className="mb-2 break-after-avoid text-xs font-semibold tracking-[0.1em] text-accent uppercase">Voorwaarden</h2>
         <p className="text-foreground-muted">
-          Op deze offerte zijn de Algemene Voorwaarden van SMV Advies van toepassing (versie {snapshot.voorwaarden.versie}), te
-          raadplegen op www.smv-advies.nl/voorwaarden. Deze offerte is vrijblijvend en geldig tot de hierboven genoemde datum.
+          Op deze offerte zijn de Algemene Voorwaarden van {instellingen.bedrijfsnaam} van toepassing (versie {snapshot.voorwaarden.versie}
+          ), te raadplegen op www.smv-advies.nl/voorwaarden. Deze offerte is vrijblijvend en geldig tot de hierboven genoemde datum.
         </p>
-        <p className="mt-2 text-foreground-muted">Opgesteld door {snapshot.opgesteld_door.naam}, SMV Advies.</p>
+        <p className="mt-2 text-foreground-muted">Opgesteld door {snapshot.opgesteld_door.naam}, {instellingen.bedrijfsnaam}.</p>
       </section>
 
       {/* 8. Akkoord */}

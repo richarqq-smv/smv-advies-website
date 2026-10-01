@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { ArrowLeft, ArrowRight } from '@phosphor-icons/react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { ArrowLeft, ArrowRight, Check } from '@phosphor-icons/react'
 import { Seo } from '../components/seo/Seo'
 import { Button } from '../components/ui/Button'
 import { ROUTES } from '../lib/routes'
@@ -11,6 +11,7 @@ import {
   listOpnameChecklistItems,
   getDocumentenVoorOpname,
   setOpnameChecklistItem,
+  updateOpnameStatus,
   getMijnProfiel,
 } from '../lib/klantOmgeving/api'
 import { magOpnameBewerken, OPNAME_STATUS_LABELS, berekenChecklistVoortgang, groepeerWaarnemingenPerOnderdeel, OPNAME_ONDERDEEL_CODES } from '../lib/klantOmgeving/opname'
@@ -40,6 +41,7 @@ const STAPPEN = [
  */
 export default function AdminOpname() {
   const { dossierId, opnameId } = useParams()
+  const navigate = useNavigate()
   const [laden, setLaden] = useState(true)
   const [nietGevonden, setNietGevonden] = useState(false)
   const [dossier, setDossier] = useState(null)
@@ -49,6 +51,8 @@ export default function AdminOpname() {
   const [documenten, setDocumenten] = useState([])
   const [adviseurNaam, setAdviseurNaam] = useState(null)
   const [huidigeIndex, setHuidigeIndex] = useState(0)
+  const [afrondenBezig, setAfrondenBezig] = useState(false)
+  const [afrondenFout, setAfrondenFout] = useState(null)
 
   useEffect(() => {
     let actief = true
@@ -78,6 +82,8 @@ export default function AdminOpname() {
   }, [dossierId, opnameId])
 
   const magBewerken = magOpnameBewerken(opname)
+  const isLaatsteStap = huidigeIndex === STAPPEN.length - 1
+  const checklistVoortgang = useMemo(() => berekenChecklistVoortgang(checklistItems), [checklistItems])
 
   const waarnemingenPerOnderdeel = useMemo(() => groepeerWaarnemingenPerOnderdeel(waarnemingen), [waarnemingen])
 
@@ -105,6 +111,18 @@ export default function AdminOpname() {
   function vorige() {
     setHuidigeIndex((i) => Math.max(i - 1, 0))
     window.scrollTo(0, 0)
+  }
+
+  async function afronden() {
+    setAfrondenFout(null)
+    setAfrondenBezig(true)
+    try {
+      await updateOpnameStatus(opnameId, 'afgerond')
+      navigate(ROUTES.adminDossierDetail(dossierId))
+    } catch {
+      setAfrondenFout('Afronden is niet gelukt. Probeer het opnieuw.')
+      setAfrondenBezig(false)
+    }
   }
 
   async function checklistToggle(itemCode, afgevinkt) {
@@ -166,7 +184,7 @@ export default function AdminOpname() {
 
       <OpnameStapper stappen={STAPPEN} huidigeIndex={huidigeIndex} voltooideIndices={voltooideIndices} onSpringNaar={setHuidigeIndex} />
 
-      <div className="mx-auto max-w-3xl px-4 py-6 pb-28">
+      <div className="mx-auto max-w-3xl px-4 py-6 pb-32">
         {huidigeStap.key === 'basis' ? (
           <OpnameBasisgegevensStap opname={opname} dossier={dossier} adviseurNaam={adviseurNaam} magBewerken={magBewerken} onOpnameChange={setOpname} />
         ) : huidigeStap.key === 'onderdelen' ? (
@@ -196,15 +214,36 @@ export default function AdminOpname() {
       </div>
 
       <div
-        className="fixed inset-x-0 bottom-0 z-30 flex gap-2 border-t border-border bg-white px-4 pt-3"
+        className="fixed inset-x-0 bottom-0 z-30 flex flex-col gap-2 border-t border-border bg-white px-4 pt-3"
         style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
       >
-        <Button type="button" variant="outline" onClick={vorige} disabled={huidigeIndex === 0} className="min-h-11 flex-1">
-          <ArrowLeft size={16} /> Vorige
-        </Button>
-        <Button type="button" onClick={volgende} disabled={huidigeIndex === STAPPEN.length - 1} className="min-h-11 flex-1">
-          Volgende <ArrowRight size={16} />
-        </Button>
+        {afrondenFout ? (
+          <p role="alert" className="text-xs font-medium text-error">
+            {afrondenFout}
+          </p>
+        ) : null}
+        <div className="flex gap-2">
+          <Button type="button" variant="outline" onClick={vorige} disabled={huidigeIndex === 0} className="min-h-11 flex-1">
+            <ArrowLeft size={16} /> Vorige
+          </Button>
+          {isLaatsteStap && magBewerken ? (
+            <Button type="button" onClick={afronden} disabled={afrondenBezig || !checklistVoortgang.compleet} className="min-h-11 flex-1">
+              {afrondenBezig ? 'Bezig...' : (
+                <>
+                  Afronden <Check size={16} />
+                </>
+              )}
+            </Button>
+          ) : isLaatsteStap ? (
+            <Button type="button" disabled className="min-h-11 flex-1">
+              <Check size={16} /> Afgerond
+            </Button>
+          ) : (
+            <Button type="button" onClick={volgende} disabled={huidigeIndex === STAPPEN.length - 1} className="min-h-11 flex-1">
+              Volgende <ArrowRight size={16} />
+            </Button>
+          )}
+        </div>
       </div>
     </>
   )

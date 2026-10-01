@@ -6,6 +6,7 @@ import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
+import { AdminTerugKnop } from '../components/admin/AdminTerugKnop'
 import { ROUTES } from '../lib/routes'
 import { adminListGearchiveerdeDossiers, herstelDossier } from '../lib/klantOmgeving/api'
 import { formatDatumNl } from '../lib/klantOmgeving/offerte'
@@ -16,9 +17,11 @@ import { formatDatumNl } from '../lib/klantOmgeving/offerte'
  * van adminListDossiers() op /admin/dossiers, zie api.js). Archiveren
  * gebeurt op AdminDossiers.jsx (prullenbakknop); hier staat alleen de
  * terugweg: Herstellen. Geen tweede dossierweergave — "openen" navigeert
- * altijd naar het bestaande DossierDetail.jsx. Navigatie naar de rest van
- * de adminomgeving loopt sinds de Admin-ronde via AdminLayout.jsx (zie
- * App.jsx), niet meer via een eigen knop op deze pagina.
+ * altijd naar het bestaande DossierDetail.jsx. Sinds de
+ * responsiviteitsronde staat hier ook weer een eigen "Terug naar
+ * dashboard"-knop (AdminTerugKnop) — de AdminLayout-topnavigatie zit op
+ * mobiel achter een hamburgermenu, dus een rechtstreeks zichtbare terugweg
+ * blijft nodig, ook al bestaat die bredere navigatie ernaast.
  */
 export default function Archief() {
   const [laden, setLaden] = useState(true)
@@ -62,6 +65,7 @@ export default function Archief() {
       <PageHero eyebrow="Beheer" title="Gearchiveerde dossiers" description="Dossiers die uit het actieve overzicht zijn gehaald, maar nog volledig bewaard blijven." />
       <Section tone="white" noTopPadding>
         <Container className="max-w-3xl">
+          <AdminTerugKnop />
           {laden ? (
             <p className="text-sm text-foreground-muted">Bezig met laden...</p>
           ) : fout ? (

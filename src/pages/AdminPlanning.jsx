@@ -6,6 +6,7 @@ import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
 import { AfspraakModal } from '../components/admin/AfspraakModal'
+import { AdminTerugKnop } from '../components/admin/AdminTerugKnop'
 import { adminListKlanten, listAfspraken } from '../lib/klantOmgeving/api'
 import {
   berekenWeekdagen,
@@ -109,6 +110,7 @@ export default function AdminPlanning() {
       <PageHero eyebrow="Beheer" title="Planning" description="Afspraken, bezoeken en gesprekken." />
       <Section tone="white" noTopPadding>
         <Container className="max-w-5xl">
+          <AdminTerugKnop />
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2">
               <Button type="button" variant="ghost" size="sm" onClick={() => verschuif(weergave === 'week' ? -7 : -1)} aria-label="Vorige periode">

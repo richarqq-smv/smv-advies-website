@@ -6,6 +6,7 @@ import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
+import { Accordion } from '../components/ui/Accordion'
 import { ROUTES } from '../lib/routes'
 import { DossierWerkruimte } from '../components/klantOmgeving/DossierWerkruimte'
 import { DossierHealthCheck } from '../components/klantOmgeving/DossierHealthCheck'
@@ -221,24 +222,42 @@ export default function DossierDetail() {
                   </Button>
                 ) : null}
               </div>
-              {healthCheck ? <DossierHealthCheck healthCheck={healthCheck} /> : null}
+              {healthCheck ? (
+                <Accordion title="Voortgang" defaultOpen>
+                  <DossierHealthCheck healthCheck={healthCheck} />
+                </Accordion>
+              ) : null}
               <PakketControle dossier={dossier} onDossierChange={setDossier} magBeheren={isAdmin} />
-              <DossierWerkruimte
-                dossier={dossier}
-                adviespunten={adviespunten}
-                mjopSnapshot={dossier.mjop_snapshot}
-                energieSnapshot={dossier.energie_snapshot}
-                onDossierChange={setDossier}
-                magBeheren={isAdmin}
-              />
-              <BouwkundigeAnalyse dossier={dossier} onDossierChange={setDossier} magBeheren={isAdmin} />
+              <Accordion title="Adviesdossier · Advies" defaultOpen>
+                <DossierWerkruimte
+                  dossier={dossier}
+                  adviespunten={adviespunten}
+                  mjopSnapshot={dossier.mjop_snapshot}
+                  energieSnapshot={dossier.energie_snapshot}
+                  onDossierChange={setDossier}
+                  magBeheren={isAdmin}
+                />
+              </Accordion>
+              {isAdmin && dossier.pakket_id !== 'basis' ? (
+                <Accordion title="Bouwkundige analyse · Rc/U-waarden">
+                  <BouwkundigeAnalyse dossier={dossier} onDossierChange={setDossier} magBeheren={isAdmin} />
+                </Accordion>
+              ) : null}
               {isAdmin ? <OpnamesSectie dossierId={dossier.dossier_id} /> : null}
               {isAdmin ? <AdviesrapportGenerator dossier={dossier} adviespunten={adviespunten} /> : null}
-              {isAdmin && dossier.pakket_id === 'gold' ? <DossierTaken dossierId={dossier.dossier_id} pakketId={dossier.pakket_id} magBeheren={isAdmin} /> : null}
-              {isAdmin && !dossier.energie_snapshot ? (
-                <EnergieUitnodiging dossierId={dossier.dossier_id} klant={dossier.klanten} />
+              {isAdmin && dossier.pakket_id === 'gold' ? (
+                <Accordion title="Subsidiebegeleiding & oplevering">
+                  <DossierTaken dossierId={dossier.dossier_id} pakketId={dossier.pakket_id} magBeheren={isAdmin} />
+                </Accordion>
               ) : null}
-              <EnergieSnapshot snapshot={dossier.energie_snapshot} />
+              <Accordion title="Energie-indicatie">
+                {isAdmin && !dossier.energie_snapshot ? (
+                  <div className="mb-6">
+                    <EnergieUitnodiging dossierId={dossier.dossier_id} klant={dossier.klanten} />
+                  </div>
+                ) : null}
+                <EnergieSnapshot snapshot={dossier.energie_snapshot} />
+              </Accordion>
               <DocumentenBijDossier documenten={documentenVoorDossier} downloaden={downloaden} downloadFoutId={downloadFoutId} />
               {/* Anchor voor de Health Check-offerteactie hieronder ("Offerte bekijken") — geen routewijziging nodig, dit staat al op dezelfde pagina. */}
               <div id="offertes-sectie" className="flex flex-col gap-6">

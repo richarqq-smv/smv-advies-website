@@ -4,6 +4,7 @@ import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
+import { AdminTerugKnop } from '../components/admin/AdminTerugKnop'
 import { ROUTES } from '../lib/routes'
 import { adminListCommercieleKansen } from '../lib/klantOmgeving/api'
 import { VERVOLGSTAP_LABELS } from '../lib/klantOmgeving/commercieleKans'
@@ -42,6 +43,7 @@ export default function AdminKansen() {
       <PageHero eyebrow="Beheer" title="Commerciële kansen" description="Dossiers waarvoor een interne commerciële vervolgstap is vastgelegd." />
       <Section tone="white" noTopPadding>
         <Container className="max-w-3xl">
+          <AdminTerugKnop />
           {laden ? (
             <p className="text-sm text-foreground-muted">Bezig met laden...</p>
           ) : fout ? (

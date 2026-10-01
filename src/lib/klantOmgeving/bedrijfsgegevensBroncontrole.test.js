@@ -1,0 +1,55 @@
+import { test } from 'node:test'
+import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import path from 'node:path'
+
+/**
+ * Statische bron-controles (zelfde patroon als
+ * energieScan/publiekeOutputBroncontrole.test.js) voor de bedrijfsgegevens-
+ * bronronde (2026-10-01): OfferteDocument.jsx gebruikte tot nu toe de
+ * statische src/data/company.js voor het titelblok, terwijl
+ * FactuurDocument.jsx al langer correct `instellingen`
+ * (factuur_instellingen, Administratie Instellingen) gebruikt — een
+ * wijziging in Administratie Instellingen kwam daardoor niet door in
+ * nieuwe offertes. Dit test dat beide documenten nu dezelfde, centrale
+ * bron gebruiken.
+ */
+const HIER = path.dirname(fileURLToPath(import.meta.url))
+
+function leesZonderComments(...relatievePad) {
+  const volledigPad = path.join(HIER, ...relatievePad)
+  const bron = readFileSync(volledigPad, 'utf8')
+  return bron.replace(/\/\*[\s\S]*?\*\//g, '')
+}
+
+test('OfferteDocument.jsx: importeert niet langer de statische data/company.js', () => {
+  const bron = leesZonderComments('..', '..', 'components', 'klantOmgeving', 'OfferteDocument.jsx')
+  assert.equal(/from ['"]\.\.\/\.\.\/data\/company['"]/.test(bron), false)
+  assert.equal(/\bCOMPANY\./.test(bron), false)
+})
+
+test('OfferteDocument.jsx: gebruikt het instellingen-prop (factuur_instellingen) voor het titelblok', () => {
+  const bron = leesZonderComments('..', '..', 'components', 'klantOmgeving', 'OfferteDocument.jsx')
+  assert.match(bron, /function OfferteDocument\(\{ offerte, instellingen \}\)/)
+  assert.match(bron, /instellingen\.adres/)
+  assert.match(bron, /instellingen\.bedrijfsnaam/)
+})
+
+test('OffertePreview.jsx: haalt getFactuurInstellingen() op en geeft het door aan OfferteDocument', () => {
+  const bron = leesZonderComments('..', '..', 'pages', 'OffertePreview.jsx')
+  assert.match(bron, /getFactuurInstellingen/)
+  assert.match(bron, /<OfferteDocument offerte=\{offerte\} instellingen=\{instellingen\} \/>/)
+})
+
+test('FactuurDocument.jsx: blijft (zoals voorheen) instellingen gebruiken, niet data/company.js', () => {
+  const bron = leesZonderComments('..', '..', 'components', 'admin', 'FactuurDocument.jsx')
+  assert.equal(/from ['"].*data\/company['"]/.test(bron), false)
+  assert.match(bron, /instellingen\.bedrijfsnaam/)
+})
+
+test('adviesrapportDocx.js: vult alleen dossier-/adviesgegevens in bestaande sjablonen, geen eigen bedrijfsgegevens-bron', () => {
+  const bron = leesZonderComments('adviesrapportDocx.js')
+  assert.equal(/from ['"].*data\/company['"]/.test(bron), false)
+  assert.equal(/factuur_instellingen/.test(bron), false)
+})

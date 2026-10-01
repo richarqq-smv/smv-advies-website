@@ -6,6 +6,7 @@ import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
+import { AdminTerugKnop } from '../components/admin/AdminTerugKnop'
 import { ROUTES } from '../lib/routes'
 import { adminListKlanten, adminListDossiers, adminImporteerKlant, archiveerDossier } from '../lib/klantOmgeving/api'
 import { magDossierArchiveren } from '../lib/klantOmgeving/dossierArchief'
@@ -123,6 +124,7 @@ export default function AdminDossiers() {
       <PageHero eyebrow="Beheer" title="Klanten & dossiers" description="Beheer klanten, panden en adviesdossiers." />
       <Section tone="white" noTopPadding>
         <Container className="max-w-3xl">
+          <AdminTerugKnop />
           {laden ? (
             <p className="text-sm text-foreground-muted">Bezig met laden...</p>
           ) : (

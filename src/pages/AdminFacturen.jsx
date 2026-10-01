@@ -4,6 +4,7 @@ import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
+import { AdminTerugKnop } from '../components/admin/AdminTerugKnop'
 import { ROUTES } from '../lib/routes'
 import { adminListFacturen } from '../lib/klantOmgeving/api'
 import { FACTUUR_STATUSSEN, FACTUUR_STATUS_LABELS, euro, formatDatumNl, isFactuurVervallen } from '../lib/klantOmgeving/factuur'
@@ -48,6 +49,7 @@ export default function AdminFacturen() {
       <PageHero eyebrow="Beheer" title="Facturen" description="Alle facturen, over alle klanten en dossiers heen." />
       <Section tone="white" noTopPadding>
         <Container className="max-w-4xl">
+          <AdminTerugKnop />
           <div className="mb-5 flex flex-wrap gap-1.5">
             {FILTERS.map((f) => (
               <button

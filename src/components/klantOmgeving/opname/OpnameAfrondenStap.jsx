@@ -9,7 +9,15 @@ import { berekenChecklistVoortgang, telWaarnemingenPerOnderdeel, onderdeelLabel 
 /**
  * Laatste stap: Algemene opmerkingen (autosave, opdracht §onderaan
  * opnameformulier — dossierbrede opmerking, niet per onderdeel) +
- * compleetheidscontrole + de daadwerkelijke Afronden-/Heropenen-actie.
+ * compleetheidscontrole + (bij een al afgeronde opname) Heropenen.
+ *
+ * De daadwerkelijke Afronden-actie zit sinds de responsiviteitsronde niet
+ * meer hier als losse knop, maar in de onderste, vaste knoppenbalk van
+ * AdminOpname.jsx zelf (die toont "Afronden" i.p.v. "Volgende" zodra dit
+ * de laatste stap is) — dat voorkomt twee verschillende "Afronden"-knoppen
+ * op hetzelfde scherm. `berekenChecklistVoortgang` wordt hier nog gebruikt
+ * om de voortgang te tónen; AdminOpname.jsx berekent `voortgang.compleet`
+ * zelf opnieuw (dezelfde pure functie) om de knop te mogen in-/uitschakelen.
  *
  * Compleet = alle 38 checklist-items afgevinkt (het brondocument definieert
  * dat zelf zo, zie opname.js). Onderdelen-zonder-waarneming is bewust
@@ -21,8 +29,8 @@ import { berekenChecklistVoortgang, telWaarnemingenPerOnderdeel, onderdeelLabel 
  */
 export function OpnameAfrondenStap({ opname, checklistItems, waarnemingen, magBewerken, onOpnameChange, onGaNaarStap }) {
   const [notitie, setNotitie] = useState(opname.notitie ?? '')
-  const [bezig, setBezig] = useState(false)
-  const [fout, setFout] = useState(null)
+  const [heropenenBezig, setHeropenenBezig] = useState(false)
+  const [heropenenFout, setHeropenenFout] = useState(null)
   const pendingRef = useRef(null)
   const onOpnameChangeRef = useLatestRef(onOpnameChange)
   const opnameIdRef = useLatestRef(opname.opname_id)
@@ -52,29 +60,16 @@ export function OpnameAfrondenStap({ opname, checklistItems, waarnemingen, magBe
     opslaan()
   }
 
-  async function afronden() {
-    setFout(null)
-    setBezig(true)
-    try {
-      const bijgewerkt = await updateOpnameStatus(opname.opname_id, 'afgerond')
-      onOpnameChange(bijgewerkt)
-    } catch {
-      setFout('Afronden is niet gelukt. Probeer het opnieuw.')
-    } finally {
-      setBezig(false)
-    }
-  }
-
   async function heropenen() {
-    setFout(null)
-    setBezig(true)
+    setHeropenenFout(null)
+    setHeropenenBezig(true)
     try {
       const bijgewerkt = await updateOpnameStatus(opname.opname_id, 'opgeslagen')
       onOpnameChange(bijgewerkt)
     } catch {
-      setFout('Heropenen is niet gelukt. Probeer het opnieuw.')
+      setHeropenenFout('Heropenen is niet gelukt. Probeer het opnieuw.')
     } finally {
-      setBezig(false)
+      setHeropenenBezig(false)
     }
   }
 
@@ -135,21 +130,21 @@ export function OpnameAfrondenStap({ opname, checklistItems, waarnemingen, magBe
         </div>
       ) : null}
 
-      {fout ? <p role="alert" className="text-sm font-medium text-error">{fout}</p> : null}
+      {heropenenFout ? <p role="alert" className="text-sm font-medium text-error">{heropenenFout}</p> : null}
 
       {opname.status === 'afgerond' ? (
         <div className="flex flex-col gap-2">
           <p className="flex items-center gap-1.5 text-sm font-medium text-primary">
             <CheckCircle size={16} weight="fill" className="text-accent" /> Deze opname is afgerond.
           </p>
-          <Button type="button" variant="outline" onClick={heropenen} disabled={bezig} className="w-fit">
-            {bezig ? 'Bezig...' : 'Opname heropenen'}
+          <Button type="button" variant="outline" onClick={heropenen} disabled={heropenenBezig} className="w-fit">
+            {heropenenBezig ? 'Bezig...' : 'Opname heropenen'}
           </Button>
         </div>
+      ) : !voortgang.compleet ? (
+        <p className="text-sm text-foreground-muted">Rond de checklist af om deze opname te kunnen afronden — gebruik de knop onderaan.</p>
       ) : (
-        <Button type="button" onClick={afronden} disabled={bezig || !voortgang.compleet} className="w-fit">
-          {bezig ? 'Bezig...' : 'Opname afronden'}
-        </Button>
+        <p className="text-sm text-foreground-muted">Gebruik de knop "Afronden" onderaan om deze opname definitief te maken.</p>
       )}
     </div>
   )

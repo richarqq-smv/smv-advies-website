@@ -6,6 +6,7 @@ import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
+import { AdminTerugKnop } from '../components/admin/AdminTerugKnop'
 import { ROUTES } from '../lib/routes'
 import { adminListFacturen, adminListKosten } from '../lib/klantOmgeving/api'
 import { euro, isFactuurVervallen } from '../lib/klantOmgeving/factuur'
@@ -75,6 +76,7 @@ export default function AdminAdministratie() {
       <PageHero eyebrow="Beheer" title="Administratie" description="Wat moet u vandaag weten over facturatie en btw." />
       <Section tone="white" noTopPadding>
         <Container className="max-w-3xl">
+          <AdminTerugKnop />
           {laden ? (
             <p className="text-sm text-foreground-muted">Bezig met laden...</p>
           ) : fout ? (
