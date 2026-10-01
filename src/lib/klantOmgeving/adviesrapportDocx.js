@@ -17,10 +17,11 @@
  * Gold's offertevergelijking) volledig ongemoeid.
  *
  * Beperkt tot het universeel automatiseerbare deel van alle drie
- * templates: de metatabel (klantnaam/pandadres/datum/adviseur), de
- * samenvatting, en de maatregelentabel. Rapportnummer en "Pakket" (dat
- * al per sjabloon-bestand vaststaat) worden bewust niet aangepast —
- * zie adviesrapport.js.
+ * templates: de metatabel (klantnaam/pandadres/datum/adviseur, en sinds
+ * de bedrijfsgegevens-bronronde ook Adviesbureau/Adres/Telefoon/E-mail
+ * uit factuur_instellingen — zie adviesrapport.js), de samenvatting, en
+ * de maatregelentabel. Rapportnummer en "Pakket" (dat al per
+ * sjabloon-bestand vaststaat) worden bewust niet aangepast.
  */
 import JSZip from 'jszip'
 import { bouwAdviesrapportData } from './adviesrapport.js'
@@ -42,6 +43,13 @@ const METATABEL_LABELS = {
   Pandadres: 'pandadres',
   'Datum rapport': 'datumRapport',
   Adviseur: 'adviseur',
+  // Bedrijfsgegevens-bronronde: uit de Administratie Instellingen (via de
+  // `instellingen`-parameter hieronder), zelfde patroon als Offerte/Factuur
+  // — zie adviesrapport.js. Deze module haalt die gegevens zelf niet op.
+  Adviesbureau: 'bedrijfsnaam',
+  'Adres adviesbureau': 'bedrijfsadres',
+  'Telefoon adviesbureau': 'bedrijfsTelefoon',
+  'E-mail adviesbureau': 'bedrijfsEmail',
 }
 
 function elementTekst(el) {
@@ -239,13 +247,13 @@ function vulSubsidieplanTabel(doc, subsidieStappen) {
  * kan zien wat nog handmatig moet worden aangevuld (randvoorwaarde 14 —
  * reproduceerbaar en controleerbaar).
  */
-export async function genereerAdviesrapportDocx({ dossier, adviespunten = [], pakketId, adviseurNaam = null, datum = null, subsidieTaken = [] }) {
+export async function genereerAdviesrapportDocx({ dossier, adviespunten = [], pakketId, adviseurNaam = null, datum = null, subsidieTaken = [], instellingen = null }) {
   const templateUrl = TEMPLATE_URLS[pakketId]
   if (!templateUrl) {
     throw new Error(`Onbekend pakket "${pakketId}" — geen sjabloon beschikbaar.`)
   }
 
-  const data = bouwAdviesrapportData({ dossier, adviespunten, pakketId, adviseurNaam, datum, subsidieTaken })
+  const data = bouwAdviesrapportData({ dossier, adviespunten, pakketId, adviseurNaam, datum, subsidieTaken, instellingen })
 
   const respons = await fetch(templateUrl)
   if (!respons.ok) throw new Error('Kon het rapportsjabloon niet laden.')
@@ -318,8 +326,8 @@ export function downloadAdviesrapportBlob(blob, bestandsnaam) {
 }
 
 /** Genereert het rapport en start meteen de download — voor gebruik zonder tussenliggende preview. */
-export async function triggerAdviesrapportDocxDownload({ dossier, adviespunten, pakketId, adviseurNaam, datum, subsidieTaken }) {
-  const resultaat = await genereerAdviesrapportDocx({ dossier, adviespunten, pakketId, adviseurNaam, datum, subsidieTaken })
+export async function triggerAdviesrapportDocxDownload({ dossier, adviespunten, pakketId, adviseurNaam, datum, subsidieTaken, instellingen }) {
+  const resultaat = await genereerAdviesrapportDocx({ dossier, adviespunten, pakketId, adviseurNaam, datum, subsidieTaken, instellingen })
   downloadAdviesrapportBlob(resultaat.blob, bouwAdviesrapportBestandsnaam({ dossier, pakketId }))
   return resultaat
 }

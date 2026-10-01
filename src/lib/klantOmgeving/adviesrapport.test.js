@@ -122,6 +122,62 @@ test('bouwAdviesrapportData: datum valt terug op vandaag als geen datum is opgeg
   assert.match(data.meta.datumRapport, /^\d{2}-\d{2}-\d{4}$/)
 })
 
+// --- Bedrijfsgegevens uit factuur_instellingen (Administratie Instellingen) --
+
+test('bouwAdviesrapportData: bedrijfsgegevens komen uit instellingen (factuur_instellingen), adres combineert adres/postcode/plaats', () => {
+  const instellingen = { bedrijfsnaam: 'SMV Advies', adres: 'Frans Halsstraat 28', postcode: '3262 HG', plaats: 'Oud-Beijerland', telefoon: '06 22 71 33 83', email: 'info@smv-advies.nl' }
+  const data = bouwAdviesrapportData({ dossier: dossierFixture(), adviespunten: [], pakketId: 'basis', instellingen })
+  assert.equal(data.meta.bedrijfsnaam, 'SMV Advies')
+  assert.equal(data.meta.bedrijfsadres, 'Frans Halsstraat 28, 3262 HG Oud-Beijerland')
+  assert.equal(data.meta.bedrijfsTelefoon, '06 22 71 33 83')
+  assert.equal(data.meta.bedrijfsEmail, 'info@smv-advies.nl')
+})
+
+test('bouwAdviesrapportData: financieel-administratieve velden (KvK/btw-id/IBAN/betalingsvoorwaarden) komen niet in de rapportdata terecht', () => {
+  const instellingen = {
+    bedrijfsnaam: 'SMV Advies',
+    adres: 'Frans Halsstraat 28',
+    postcode: '3262 HG',
+    plaats: 'Oud-Beijerland',
+    telefoon: '06 22 71 33 83',
+    email: 'info@smv-advies.nl',
+    kvk_nummer: '12345678',
+    btw_id: 'NL123456789B01',
+    iban: 'NL91ABNA0417164300',
+    betalingsvoorwaarden: 'Binnen 14 dagen.',
+  }
+  const data = bouwAdviesrapportData({ dossier: dossierFixture(), adviespunten: [], pakketId: 'basis', instellingen })
+  const waarden = Object.values(data.meta)
+  assert.equal(waarden.includes('12345678'), false)
+  assert.equal(waarden.includes('NL123456789B01'), false)
+  assert.equal(waarden.includes('NL91ABNA0417164300'), false)
+  assert.equal(waarden.includes('Binnen 14 dagen.'), false)
+})
+
+test('bouwAdviesrapportData: ontbrekende instellingen laat bedrijfsgegevensvelden gewoon leeg (null), geen crash', () => {
+  const data = bouwAdviesrapportData({ dossier: dossierFixture(), adviespunten: [], pakketId: 'basis' })
+  assert.equal(data.meta.bedrijfsnaam, null)
+  assert.equal(data.meta.bedrijfsadres, null)
+  assert.equal(data.meta.bedrijfsTelefoon, null)
+  assert.equal(data.meta.bedrijfsEmail, null)
+})
+
+test('bouwAdviesrapportData: lange/realistische bedrijfsgegevens komen ongewijzigd (niet afgekapt) in de rapportdata terecht', () => {
+  const instellingen = {
+    bedrijfsnaam: 'SMV Advies Bouwkundig Energieadvies & Projectbegeleiding Nederland B.V.',
+    adres: 'Langestraat-Noordzijde 128-B, Bedrijvenpark De Hoeksche Verbinding',
+    postcode: '3262 HG',
+    plaats: 'Oud-Beijerland-aan-de-Maas',
+    telefoon: '06 22 71 33 83 / 088 123 45 67 (bereikbaar ma-vr 08:00-18:00)',
+    email: 'administratie.en.facturatie.lange.testwaarde@smv-advies.nl',
+  }
+  const data = bouwAdviesrapportData({ dossier: dossierFixture(), adviespunten: [], pakketId: 'basis', instellingen })
+  assert.equal(data.meta.bedrijfsnaam, instellingen.bedrijfsnaam)
+  assert.equal(data.meta.bedrijfsadres, 'Langestraat-Noordzijde 128-B, Bedrijvenpark De Hoeksche Verbinding, 3262 HG Oud-Beijerland-aan-de-Maas')
+  assert.equal(data.meta.bedrijfsTelefoon, instellingen.telefoon)
+  assert.equal(data.meta.bedrijfsEmail, instellingen.email)
+})
+
 test('bouwSamenvatting: groepeert per status met voorzichtige formulering, sluit af met disclaimer', () => {
   const adviespunten = [
     adviespuntFixture({ onderwerp: 'Dakisolatie', advies_status: 'nu_onderzoeken' }),

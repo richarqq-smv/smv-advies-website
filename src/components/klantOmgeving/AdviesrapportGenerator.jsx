@@ -3,7 +3,7 @@ import { FileArrowDown, DownloadSimple, WarningCircle } from '@phosphor-icons/re
 import { Button } from '../ui/Button'
 import { genereerAdviesrapportDocx, downloadAdviesrapportBlob, bouwAdviesrapportBestandsnaam } from '../../lib/klantOmgeving/adviesrapportDocx'
 import { PAKKET_RAPPORT_LABELS } from '../../lib/klantOmgeving/adviesrapport'
-import { listDossierTaken } from '../../lib/klantOmgeving/api'
+import { listDossierTaken, getFactuurInstellingen } from '../../lib/klantOmgeving/api'
 
 const PAKKET_KNOPPEN = [
   { id: 'basis', label: 'QuickScan-rapport' },
@@ -45,7 +45,12 @@ export function AdviesrapportGenerator({ dossier, adviespunten }) {
       // Subsidiebegeleidingsplan (Gold) komt uit dossier_taken — alleen
       // opgehaald wanneer relevant, geen onnodige aanroep voor Basis/Premium.
       const subsidieTaken = pakketId === 'gold' ? (await listDossierTaken(dossier.dossier_id)).filter((t) => t.categorie === 'subsidie') : []
-      const data = await genereerAdviesrapportDocx({ dossier, adviespunten, pakketId, adviseurNaam: adviseurNaam.trim() || null, subsidieTaken })
+      // Bedrijfsgegevens-bronronde: zelfde bron als Offerte/Factuur
+      // (factuur_instellingen/Administratie Instellingen), hier pas bij
+      // het genereren opgehaald — geen altijd-actieve aanroep bij het
+      // enkel tonen van dit formulier.
+      const instellingen = await getFactuurInstellingen()
+      const data = await genereerAdviesrapportDocx({ dossier, adviespunten, pakketId, adviseurNaam: adviseurNaam.trim() || null, subsidieTaken, instellingen })
       setResultaat({ ...data, pakketId })
     } catch {
       setFout('Het genereren van het rapport is niet gelukt. Probeer het opnieuw.')
@@ -64,9 +69,9 @@ export function AdviesrapportGenerator({ dossier, adviespunten }) {
       <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Adviesrapport</p>
       <h3 className="mb-2 text-xl text-primary">Rapport genereren</h3>
       <p className="mb-4 text-sm text-foreground-muted">
-        Vult de klantnaam, het pandadres, de samenvatting en de maatregelentabel automatisch in één van de bestaande SMV-sjablonen — op basis van het
-        vastgelegde advies in dit dossier. Overige onderdelen van het sjabloon (zoals de bouwkundige analyse of offertevergelijking) blijven staan zoals in
-        het sjabloon, voor handmatige aanvulling.
+        Vult de klantnaam, het pandadres, de samenvatting, de maatregelentabel en de actuele bedrijfsgegevens (Administratie Instellingen) automatisch in
+        één van de bestaande SMV-sjablonen — op basis van het vastgelegde advies in dit dossier. Overige onderdelen van het sjabloon (zoals de bouwkundige
+        analyse of offertevergelijking) blijven staan zoals in het sjabloon, voor handmatige aanvulling.
       </p>
 
       <div className="mb-4 max-w-xs">

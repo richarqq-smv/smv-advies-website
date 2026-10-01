@@ -57,6 +57,26 @@ function bouwKlantgegevens(dossier) {
   return { klantnaam, pandadres }
 }
 
+/**
+ * Bedrijfsgegevens van SMV zelf voor de metatabel — uit `instellingen`
+ * (factuur_instellingen/Administratie Instellingen, zelfde bron als
+ * Offerte/Factuur), nooit uit de statische data/company.js. Alleen de
+ * velden die relevant zijn om het adviesbureau te kunnen identificeren/
+ * bereiken; financieel-administratieve velden (IBAN, btw-id, KvK,
+ * betalingsvoorwaarden e.d.) horen hier niet thuis — die zijn specifiek
+ * voor facturatie, niet voor een adviesrapport.
+ */
+function bouwBedrijfsgegevens(instellingen) {
+  const bedrijfsnaam = instellingen?.bedrijfsnaam || null
+  const adresregel = instellingen?.adres || null
+  const plaatsregel = [instellingen?.postcode, instellingen?.plaats].filter(Boolean).join(' ') || null
+  const bedrijfsadres = [adresregel, plaatsregel].filter(Boolean).join(', ') || null
+  const bedrijfsTelefoon = instellingen?.telefoon || null
+  const bedrijfsEmail = instellingen?.email || null
+
+  return { bedrijfsnaam, bedrijfsadres, bedrijfsTelefoon, bedrijfsEmail }
+}
+
 function sorteerAdviespunten(adviespunten) {
   return [...adviespunten].sort((a, b) => {
     const prioA = a.prioriteit ?? 99
@@ -179,12 +199,17 @@ function bouwSubsidieStappen(subsidieTaken) {
  * kiest dit expliciet (geen automatische afleiding, zie randvoorwaarde
  * 13 en de commerciële-kans-analyse in dit dossier).
  *
+ * `instellingen` is optioneel (factuur_instellingen) — ontbreekt die, dan
+ * blijven de bedrijfsgegevensvelden in de metatabel gewoon leeg, net zoals
+ * elk ander ontbrekend veld hier al stilzwijgend leeg blijft.
+ *
  * `ontbrekendeVelden` somt op wat niet automatisch gevuld kon worden, zodat
  * de adviseur dit bewust kan aanvullen vóór het document de deur uit gaat
  * — nooit een verzonnen waarde in plaats daarvan.
  */
-export function bouwAdviesrapportData({ dossier, adviespunten = [], pakketId, adviseurNaam = null, datum = null, subsidieTaken = [] }) {
+export function bouwAdviesrapportData({ dossier, adviespunten = [], pakketId, adviseurNaam = null, datum = null, subsidieTaken = [], instellingen = null }) {
   const { klantnaam, pandadres } = bouwKlantgegevens(dossier)
+  const { bedrijfsnaam, bedrijfsadres, bedrijfsTelefoon, bedrijfsEmail } = bouwBedrijfsgegevens(instellingen)
   const gesorteerd = sorteerAdviespunten(adviespunten)
   const maatregelen = gesorteerd.map(bouwMaatregelRegel)
   const samenvatting = bouwSamenvatting(adviespunten)
@@ -216,6 +241,10 @@ export function bouwAdviesrapportData({ dossier, adviespunten = [], pakketId, ad
       datumRapport: formatDatum(datum),
       adviseur: adviseurNaam,
       pakket: PAKKET_RAPPORT_LABELS[pakketId] ?? null,
+      bedrijfsnaam,
+      bedrijfsadres,
+      bedrijfsTelefoon,
+      bedrijfsEmail,
     },
     samenvatting,
     maatregelen,
