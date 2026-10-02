@@ -52,6 +52,28 @@ export default function Over() {
 
       <Section tone="muted">
         <Container className="max-w-3xl">
+          <h2 className="text-2xl text-primary sm:text-3xl">Wie er langskomt</h2>
+          <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:gap-6">
+            <div
+              aria-hidden="true"
+              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary font-heading text-2xl text-white"
+            >
+              R
+            </div>
+            <div className="space-y-4 text-base leading-relaxed text-foreground-muted">
+              <p>
+                Mijn naam is Richard. Op dit moment ben ik de enige die voor SMV Advies werkt — van het eerste
+                gesprek tot het locatiebezoek en het rapport dat u ontvangt doe ik zelf. Dat betekent dat u steeds
+                met dezelfde persoon te maken heeft, niet met een wisselend team.
+              </p>
+              <p>Mocht SMV Advies groeien, dan komt daar op termijn mogelijk iemand bij.</p>
+            </div>
+          </div>
+        </Container>
+      </Section>
+
+      <Section tone="white">
+        <Container className="max-w-3xl">
           <h2 className="text-2xl text-primary sm:text-3xl">Waarom SMV Advies bestaat</h2>
           <div className="mt-6 space-y-5 text-base leading-relaxed text-foreground-muted">
             <p>
@@ -70,7 +92,7 @@ export default function Over() {
         </Container>
       </Section>
 
-      <Section tone="white">
+      <Section tone="muted">
         <Container className="max-w-3xl">
           <h2 className="text-2xl text-primary sm:text-3xl">Voor ondernemers met een eigen bedrijfspand</h2>
           <div className="mt-6 space-y-5 text-base leading-relaxed text-foreground-muted">
