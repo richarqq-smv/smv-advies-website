@@ -19,7 +19,7 @@ export function AdviesEerst() {
       <Container className="max-w-3xl text-center">
         <Reveal>
           <ListChecks size={32} weight="light" className="mx-auto text-accent" />
-          <h2 className="mt-5 text-3xl text-primary sm:text-4xl">Eerst advies, dan pas offertes</h2>
+          <h2 className="mt-5 text-3xl text-primary sm:text-4xl">Waarom we niet meteen naar offertes kijken</h2>
           <p className="mt-5 text-lg leading-relaxed text-foreground-muted">
             Een offerte van een installateur gaat uit van wat hij verkoopt, niet van wat voor uw
             pand verstandig is. Daarom beginnen wij met onafhankelijk advies: wat moet nu, wat kan

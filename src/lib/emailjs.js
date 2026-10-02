@@ -32,6 +32,21 @@ export const EMAILJS_TEMPLATE_MJOP = 'template_5koc1ge'
 export const EMAILJS_PUBLIC_KEY_MJOP = '94qfMTUrAn5q0DQQv'
 export const MJOP_RECIPIENT_EMAIL = 'Richard@smv-advies.nl'
 
+/**
+ * Contactformulier (/contact, websiteoptimalisatieronde 2026-10-02): nog
+ * GEEN werkend template — er bestaat in het EmailJS-account geen sjabloon
+ * voor een kort, generiek contactformulier (naam/bedrijfsnaam/plaats/
+ * e-mail/telefoon/vraag), alleen de twee energie-indicatie-templates
+ * hierboven en het MJOP-template, geen van alle met passende velden.
+ * `ONTBREKEND_`-prefix is de bestaande conventie in sendEmail() hieronder:
+ * geeft een duidelijke Nederlandse foutmelding in plaats van een valse
+ * "verzonden"-bevestiging. Zodra een echt template-ID bestaat (nieuw
+ * EmailJS-template met minstens de velden naam/email/vraag), uitsluitend
+ * deze regel aanpassen — de rest van ContactForm.jsx hoeft niet te
+ * wijzigen.
+ */
+export const EMAILJS_TEMPLATE_CONTACT = 'ONTBREKEND_contactformulier_template'
+
 let initialized = false
 function ensureInit() {
   if (!initialized) {

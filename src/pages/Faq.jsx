@@ -64,7 +64,10 @@ export default function Faq() {
         </Container>
       </Section>
 
-      <ClosingCta />
+      <ClosingCta
+        heading="Staat uw vraag er niet bij?"
+        description="Stel hem gerust, of doe eerst de gratis energie-indicatie voor een eerste beeld van uw pand."
+      />
     </>
   )
 }

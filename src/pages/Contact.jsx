@@ -4,6 +4,7 @@ import { Seo } from '../components/seo/Seo'
 import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
+import { ContactForm } from '../components/contact/ContactForm'
 import { COMPANY } from '../data/company'
 import { PACKAGES } from '../data/packages'
 import { getBreadcrumbSchema } from '../lib/structuredData'
@@ -31,7 +32,7 @@ export default function Contact() {
     <>
       <Seo
         title="Contact"
-        description="Neem rechtstreeks contact op met SMV Advies — per e-mail of telefoon."
+        description="Neem contact op met SMV Advies: bel, mail, of schrijf uw vraag op via het contactformulier."
         structuredData={[getBreadcrumbSchema([{ name: 'Contact', path: ROUTES.contact }])]}
       />
       <Section>
@@ -41,7 +42,7 @@ export default function Contact() {
               Uw aanvraag: {pakket.name} Pakket
             </p>
           ) : null}
-          <h1 className="text-4xl text-primary sm:text-5xl">Laten we uw pand toekomstbestendig maken</h1>
+          <h1 className="text-4xl text-primary sm:text-5xl">Heeft u een vraag over uw bedrijfspand?</h1>
           <p className="mx-auto mt-4 max-w-[50ch] text-base leading-relaxed text-foreground-muted">
             Een vraag, een aanvraag of gewoon sparren? {COMPANY.responseTime}.
           </p>
@@ -92,6 +93,18 @@ export default function Contact() {
                 </div>
               </div>
             </dl>
+          </div>
+        </Container>
+      </Section>
+
+      <Section tone="muted" noTopPadding>
+        <Container className="max-w-xl">
+          <h2 className="text-xl font-semibold text-primary">Liever uw vraag opschrijven dan bellen?</h2>
+          <p className="mt-2 text-sm leading-relaxed text-foreground-muted">
+            Kan ook. Vul het formulier in, dan reageren we er per e-mail op — {COMPANY.responseTime.toLowerCase()}.
+          </p>
+          <div className="mt-6">
+            <ContactForm />
           </div>
         </Container>
       </Section>

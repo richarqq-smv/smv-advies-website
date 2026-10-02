@@ -8,6 +8,7 @@ import {
   Receipt,
   Scales,
 } from '@phosphor-icons/react'
+import { Link } from 'react-router-dom'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
@@ -16,6 +17,8 @@ import { SectionHeading } from '../components/ui/SectionHeading'
 import { ClosingCta } from '../components/home/ClosingCta'
 import { getBreadcrumbSchema } from '../lib/structuredData'
 import { ROUTES } from '../lib/routes'
+
+const LINK_CLASSNAME = 'font-medium text-accent underline underline-offset-2 hover:text-secondary'
 
 const ONDERZOCHT = [
   {
@@ -36,7 +39,14 @@ const ONDERZOCHT = [
   {
     icon: Receipt,
     title: 'Regelgeving',
-    description: 'Energielabelverplichtingen en de energiebesparingsplicht die op uw pand van toepassing kunnen zijn.',
+    description: (
+      <>
+        <Link to={ROUTES.blogPost('energielabel-c-verplicht-bedrijfspand')} className={LINK_CLASSNAME}>
+          Energielabelverplichtingen
+        </Link>{' '}
+        en de energiebesparingsplicht die op uw pand van toepassing kunnen zijn.
+      </>
+    ),
   },
 ]
 
@@ -164,7 +174,10 @@ export default function Cases() {
         </Container>
       </Section>
 
-      <ClosingCta />
+      <ClosingCta
+        heading="Zodra we cases kunnen delen, vindt u ze hier"
+        description="Tot die tijd horen we graag hoe we voor uw pand van nut kunnen zijn — bespreek het vrijblijvend, of doe eerst de gratis energie-indicatie."
+      />
     </>
   )
 }

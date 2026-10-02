@@ -32,6 +32,7 @@ const MAATREGELEN = [
     icon: SunHorizon,
     title: 'Zonnepanelen',
     description: 'Kansrijk op veel platte bedrijfsdaken, met aandacht voor dakbelasting en netaansluiting.',
+    to: ROUTES.blogPost('zonnepanelen-op-uw-bedrijfspand'),
   },
   {
     icon: Gauge,
@@ -129,6 +130,17 @@ export default function Werkgebied() {
             bedrijventerreinen, betekent dat we de bouwperiodes en het type bedrijfspand in de regio goed kennen
             — dat scheelt in de praktijk tijd en giswerk.
           </p>
+          <p className="mt-4 text-base leading-relaxed text-foreground-muted">
+            In delen van de Hoeksche Waard speelt daarnaast{' '}
+            <Link
+              to={ROUTES.blogPost('netcongestie-hoeksche-waard')}
+              className="font-medium text-accent underline underline-offset-2 hover:text-secondary"
+            >
+              netcongestie
+            </Link>{' '}
+            een rol bij wat technisch en financieel haalbaar is — denk aan zonnepanelen die niet (volledig) kunnen
+            terugleveren. Dat nemen we mee in het advies, niet achteraf als verrassing.
+          </p>
           <img
             src="/werkgebied-hoeksche-waard.png"
             alt="Illustratieve kaart van de Hoeksche Waard met de vestigingsplaats van SMV Advies en de kernen Oud-Beijerland, Heinenoord, Puttershoek, Maasdam, Zuid-Beijerland, Mijnsheerenland, 's-Gravendeel, Klaaswaal, Strijen en Numansdorp"
@@ -140,7 +152,10 @@ export default function Werkgebied() {
         </Container>
       </Section>
 
-      <ClosingCta />
+      <ClosingCta
+        heading="Uw pand staat ergens in dit gebied"
+        description="We bespreken graag hoe dat er voor uw situatie concreet uitziet, of start eerst de gratis energie-indicatie."
+      />
     </>
   )
 }

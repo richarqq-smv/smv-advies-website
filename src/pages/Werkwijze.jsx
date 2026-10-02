@@ -1,4 +1,5 @@
 import { CurrencyEur, ListNumbers, MagnifyingGlass, Prohibit, Receipt } from '@phosphor-icons/react'
+import { Link } from 'react-router-dom'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
@@ -8,6 +9,8 @@ import { HowItWorks } from '../components/home/HowItWorks'
 import { ClosingCta } from '../components/home/ClosingCta'
 import { getBreadcrumbSchema } from '../lib/structuredData'
 import { ROUTES } from '../lib/routes'
+
+const LINK_CLASSNAME = 'font-medium text-accent underline underline-offset-2 hover:text-secondary'
 
 const WAT_U_KRIJGT = [
   {
@@ -84,10 +87,24 @@ export default function Werkwijze() {
             gespecialiseerde installateurs en aannemers. Dat past bij onze onafhankelijke rol: we
             hebben geen belang bij een bepaalde uitvoerder of een bepaald product.
           </p>
+          <p className="mt-5 text-base leading-relaxed text-foreground-muted">
+            We stellen ook geen meerjarenonderhoudsplan (MJOP) op — dat is een ander document, voor
+            een andere vraag. Een MJOP plant onderhoud en vervanging van bouwdelen en installaties over
+            meerdere jaren. Ons advies kijkt specifiek naar verduurzamingsmaatregelen zoals energie,
+            isolatie en installaties, en hoe die zich verhouden tot onderhoud dat al gepland staat.
+            Heeft u al een MJOP? Dan sluit dit advies erop aan in plaats van het te vervangen — zie ook{' '}
+            <Link to={ROUTES.faq} className={LINK_CLASSNAME}>
+              de FAQ
+            </Link>
+            .
+          </p>
         </Container>
       </Section>
 
-      <ClosingCta />
+      <ClosingCta
+        heading="Herkent u dit traject voor uw eigen pand?"
+        description="Bespreek vrijblijvend waar u staat, of doe eerst de gratis energie-indicatie voor een eerste richting."
+      />
     </>
   )
 }

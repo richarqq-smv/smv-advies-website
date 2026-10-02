@@ -18,8 +18,8 @@ export default function Pakketten() {
   return (
     <>
       <Seo
-        title="Pakketten"
-        description="Drie pakketten, één doel: een toekomstbestendig bedrijfspand. Van een snelle QuickScan tot ontzorging binnen een vooraf afgebakende scope."
+        title="Pakketten en prijzen"
+        description="Prijzen en inhoud van de drie SMV Advies-pakketten voor een bedrijfspand: van een QuickScan vanaf €495 tot volledige begeleiding, met vaste tarieven per pandgrootte."
         structuredData={[getBreadcrumbSchema([{ name: 'Pakketten', path: ROUTES.pakketten }])]}
       />
 

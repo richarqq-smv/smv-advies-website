@@ -18,13 +18,13 @@ export default function Over() {
       <PageHero
         eyebrow="Over SMV Advies"
         title="Steen en Mortel Verbetering — letterlijk én figuurlijk"
-        description="SMV Advies helpt mkb-ondernemers in de Hoeksche Waard om hun bedrijfspand stap voor stap te verduurzamen. Onafhankelijk, dichtbij en met beide benen op de grond."
+        description="SMV Advies helpt mkb-ondernemers in de Hoeksche Waard om hun bedrijfspand stap voor stap te verduurzamen, zonder belang bij de installatie die u uiteindelijk kiest."
       />
 
       <Section tone="white" noTopPadding>
         <Container className="max-w-3xl">
           <h2 className="text-2xl text-primary sm:text-3xl">Ons verhaal</h2>
-          <p className="mt-2 text-sm font-medium text-accent">Van steen en mortel naar toekomstbestendig</p>
+          <p className="mt-2 text-sm font-medium text-accent">Waarom de naam SMV Advies</p>
 
           <div className="mt-6 space-y-5 text-base leading-relaxed text-foreground-muted">
             <p>
@@ -90,7 +90,10 @@ export default function Over() {
         </Container>
       </Section>
 
-      <ClosingCta />
+      <ClosingCta
+        heading="Nieuwsgierig wat wij voor uw pand zouden adviseren?"
+        description="Bel of mail gerust, of doe eerst de gratis energie-indicatie voor een eerste beeld van de kansen in uw pand."
+      />
     </>
   )
 }
