@@ -37,3 +37,10 @@ test('Over.jsx: geen verzonnen ervaring/opleiding/certificering rond Richard', (
   const bron = leesZonderComments('..', 'pages', 'Over.jsx')
   assert.equal(/\d+\s*jaar ervaring|gecertificeerd|diploma|afgestudeerd/i.test(bron), false)
 })
+
+test('Over.jsx: linkt naar het echte, door de klant aangeleverde LinkedIn-profiel, opent in nieuw tabblad', () => {
+  const bron = leesZonderComments('..', 'pages', 'Over.jsx')
+  assert.match(bron, /href="https:\/\/www\.linkedin\.com\/in\/richard-schipper\/"/)
+  assert.match(bron, /target="_blank"/)
+  assert.match(bron, /rel="noopener noreferrer"/)
+})

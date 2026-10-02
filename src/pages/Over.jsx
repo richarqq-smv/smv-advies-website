@@ -67,6 +67,16 @@ export default function Over() {
                 met dezelfde persoon te maken heeft, niet met een wisselend team.
               </p>
               <p>Mocht SMV Advies groeien, dan komt daar op termijn mogelijk iemand bij.</p>
+              <p>
+                <a
+                  href="https://www.linkedin.com/in/richard-schipper/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-accent underline underline-offset-2 hover:text-secondary"
+                >
+                  Bekijk mijn LinkedIn-profiel
+                </a>
+              </p>
             </div>
           </div>
         </Container>
