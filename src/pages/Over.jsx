@@ -62,11 +62,24 @@ export default function Over() {
             </div>
             <div className="space-y-4 text-base leading-relaxed text-foreground-muted">
               <p>
-                Mijn naam is Richard. Op dit moment ben ik de enige die voor SMV Advies werkt — van het eerste
-                gesprek tot het locatiebezoek en het rapport dat u ontvangt doe ik zelf. Dat betekent dat u steeds
-                met dezelfde persoon te maken heeft, niet met een wisselend team.
+                Mijn naam is Richard. Ik ben de oprichter van SMV Advies en op dit moment ook degene die het
+                volledige adviestraject voor u verzorgt.
               </p>
-              <p>Mocht SMV Advies groeien, dan komt daar op termijn mogelijk iemand bij.</p>
+              <p>
+                Van het eerste gesprek en de intake tot het locatiebezoek, de analyse en het uiteindelijke rapport:
+                u heeft steeds rechtstreeks contact met mij. Daardoor blijft de communicatie persoonlijk en weet u
+                precies wie uw pand kent en wie verantwoordelijk is voor het advies.
+              </p>
+              <p>
+                Ik vind het belangrijk om niet alleen een rapport op te leveren, maar vooral om goed te begrijpen
+                wat er bij uw bedrijf en bedrijfspand speelt. Geen standaardadvies van een afstand, maar een
+                praktisch en onafhankelijk advies dat aansluit bij uw situatie, plannen en mogelijkheden.
+              </p>
+              <p>
+                SMV Advies groeit bewust stap voor stap. Mocht het bedrijf in de toekomst uitbreiden, dan zal ik er
+                ook voor zorgen dat de persoonlijke manier van werken en de kwaliteit van het advies behouden
+                blijven.
+              </p>
               <p>
                 <a
                   href="https://www.linkedin.com/in/richard-schipper/"
