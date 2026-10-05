@@ -14,6 +14,10 @@ export const AFSPRAAK_TYPES = [
   { id: 'overleg', label: 'Overleg' },
   { id: 'herbeoordeling', label: 'Herbeoordeling' },
   { id: 'overig', label: 'Overig' },
+  // Enige type dat de klant zelf kan aanmaken (via boek_telefonische_afspraak(),
+  // migratie 0032) — alle andere types hierboven blijven uitsluitend door
+  // admin aan te maken, precies zoals vóór deze uitbreiding.
+  { id: 'telefonisch_adviesgesprek', label: 'Telefonisch adviesgesprek' },
 ]
 export const AFSPRAAK_TYPE_LABELS = Object.fromEntries(AFSPRAAK_TYPES.map((t) => [t.id, t.label]))
 const AFSPRAAK_TYPE_IDS = new Set(AFSPRAAK_TYPES.map((t) => t.id))

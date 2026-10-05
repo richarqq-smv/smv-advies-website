@@ -1,6 +1,6 @@
 import { cn } from '../../lib/cn'
 
-export function TextField({ id, label, type = 'text', autoComplete, placeholder, value, onChange, error, required = false }) {
+export function TextField({ id, label, type = 'text', autoComplete, placeholder, value, onChange, error, required = false, min }) {
   const errorId = error ? `${id}-error` : undefined
 
   return (
@@ -16,6 +16,7 @@ export function TextField({ id, label, type = 'text', autoComplete, placeholder,
         autoComplete={autoComplete}
         placeholder={placeholder}
         value={value}
+        min={min}
         onChange={(e) => onChange(e.target.value)}
         aria-invalid={Boolean(error)}
         aria-required={required}

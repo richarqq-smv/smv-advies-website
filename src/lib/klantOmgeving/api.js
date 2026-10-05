@@ -828,6 +828,48 @@ export async function verwijderAfspraak(afspraakId) {
   if (error) throw error
 }
 
+// --- Telefonische-afspraakplanner voor de klant (2026-10-05) ----------------
+//
+// Alle drie onderstaande functies zijn dunne wrappers om de gelijknamige
+// SECURITY DEFINER-RPC's uit migratie 0032_telefonische_afspraak_planner.sql
+// — geen eigen autorisatielogica hier, exact zoals de rest van dit bestand.
+// Er is bewust GEEN directe `.from('planning_afspraken')`-query voor de
+// klant: die tabel heeft uitsluitend admin-only RLS-policies (0011), dus
+// elke klanttoegang loopt via deze drie functies.
+
+/** Beschikbare starttijden op `datumIso` ("YYYY-MM-DD") voor de klant — uitsluitend een lijst "HH:MM"-starttijden, nooit onderliggende afspraakgegevens van anderen. */
+export async function getBeschikbareMomenten(datumIso) {
+  const rijen = throwOnError(await supabase.rpc('beschikbare_momenten', { p_datum: datumIso }))
+  return (rijen ?? []).map((r) => r.starttijd.slice(0, 5))
+}
+
+/** Mijn eigen telefonische adviesgesprek(ken) voor dit dossier (meest recente eerst), of `null` als er nog geen is. */
+export async function getMijnTelefonischeAfspraak(dossierId) {
+  const rijen = throwOnError(await supabase.rpc('mijn_telefonische_afspraak', { p_dossier_id: dossierId }))
+  return rijen?.[0] ?? null
+}
+
+/**
+ * Boekt een telefonisch adviesgesprek van 30 minuten op `datumIso`/`starttijd`
+ * ("HH:MM") voor dit dossier. Alle autorisatie/validatie/overlapcontrole
+ * gebeurt server-side in de RPC — zie migratie 0032 voor de volledige lijst
+ * controles. Gooit een leesbare Nederlandse foutmelding door bij een
+ * conflict (race condition) of een geweigerde boeking, nooit een rauwe
+ * Postgres-foutcode richting de UI.
+ */
+export async function boekTelefonischeAfspraak(dossierId, datumIso, starttijd) {
+  const { data, error } = await supabase.rpc('boek_telefonische_afspraak', {
+    p_dossier_id: dossierId,
+    p_datum: datumIso,
+    p_starttijd: starttijd,
+  })
+  if (error) {
+    if (error.code === '23P01') throw new Error('Dit moment is net niet meer beschikbaar. Kies een ander moment.')
+    throw new Error('Boeken is niet gelukt. Probeer het opnieuw.')
+  }
+  return data?.[0] ?? null
+}
+
 // --- Interne commerciële kans per dossier (2026-09-28) -----------------------
 //
 // Volledig admin-only, zelfde reden als hierboven — zie

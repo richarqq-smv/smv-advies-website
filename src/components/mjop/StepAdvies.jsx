@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Printer, Download, PaperPlaneTilt, FloppyDisk, SpinnerGap, CheckCircle, WarningCircle } from '@phosphor-icons/react'
+import { Printer, Download, PaperPlaneTilt, FloppyDisk, SpinnerGap, CheckCircle, WarningCircle, Phone } from '@phosphor-icons/react'
 import { Button } from '../ui/Button'
 import { TextField } from '../ui/TextField'
 import { StatusBadge } from './StatusBadge'
@@ -215,7 +215,29 @@ export function StepAdvies({ building, insights, onExport, onSend, sendStatus, o
         </OverviewSection>
       </div>
 
-      <div className="mt-10 flex flex-col gap-3 rounded-lg border border-border bg-muted/50 px-4 py-3 print:hidden">
+      {/*
+        Informatieve verwijzing naar de telefonische-afspraakplanner
+        (werkfase 2026-10-05) — bewust GEEN directe CTA-knop naar de
+        planner zelf: op dit punt in de (mogelijk nog uitgelogde) MJOP-
+        flow bestaat er nog geen dossier om de afspraak aan te koppelen.
+        De daadwerkelijke planner staat op de Dossier-detailpagina
+        (TelefonischeAfspraakSectie), bereikbaar via precies de koppel-/
+        registratiestap hieronder (MjopKlantKoppeling, ongewijzigd) — zie
+        het eindrapport voor de volledige afweging.
+      */}
+      <div className="mt-10 flex items-start gap-3 rounded-lg border border-accent/30 bg-accent/5 px-4 py-3.5 print:hidden">
+        <Phone size={20} weight="fill" className="mt-0.5 shrink-0 text-accent" />
+        <div className="text-sm">
+          <p className="font-semibold text-primary">Telefonisch adviesgesprek</p>
+          <p className="mt-1 leading-relaxed text-foreground-muted">
+            Heeft u vragen over uw bedrijfspand of wilt u de uitkomsten van deze MJOP bespreken? Rond hieronder uw
+            account/dossier af — daar kunt u eenvoudig een telefonisch adviesgesprek van ongeveer 20-30 minuten
+            inplannen.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-col gap-3 rounded-lg border border-border bg-muted/50 px-4 py-3 print:hidden">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-foreground-muted">
             Bewaar de huidige MJOP-gegevens bij het pandprofiel, los van het versturen van deze analyse.

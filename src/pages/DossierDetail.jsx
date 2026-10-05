@@ -20,6 +20,7 @@ import { OpnamesSectie } from '../components/klantOmgeving/OpnamesSectie'
 import { PakketControle } from '../components/klantOmgeving/PakketControle'
 import { BouwkundigeAnalyse } from '../components/klantOmgeving/BouwkundigeAnalyse'
 import { DossierTaken } from '../components/klantOmgeving/DossierTaken'
+import { TelefonischeAfspraakSectie } from '../components/klantOmgeving/TelefonischeAfspraakSectie'
 import {
   getDossier,
   listAdviespunten,
@@ -314,6 +315,16 @@ export default function DossierDetail() {
                 ) : null}
                 <EnergieSnapshot snapshot={dossier.energie_snapshot} />
               </Accordion>
+              {/*
+                Telefonische-afspraakplanner (2026-10-05) — zichtbaar voor
+                klant én admin (zelfde reden als de rest van deze pagina:
+                RLS/RPC's zijn de echte grens, niet isAdmin hier). Geeft
+                zichzelf niets terug voor een niet-zakelijk pand
+                (isZakelijkPand in het component), maar dat is uitsluitend
+                UI-gemak — zie boek_telefonische_afspraak() voor de
+                daadwerkelijke, server-side afgedwongen zakelijke gate.
+              */}
+              <TelefonischeAfspraakSectie dossierId={dossier.dossier_id} gebruikstype={dossier.panden?.gebruikstype} />
               <DocumentenBijDossier documenten={documentenVoorDossier} downloaden={downloaden} downloadFoutId={downloadFoutId} />
               {/* Anchor voor de Health Check-offerteactie hieronder ("Offerte bekijken") — geen routewijziging nodig, dit staat al op dezelfde pagina. */}
               <div id="offertes-sectie" className="flex flex-col gap-6">
