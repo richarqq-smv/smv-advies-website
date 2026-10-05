@@ -316,7 +316,7 @@ export async function addDossierTakenBulk(dossierId, taken) {
   )
 }
 
-export async function updateDossierTaak(taakId, { omschrijving, verantwoordelijke, deadline, status, notitie, documentId }) {
+export async function updateDossierTaak(taakId, { omschrijving, verantwoordelijke, deadline, status, notitie, documentId, adviespuntId }) {
   const changes = {}
   if (omschrijving !== undefined) changes.omschrijving = omschrijving.trim()
   if (verantwoordelijke !== undefined) changes.verantwoordelijke = verantwoordelijke?.trim() || null
@@ -324,6 +324,7 @@ export async function updateDossierTaak(taakId, { omschrijving, verantwoordelijk
   if (status !== undefined) changes.status = status
   if (notitie !== undefined) changes.notitie = notitie?.trim() || null
   if (documentId !== undefined) changes.document_id = documentId
+  if (adviespuntId !== undefined) changes.adviespunt_id = adviespuntId
   return throwOnError(await supabase.from('dossier_taken').update(changes).eq('taak_id', taakId).select('*').single())
 }
 

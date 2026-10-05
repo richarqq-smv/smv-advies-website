@@ -304,7 +304,13 @@ export default function DossierDetail() {
               {isAdmin ? <AdviesrapportGenerator dossier={dossier} adviespunten={adviespunten} /> : null}
               {isAdmin && dossier.pakket_id === 'gold' ? (
                 <Accordion title="Subsidiebegeleiding & oplevering">
-                  <DossierTaken dossierId={dossier.dossier_id} pakketId={dossier.pakket_id} magBeheren={isAdmin} />
+                  <DossierTaken
+                    dossierId={dossier.dossier_id}
+                    pakketId={dossier.pakket_id}
+                    magBeheren={isAdmin}
+                    adviespunten={adviespunten}
+                    documenten={documentenVoorDossier}
+                  />
                 </Accordion>
               ) : null}
               <Accordion title="Energie-indicatie">

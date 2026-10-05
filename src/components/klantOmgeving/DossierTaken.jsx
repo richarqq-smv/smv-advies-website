@@ -23,8 +23,14 @@ const LEEG_FORMULIER = { omschrijving: '', verantwoordelijke: '', deadline: '' }
  * expliciete actie — nooit automatisch bij het kiezen van Gold — en is
  * pas zichtbaar zolang de categorie nog leeg is, zodat er nooit
  * per ongeluk een tweede complete set naast een al bewerkte set ontstaat.
+ *
+ * Subsidiehulp Fase 1: `adviespunten`/`documenten` zijn de al door
+ * DossierDetail.jsx opgehaalde, al dossiergebonden lijsten (listAdviespunten/
+ * getDocumentenVoorDossier) — hier alleen doorgegeven om te koppelen aan
+ * dossier_taken.adviespunt_id/document_id. Geen eigen fetch, geen nieuwe
+ * upload-/aanmaak-UI: uitsluitend bestaande data selecteerbaar maken.
  */
-export function DossierTaken({ dossierId, pakketId, magBeheren }) {
+export function DossierTaken({ dossierId, pakketId, magBeheren, adviespunten = [], documenten = [] }) {
   const [laden, setLaden] = useState(true)
   const [taken, setTaken] = useState([])
   const [nieuwFormulier, setNieuwFormulier] = useState(null) // null | categorie
@@ -89,6 +95,26 @@ export function DossierTaken({ dossierId, pakketId, magBeheren }) {
     }
   }
 
+  async function wijzigAdviespunt(taakId, adviespuntId) {
+    setFout(null)
+    try {
+      const bijgewerkt = await updateDossierTaak(taakId, { adviespuntId })
+      setTaken((v) => v.map((t) => (t.taak_id === taakId ? bijgewerkt : t)))
+    } catch {
+      setFout('Maatregel koppelen is niet gelukt. Probeer het opnieuw.')
+    }
+  }
+
+  async function wijzigDocument(taakId, documentId) {
+    setFout(null)
+    try {
+      const bijgewerkt = await updateDossierTaak(taakId, { documentId })
+      setTaken((v) => v.map((t) => (t.taak_id === taakId ? bijgewerkt : t)))
+    } catch {
+      setFout('Document koppelen is niet gelukt. Probeer het opnieuw.')
+    }
+  }
+
   async function verwijder(taakId) {
     setFout(null)
     try {
@@ -121,28 +147,64 @@ export function DossierTaken({ dossierId, pakketId, magBeheren }) {
             ) : (
               <ul className="flex flex-col gap-2">
                 {groepen[categorie].map((taak) => (
-                  <li key={taak.taak_id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border px-3.5 py-2.5 text-sm">
-                    <div className="min-w-0">
-                      <p className="text-primary">{taak.omschrijving}</p>
-                      {taak.verantwoordelijke || taak.deadline ? (
-                        <p className="text-xs text-foreground-muted">
-                          {taak.verantwoordelijke ?? ''}
-                          {taak.verantwoordelijke && taak.deadline ? ' · ' : ''}
-                          {taak.deadline ? `Deadline ${new Date(taak.deadline).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' })}` : ''}
-                        </p>
-                      ) : null}
+                  <li key={taak.taak_id} className="flex flex-col gap-2 rounded-lg border border-border px-3.5 py-2.5 text-sm">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="text-primary">{taak.omschrijving}</p>
+                        {taak.verantwoordelijke || taak.deadline ? (
+                          <p className="text-xs text-foreground-muted">
+                            {taak.verantwoordelijke ?? ''}
+                            {taak.verantwoordelijke && taak.deadline ? ' · ' : ''}
+                            {taak.deadline ? `Deadline ${new Date(taak.deadline).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' })}` : ''}
+                          </p>
+                        ) : null}
+                      </div>
+                      <div className="flex shrink-0 items-center gap-2">
+                        <select className={SELECT_CLASSNAME} value={taak.status} onChange={(e) => wijzigStatus(taak.taak_id, e.target.value)}>
+                          {TAAK_STATUSSEN.map((s) => (
+                            <option key={s.value} value={s.value}>
+                              {s.label}
+                            </option>
+                          ))}
+                        </select>
+                        <button type="button" onClick={() => verwijder(taak.taak_id)} aria-label="Taak verwijderen" className="rounded-md p-1.5 text-foreground-muted hover:bg-error-bg hover:text-error">
+                          <Trash size={15} />
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex shrink-0 items-center gap-2">
-                      <select className={SELECT_CLASSNAME} value={taak.status} onChange={(e) => wijzigStatus(taak.taak_id, e.target.value)}>
-                        {TAAK_STATUSSEN.map((s) => (
-                          <option key={s.value} value={s.value}>
-                            {s.label}
-                          </option>
-                        ))}
-                      </select>
-                      <button type="button" onClick={() => verwijder(taak.taak_id)} aria-label="Taak verwijderen" className="rounded-md p-1.5 text-foreground-muted hover:bg-error-bg hover:text-error">
-                        <Trash size={15} />
-                      </button>
+
+                    <div className="flex flex-col gap-1.5 border-t border-border/60 pt-2 sm:flex-row sm:flex-wrap sm:gap-3">
+                      <label className="flex min-w-0 flex-1 items-center gap-1.5 text-xs text-foreground-muted">
+                        <span className="shrink-0">Maatregel:</span>
+                        <select
+                          className={`${SELECT_CLASSNAME} min-w-0 flex-1`}
+                          value={taak.adviespunt_id ?? ''}
+                          onChange={(e) => wijzigAdviespunt(taak.taak_id, e.target.value || null)}
+                        >
+                          <option value="">Geen maatregel gekoppeld</option>
+                          {adviespunten.map((a) => (
+                            <option key={a.adviespunt_id} value={a.adviespunt_id}>
+                              {a.onderwerp}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+
+                      <label className="flex min-w-0 flex-1 items-center gap-1.5 text-xs text-foreground-muted">
+                        <span className="shrink-0">Document:</span>
+                        <select
+                          className={`${SELECT_CLASSNAME} min-w-0 flex-1`}
+                          value={taak.document_id ?? ''}
+                          onChange={(e) => wijzigDocument(taak.taak_id, e.target.value || null)}
+                        >
+                          <option value="">Geen document gekoppeld</option>
+                          {documenten.map((d) => (
+                            <option key={d.document_id} value={d.document_id}>
+                              {d.bestandsnaam}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
                     </div>
                   </li>
                 ))}
