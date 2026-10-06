@@ -6,12 +6,16 @@ import path from 'node:path'
 
 /**
  * Statische bron-controles (zelfde patroon als publiekeOutputBroncontrole.test.js
- * — geen jsdom/React-testrunner in dit project) voor de JSON-bijlage op de
- * interne Energie Indicatie-leadmail. De eigenlijke payload-/
- * bestandsnaamlogica wordt al apart getest in internAttachment.test.js;
- * dit bestand controleert alleen de bedrading (welke mail krijgt de
- * bijlage, welke niet) en de scope-grenzen uit de opdracht (geen
- * publieke downloadknop, bestaande flows ongewijzigd).
+ * — geen jsdom/React-testrunner in dit project) voor de JSON-kopie op de
+ * interne Energie Indicatie-leadmail. EmailJS' dynamische bestandsbijlagen
+ * (sendForm + File) bleken een betaald-abonnement-feature ("Subscription
+ * Limitation" bij het instellen), dus dit is teruggebracht naar platte
+ * tekst in een extra merge-veld op de bestaande sendEmail() — geen
+ * sendForm, geen File/DataTransfer, geen formulierbouw meer nodig.
+ * De eigenlijke payload-logica wordt al apart getest in
+ * internAttachment.test.js; dit bestand controleert alleen de bedrading
+ * (welke mail krijgt het veld, welke niet) en de scope-grenzen uit de
+ * opdracht (geen publieke downloadknop, bestaande flows ongewijzigd).
  */
 const HIER = path.dirname(fileURLToPath(import.meta.url))
 
@@ -23,42 +27,26 @@ const HOOK = lees('..', '..', 'hooks', 'useEnergieScan.js')
 const EMAILJS = lees('..', 'emailjs.js')
 const RESULTS_VIEW = lees('..', '..', 'components', 'energieIndicatie', 'ResultsView.jsx')
 
-test('useEnergieScan.js: de JSON-bijlage gaat alleen mee met de interne leadmail (EMAILJS_TEMPLATE_LEAD), niet met de klantbevestiging', () => {
-  assert.match(HOOK, /sendEmailWithAttachment\(EMAILJS_TEMPLATE_LEAD, leadParams, bijlage\)/)
-  // De regel die EMAILJS_TEMPLATE_CONFIRM verstuurt, gebruikt nog steeds de
-  // gewone sendEmail() zonder bijlage-argument.
-  const confirmRegel = HOOK.match(/sendEmail\(EMAILJS_TEMPLATE_CONFIRM,[^\n]*/)[0]
-  assert.equal(/bijlage/.test(confirmRegel), false)
+test('useEnergieScan.js: de JSON-tekst gaat alleen mee in de interne leadmail (leadParams), niet in de klantbevestiging (confirmParams)', () => {
+  assert.match(HOOK, /leadParams\[ENERGIE_INDICATIE_JSON_PARAM\] = JSON\.stringify\(buildInterneJsonPayload\(state\.values, result\), null, 2\)/)
+  assert.equal(/confirmParams\[ENERGIE_INDICATIE_JSON_PARAM\]/.test(HOOK), false)
 })
 
-test('useEnergieScan.js: bij een bijlagefout valt het terug op de gewone sendEmail (de interne mail blijft altijd verstuurd)', () => {
-  assert.match(HOOK, /sendEmailWithAttachment\([^)]*\)\.catch\(\(\) => sendEmail\(EMAILJS_TEMPLATE_LEAD, leadParams\)\.catch\(\(\) => \{\}\)\)/)
+test('useEnergieScan.js: verstuurt de interne leadmail nog steeds via de gewone, bestaande sendEmail() — geen sendForm/attachment-pad meer', () => {
+  assert.match(HOOK, /sendEmail\(EMAILJS_TEMPLATE_LEAD, leadParams\)\.catch\(\(\) => \{\}\)/)
+  assert.equal(/sendEmailWithAttachment|sendForm/.test(HOOK), false)
 })
 
 test('useEnergieScan.js: bouwt de JSON-payload uit internAttachment.js, geen losse/eigen implementatie', () => {
   assert.match(HOOK, /from ['"]\.\.\/lib\/energieScan\/internAttachment['"]/)
   assert.match(HOOK, /buildInterneJsonPayload\(state\.values, result\)/)
-  assert.match(HOOK, /buildInterneJsonBestandsnaam\(state\.values\)/)
 })
 
-test('emailjs.js: sendEmailWithAttachment bouwt een <form>-element dat NOOIT aan de pagina wordt toegevoegd (geen appendChild op document/body)', () => {
-  const fnBody = EMAILJS.match(/export async function sendEmailWithAttachment\([\s\S]*?\n\}/)[0]
-  assert.match(fnBody, /document\.createElement\('form'\)/)
-  assert.equal(/document\.body\.appendChild|document\.appendChild/.test(fnBody), false)
+test('emailjs.js: geen sendForm/File/DataTransfer-code meer (betaalfunctie, niet beschikbaar op dit EmailJS-plan)', () => {
+  assert.equal(/sendEmailWithAttachment|sendForm|DataTransfer|new File\(/.test(EMAILJS), false)
 })
 
-test('emailjs.js: sendEmailWithAttachment gebruikt sendForm (multipart), niet send (platte JSON) — alleen sendForm ondersteunt een File-bijlage', () => {
-  const fnBody = EMAILJS.match(/export async function sendEmailWithAttachment\([\s\S]*?\n\}/)[0]
-  assert.match(fnBody, /emailjs\.sendForm\(EMAILJS_SERVICE_ID, templateId, form, publicKey\)/)
-})
-
-test('emailjs.js: het attachment-veld krijgt een File-object (geen Blob zonder bestandsnaam, geen ruwe string)', () => {
-  const fnBody = EMAILJS.match(/export async function sendEmailWithAttachment\([\s\S]*?\n\}/)[0]
-  assert.match(fnBody, /new File\(\[bijlage\.inhoud\], bijlage\.bestandsnaam, \{ type: bijlage\.type/)
-  assert.match(fnBody, /fileInput\.name = bijlage\.veldNaam/)
-})
-
-test('emailjs.js: bestaande sendEmail() (zonder bijlage) blijft ongewijzigd aanwezig — geen vervanging, alleen een nieuwe functie ernaast', () => {
+test('emailjs.js: bestaande sendEmail() blijft ongewijzigd aanwezig', () => {
   assert.match(EMAILJS, /export async function sendEmail\(templateId, params, publicKey\) \{/)
 })
 

@@ -1,11 +1,13 @@
 /**
- * Bouwt de JSON-bijlage voor de interne leadmail (EMAILJS_TEMPLATE_LEAD,
- * zie useEnergieScan.js) — een downloadbare, machineleesbare kopie van
- * exact dezelfde invoer en het volledige resultaat die de mail zelf al
- * als platte tekst bevat (buildEmailParams()/buildInterneLeadParams()).
- * Puur intern archief-/koppelmateriaal voor SMV: geen publieke
- * download-UI leest dit bestand, de klant krijgt het nooit te zien (zie
- * ResultsView.jsx — alleen print/PDF en "Opnieuw invullen").
+ * Bouwt de machineleesbare JSON-kopie voor de interne leadmail
+ * (EMAILJS_TEMPLATE_LEAD, zie useEnergieScan.js) — exact dezelfde invoer
+ * en het volledige resultaat die de mail zelf al als platte tekst bevat
+ * (buildEmailParams()/buildInterneLeadParams()), hier als los
+ * merge-veld in de mail zelf (géén losse bijlage: EmailJS' dynamische
+ * attachments zitten achter een betaald abonnement, zie
+ * ENERGIE_INDICATIE_JSON_PARAM hieronder). Puur intern archiefmateriaal
+ * voor SMV: geen publieke UI toont dit, de klant krijgt dit nooit te
+ * zien (zie ResultsView.jsx — alleen print/PDF en "Opnieuw invullen").
  *
  * Losstaand van emailParams.js/calculations.js (geen import ervan): dit
  * bestand neemt `values` en het al berekende `result` gewoon aan zoals
@@ -15,8 +17,8 @@
  */
 export const ENERGIE_INDICATIE_JSON_FORMAT_VERSION = 1
 
-/** Naam van het attachment-veld zoals dat in het EmailJS-dashboard op EMAILJS_TEMPLATE_LEAD moet worden ingesteld (zie eindrapport/EmailJS-configuratie). */
-export const ENERGIE_INDICATIE_JSON_ATTACHMENT_FIELD = 'energie_indicatie_json'
+/** Merge-veldnaam in EMAILJS_TEMPLATE_LEAD — moet exact zo in de template-HTML als {{energie_indicatie_json}} staan. */
+export const ENERGIE_INDICATIE_JSON_PARAM = 'energie_indicatie_json'
 
 /**
  * Het volledige, machineleesbare rapport — versie + tijdstip zodat een
@@ -54,22 +56,4 @@ export function buildInterneJsonPayload(values, result) {
     },
     resultaat: result,
   }
-}
-
-/** Maakt een los bestandsnaamdeel veilig: alleen a-z/0-9/koppelteken, geen diakrieten, nooit leeg. */
-function veiligBestandsnaamdeel(tekst) {
-  const schoon = String(tekst ?? '')
-    .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-zA-Z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .toLowerCase()
-  return schoon || 'onbekend'
-}
-
-/** bv. "energie-indicatie-jansen-bv-2026-10-06.json" — nooit afhankelijk van onvertrouwde tekens in bedrijfsnaam/naam. */
-export function buildInterneJsonBestandsnaam(values, datum = new Date()) {
-  const bedrijf = veiligBestandsnaamdeel(values.bedrijfsnaam || values.naam)
-  const datumDeel = datum.toISOString().slice(0, 10)
-  return `energie-indicatie-${bedrijf}-${datumDeel}.json`
 }

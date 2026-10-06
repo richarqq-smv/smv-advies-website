@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { buildInterneJsonPayload, buildInterneJsonBestandsnaam, ENERGIE_INDICATIE_JSON_FORMAT_VERSION } from './internAttachment.js'
+import { buildInterneJsonPayload, ENERGIE_INDICATIE_JSON_FORMAT_VERSION } from './internAttachment.js'
 
 function valuesFixture(overrides = {}) {
   return {
@@ -76,20 +76,4 @@ test('buildInterneJsonPayload: is valide JSON (round-trip zonder verlies)', () =
   const json = JSON.stringify(payload)
   const herladen = JSON.parse(json)
   assert.deepEqual(herladen, payload)
-})
-
-test('buildInterneJsonBestandsnaam: bevat bedrijfsnaam (veilig gemaakt) en een datum, eindigt op .json', () => {
-  const naam = buildInterneJsonBestandsnaam(valuesFixture(), new Date('2026-10-06T12:00:00Z'))
-  assert.equal(naam, 'energie-indicatie-jansen-zn-b-v-2026-10-06.json')
-})
-
-test('buildInterneJsonBestandsnaam: valt terug op de persoonsnaam als er geen bedrijfsnaam is ingevuld', () => {
-  const naam = buildInterneJsonBestandsnaam(valuesFixture({ bedrijfsnaam: '' }), new Date('2026-10-06T12:00:00Z'))
-  assert.equal(naam, 'energie-indicatie-jan-jansen-2026-10-06.json')
-})
-
-test('buildInterneJsonBestandsnaam: valt nooit leeg/onveilig uit, ook niet met alleen speciale tekens', () => {
-  const naam = buildInterneJsonBestandsnaam(valuesFixture({ bedrijfsnaam: '/../\\*?"<>|', naam: '' }), new Date('2026-10-06T12:00:00Z'))
-  assert.equal(naam, 'energie-indicatie-onbekend-2026-10-06.json')
-  assert.equal(/[/\\*?"<>|]/.test(naam), false)
 })
