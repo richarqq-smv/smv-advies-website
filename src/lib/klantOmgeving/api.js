@@ -333,6 +333,98 @@ export async function removeDossierTaak(taakId) {
   if (error) throw error
 }
 
+/*
+ * ============================================================
+ * Subsidiehulp Fase 2: dossier_subsidies + koppeltabellen
+ * (0035_dossier_subsidies.sql) — admin-only (RLS), zelfde patroon als
+ * dossier_taken hierboven. Eén rij per subsidietraject (regeling/bedrag/
+ * status/deadline); de twee koppeltabellen zijn n-op-n en hergebruiken
+ * de bestaande adviespunten/documenten-tabellen volledig, geen duplicatie.
+ * ============================================================
+ */
+
+export async function listDossierSubsidies(dossierId) {
+  return throwOnError(
+    await supabase.from('dossier_subsidies').select('*').eq('dossier_id', dossierId).order('created_at', { ascending: true }),
+  )
+}
+
+export async function addDossierSubsidie(dossierId, { regelingNaam, verwachtBedrag = null, status = 'voorbereiding', deadline = null, notitie = null }) {
+  return throwOnError(
+    await supabase
+      .from('dossier_subsidies')
+      .insert({
+        dossier_id: dossierId,
+        regeling_naam: regelingNaam.trim(),
+        verwacht_bedrag: verwachtBedrag,
+        status,
+        deadline: deadline || null,
+        notitie: notitie?.trim() || null,
+      })
+      .select('*')
+      .single(),
+  )
+}
+
+export async function updateDossierSubsidie(subsidieId, { regelingNaam, verwachtBedrag, status, deadline, notitie }) {
+  const changes = {}
+  if (regelingNaam !== undefined) changes.regeling_naam = regelingNaam.trim()
+  if (verwachtBedrag !== undefined) changes.verwacht_bedrag = verwachtBedrag
+  if (status !== undefined) changes.status = status
+  if (deadline !== undefined) changes.deadline = deadline || null
+  if (notitie !== undefined) changes.notitie = notitie?.trim() || null
+  return throwOnError(await supabase.from('dossier_subsidies').update(changes).eq('subsidie_id', subsidieId).select('*').single())
+}
+
+export async function removeDossierSubsidie(subsidieId) {
+  const { error } = await supabase.from('dossier_subsidies').delete().eq('subsidie_id', subsidieId)
+  if (error) throw error
+}
+
+/** Gekoppelde maatregelen (adviespunten) voor één subsidie, mét adviespuntgegevens erbij — zelfde geneste select-stijl als elders (bv. dossiers: '*, panden(*)'). */
+export async function listSubsidieMaatregelen(subsidieId) {
+  return throwOnError(
+    await supabase.from('dossier_subsidie_maatregelen').select('id, adviespunt_id, adviespunten(*)').eq('subsidie_id', subsidieId),
+  )
+}
+
+export async function koppelSubsidieMaatregel(subsidieId, adviespuntId) {
+  return throwOnError(
+    await supabase
+      .from('dossier_subsidie_maatregelen')
+      .insert({ subsidie_id: subsidieId, adviespunt_id: adviespuntId })
+      .select('id, adviespunt_id')
+      .single(),
+  )
+}
+
+export async function ontkoppelSubsidieMaatregel(koppelingId) {
+  const { error } = await supabase.from('dossier_subsidie_maatregelen').delete().eq('id', koppelingId)
+  if (error) throw error
+}
+
+/** Gekoppelde documenten voor één subsidie, mét documentgegevens erbij. */
+export async function listSubsidieDocumenten(subsidieId) {
+  return throwOnError(
+    await supabase.from('dossier_subsidie_documenten').select('id, document_id, documenten(*)').eq('subsidie_id', subsidieId),
+  )
+}
+
+export async function koppelSubsidieDocument(subsidieId, documentId) {
+  return throwOnError(
+    await supabase
+      .from('dossier_subsidie_documenten')
+      .insert({ subsidie_id: subsidieId, document_id: documentId })
+      .select('id, document_id')
+      .single(),
+  )
+}
+
+export async function ontkoppelSubsidieDocument(koppelingId) {
+  const { error } = await supabase.from('dossier_subsidie_documenten').delete().eq('id', koppelingId)
+  if (error) throw error
+}
+
 /** Uitsluitend admin: sinds de security-hardeningsronde (2026-09-28) blokkeert bewaak_dossier_integriteit() een statuswijziging door een niet-admin, ook al zou dossiers_update de rij zelf toestaan. De UI toont "Dossier afronden" alleen bij magBeheren (zie DossierWerkruimte.jsx). */
 export async function completeDossier(dossierId) {
   return throwOnError(await supabase.from('dossiers').update({ status: 'afgerond' }).eq('dossier_id', dossierId).select('*, panden(*)').single())

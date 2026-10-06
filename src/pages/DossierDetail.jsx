@@ -20,6 +20,7 @@ import { OpnamesSectie } from '../components/klantOmgeving/OpnamesSectie'
 import { PakketControle } from '../components/klantOmgeving/PakketControle'
 import { BouwkundigeAnalyse } from '../components/klantOmgeving/BouwkundigeAnalyse'
 import { DossierTaken } from '../components/klantOmgeving/DossierTaken'
+import { DossierSubsidies } from '../components/klantOmgeving/DossierSubsidies'
 import { TelefonischeAfspraakSectie } from '../components/klantOmgeving/TelefonischeAfspraakSectie'
 import {
   getDossier,
@@ -302,6 +303,16 @@ export default function DossierDetail() {
               ) : null}
               {isAdmin ? <OpnamesSectie dossierId={dossier.dossier_id} /> : null}
               {isAdmin ? <AdviesrapportGenerator dossier={dossier} adviespunten={adviespunten} /> : null}
+              {isAdmin && dossier.pakket_id === 'gold' ? (
+                <Accordion title="Subsidies">
+                  <DossierSubsidies
+                    dossierId={dossier.dossier_id}
+                    magBeheren={isAdmin}
+                    adviespunten={adviespunten}
+                    documenten={documentenVoorDossier}
+                  />
+                </Accordion>
+              ) : null}
               {isAdmin && dossier.pakket_id === 'gold' ? (
                 <Accordion title="Subsidiebegeleiding & oplevering">
                   <DossierTaken
