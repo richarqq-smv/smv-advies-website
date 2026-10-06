@@ -52,6 +52,20 @@ test('emailjs.js: EMAILJS_TEMPLATE_CONTACT is nog niet geconfigureerd (ONTBREKEN
   assert.match(bron, /export const EMAILJS_TEMPLATE_CONTACT = 'ONTBREKEND_/)
 })
 
+test('ContactForm.jsx: voorkomt dubbel verzenden bij snel dubbelklikken via een ref-guard (niet alleen de disabled-knop)', () => {
+  const bron = leesZonderComments('ContactForm.jsx')
+  assert.match(bron, /const bezigRef = useRef\(false\)/)
+  assert.match(bron, /if \(bezigRef\.current\) return/)
+  assert.match(bron, /bezigRef\.current = true/)
+  assert.match(bron, /finally \{\s*bezigRef\.current = false/)
+})
+
+test('contactForm.js: buildContactEmailParams() stuurt alleen expliciet benoemde velden naar EmailJS, geen JSON.stringify van het hele formulier', () => {
+  const bron = leesZonderComments('..', '..', 'lib', 'contactForm.js')
+  assert.equal(/JSON\.stringify/.test(bron), false)
+  assert.match(bron, /verzonden_op: new Date\(\)\.toLocaleString\('nl-NL'\)/)
+})
+
 test('Contact.jsx: bestaande mailto/tel-knoppen blijven bestaan naast het formulier', () => {
   const bron = leesZonderComments('..', '..', 'pages', 'Contact.jsx')
   assert.match(bron, /mailtoHref/)

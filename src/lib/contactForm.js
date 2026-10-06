@@ -19,7 +19,7 @@ export function validateContactForm(values) {
   return errors
 }
 
-/** Bouwt de merge-velden voor de EmailJS-template — lege optionele velden worden '-' (leesbaar in het mailtemplate, geen `undefined`). */
+/** Bouwt de merge-velden voor de EmailJS-template — lege optionele velden worden '-' (leesbaar in het mailtemplate, geen `undefined`). `verzonden_op` volgt hetzelfde patroon als `ingevuld_op` bij de energie-indicatietool (zie lib/energieScan/emailParams.js). */
 export function buildContactEmailParams(values) {
   return {
     naam: values.naam.trim(),
@@ -28,5 +28,6 @@ export function buildContactEmailParams(values) {
     email: values.email.trim(),
     telefoon: values.telefoon?.trim() || '-',
     vraag: values.vraag.trim(),
+    verzonden_op: new Date().toLocaleString('nl-NL'),
   }
 }

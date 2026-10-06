@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { CheckCircle, LockSimple, SpinnerGap, WarningCircle } from '@phosphor-icons/react'
 import { TextField } from '../ui/TextField'
 import { TextArea } from '../ui/TextArea'
@@ -29,6 +29,10 @@ export function ContactForm() {
   const [values, setValues] = useState(LEEG)
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('idle') // 'idle' | 'submitting' | 'success' | 'error'
+  // Ref-guard (niet alleen de disabled-knop): state-updates zijn async, dus
+  // een snel dubbelklik kan dit twee keer aanroepen vóór een re-render de
+  // knop echt disabled toont — zelfde patroon als useEnergieScan.js.
+  const bezigRef = useRef(false)
 
   function setValue(id, v) {
     setValues((prev) => ({ ...prev, [id]: v }))
@@ -36,10 +40,12 @@ export function ContactForm() {
 
   async function handleSubmit(e) {
     e.preventDefault()
+    if (bezigRef.current) return
     const nieuweErrors = validateContactForm(values)
     setErrors(nieuweErrors)
     if (Object.keys(nieuweErrors).length > 0) return
 
+    bezigRef.current = true
     setStatus('submitting')
     try {
       await sendEmail(EMAILJS_TEMPLATE_CONTACT, buildContactEmailParams(values))
@@ -47,6 +53,8 @@ export function ContactForm() {
       setValues(LEEG)
     } catch {
       setStatus('error')
+    } finally {
+      bezigRef.current = false
     }
   }
 

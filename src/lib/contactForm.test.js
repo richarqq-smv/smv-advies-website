@@ -39,7 +39,8 @@ test('validateContactForm: alleen-witruimte telt als leeg', () => {
 
 test('buildContactEmailParams: trimt verplichte velden en zet lege optionele velden op een leesbaar streepje', () => {
   const params = buildContactEmailParams({ naam: '  Jan  ', email: ' jan@bedrijf.nl ', vraag: ' Een vraag. ' })
-  assert.deepEqual(params, {
+  const { verzonden_op, ...rest } = params
+  assert.deepEqual(rest, {
     naam: 'Jan',
     bedrijfsnaam: '-',
     plaats: '-',
@@ -47,6 +48,13 @@ test('buildContactEmailParams: trimt verplichte velden en zet lege optionele vel
     telefoon: '-',
     vraag: 'Een vraag.',
   })
+  assert.equal(typeof verzonden_op, 'string')
+  assert.ok(verzonden_op.length > 0)
+})
+
+test('buildContactEmailParams: verzonden_op is een leesbare datum/tijd-string, geen ruwe timestamp', () => {
+  const params = buildContactEmailParams({ naam: 'Jan', email: 'jan@bedrijf.nl', vraag: 'Een vraag.' })
+  assert.match(params.verzonden_op, /\d{1,4}.\d{1,2}.\d{1,4},?\s+\d{1,2}:\d{2}/)
 })
 
 test('buildContactEmailParams: gevulde optionele velden blijven staan, getrimd', () => {
