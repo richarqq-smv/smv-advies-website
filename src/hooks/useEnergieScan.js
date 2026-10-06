@@ -3,7 +3,8 @@ import { berekenResultaat } from '../lib/energieScan/calculations'
 import { buildEmailParams } from '../lib/energieScan/emailParams'
 import { buildInterneLeadParams, buildKlantBevestigingParams } from '../lib/energieScan/emailAudiences'
 import { prepareCalculationInput, validateStep1, validateStep2, validateStep3, validateStep4 } from '../lib/energieScan/validation'
-import { BUSINESS_EMAIL, EMAILJS_TEMPLATE_CONFIRM, EMAILJS_TEMPLATE_LEAD, sendEmail } from '../lib/emailjs'
+import { buildInterneJsonBestandsnaam, buildInterneJsonPayload, ENERGIE_INDICATIE_JSON_ATTACHMENT_FIELD } from '../lib/energieScan/internAttachment'
+import { BUSINESS_EMAIL, EMAILJS_TEMPLATE_CONFIRM, EMAILJS_TEMPLATE_LEAD, sendEmail, sendEmailWithAttachment } from '../lib/emailjs'
 
 const INITIAL_VALUES = {
   pandtype: null,
@@ -139,7 +140,15 @@ export function useEnergieScan() {
       const leadParams = buildInterneLeadParams(emailParams, BUSINESS_EMAIL)
       const confirmParams = buildKlantBevestigingParams(emailParams, result, state.values.email)
 
-      sendEmail(EMAILJS_TEMPLATE_LEAD, leadParams).catch(() => {})
+      // JSON-bijlage: alleen op de interne leadmail (SMV Advies zelf), nooit
+      // op de klantbevestiging — de klant krijgt dit bestand nooit te zien,
+      // er is ook geen downloadknop in de resultaatweergave (zie
+      // internAttachment.js). Faalt het bouwen/versturen hiervan onverwacht,
+      // dan valt dit terug op de gewone, bijlage-loze sendEmail() zodat de
+      // interne mail zelf nooit alsnog uitblijft door een bijlageprobleem.
+      const json = JSON.stringify(buildInterneJsonPayload(state.values, result), null, 2)
+      const bijlage = { veldNaam: ENERGIE_INDICATIE_JSON_ATTACHMENT_FIELD, bestandsnaam: buildInterneJsonBestandsnaam(state.values), inhoud: json, type: 'application/json' }
+      sendEmailWithAttachment(EMAILJS_TEMPLATE_LEAD, leadParams, bijlage).catch(() => sendEmail(EMAILJS_TEMPLATE_LEAD, leadParams).catch(() => {}))
       sendEmail(EMAILJS_TEMPLATE_CONFIRM, confirmParams)
         .then(() => dispatch({ type: 'LEAD_SENT' }))
         .catch(() => dispatch({ type: 'LEAD_FAILED' }))
