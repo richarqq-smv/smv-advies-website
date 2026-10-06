@@ -3,37 +3,57 @@ import { COMPANY } from './company'
 /**
  * Content for /privacy and /voorwaarden.
  *
- * Source: the client's definitive Privacyverklaring.docx and Algemene
- * Voorwaarden.docx (2026-08-26). Text is reproduced as supplied — nothing
- * added or reworded — except:
- *  - the documents' own [adres]/[postcode]/[telefoonnummer] placeholders,
+ * PRIVACY_CONTENT: source is the client's definitive Privacyverklaring.docx
+ * (2026-08-26), reproduced as supplied — nothing added or reworded — except:
+ *  - the document's own [adres]/[postcode]/[telefoonnummer] placeholders,
  *    filled in with the same values already published elsewhere on this
  *    site (COMPANY, below);
- *  - the documents' own [KvK-nummer] placeholder, which is conditionally
+ *  - the document's own [KvK-nummer] placeholder, which is conditionally
  *    included only once COMPANY.kvk is filled in (matches the Footer's
  *    existing behavior — no fake-looking placeholder shown meanwhile);
  *  - two sentences (marked below) corrected to match how the energy scan
  *    actually behaves, per explicit instruction that the tool is leading
  *    over descriptive text.
  *
- * "Laatst bijgewerkt" / "Versie" dates were blank in the source documents
- * ([datum] / [maand jaar]) — set here to the date this text was published
- * to the site. Confirm this is acceptable, or supply a different date.
+ * VOORWAARDEN_CONTENT: the original source was the client's Algemene
+ * Voorwaarden.docx (2026-08-26). This round (zie VOORWAARDEN_LAST_UPDATED)
+ * substantially rewrote/expanded that text on explicit client instruction
+ * — a legal aanscherping, not a reproduction — to cover: SMV Advies'
+ * rol als advies-/begeleidingsbureau (geen aannemer/installateur);
+ * subsidies/fiscale regelingen; het onderscheid brongegevens/afgeleide
+ * gegevens/aannames in berekeningen; een uitgebreidere aansprakelijkheids-
+ * paragraaf; derden; wijzigingen in wet- en regelgeving; en scope/meerwerk.
+ * Prijzen, pakketgrenzen en het meerwerktarief komen uitsluitend uit
+ * src/data/packages.js / src/lib/klantOmgeving/offerte.js (geen tweede
+ * bron voor diezelfde cijfers) — deze tekst verwijst daar beschrijvend
+ * naar in plaats van bedragen/aantallen te herhalen.
+ *
+ * Privacy en Voorwaarden zijn onafhankelijke documenten met elk hun eigen
+ * revisiedatum — vandaar twee losse *_LAST_UPDATED-constanten in plaats
+ * van één gedeelde: het bijwerken van de ene tekst mag nooit stilzwijgend
+ * ook de "laatst bijgewerkt"-datum van de andere tekst laten meeveranderen.
  */
 
 const KVK_CLAUSE = COMPANY.kvk ? `, ingeschreven bij de Kamer van Koophandel onder nummer ${COMPANY.kvk}` : ''
 const KVK_BYLINE = COMPANY.kvk ? ` — KvK ${COMPANY.kvk}` : ''
 const ADDRESS_LINE = `${COMPANY.address.street}, ${COMPANY.address.postalCode} ${COMPANY.address.city}`
+
+export const PRIVACY_LAST_UPDATED = '27 september 2026'
+
 // Geëxporteerd (niet alleen module-lokaal) zodat de offertefunctionaliteit
 // dezelfde versie-aanduiding in een offerte-snapshot kan vastleggen zonder
 // een tweede plek te creëren waar deze datum zou moeten kloppen — zie
-// src/lib/klantOmgeving/offerte.js.
-export const LAST_UPDATED = '27 september 2026'
+// VOORWAARDEN_VERSIE in src/components/klantOmgeving/OfferteEditor.jsx en
+// bouwOfferteSnapshot() in src/lib/klantOmgeving/offerte.js. Een al
+// aangemaakte offerte bevat de datum die hier gold op het moment van
+// aanmaken (bevroren in de snapshot) en verandert dus nooit mee als deze
+// constante later wordt bijgewerkt.
+export const VOORWAARDEN_LAST_UPDATED = '6 oktober 2026'
 
 export const PRIVACY_CONTENT = {
   intro:
     'SMV Advies (Steen en Mortel Verbetering) respecteert de privacy van iedereen die contact met ons heeft — via onze website, onze gratis energie-indicatietool, of als klant. In deze verklaring leest u welke persoonsgegevens wij verwerken, waarom, en welke rechten u heeft. ' +
-    `Laatst bijgewerkt: ${LAST_UPDATED}. Deze verklaring is van toepassing op www.smv-advies.nl en alle diensten van SMV Advies.`,
+    `Laatst bijgewerkt: ${PRIVACY_LAST_UPDATED}. Deze verklaring is van toepassing op www.smv-advies.nl en alle diensten van SMV Advies.`,
   sections: [
     {
       title: 'Wie is de verwerkingsverantwoordelijke',
@@ -134,8 +154,8 @@ export const PRIVACY_CONTENT = {
 
 export const VOORWAARDEN_CONTENT = {
   intro:
-    `SMV Advies (Steen en Mortel Verbetering), eenmanszaak gevestigd te ${COMPANY.address.city}${KVK_CLAUSE}. Versie september 2026. ` +
-    'Deze voorwaarden zijn geschreven voor een advies- en begeleidingsbureau — SMV Advies voert zelf geen bouwkundige of installatietechnische werkzaamheden uit; die worden verricht door de klant of via SMV Advies gecontracteerde installateurs en aannemers.',
+    `SMV Advies (Steen en Mortel Verbetering), eenmanszaak gevestigd te ${COMPANY.address.city}${KVK_CLAUSE}. Versie ${VOORWAARDEN_LAST_UPDATED}. ` +
+    'Deze voorwaarden zijn geschreven voor een advies- en begeleidingsbureau: SMV Advies is geen aannemer, installateur of uitvoerend bouwbedrijf en voert zelf geen bouwkundige of installatietechnische werkzaamheden uit; die worden verricht door de klant zelf, of door installateurs en aannemers die de klant zelf of via SMV Advies inschakelt.',
   sections: [
     {
       title: 'Definities',
@@ -145,6 +165,7 @@ export const VOORWAARDEN_CONTENT = {
         'Opdracht: de overeenkomst tussen SMV Advies en de klant tot het verrichten van advies-, analyse- en/of begeleidingswerkzaamheden op het gebied van verduurzaming van bedrijfspanden.',
         'Rapport: het door SMV Advies opgeleverde advies- of analysedocument (o.a. QuickScan, Premium- of Gold-rapportage).',
         'Derde partijen: installateurs, aannemers, leveranciers of andere uitvoerende partijen die door de klant of via SMV Advies worden ingeschakeld voor de daadwerkelijke uitvoering van maatregelen.',
+        'Subsidie- of fiscale regeling: een subsidie, fiscale faciliteit of vergelijkbare regeling van een overheidsinstantie, waaronder (niet-limitatief) de EIA, ISDE, MIA en Vamil.',
       ],
     },
     {
@@ -153,6 +174,14 @@ export const VOORWAARDEN_CONTENT = {
         'Deze Algemene Voorwaarden zijn van toepassing op alle offertes, opdrachtbevestigingen en overeenkomsten tussen SMV Advies en de klant, tenzij partijen schriftelijk anders overeenkomen.',
         'Eventuele inkoop- of andere voorwaarden van de klant worden uitdrukkelijk van de hand gewezen.',
         'Afwijkingen van deze voorwaarden zijn alleen geldig indien schriftelijk overeengekomen tussen SMV Advies en de klant.',
+      ],
+    },
+    {
+      title: 'Rol van SMV Advies',
+      content: [
+        'SMV Advies is een advies- en begeleidingsbureau op het gebied van verduurzaming van bedrijfspanden. SMV Advies is geen aannemer, installateur of uitvoerend bouwbedrijf en treedt ook niet als zodanig op.',
+        'SMV Advies is niet verantwoordelijk voor: de daadwerkelijke uitvoering van maatregelen; de bouwkundige of installatietechnische kwaliteit van werkzaamheden van derden; de constructieve veiligheid van uitgevoerd werk; de naleving van bouw-, installatie-, veiligheids- of andere wettelijke voorschriften door uitvoerende partijen; de planning, levertijd of beschikbaarheid van derden; garanties van leveranciers, installateurs of aannemers; en gebreken in producten of werkzaamheden van derden.',
+        'Heeft SMV Advies namens of samen met de klant contact met een derde partij — bijvoorbeeld bij het opvragen van offertes of bij een kickoffgesprek — dan maakt dit SMV Advies niet tot uitvoerende partij en neemt SMV Advies daarmee niet de aansprakelijkheid van die derde partij over.',
       ],
     },
     {
@@ -171,16 +200,42 @@ export const VOORWAARDEN_CONTENT = {
         'Betaling vindt plaats binnen 14 dagen na factuurdatum, tenzij schriftelijk anders overeengekomen in de opdrachtbevestiging.',
         'Bij overschrijding van de betalingstermijn is de klant van rechtswege in verzuim en is de wettelijke handelsrente verschuldigd over het openstaande bedrag, onverminderd het recht van SMV Advies op vergoeding van buitengerechtelijke incassokosten.',
         'SMV Advies is gerechtigd werkzaamheden op te schorten indien de klant met betaling in gebreke blijft.',
-        'Meerwerk — werkzaamheden die buiten de in de offerte of opdrachtbevestiging omschreven omvang vallen — wordt alleen uitgevoerd na voorafgaand schriftelijk akkoord van de klant en afzonderlijk in rekening gebracht.',
+        'Meerwerk wordt alleen uitgevoerd na voorafgaand schriftelijk akkoord van de klant en afzonderlijk in rekening gebracht — zie het artikel Scope en meerwerk hieronder.',
+      ],
+    },
+    {
+      title: 'Scope en meerwerk',
+      content: [
+        'Alleen de werkzaamheden die partijen in de offerte of opdrachtbevestiging zijn overeengekomen maken onderdeel uit van de opdracht.',
+        'Voor pakketten met een vooraf afgebakende scope — in het bijzonder het Gold Pakket — geldt de scope zoals beschreven op www.smv-advies.nl/pakketten en in de offerte, waaronder het aantal maatregelen, offerterondes, klantcontactmomenten en de duur van de begeleiding.',
+        'Werkzaamheden, maatregelen, contactmomenten of offertes die buiten deze overeengekomen scope vallen, zijn meerwerk. Meerwerk wordt altijd vooraf met de klant afgestemd en pas uitgevoerd na schriftelijk akkoord van de klant, tegen het daarvoor geldende tarief zoals vermeld in de offerte of opdrachtbevestiging.',
       ],
     },
     {
       title: 'Uitvoering van de opdracht',
       content: [
         'SMV Advies voert de opdracht naar beste inzicht, kennis en kunde uit, conform de eisen van goed vakmanschap, op basis van een inspanningsverplichting.',
-        'De in rapporten genoemde bedragen (investeringen, besparingen, terugverdientijden) zijn indicatief en gebaseerd op kentallen, aangeleverde gegevens en/of een visuele opname. Hieraan kunnen geen rechten worden ontleend; voor een sluitend uitvoeringsbudget zijn offertes van uitvoerende partijen noodzakelijk.',
-        'SMV Advies voert zelf geen bouwkundige, installatietechnische of andere uitvoerende werkzaamheden uit. Bij het Gold Pakket ondersteunt SMV Advies de klant bij het opvragen, vergelijken en beoordelen van offertes van derde partijen binnen de overeengekomen scope, is SMV Advies aanwezig bij één kickoffgesprek met de uitvoerende partij, en voert SMV Advies bij afronding één visuele, documentaire oplevercheck uit. Deze oplevercheck omvat geen technische keuring en geen bouwkundige inspectie, en houdt geen garantie op de uitvoeringskwaliteit in. De daadwerkelijke uitvoering en de contractuele relatie met de uitvoerende partij komen tot stand tussen de klant en die derde partij; SMV Advies is niet verantwoordelijk voor de uitvoeringskwaliteit van die derde partij.',
+        'Bij het Gold Pakket kan de begeleiding van SMV Advies, binnen de overeengekomen scope, onder meer bestaan uit: het opvragen van offertes bij derde partijen; het vergelijken van offertes; het op hoofdlijnen inhoudelijk beoordelen van offertes; contactmomenten met de klant; aanwezigheid bij een kickoffgesprek met de uitvoerende partij; en een visuele, documentaire oplevercheck binnen de afgesproken scope.',
+        'Deze begeleiding is geen technische keuring, geen bouwkundige inspectie, geen constructieve inspectie en geen installatietechnische keuring. Het houdt geen toezicht op de uitvoering in, geen garantie op de uitvoeringskwaliteit en geen vrijwaring van de uitvoerende partij. SMV Advies neemt met deze begeleiding niet de aansprakelijkheid van de aannemer, installateur of leverancier over.',
+        'De uitvoerende partij blijft zelf volledig verantwoordelijk voor de correcte uitvoering, kwaliteit, veiligheid, wettelijke conformiteit, garanties en oplevering van haar eigen werkzaamheden.',
         'Genoemde termijnen (levertijd rapport, doorlooptijd project) zijn indicatief en gelden niet als fatale termijn, tenzij uitdrukkelijk schriftelijk anders overeengekomen.',
+      ],
+    },
+    {
+      title: 'Berekeningen en prognoses',
+      content: [
+        'Door SMV Advies genoemde investeringsbedragen, besparingen, energieverbruiken, terugverdientijden, rendementen, toekomstige energiekosten, CO₂-besparingen en energielabels of indicaties daarvan zijn, voor zover gebaseerd op aannames, kengetallen, aangeleverde gegevens of ramingen, indicatief. Hieraan kan geen garantie op een bepaald financieel of energetisch resultaat worden ontleend.',
+        'SMV Advies onderscheidt daarbij: brongegevens (door de klant aangeleverde of tijdens een opname vastgelegde gegevens, zoals jaarafrekeningen, bouwjaar en pandkenmerken); berekende of afgeleide gegevens (op basis van brongegevens berekende indicaties, zoals besparing en terugverdientijd); en aannames of prognoses (inschattingen voor zover brongegevens ontbreken of onzeker zijn).',
+        'Voor een sluitend uitvoeringsbudget zijn offertes van uitvoerende partijen noodzakelijk.',
+      ],
+    },
+    {
+      title: 'Subsidies en fiscale regelingen',
+      content: [
+        'SMV Advies kan de klant informeren over, en begeleiden bij, subsidies en fiscale regelingen (waaronder de EIA, ISDE, MIA en Vamil) door middel van informatie, indicaties, berekeningen of begeleiding bij de aanvraag.',
+        'SMV Advies geeft geen garantie dat een subsidie of fiscale faciliteit wordt toegekend, en kan niet garanderen dat een aanvraag voldoet aan alle op het moment van aanvraag geldende voorwaarden, of dat een regeling beschikbaar blijft.',
+        'SMV Advies is niet verantwoordelijk voor wijzigingen in wet- en regelgeving of beleidsregels, en niet voor afwijzing, vertraging of vermindering van een aanvraag door RVO of een andere bevoegde instantie.',
+        'De klant blijft verantwoordelijk voor het tijdig aanleveren van juiste en volledige gegevens en voor het voldoen aan de formele aanvraagvoorwaarden, tenzij SMV Advies een concrete administratieve handeling (zoals het indienen van een specifieke aanvraag) schriftelijk op zich heeft genomen. In dat geval voert SMV Advies die handeling naar beste inzicht en binnen de daarvoor geldende termijnen uit, zonder dat dit een garantie op toekenning inhoudt.',
       ],
     },
     {
@@ -189,18 +244,34 @@ export const VOORWAARDEN_CONTENT = {
         'Tijdig en volledig verstrekken van de voor de opdracht benodigde gegevens (o.a. jaarafrekeningen, tekeningen, toegang tot het pand).',
         'Toegang verlenen tot het pand en de relevante technische ruimtes op de afgesproken datum en tijdstip.',
         'SMV Advies tijdig informeren over wijzigingen die relevant zijn voor de opdracht (bijv. geplande verbouwingen, eigendomswijziging).',
-        'Bij onjuiste, onvolledige of te laat verstrekte gegevens is SMV Advies niet aansprakelijk voor eventuele afwijkingen in het rapport of vertraging in de levering.',
+        'SMV Advies mag uitgaan van de juistheid en volledigheid van de door de klant verstrekte informatie, tenzij er een duidelijke aanleiding bestaat om daaraan te twijfelen.',
+        'Bij onjuiste, onvolledige of te laat verstrekte gegevens is SMV Advies niet aansprakelijk voor afwijkingen in het rapport, of voor vertraging, die daardoor ontstaan.',
+      ],
+    },
+    {
+      title: 'Wijzigingen in wet- en regelgeving',
+      content: [
+        'Berekeningen, adviezen en informatie over subsidies en fiscale regelingen zijn gebaseerd op de wet- en regelgeving en de overige informatie die gelden op het moment waarop ze worden opgesteld, tenzij schriftelijk anders overeengekomen.',
+        'Wijzigingen in wet- en regelgeving, beleidsregels of subsidievoorwaarden na dat moment leiden niet automatisch tot aansprakelijkheid van SMV Advies.',
       ],
     },
     {
       title: 'Aansprakelijkheid',
       content: [
-        'De aansprakelijkheid van SMV Advies voor schade voortvloeiend uit of verband houdend met de uitvoering van de opdracht is beperkt tot het bedrag dat in het desbetreffende geval door de beroeps- of bedrijfsaansprakelijkheidsverzekering van SMV Advies wordt uitgekeerd, vermeerderd met het eigen risico.',
-        'Indien om welke reden dan ook geen uitkering krachtens die verzekering plaatsvindt, is de aansprakelijkheid van SMV Advies beperkt tot maximaal het bedrag van de voor de betreffende opdracht overeengekomen prijs (excl. btw), met een maximum van € 5.000.',
-        'SMV Advies is niet aansprakelijk voor schade die voortvloeit uit de uitvoering van maatregelen door derde partijen (installateurs, aannemers), noch voor de kwaliteit, planning of nakoming van door de klant of via SMV Advies gecontracteerde derde partijen.',
-        'SMV Advies is niet aansprakelijk voor indirecte schade, waaronder gevolgschade, gederfde winst, gemiste besparingen of schade door bedrijfsstagnatie.',
-        'De in dit artikel opgenomen beperkingen gelden niet voor zover schade het gevolg is van opzet of bewuste roekeloosheid van SMV Advies.',
-        'Elke vordering tot schadevergoeding vervalt indien deze niet binnen 12 maanden nadat de klant bekend werd of redelijkerwijs bekend had kunnen zijn met de schade, schriftelijk bij SMV Advies is ingediend.',
+        'De aansprakelijkheid van SMV Advies voor schade voortvloeiend uit of verband houdend met de uitvoering van de opdracht is beperkt tot het bedrag dat in het desbetreffende geval daadwerkelijk door de beroeps- of bedrijfsaansprakelijkheidsverzekering van SMV Advies wordt uitgekeerd, vermeerderd met het onder die verzekering toepasselijke eigen risico.',
+        'Indien en voor zover om welke reden dan ook geen uitkering krachtens die verzekering plaatsvindt, is de aansprakelijkheid van SMV Advies beperkt tot maximaal het bedrag van de voor de betreffende opdracht overeengekomen prijs (excl. btw), met een maximum van € 5.000.',
+        'SMV Advies is niet aansprakelijk voor schade die voortvloeit uit de uitvoering van maatregelen door derde partijen, noch voor de kwaliteit, planning of nakoming van door de klant of via SMV Advies gecontracteerde derde partijen (zie ook het artikel Rol van SMV Advies).',
+        'Voor zover rechtens toegestaan is SMV Advies niet aansprakelijk voor indirecte schade of gevolgschade, waaronder in ieder geval: gederfde winst, gemiste besparingen, gemiste subsidies of fiscale voordelen, bedrijfsstagnatie, productieverlies, reputatieschade, schade door het niet behalen van duurzaamheidsdoelen of een gewenst energielabel, en overige zuivere vermogensschade.',
+        'De in dit artikel opgenomen beperkingen en uitsluitingen gelden niet voor zover schade het gevolg is van opzet of bewuste roekeloosheid van SMV Advies.',
+        'Elke vordering tot schadevergoeding vervalt indien deze niet binnen 12 maanden nadat de klant de schade heeft ontdekt of redelijkerwijs had kunnen ontdekken, schriftelijk en gemotiveerd bij SMV Advies is ingediend.',
+      ],
+    },
+    {
+      title: 'Derden',
+      content: [
+        'Er wordt onderscheid gemaakt tussen: derde partijen die de klant zelf heeft ingeschakeld; derde partijen die via SMV Advies zijn benaderd (bijvoorbeeld voor een offerte); en de partij die daadwerkelijk contractspartij wordt voor de uitvoering.',
+        'Het via SMV Advies benaderen of voordragen van een derde partij maakt SMV Advies geen partij bij de overeenkomst die de klant vervolgens met die derde sluit.',
+        'Sluit de klant een overeenkomst met een installateur, aannemer of andere uitvoerende partij, dan blijft die partij zelf verantwoordelijk voor haar eigen prestaties, garanties en nakoming jegens de klant.',
       ],
     },
     {
@@ -222,9 +293,10 @@ export const VOORWAARDEN_CONTENT = {
     {
       title: 'Klachtenregeling',
       content: [
-        'Klachten over de dienstverlening dienen zo spoedig mogelijk, doch uiterlijk binnen 30 dagen na constatering, schriftelijk en gemotiveerd bij SMV Advies te worden ingediend.',
+        'Klachten over de dienstverlening dienen zo spoedig mogelijk, doch uiterlijk binnen 30 dagen nadat de klant het gebrek heeft ontdekt of redelijkerwijs had kunnen ontdekken, schriftelijk en gemotiveerd bij SMV Advies te worden ingediend.',
         'Een klacht schort de betalingsverplichting van de klant niet op.',
         'SMV Advies reageert binnen 14 dagen op een ingediende klacht en zal zich inspannen om in onderling overleg tot een oplossing te komen.',
+        'Deze klachtregeling laat de vervaltermijn voor vorderingen tot schadevergoeding uit het artikel Aansprakelijkheid onverlet.',
       ],
     },
     {

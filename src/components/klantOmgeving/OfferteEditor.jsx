@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { CheckCircle, WarningCircle, SpinnerGap, Plus, X, FileText } from '@phosphor-icons/react'
 import { Button } from '../ui/Button'
 import { PACKAGES } from '../../data/packages'
-import { LAST_UPDATED as VOORWAARDEN_VERSIE } from '../../data/legalContent'
+import { VOORWAARDEN_LAST_UPDATED as VOORWAARDEN_VERSIE } from '../../data/legalContent'
 import { createOfferte } from '../../lib/klantOmgeving/api'
 import { ROUTES } from '../../lib/routes'
 import {
