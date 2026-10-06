@@ -151,12 +151,19 @@ export default function App() {
           <Route path={ROUTES.contact} element={<Contact />} />
           <Route path={ROUTES.privacy} element={<Privacy />} />
           <Route path={ROUTES.voorwaarden} element={<Voorwaarden />} />
-          <Route path={ROUTES.mjopTool} element={<MjopTool />} />
           <Route path={ROUTES.inloggen} element={<Inloggen />} />
           <Route path={ROUTES.registreren} element={<Registreren />} />
           <Route path={ROUTES.wachtwoordVergeten} element={<WachtwoordVergeten />} />
 
           <Route element={<RequireAuth />}>
+            {/*
+              Verhuisd achter RequireAuth (was hierboven een publieke
+              route): de MJOP-tool mag niet meer zonder account gebruikt
+              worden. RequireAuth onthoudt pad+querystring (incl.
+              dossierId) in location.state.van, zodat Inloggen.jsx na
+              succesvol inloggen hier exact op terugkomt.
+            */}
+            <Route path={ROUTES.mjopTool} element={<MjopTool />} />
             <Route path={ROUTES.account} element={<Account />} />
             {/*
               Klantomgeving-uitbreiding (2026-09-28) — "Mijn facturen":
