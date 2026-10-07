@@ -84,11 +84,11 @@ export const FAQ_CATEGORIES = [
       {
         question: 'Helpen jullie met subsidies zoals EIA en ISDE?',
         answer:
-          'Ja. Vanaf het Premium Pakket voeren we een subsidie-check uit en adviseren we over in aanmerking komende regelingen zoals de EIA, ISDE en SDE++. Bij opdracht kunnen we ook meehelpen met de aanvraag bij het RVO.',
+          'Ja. Vanaf het Premium Pakket voeren we een subsidie-check uit en adviseren we per maatregel welke regelingen zoals de EIA, ISDE en SDE++ mogelijk van toepassing zijn. Bij het Gold Pakket ondersteunen we u ook bij de daadwerkelijke aanvraag bij het RVO.',
         answerParts: [
-          'Ja. Vanaf het Premium Pakket voeren we een subsidie-check uit en adviseren we over in aanmerking komende regelingen zoals ',
+          'Ja. Vanaf het Premium Pakket voeren we een subsidie-check uit en adviseren we per maatregel welke regelingen zoals ',
           { text: 'de EIA, ISDE en SDE++', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
-          '. Bij opdracht kunnen we ook meehelpen met de aanvraag bij het RVO.',
+          ' mogelijk van toepassing zijn. Bij het Gold Pakket ondersteunen we u ook bij de daadwerkelijke aanvraag bij het RVO.',
         ],
       },
       {

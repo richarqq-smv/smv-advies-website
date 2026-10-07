@@ -54,6 +54,7 @@ export const PACKAGES = [
       'Alles uit het Basis Pakket',
       'Fysieke opname ter plaatse',
       'Bouwkundige en installatietechnische analyse in detail',
+      'Advies over welke subsidies van toepassing zijn, per maatregel',
       'Advies over het juiste investeringsmoment, ook in samenhang met onderhoud',
       'Stappenplan met fasering en financieel overzicht',
     ],
