@@ -27,11 +27,28 @@ import { bouwDossiersCsv, triggerCsvDownload } from '../lib/klantOmgeving/csvExp
  * Uitsluitend bereikbaar voor een echte admin (RequireAdmin in App.jsx);
  * de echte grens is RLS, zoals overal in deze module.
  */
+
+// Zelfde pil-patroon als OfferteStatusBadge (OffertesHistorie.jsx) — alleen
+// bestaande kleurtokens, geen nieuwe status toegevoegd aan dossiers.status.
+function DossierStatusBadge({ status }) {
+  const isAfgerond = status === 'afgerond'
+  return (
+    <span
+      className={`inline-flex shrink-0 items-center rounded-full px-3 py-1 text-xs font-semibold tracking-wide ${
+        isAfgerond ? 'bg-accent/10 text-accent' : 'bg-muted text-foreground-muted'
+      }`}
+    >
+      {isAfgerond ? 'Afgerond' : 'Open'}
+    </span>
+  )
+}
+
 export default function AdminDossiers() {
   const [laden, setLaden] = useState(true)
   const [klanten, setKlanten] = useState([])
   const [dossiers, setDossiers] = useState([])
   const [zoekterm, setZoekterm] = useState('')
+  const [dossierZoekterm, setDossierZoekterm] = useState('')
 
   const [lokaleKlanten, setLokaleKlanten] = useState([])
   const [importBezig, setImportBezig] = useState(null) // klantId die momenteel importeert, of null
@@ -150,6 +167,12 @@ export default function AdminDossiers() {
     const q = zoekterm.trim().toLowerCase()
     if (!q) return true
     return [k.naam, k.bedrijfsnaam, k.email].some((v) => (v ?? '').toLowerCase().includes(q))
+  })
+
+  const gefilterdeDossiers = dossiers.filter((d) => {
+    const q = dossierZoekterm.trim().toLowerCase()
+    if (!q) return true
+    return [d.klanten?.naam, d.klanten?.bedrijfsnaam, d.panden?.omschrijving, d.panden?.adres].some((v) => (v ?? '').toLowerCase().includes(q))
   })
 
   return (
@@ -290,56 +313,71 @@ export default function AdminDossiers() {
                 {dossiers.length === 0 ? (
                   <p className="rounded-lg border border-dashed border-border px-5 py-6 text-center text-sm text-foreground-muted">Nog geen dossiers.</p>
                 ) : (
-                  <ul className="flex flex-col gap-2">
-                    {dossiers.map((d) =>
-                      archiveerId === d.dossier_id ? (
-                        <li key={d.dossier_id}>
-                          <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-accent/40 bg-accent/5 px-4 py-3 text-sm">
-                            <span className="text-primary">Dossier archiveren? Het dossier wordt naar het archief verplaatst en kan later worden hersteld.</span>
-                            <div className="flex flex-wrap items-center gap-2">
-                              <Button type="button" variant="ghost" size="sm" onClick={() => bevestigArchiveren(d.dossier_id)} disabled={archiveerBezig}>
-                                {archiveerBezig ? 'Bezig...' : 'Ja, archiveren'}
-                              </Button>
-                              <Button type="button" variant="ghost" size="sm" onClick={() => setArchiveerId(null)} disabled={archiveerBezig}>
-                                Annuleren
-                              </Button>
-                            </div>
-                          </div>
-                        </li>
-                      ) : (
-                        <li key={d.dossier_id}>
-                          <div className="flex items-stretch gap-2">
-                            <Link
-                              to={ROUTES.adminDossierDetail(d.dossier_id)}
-                              className="flex flex-1 flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-white px-4 py-3 text-sm hover:border-accent hover:bg-muted"
-                            >
-                              <span className="font-medium text-primary">{d.klanten?.naam || d.klanten?.bedrijfsnaam || 'Onbekende klant'}</span>
-                              <span className="text-foreground-muted">{d.panden?.omschrijving || d.panden?.adres || 'Onbekend pand'}</span>
-                              <span className={d.status === 'afgerond' ? 'text-accent' : 'text-foreground-muted'}>{d.status === 'afgerond' ? 'Afgerond' : 'Open'}</span>
-                            </Link>
-                            {magDossierArchiveren(d) ? (
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setArchiveerId(d.dossier_id)}
-                                aria-label="Dossier archiveren"
-                                title="Dossier archiveren"
-                              >
-                                <Trash size={16} />
-                              </Button>
-                            ) : null}
-                          </div>
-                          {archiveerFoutId === d.dossier_id ? (
-                            <p role="alert" className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-error">
-                              <WarningCircle size={13} weight="fill" />
-                              Archiveren is niet gelukt. Probeer het opnieuw.
-                            </p>
-                          ) : null}
-                        </li>
-                      ),
+                  <>
+                    <input
+                      type="search"
+                      placeholder="Zoek op klant, pand of adres"
+                      value={dossierZoekterm}
+                      onChange={(e) => setDossierZoekterm(e.target.value)}
+                      className="mb-4 w-full rounded-lg border border-border bg-white px-3.5 py-2.5 text-sm text-primary focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
+                    />
+                    {gefilterdeDossiers.length === 0 ? (
+                      <p className="rounded-lg border border-dashed border-border px-5 py-6 text-center text-sm text-foreground-muted">Geen dossiers gevonden.</p>
+                    ) : (
+                      <ul className="flex flex-col gap-2">
+                        {gefilterdeDossiers.map((d) =>
+                          archiveerId === d.dossier_id ? (
+                            <li key={d.dossier_id}>
+                              <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-accent/40 bg-accent/5 px-4 py-3 text-sm">
+                                <span className="text-primary">Dossier archiveren? Het dossier wordt naar het archief verplaatst en kan later worden hersteld.</span>
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <Button type="button" variant="ghost" size="sm" onClick={() => bevestigArchiveren(d.dossier_id)} disabled={archiveerBezig}>
+                                    {archiveerBezig ? 'Bezig...' : 'Ja, archiveren'}
+                                  </Button>
+                                  <Button type="button" variant="ghost" size="sm" onClick={() => setArchiveerId(null)} disabled={archiveerBezig}>
+                                    Annuleren
+                                  </Button>
+                                </div>
+                              </div>
+                            </li>
+                          ) : (
+                            <li key={d.dossier_id}>
+                              <div className="flex items-stretch gap-2">
+                                <Link
+                                  to={ROUTES.adminDossierDetail(d.dossier_id)}
+                                  className="flex flex-1 items-center justify-between gap-3 rounded-lg border border-border bg-white px-4 py-3 text-sm hover:border-accent hover:bg-muted"
+                                >
+                                  <span className="min-w-0">
+                                    <span className="block truncate font-medium text-primary">{d.klanten?.naam || d.klanten?.bedrijfsnaam || 'Onbekende klant'}</span>
+                                    <span className="block truncate text-xs text-foreground-muted">{d.panden?.omschrijving || d.panden?.adres || 'Onbekend pand'}</span>
+                                  </span>
+                                  <DossierStatusBadge status={d.status} />
+                                </Link>
+                                {magDossierArchiveren(d) ? (
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setArchiveerId(d.dossier_id)}
+                                    aria-label="Dossier archiveren"
+                                    title="Dossier archiveren"
+                                  >
+                                    <Trash size={16} />
+                                  </Button>
+                                ) : null}
+                              </div>
+                              {archiveerFoutId === d.dossier_id ? (
+                                <p role="alert" className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-error">
+                                  <WarningCircle size={13} weight="fill" />
+                                  Archiveren is niet gelukt. Probeer het opnieuw.
+                                </p>
+                              ) : null}
+                            </li>
+                          ),
+                        )}
+                      </ul>
                     )}
-                  </ul>
+                  </>
                 )}
               </div>
             </div>
