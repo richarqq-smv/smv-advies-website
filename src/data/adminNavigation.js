@@ -13,6 +13,7 @@ export const ADMIN_BEHEER_NAV_ITEMS = [
   { to: ROUTES.admin, label: 'Dashboard', end: true },
   { to: ROUTES.adminPlanning, label: 'Planning' },
   { to: ROUTES.adminDossiers, label: 'Klanten & dossiers' },
+  { to: ROUTES.adminSubsidies, label: 'Subsidies' },
   { to: ROUTES.watKanWachten, label: 'Wat kan wachten' },
   { to: ROUTES.archief, label: 'Archief' },
 ]

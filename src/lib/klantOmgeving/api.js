@@ -1504,3 +1504,21 @@ export async function verwijderDocument(documentId, storagePath) {
   const { error } = await supabase.from('documenten').delete().eq('document_id', documentId)
   if (error) throw error
 }
+
+/**
+ * RVO-subsidie-naslag (onderzoeksronde 2026-10-07) — admin-only
+ * referentielijst, maandelijks automatisch gesynchroniseerd door de
+ * Edge Function rvo-subsidies-sync (zie 0036_rvo_subsidie_index.sql).
+ * Puur leeswerk vanuit de admin-UI; schrijven gebeurt uitsluitend door
+ * die Edge Function (service_role, omzeilt RLS).
+ */
+export async function adminListRvoSubsidieIndex() {
+  return throwOnError(await supabase.from('rvo_subsidie_index').select('*').order('titel', { ascending: true }))
+}
+
+/** Meest recente syncpoging (success of error) — zie rvo_sync_log, altijd precies één rij per poging. */
+export async function adminGetRvoSyncStatus() {
+  const { data, error } = await supabase.from('rvo_sync_log').select('*').order('gestart_op', { ascending: false }).limit(1).maybeSingle()
+  if (error) throw error
+  return data
+}

@@ -57,6 +57,9 @@ export const ROUTES = {
   adminOpname: (dossierId, opnameId) => `/admin/dossiers/${dossierId}/opnames/${opnameId}`,
   adminPlanning: '/admin/planning',
   adminKansen: '/admin/kansen',
+  // RVO-subsidie-naslag (onderzoeksronde 2026-10-07) — admin-only,
+  // maandelijks gesynchroniseerde referentielijst, zie AdminSubsidies.jsx.
+  adminSubsidies: '/admin/subsidies',
   // Werkfase Fase 8 — dossier-overstijgend, admin-only, geen klantroute.
   watKanWachten: '/admin/wat-kan-wachten',
   // Dossier-archief (admin-feature, 2026-09-28) — zelfde behandeling als

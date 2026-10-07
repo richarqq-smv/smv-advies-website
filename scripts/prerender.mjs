@@ -69,6 +69,7 @@ const ROUTES = [
   ROUTE_PATHS.adminDossiers,
   ROUTE_PATHS.adminPlanning,
   ROUTE_PATHS.adminKansen,
+  ROUTE_PATHS.adminSubsidies,
   // Administratie-uitbreiding (2026-09-28): zelfde reden als hierboven —
   // statische paden zonder parameter, achter RequireAuth/RequireAdmin.
   // adminFactuurDetail (/admin/facturen/:id) staat hier bewust NIET in:
