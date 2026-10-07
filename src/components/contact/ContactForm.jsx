@@ -19,11 +19,7 @@ const LEEG = { naam: '', bedrijfsnaam: '', plaats: '', email: '', telefoon: '', 
  *
  * Verzending loopt via de bestaande EmailJS-infrastructuur (lib/emailjs.js,
  * dezelfde die de energie-indicatie en de MJOP-tool al gebruiken) — geen
- * nieuw backend-systeem. EMAILJS_TEMPLATE_CONTACT wijst op dit moment nog
- * naar een niet-bestaand EmailJS-template (zie het commentaar daar): een
- * verzendpoging geeft daardoor de nette foutmelding hieronder, nooit een
- * valse "verzonden"-bevestiging. Zodra er een echt template-ID is, is dit
- * formulier zonder verdere wijziging bruikbaar.
+ * nieuw backend-systeem.
  */
 export function ContactForm() {
   const [values, setValues] = useState(LEEG)

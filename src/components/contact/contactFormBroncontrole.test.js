@@ -47,9 +47,9 @@ test('ContactForm.jsx: alleen naam, e-mail en vraag zijn verplicht (required) â€
   assert.deepEqual(new Set(vereisteVelden), new Set(['naam', 'email', 'vraag']))
 })
 
-test('emailjs.js: EMAILJS_TEMPLATE_CONTACT is nog niet geconfigureerd (ONTBREKEND_-conventie), geen verzonnen template-ID', () => {
+test('emailjs.js: EMAILJS_TEMPLATE_CONTACT wijst naar een echt EmailJS-template-ID, niet meer naar de ONTBREKEND_-placeholder', () => {
   const bron = leesZonderComments('..', '..', 'lib', 'emailjs.js')
-  assert.match(bron, /export const EMAILJS_TEMPLATE_CONTACT = 'ONTBREKEND_/)
+  assert.match(bron, /export const EMAILJS_TEMPLATE_CONTACT = 'template_\w+'/)
 })
 
 test('ContactForm.jsx: voorkomt dubbel verzenden bij snel dubbelklikken via een ref-guard (niet alleen de disabled-knop)', () => {
