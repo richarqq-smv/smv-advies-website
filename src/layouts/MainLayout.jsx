@@ -10,7 +10,7 @@ import { NAV_ITEMS } from '../data/navigation'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 
 export function MainLayout() {
-  const { pathname } = useLocation()
+  const { pathname, hash } = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
   const isDesktop = useMediaQuery('(min-width: 1440px)')
 
@@ -20,10 +20,33 @@ export function MainLayout() {
   const mobileNavOpen = menuOpen && !isDesktop
 
   // Jump to top on route change so navigating never leaves the scroll
-  // position of the previous page.
+  // position of the previous page — except when the URL carries a hash
+  // (bijv. /pakketten#pakket-gold, zie PricingCard.jsx "Meer informatie"):
+  // dan naar die sectie scrollen in plaats van naar boven. De doelpagina
+  // is vaak lazy-loaded (zie App.jsx) en kan nog aan het mounten zijn
+  // wanneer dit effect draait, dus een paar animation frames proberen in
+  // plaats van direct op te geven bij een nog ontbrekend element.
   useEffect(() => {
+    if (hash) {
+      let geannuleerd = false
+      let pogingen = 0
+      const probeerScrollen = () => {
+        if (geannuleerd) return
+        const doel = document.getElementById(hash.slice(1))
+        if (doel) {
+          doel.scrollIntoView()
+        } else if (pogingen < 30) {
+          pogingen += 1
+          requestAnimationFrame(probeerScrollen)
+        }
+      }
+      probeerScrollen()
+      return () => {
+        geannuleerd = true
+      }
+    }
     window.scrollTo(0, 0)
-  }, [pathname])
+  }, [pathname, hash])
 
   return (
     <div className="flex min-h-dvh flex-col">

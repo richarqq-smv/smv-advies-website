@@ -6,6 +6,12 @@
 export const ROUTES = {
   home: '/',
   pakketten: '/pakketten',
+  // Anchor naar de uitgebreide informatiesectie van één pakket op
+  // /pakketten (Meer-informatie-ronde, 2026-10-07) — PricingCard.jsx en
+  // Pakketten.jsx gebruiken allebei deze ene functie, zodat het anchor-id
+  // nooit tussen "waar de knop naartoe linkt" en "waar de sectie staat"
+  // uit elkaar kan lopen.
+  pakketAnchor: (pakketId) => `/pakketten#pakket-${pakketId}`,
   energieIndicatie: '/energie-indicatie',
   over: '/over',
   werkwijze: '/werkwijze',

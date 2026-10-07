@@ -3,6 +3,7 @@ import { Button } from '../ui/Button'
 import { Badge } from '../ui/Badge'
 import { Reveal } from '../ui/Reveal'
 import { cn } from '../../lib/cn'
+import { ROUTES } from '../../lib/routes'
 
 export function PricingCard({ pkg, delay = 0 }) {
   return (
@@ -45,6 +46,15 @@ export function PricingCard({ pkg, delay = 0 }) {
 
       <Button to={pkg.ctaTo} variant={pkg.featured ? 'primary' : 'outline'} className="mt-8 w-full">
         {pkg.cta}
+      </Button>
+      {/*
+        Secundaire actie (Meer-informatie-ronde, 2026-10-07) — springt naar
+        de uitgebreide uitleg van dit pakket op /pakketten. Werkt zowel hier
+        als op de homepage (zie PricingSection.jsx): het pad is altijd
+        /pakketten#pakket-{id}, nooit een lokale anchor op de huidige pagina.
+      */}
+      <Button to={ROUTES.pakketAnchor(pkg.id)} variant="ghost" size="sm" className="mt-2 w-full">
+        Meer informatie
       </Button>
     </Reveal>
   )

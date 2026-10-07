@@ -9,6 +9,7 @@ import { PricingCard } from '../components/home/PricingCard'
 import { ComparisonTable } from '../components/pakketten/ComparisonTable'
 import { DecisionCta } from '../components/pakketten/DecisionCta'
 import { PACKAGES } from '../data/packages'
+import { PACKAGE_DETAILS } from '../data/packageDetails'
 import { getBreadcrumbSchema } from '../lib/structuredData'
 import { ROUTES } from '../lib/routes'
 
@@ -99,6 +100,59 @@ export default function Pakketten() {
             className="mb-10"
           />
           <ComparisonTable />
+        </Container>
+      </Section>
+
+      <Section tone="white">
+        <Container>
+          <SectionHeading
+            title="Wat elk pakket u oplevert"
+            description="Voor wie het bedoeld is, wat u concreet ontvangt en hoe het traject verloopt — per pakket op een rij."
+            className="mb-10"
+          />
+          <div className="flex flex-col gap-8">
+            {PACKAGES.map((pkg) => {
+              const details = PACKAGE_DETAILS[pkg.id]
+              if (!details) return null
+              return (
+                <div
+                  key={pkg.id}
+                  id={`pakket-${pkg.id}`}
+                  className="scroll-mt-24 rounded-2xl border border-border bg-white p-7 sm:p-8"
+                >
+                  <h3 className="text-2xl text-primary">{pkg.name}</h3>
+                  <p className="mt-1 text-sm text-foreground-muted">{pkg.subtitle}</p>
+
+                  <div className="mt-6 grid gap-6 lg:grid-cols-3">
+                    <div>
+                      <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Voor wie</p>
+                      <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{details.voorWie}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Wat u ontvangt</p>
+                      <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-foreground-muted">
+                        {details.watJeOntvangt.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Hoe het proces verloopt</p>
+                      <ol className="mt-2 list-inside list-decimal space-y-1.5 text-sm leading-relaxed text-foreground-muted">
+                        {details.hoeHetProcesVerloopt.map((stap) => (
+                          <li key={stap}>{stap}</li>
+                        ))}
+                      </ol>
+                    </div>
+                  </div>
+
+                  <Button to={pkg.ctaTo} variant={pkg.featured ? 'primary' : 'outline'} size="sm" className="mt-6">
+                    {pkg.cta}
+                  </Button>
+                </div>
+              )
+            })}
+          </div>
         </Container>
       </Section>
 
