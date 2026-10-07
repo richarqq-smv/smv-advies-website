@@ -23,9 +23,14 @@ function leesZonderComments(...relatievePad) {
 
 test('ContactForm.jsx: hergebruikt sendEmail() uit lib/emailjs.js, geen eigen fetch/XHR naar een nieuw backend', () => {
   const bron = leesZonderComments('ContactForm.jsx')
-  assert.match(bron, /import \{ sendEmail, EMAILJS_TEMPLATE_CONTACT \} from '\.\.\/\.\.\/lib\/emailjs'/)
-  assert.match(bron, /sendEmail\(EMAILJS_TEMPLATE_CONTACT, buildContactEmailParams\(values\)\)/)
+  assert.match(bron, /import \{ sendEmail, EMAILJS_TEMPLATE_CONTACT, EMAILJS_PUBLIC_KEY_MJOP \} from '\.\.\/\.\.\/lib\/emailjs'/)
+  assert.match(bron, /sendEmail\(EMAILJS_TEMPLATE_CONTACT, buildContactEmailParams\(values\), EMAILJS_PUBLIC_KEY_MJOP\)/)
   assert.equal(/fetch\(|XMLHttpRequest|axios/.test(bron), false)
+})
+
+test('ContactForm.jsx: geeft de publicKey-override mee — het contactformulier-template staat onder het MJOP-EmailJS-account, niet het energie-indicatie-account', () => {
+  const bronEmailjs = leesZonderComments('..', '..', 'lib', 'emailjs.js')
+  assert.match(bronEmailjs, /export const EMAILJS_PUBLIC_KEY_MJOP = '\w+'/)
 })
 
 test('ContactForm.jsx: valideert met de bestaande validateContactForm() vóór verzending, geen losse inline-validatie', () => {

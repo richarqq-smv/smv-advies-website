@@ -26,7 +26,10 @@ export const BUSINESS_EMAIL = 'info@smv-advies.nl'
  * testen ook exact zo bleek. sendEmail() geeft deze publicKey expliciet
  * mee aan emailjs.send() (los van de globale ensureInit() hieronder), dus
  * de bestaande energie-indicatiemails blijven op hun eigen, ongewijzigde
- * account/key verlopen.
+ * account/key verlopen. EMAILJS_PUBLIC_KEY_MJOP is inmiddels ook het
+ * account waaronder het contactformulier-template hieronder is aangemaakt
+ * (zelfde EmailJS-login als MJOP, niet het energie-indicatie-account) —
+ * de naam is historisch, de sleutel wordt nu door beide templates gedeeld.
  */
 export const EMAILJS_TEMPLATE_MJOP = 'template_5koc1ge'
 export const EMAILJS_PUBLIC_KEY_MJOP = '94qfMTUrAn5q0DQQv'
@@ -34,8 +37,11 @@ export const MJOP_RECIPIENT_EMAIL = 'Richard@smv-advies.nl'
 
 /**
  * Contactformulier (/contact, websiteoptimalisatieronde 2026-10-02) —
- * stuurt naar het hoofd-EmailJS-account (zelfde service_id als de
- * energie-indicatie-templates hierboven, geen publicKey-override nodig).
+ * template staat onder hetzelfde EmailJS-account als MJOP (zie hierboven),
+ * dus ContactForm.jsx geeft EMAILJS_PUBLIC_KEY_MJOP mee als publicKey-
+ * override aan sendEmail(). Zonder die override zoekt EmailJS dit template
+ * in het energie-indicatie-account en vindt het niet (live getest, zelfde
+ * faalpatroon als bij MJOP destijds).
  */
 export const EMAILJS_TEMPLATE_CONTACT = 'template_w7aknuu'
 

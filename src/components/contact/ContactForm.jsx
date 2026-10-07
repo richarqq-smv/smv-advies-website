@@ -3,7 +3,7 @@ import { CheckCircle, LockSimple, SpinnerGap, WarningCircle } from '@phosphor-ic
 import { TextField } from '../ui/TextField'
 import { TextArea } from '../ui/TextArea'
 import { Button } from '../ui/Button'
-import { sendEmail, EMAILJS_TEMPLATE_CONTACT } from '../../lib/emailjs'
+import { sendEmail, EMAILJS_TEMPLATE_CONTACT, EMAILJS_PUBLIC_KEY_MJOP } from '../../lib/emailjs'
 import { validateContactForm, buildContactEmailParams } from '../../lib/contactForm'
 import { ROUTES } from '../../lib/routes'
 
@@ -44,7 +44,7 @@ export function ContactForm() {
     bezigRef.current = true
     setStatus('submitting')
     try {
-      await sendEmail(EMAILJS_TEMPLATE_CONTACT, buildContactEmailParams(values))
+      await sendEmail(EMAILJS_TEMPLATE_CONTACT, buildContactEmailParams(values), EMAILJS_PUBLIC_KEY_MJOP)
       setStatus('success')
       setValues(LEEG)
     } catch {
