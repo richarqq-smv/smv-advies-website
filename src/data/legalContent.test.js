@@ -39,6 +39,51 @@ test('PRIVACY_CONTENT.intro gebruikt PRIVACY_LAST_UPDATED, niet de Voorwaarden-d
   assert.match(BRON, /Laatst bijgewerkt: \$\{PRIVACY_LAST_UPDATED\}/)
 })
 
+// --- K. Privacy: marketing/opvolgend contact & internationale doorgifte ----
+// (Fase: Privacy-aanscherping, 2026-10-07)
+
+test('Met welk doel en op welke rechtsgrondslag: directe aanvraagopvolging is duidelijk onderscheiden van direct marketing', () => {
+  const tekst = sectie('Met welk doel en op welke rechtsgrondslag gegevens worden verwerkt')
+  assert.match(tekst, /concrete aanvraag, offerteaanvraag of lopende klantrelatie rechtstreeks op te volgen/)
+  assert.match(tekst, /geen algemene direct marketing/)
+})
+
+test('Met welk doel en op welke rechtsgrondslag: elektronische commerciële berichten vereisen voorafgaande toestemming (voor zover de wet dat vereist)', () => {
+  const tekst = sectie('Met welk doel en op welke rechtsgrondslag gegevens worden verwerkt')
+  assert.match(tekst, /elektronisch commercieel bericht/)
+  assert.match(tekst, /alleen wanneer u daarvoor voorafgaand toestemming heeft gegeven/)
+  assert.match(tekst, /voor zover de toepasselijke wetgeving die toestemming vereist/)
+  assert.match(tekst, /te allen tijde intrekken/)
+  assert.match(tekst, /laat de rechtmatigheid van de verwerking vóór de intrekking onverlet/)
+  assert.match(tekst, /altijd het recht bezwaar te maken tegen verwerking van uw gegevens voor direct marketing/)
+})
+
+test('Geen van de privacy-secties claimt dat er al een marketing-opt-in-checkbox bestaat', () => {
+  assert.equal(/checkbox/i.test(BRON), false)
+  assert.equal(/opt-in/i.test(BRON), false)
+  assert.equal(/aanvinken/i.test(BRON), false)
+})
+
+test('De rechten van betrokkenen: bezwaar tegen direct marketing blijft expliciet staan, plus het recht op intrekking van toestemming', () => {
+  const tekst = sectie('De rechten van betrokkenen en hoe die uit te oefenen')
+  assert.match(tekst, /bezwaar te maken tegen verwerking van uw gegevens voor direct marketing/)
+  assert.match(tekst, /Recht om een gegeven toestemming/)
+  assert.match(tekst, /te allen tijde in te trekken/)
+})
+
+test('Met wie gegevens eventueel worden gedeeld: bevat de internationale-doorgiftepassage met EER, AVG-waarborgen, SCC en EU-US Data Privacy Framework', () => {
+  const tekst = sectie('Met wie gegevens eventueel worden gedeeld')
+  assert.match(tekst, /Internationale doorgifte/)
+  assert.match(tekst, /Europese Economische Ruimte \(EER\)/)
+  assert.match(tekst, /passende waarborgen zoals vereist door de AVG/)
+  assert.match(tekst, /Standard Contractual Clauses/)
+  assert.match(tekst, /EU-US Data Privacy Framework/)
+})
+
+test('Privacy: geen KvK-wijziging door deze ronde (KVK_CLAUSE-logica ongewijzigd)', () => {
+  assert.match(BRON, /const KVK_CLAUSE = COMPANY\.kvk \? `, ingeschreven bij de Kamer van Koophandel onder nummer \$\{COMPANY\.kvk\}` : ''/)
+})
+
 // --- A. Rol van SMV Advies ---------------------------------------------------
 
 test('Rol van SMV Advies: maakt ondubbelzinnig duidelijk dat SMV Advies geen aannemer/installateur/uitvoerend bouwbedrijf is', () => {

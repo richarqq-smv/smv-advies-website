@@ -38,7 +38,7 @@ const KVK_CLAUSE = COMPANY.kvk ? `, ingeschreven bij de Kamer van Koophandel ond
 const KVK_BYLINE = COMPANY.kvk ? ` — KvK ${COMPANY.kvk}` : ''
 const ADDRESS_LINE = `${COMPANY.address.street}, ${COMPANY.address.postalCode} ${COMPANY.address.city}`
 
-export const PRIVACY_LAST_UPDATED = '27 september 2026'
+export const PRIVACY_LAST_UPDATED = '7 oktober 2026'
 
 // Geëxporteerd (niet alleen module-lokaal) zodat de offertefunctionaliteit
 // dezelfde versie-aanduiding in een offerte-snapshot kan vastleggen zonder
@@ -85,9 +85,9 @@ export const PRIVACY_CONTENT = {
       content: [
         'Om een offerte op te stellen en een opdracht uit te voeren — grondslag: uitvoering van de overeenkomst (of de te sluiten overeenkomst).',
         'Om de gratis energie-indicatie te berekenen en aan u toe te sturen — grondslag: uitvoering van de overeenkomst / uw uitdrukkelijke verzoek.',
-        'Om contact met u op te nemen naar aanleiding van een aanvraag, offerte of lopend project — grondslag: uitvoering van de overeenkomst of gerechtvaardigd belang (opvolgen van een concrete aanvraag).',
+        'Om een concrete aanvraag, offerteaanvraag of lopende klantrelatie rechtstreeks op te volgen — bijvoorbeeld door te reageren op uw vraag of een passend vervolg op uw aanvraag te bespreken — grondslag: uitvoering van de overeenkomst (of de daaraan voorafgaande precontractuele maatregelen), of, waar passend, gerechtvaardigd belang. Dit is een directe opvolging van uw eigen aanvraag en geen algemene direct marketing.',
+        'Gaat opvolgend contact verder dan de directe opvolging van uw concrete aanvraag en kwalificeert dit als een elektronisch commercieel bericht, dan verstuurt SMV Advies dit alleen wanneer u daarvoor voorafgaand toestemming heeft gegeven, voor zover de toepasselijke wetgeving die toestemming vereist. U kunt deze toestemming te allen tijde intrekken; intrekking laat de rechtmatigheid van de verwerking vóór de intrekking onverlet. Ongeacht de gebruikte grondslag heeft u altijd het recht bezwaar te maken tegen verwerking van uw gegevens voor direct marketing (zie het hoofdstuk De rechten van betrokkenen en hoe die uit te oefenen).',
         'Om te voldoen aan wettelijke verplichtingen, zoals onze fiscale bewaarplicht — grondslag: wettelijke verplichting.',
-        'Om, na een aanvraag via de energie-indicatietool, opvolgend contact op te nemen met een passend aanbod — grondslag: gerechtvaardigd belang. U kunt hiertegen te allen tijde bezwaar maken (zie het hoofdstuk Uw rechten).',
         'Wij gebruiken uw gegevens niet voor geautomatiseerde besluitvorming met rechtsgevolgen en verkopen uw gegevens niet aan derden.',
       ],
     },
@@ -108,6 +108,7 @@ export const PRIVACY_CONTENT = {
         'Met onze accountant of boekhouder, voor de financiële administratie.',
         'Met IT-dienstverleners (bijv. hosting, e-mail, agenda- en CRM-software) die als verwerker voor ons optreden, op basis van een verwerkersovereenkomst.',
         'Met overheidsinstanties (zoals RVO), uitsluitend indien u ons daartoe opdracht geeft in het kader van een subsidieaanvraag.',
+        'Internationale doorgifte: uw persoonsgegevens worden in principe binnen de Europese Economische Ruimte (EER) opgeslagen en verwerkt. Indien een IT-dienstverlener persoonsgegevens buiten de EER verwerkt, bijvoorbeeld in de Verenigde Staten, zorgt SMV Advies ervoor dat deze doorgifte uitsluitend plaatsvindt met passende waarborgen zoals vereist door de AVG. Daarbij kan bijvoorbeeld gebruik worden gemaakt van door de Europese Commissie vastgestelde EU-modelcontractbepalingen (Standard Contractual Clauses) of, wanneer van toepassing, het EU-US Data Privacy Framework.',
         'Wij delen uw gegevens niet met derden voor commerciële doeleinden en verkopen geen persoonsgegevens.',
       ],
     },
@@ -120,7 +121,8 @@ export const PRIVACY_CONTENT = {
         "Recht op verwijdering ('recht op vergetelheid'), voor zover geen wettelijke bewaarplicht van toepassing is.",
         'Recht op beperking van de verwerking.',
         'Recht op overdraagbaarheid (dataportabiliteit) van de gegevens die u zelf aan ons heeft verstrekt.',
-        'Recht van bezwaar tegen verwerking op basis van gerechtvaardigd belang, waaronder opvolgend contact na de gratis energie-indicatie.',
+        'Recht van bezwaar tegen verwerking op basis van gerechtvaardigd belang, en in het bijzonder het recht om te allen tijde bezwaar te maken tegen verwerking van uw gegevens voor direct marketing.',
+        'Recht om een gegeven toestemming — bijvoorbeeld voor elektronische commerciële berichten — te allen tijde in te trekken. Intrekking laat de rechtmatigheid van de verwerking vóór de intrekking onverlet.',
         `U kunt een verzoek indienen via ${COMPANY.email}. Wij reageren binnen 4 weken. Daarnaast heeft u het recht een klacht in te dienen bij de Autoriteit Persoonsgegevens (autoriteitpersoonsgegevens.nl).`,
       ],
     },
