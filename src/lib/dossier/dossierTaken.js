@@ -51,6 +51,38 @@ export function bouwStandaardTaken(categorie) {
   }))
 }
 
+// Subsidiebegeleidingsronde (2026-10-xx, opdracht §24/26) — een eigen,
+// losse checklist voor de concrete subsidie-aanvraagbegeleidingsflow
+// (controleren -> gegevens verzamelen -> aanvragen -> bevestiging/
+// beschikking), bewust ANDERS dan STANDAARD_SUBSIDIE_TAKEN hierboven (die
+// blijft ongewijzigd en gaat over de EIA/ISDE-melding/nacalculatie zelf).
+// Zelfde categorie='subsidie' (geen nieuwe categorie-waarde nodig — zie
+// dossier_taken se check-constraint), dus deze items verschijnen gewoon
+// tussen de al bestaande subsidietaken in DossierTaken.jsx. Ook dit is
+// een VOORSTEL (zelfde "eenmalige, expliciete actie"-principe als
+// bouwStandaardTaken hierboven) — geen vaste, door de applicatie
+// afgedwongen rij.
+const STANDAARD_SUBSIDIE_AANVRAAG_TAKEN = [
+  { omschrijving: 'Subsidievoorwaarden gecontroleerd', verantwoordelijke: 'SMV Advies' },
+  { omschrijving: 'Benodigde gegevens verzameld (oppervlakte, isolatiewaarde, meldcode)', verantwoordelijke: 'SMV Advies' },
+  { omschrijving: 'Wegwijsblad/subsidieblad gegenereerd', verantwoordelijke: 'SMV Advies' },
+  { omschrijving: 'Subsidieaanvraag voorbereid', verantwoordelijke: 'Klant + SMV Advies' },
+  { omschrijving: 'Aanvraag ingediend bij de subsidieverstrekker', verantwoordelijke: 'Klant' },
+  { omschrijving: 'Aanvraagbevestiging opgeslagen bij het dossier', verantwoordelijke: 'Klant + SMV Advies' },
+  { omschrijving: 'Beschikking ontvangen en opgeslagen bij het dossier', verantwoordelijke: 'Klant + SMV Advies' },
+  { omschrijving: 'Subsidiedossier afgerond', verantwoordelijke: 'SMV Advies' },
+]
+
+/** Zelfde contract als bouwStandaardTaken() hierboven, specifiek voor de subsidie-aanvraagbegeleidingschecklist (opdracht §26). */
+export function bouwSubsidieAanvraagChecklist() {
+  return STANDAARD_SUBSIDIE_AANVRAAG_TAKEN.map((taak, index) => ({
+    categorie: 'subsidie',
+    omschrijving: taak.omschrijving,
+    verantwoordelijke: taak.verantwoordelijke,
+    volgorde: index,
+  }))
+}
+
 /** Sorteert taken binnen een categorie op volgorde, dan op aanmaakdatum — stabiel ook nadat de adviseur rijen toevoegt/verwijdert. */
 export function sorteerTaken(taken) {
   return [...taken].sort((a, b) => {

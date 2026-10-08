@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { ArrowLeft, DownloadSimple, FileText, Receipt, Archive } from '@phosphor-icons/react'
+import { ArrowLeft, DownloadSimple, FileText, Receipt, Archive, ClipboardText } from '@phosphor-icons/react'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
@@ -341,6 +341,27 @@ export default function DossierDetail() {
               <div id="opnames-sectie">{isAdmin ? <OpnamesSectie dossierId={dossier.dossier_id} /> : null}</div>
               {/* Anchor voor de Werkvolgorde-actie "Rapport maken" zodra alles ervoor gereed is. */}
               <div id="rapport-sectie">{isAdmin ? <AdviesrapportGenerator dossier={dossier} adviespunten={adviespunten} /> : null}</div>
+              {/*
+                Subsidiebegeleidingsronde (2026-10-xx) — zelfde plaatsing/
+                stijl als de "Rapport genereren"-kaart hierboven (opdracht
+                §2/28): een eigen, duidelijke kaart direct erna, geen
+                verborgen submenu. Admin-only, net als Rapport genereren —
+                de onderliggende route/tabel zijn apart admin-only
+                beveiligd (RequireAdmin + RLS, zie AdminSubsidieBegeleiding.jsx).
+              */}
+              {isAdmin ? (
+                <div className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
+                  <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Subsidiebegeleiding</p>
+                  <h3 className="mb-2 text-xl text-primary">Subsidie aanvraag</h3>
+                  <p className="mb-4 text-sm text-foreground-muted">
+                    Bepaal per maatregel welke ISDE-regeling van toepassing is, welke gegevens nog ontbreken en genereer een subsidieblad met de officiële
+                    aanvraagstappen.
+                  </p>
+                  <Button to={ROUTES.adminSubsidieBegeleiding(dossier.dossier_id)} variant="outline" size="sm">
+                    <ClipboardText size={15} /> Subsidie aanvraag
+                  </Button>
+                </div>
+              ) : null}
               {isAdmin ? (
                 // Pakketarchitectuurronde (2026-10-08): subsidie-administratie is
                 // backendmatig en administratief voor élk pakket beschikbaar (zie

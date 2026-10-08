@@ -55,6 +55,9 @@ export const ROUTES = {
   // Dossiers -> dossier -> Opnames -> nieuwe/bestaande opname), nooit een
   // dossieroverstijgende lijst (die bestaat bewust niet, zie opdracht §14).
   adminOpname: (dossierId, opnameId) => `/admin/dossiers/${dossierId}/opnames/${opnameId}`,
+  // Subsidiebegeleidingsronde (2026-10-xx) — zelfde padvorm als adminOpname
+  // hierboven, altijd in dossiercontext, admin-only (zie App.jsx).
+  adminSubsidieBegeleiding: (dossierId) => `/admin/dossiers/${dossierId}/subsidie`,
   adminPlanning: '/admin/planning',
   adminKansen: '/admin/kansen',
   // RVO-subsidie-naslag (onderzoeksronde 2026-10-07) — admin-only,

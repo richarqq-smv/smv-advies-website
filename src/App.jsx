@@ -48,6 +48,7 @@ const AdminKosten = lazy(() => import('./pages/AdminKosten'))
 const AdminBtw = lazy(() => import('./pages/AdminBtw'))
 const AdminInstellingen = lazy(() => import('./pages/AdminInstellingen'))
 const AdminOpname = lazy(() => import('./pages/AdminOpname'))
+const AdminSubsidieBegeleiding = lazy(() => import('./pages/AdminSubsidieBegeleiding'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 function LazyBoundary() {
@@ -118,6 +119,7 @@ export default function App() {
               */}
               <Route path="/admin/dossiers/:dossierId" element={<DossierDetail />} />
               <Route path="/admin/dossiers/:dossierId/opnames/:opnameId" element={<AdminOpname />} />
+              <Route path="/admin/dossiers/:dossierId/subsidie" element={<AdminSubsidieBegeleiding />} />
               <Route path={ROUTES.watKanWachten} element={<WatKanWachten />} />
               <Route path={ROUTES.archief} element={<Archief />} />
               <Route path={ROUTES.adminKansen} element={<AdminKansen />} />

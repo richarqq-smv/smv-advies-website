@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { bouwStandaardTaken, sorteerTaken, groepeerTakenPerCategorie } from './dossierTaken.js'
+import { bouwStandaardTaken, sorteerTaken, groepeerTakenPerCategorie, bouwSubsidieAanvraagChecklist } from './dossierTaken.js'
 
 test('bouwStandaardTaken: subsidie levert exact de 3 stappen uit de Gold-template, in volgorde', () => {
   const taken = bouwStandaardTaken('subsidie')
@@ -25,6 +25,23 @@ test('bouwStandaardTaken: oplevering levert exact de 5 items uit de Gold-templat
 test('bouwStandaardTaken: onbekende categorie geeft lege lijst, nooit een crash', () => {
   assert.deepEqual(bouwStandaardTaken('onbekend'), [])
   assert.deepEqual(bouwStandaardTaken(undefined), [])
+})
+
+test('bouwSubsidieAanvraagChecklist: levert de 8 begeleidingsstappen uit opdracht §26, in volgorde, categorie "subsidie" (geen nieuwe categoriewaarde)', () => {
+  const taken = bouwSubsidieAanvraagChecklist()
+  assert.equal(taken.length, 8)
+  assert.match(taken[0].omschrijving, /voorwaarden gecontroleerd/i)
+  assert.match(taken[2].omschrijving, /Wegwijsblad/)
+  assert.match(taken[7].omschrijving, /afgerond/)
+  assert.deepEqual(taken.map((t) => t.volgorde), [0, 1, 2, 3, 4, 5, 6, 7])
+  taken.forEach((t) => assert.equal(t.categorie, 'subsidie'))
+})
+
+test('bouwSubsidieAanvraagChecklist blijft los van bouwStandaardTaken("subsidie") — beide bestaan onafhankelijk naast elkaar', () => {
+  const bestaand = bouwStandaardTaken('subsidie')
+  const nieuw = bouwSubsidieAanvraagChecklist()
+  const overlap = nieuw.filter((n) => bestaand.some((b) => b.omschrijving === n.omschrijving))
+  assert.equal(overlap.length, 0)
 })
 
 test('sorteerTaken: sorteert op volgorde', () => {

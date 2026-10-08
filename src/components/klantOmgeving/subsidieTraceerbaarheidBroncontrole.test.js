@@ -69,9 +69,24 @@ test('subsidieCheck.js: een pand-signaal levert nooit een adviespunt-koppeling o
   assert.equal(/bron\.type === 'pand'/.test(functieMatch), false)
 })
 
-test('Geen nieuwe migratie toegevoegd voor deze ronde: dossier_subsidies/dossier_subsidie_maatregelen/rvo_subsidie_index blijven de enige betrokken tabellen (0035/0036)', () => {
+test('Geen nieuwe migratie toegevoegd voor DEZE traceerbaarheidsronde: dossier_subsidies/dossier_subsidie_maatregelen/rvo_subsidie_index blijven de enige betrokken tabellen uit die ronde', () => {
+  // Bijgewerkt (subsidiebegeleidingsronde, 2026-10-xx en de daaropvolgende
+  // inhoudelijke uitbreidingsronde, 2026-10-08): 0038_dossier_subsidie_
+  // specificaties.sql en 0039_dossier_subsidie_specificaties_uitbreiding.sql
+  // zijn latere, bewuste migraties voor een andere feature (technische
+  // invoer t.b.v. de ISDE-engine, zie lib/subsidie/) — geen regressie van
+  // de traceerbaarheidsronde die deze test oorspronkelijk vastlegde. Deze
+  // test blijft de oorspronkelijke invariant bewaken (geen 4e/5e
+  // subsidietabel die dossier_subsidies/rvo_subsidie_index zou dupliceren),
+  // niet "nooit meer een migratie".
   const migratiesDir = path.join(HIER, '..', '..', '..', 'supabase', 'migrations')
   const bestanden = readdirSync(migratiesDir)
   const subsidieMigraties = bestanden.filter((f) => /subsidie/i.test(f))
-  assert.deepEqual(subsidieMigraties.sort(), ['0035_dossier_subsidies.sql', '0036_rvo_subsidie_index.sql'])
+  assert.deepEqual(subsidieMigraties.sort(), [
+    '0035_dossier_subsidies.sql',
+    '0036_rvo_subsidie_index.sql',
+    '0038_dossier_subsidie_specificaties.sql',
+    '0039_dossier_subsidie_specificaties_uitbreiding.sql',
+    '0040_dossier_subsidie_specificaties_glas_ventilatie.sql',
+  ])
 })

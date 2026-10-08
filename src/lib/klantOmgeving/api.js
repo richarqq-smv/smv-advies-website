@@ -425,6 +425,57 @@ export async function ontkoppelSubsidieDocument(koppelingId) {
   if (error) throw error
 }
 
+/*
+ * ============================================================
+ * SUBSIDIE-SPECIFICATIES (0038_dossier_subsidie_specificaties.sql,
+ * uitgebreid in 0039_dossier_subsidie_specificaties_uitbreiding.sql) —
+ * technische invoer per maatregel (isolatie: dak/gevel/vloer/bodem,
+ * apparaat: warmtepomp/zonneboiler) t.b.v. de subsidie-engine
+ * (src/lib/subsidie/). Bewust los van dossier_subsidies hierboven: dat is
+ * het commerciële traject (regeling_naam vrije tekst, status/bedrag/
+ * deadline), dit is de technische brongegevens-invoer die daar al vóór
+ * bestaat. Eén rij per maatregel per dossier (unique-constraint), vandaar
+ * upsert i.p.v. insert/update apart.
+ * ============================================================
+ */
+
+export async function listDossierSubsidieSpecificaties(dossierId) {
+  return throwOnError(await supabase.from('dossier_subsidie_specificaties').select('*').eq('dossier_id', dossierId))
+}
+
+/**
+ * `camelCase` in/uit — `maatregelKey` is een van ONDERSTEUNDE_MAATREGELEN
+ * (isdeIsolatieRegels.js) of ONDERSTEUNDE_APPARAATMAATREGELEN
+ * (isdeApparaatRegels.js). `bedrag`/`bronUrl` zijn alleen relevant voor
+ * apparaatmaatregelen (het vaste, van de officiële meldcodepagina
+ * overgenomen bedrag + die pagina's URL — nooit berekend); voor
+ * isolatiemaatregelen blijven ze null. `doelgroep` maakt het vereiste
+ * eigenaar-bewoner/VvE/overig-onderscheid expliciet (opdracht §2/§13).
+ */
+export async function upsertDossierSubsidieSpecificatie(
+  dossierId,
+  maatregelKey,
+  { uitvoeringsjaar, oppervlakteM2, technischeWaarde, meldcode, isolatieBevestigd, notitie, bedrag, bronUrl, doelgroep } = {},
+) {
+  const wijzigingen = {}
+  if (uitvoeringsjaar !== undefined) wijzigingen.uitvoeringsjaar = uitvoeringsjaar || null
+  if (oppervlakteM2 !== undefined) wijzigingen.oppervlakte_m2 = oppervlakteM2 === '' ? null : oppervlakteM2
+  if (technischeWaarde !== undefined) wijzigingen.technische_waarde = technischeWaarde === '' ? null : technischeWaarde
+  if (meldcode !== undefined) wijzigingen.meldcode = meldcode?.trim() || null
+  if (isolatieBevestigd !== undefined) wijzigingen.isolatie_bevestigd = isolatieBevestigd
+  if (notitie !== undefined) wijzigingen.notitie = notitie?.trim() || null
+  if (bedrag !== undefined) wijzigingen.bedrag = bedrag === '' ? null : bedrag
+  if (bronUrl !== undefined) wijzigingen.bron_url = bronUrl?.trim() || null
+  if (doelgroep !== undefined) wijzigingen.doelgroep = doelgroep
+  return throwOnError(
+    await supabase
+      .from('dossier_subsidie_specificaties')
+      .upsert({ dossier_id: dossierId, maatregel_key: maatregelKey, ...wijzigingen }, { onConflict: 'dossier_id,maatregel_key' })
+      .select('*')
+      .single(),
+  )
+}
+
 /** Uitsluitend admin: sinds de security-hardeningsronde (2026-09-28) blokkeert bewaak_dossier_integriteit() een statuswijziging door een niet-admin, ook al zou dossiers_update de rij zelf toestaan. De UI toont "Dossier afronden" alleen bij magBeheren (zie DossierWerkruimte.jsx). */
 export async function completeDossier(dossierId) {
   return throwOnError(await supabase.from('dossiers').update({ status: 'afgerond' }).eq('dossier_id', dossierId).select('*, panden(*)').single())
