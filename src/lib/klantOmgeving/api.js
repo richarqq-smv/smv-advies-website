@@ -482,6 +482,23 @@ export async function completeDossier(dossierId) {
 }
 
 /**
+ * Heropent een afgerond Dossier (2026-10-08) — uitsluitend admin:
+ * bewaak_dossier_integriteit() (0041_dossier_heropenen.sql) staat alleen een
+ * admin toe de status van een afgerond dossier terug te zetten naar 'open',
+ * en blokkeert elke andere kolomwijziging in dezelfde update. `.eq('status',
+ * 'afgerond')` is hier een extra guard (zelfde patroon als
+ * archiveerDossier()'s `.is('gearchiveerd_op', null)`) zodat dit nooit per
+ * ongeluk een al-open dossier aanraakt. De UI toont deze actie alleen na
+ * dubbele bevestiging (zie DossierDetail.jsx/DossierVolgendeStap.jsx).
+ */
+export async function heropenDossier(dossierId) {
+  if (!dossierId) throw new Error('heropenDossier vereist een geldig dossier-ID.')
+  return throwOnError(
+    await supabase.from('dossiers').update({ status: 'open' }).eq('dossier_id', dossierId).eq('status', 'afgerond').select('*, panden(*)').single(),
+  )
+}
+
+/**
  * Archiveert een Dossier — geen delete, uitsluitend het losse
  * `gearchiveerd_op`-tijdstip zetten (0010_dossier_archief.sql), orthogonaal
  * aan `status`. `.is('gearchiveerd_op', null)` voorkomt een dubbele

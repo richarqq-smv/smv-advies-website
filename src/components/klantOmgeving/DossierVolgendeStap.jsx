@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle } from '@phosphor-icons/react'
+import { ArrowRight, ArrowCounterClockwise, CheckCircle } from '@phosphor-icons/react'
 import { bepaalVolgendeStap } from '../../lib/klantOmgeving/dossierHealthCheck'
 import { Button } from '../ui/Button'
 
@@ -10,8 +10,15 @@ import { Button } from '../ui/Button'
  * weer uitsluitend de al bestaande, feitelijke categorieën hergebruikt.
  * Bewust NIET in een Accordion: dit is precies het ene ding dat altijd
  * zichtbaar moet zijn, ook ingeklapt.
+ *
+ * `magBeheren`/`onHeropenenClick` (2026-10-08, vervolgronde): bij een
+ * afgerond dossier is `stap.actie` altijd null (bepaalVolgendeStap() kent
+ * zelf geen "heropenen"-begrip — dat is een UI-actie, geen gezondheidsfeit),
+ * dus deze knop vervangt die lege actieplek uitsluitend voor een admin. De
+ * daadwerkelijke bevestiging/aanroep gebeurt in DossierDetail.jsx (zelfde
+ * dubbele-bevestiging-patroon als "Naar archief"), hier alleen de trigger.
  */
-export function DossierVolgendeStap({ categorieen, dossierStatus }) {
+export function DossierVolgendeStap({ categorieen, dossierStatus, magBeheren = false, onHeropenenClick }) {
   const stap = bepaalVolgendeStap({ categorieen, dossierStatus })
   const afgerond = dossierStatus === 'afgerond'
 
@@ -34,6 +41,10 @@ export function DossierVolgendeStap({ categorieen, dossierStatus }) {
       {stap.actie ? (
         <Button {...(stap.actie.href ? { href: stap.actie.href } : { to: stap.actie.to })} size="sm">
           {stap.actie.label} <ArrowRight size={15} />
+        </Button>
+      ) : afgerond && magBeheren ? (
+        <Button type="button" variant="outline" size="sm" onClick={onHeropenenClick}>
+          <ArrowCounterClockwise size={15} /> Dossier heropenen
         </Button>
       ) : null}
     </div>

@@ -3,8 +3,10 @@ import { Plus } from '@phosphor-icons/react'
 import { Button } from '../../ui/Button'
 import { addOpnameWaarneming } from '../../../lib/klantOmgeving/api'
 import { OPNAME_ONDERDELEN } from '../../../lib/klantOmgeving/opname'
+import { maatregelenVoorOnderdeel } from '../../../lib/subsidie/opnameSubsidieKoppeling'
 import { OpnameAccordionItem } from './OpnameAccordionItem'
 import { OpnameWaarnemingCard } from './OpnameWaarnemingCard'
+import { OpnameSubsidieKaart } from './OpnameSubsidieKaart'
 
 /**
  * Alle 17 onderdelen van het opnameformulier als accordion (UX-ronde,
@@ -18,7 +20,20 @@ import { OpnameWaarnemingCard } from './OpnameWaarnemingCard'
  * tegelijk open hebben; openen van het ene onderdeel sluit nooit
  * automatisch een ander onderdeel.
  */
-export function OpnameOnderdelenStap({ waarnemingenPerOnderdeel, magBewerken, opnameId, klantId, documenten, onWaarnemingToegevoegd, onWaarnemingChange, onWaarnemingVerwijderd, onDocumentGeupload }) {
+export function OpnameOnderdelenStap({
+  waarnemingenPerOnderdeel,
+  magBewerken,
+  opnameId,
+  klantId,
+  documenten,
+  onWaarnemingToegevoegd,
+  onWaarnemingChange,
+  onWaarnemingVerwijderd,
+  onDocumentGeupload,
+  subsidieSpecificaties = {},
+  subsidieOpslaanBezig,
+  onSubsidieWijzig,
+}) {
   const [openSet, setOpenSet] = useState(() => {
     const eersteLege = OPNAME_ONDERDELEN.find((o) => (waarnemingenPerOnderdeel[o.onderdeel]?.length ?? 0) === 0)
     return new Set(eersteLege ? [eersteLege.onderdeel] : [])
@@ -53,6 +68,7 @@ export function OpnameOnderdelenStap({ waarnemingenPerOnderdeel, magBewerken, op
         {OPNAME_ONDERDELEN.map((o) => {
           const waarnemingen = waarnemingenPerOnderdeel[o.onderdeel] ?? []
           const heeftAandachtspunt = waarnemingen.some((w) => w.aandachtspunt?.trim())
+          const maatregelen = maatregelenVoorOnderdeel(o.onderdeel)
           const subtitle =
             waarnemingen.length === 0
               ? '0 waarnemingen'
@@ -67,6 +83,20 @@ export function OpnameOnderdelenStap({ waarnemingenPerOnderdeel, magBewerken, op
               onToggle={() => toggle(o.onderdeel)}
             >
               <div className="flex flex-col gap-2">
+                {maatregelen.length > 0 ? (
+                  <div className="mb-2 flex flex-col gap-2">
+                    {maatregelen.map((maatregelKey) => (
+                      <OpnameSubsidieKaart
+                        key={maatregelKey}
+                        maatregelKey={maatregelKey}
+                        specificatie={subsidieSpecificaties[maatregelKey]}
+                        opslaanBezig={subsidieOpslaanBezig}
+                        onWijzig={onSubsidieWijzig}
+                        magBewerken={magBewerken}
+                      />
+                    ))}
+                  </div>
+                ) : null}
                 {waarnemingen.length === 0 ? (
                   <p className="rounded-lg border border-dashed border-border px-4 py-5 text-center text-sm text-foreground-muted">
                     Nog geen waarneming voor dit onderdeel.

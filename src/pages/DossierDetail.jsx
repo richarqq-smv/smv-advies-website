@@ -32,6 +32,7 @@ import {
   getDocumentDownloadUrl,
   checkIsAdmin,
   archiveerDossier,
+  heropenDossier,
   listOpnamesVoorDossier,
   listDossierSubsidies,
 } from '../lib/klantOmgeving/api'
@@ -102,6 +103,14 @@ export default function DossierDetail() {
   const [archiveerBevestiging, setArchiveerBevestiging] = useState(false)
   const [archiveerBezig, setArchiveerBezig] = useState(false)
   const [archiveerFout, setArchiveerFout] = useState(false)
+
+  // Dossier heropenen (2026-10-08) — zelfde dubbele-bevestiging-patroon als
+  // hierboven, voor de omgekeerde actie: een afgerond dossier weer
+  // bewerkbaar maken (zie heropenDossier() in api.js en
+  // 0041_dossier_heropenen.sql).
+  const [heropenBevestiging, setHeropenBevestiging] = useState(false)
+  const [heropenBezig, setHeropenBezig] = useState(false)
+  const [heropenFout, setHeropenFout] = useState(false)
 
   useEffect(() => {
     let actief = true
@@ -194,6 +203,25 @@ export default function DossierDetail() {
     } catch {
       setArchiveerFout(true)
       setArchiveerBezig(false)
+    }
+  }
+
+  /**
+   * Zet uitsluitend `status` terug naar 'open' (zie heropenDossier() in
+   * api.js) — geen navigatie nodig, het dossier blijft op dezelfde pagina
+   * gewoon zichtbaar, nu weer als open dossier.
+   */
+  async function dossierHeropenen() {
+    setHeropenFout(false)
+    setHeropenBezig(true)
+    try {
+      const bijgewerkt = await heropenDossier(dossier.dossier_id)
+      setDossier(bijgewerkt)
+      setHeropenBevestiging(false)
+    } catch {
+      setHeropenFout(true)
+    } finally {
+      setHeropenBezig(false)
     }
   }
 
@@ -314,7 +342,33 @@ export default function DossierDetail() {
               {healthCheck ? (
                 <>
                   {/* UX-herontwerp (2026-10-08): altijd zichtbaar, niet ingeklapt — "weet ik wat ik nu moet doen?" mag nooit achter een accordion verstopt zitten. */}
-                  <DossierVolgendeStap categorieen={healthCheck.categorieen} dossierStatus={dossier.status} />
+                  <DossierVolgendeStap
+                    categorieen={healthCheck.categorieen}
+                    dossierStatus={dossier.status}
+                    magBeheren={isAdmin}
+                    onHeropenenClick={() => setHeropenBevestiging(true)}
+                  />
+                  {heropenBevestiging ? (
+                    <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-accent/40 bg-accent/5 px-4 py-3 text-sm">
+                      <span className="text-primary">
+                        Dossier heropenen? Het advies wordt weer bewerkbaar — controleer na afloop of alles nog klopt voordat u het dossier
+                        opnieuw afrondt.
+                      </span>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Button type="button" variant="ghost" size="sm" onClick={dossierHeropenen} disabled={heropenBezig}>
+                          {heropenBezig ? 'Bezig...' : 'Ja, heropenen'}
+                        </Button>
+                        <Button type="button" variant="ghost" size="sm" onClick={() => setHeropenBevestiging(false)} disabled={heropenBezig}>
+                          Annuleren
+                        </Button>
+                      </div>
+                    </div>
+                  ) : null}
+                  {heropenFout ? (
+                    <p role="alert" className="text-sm font-medium text-error">
+                      Heropenen is niet gelukt. Probeer het opnieuw.
+                    </p>
+                  ) : null}
                   <Accordion title="Voortgang" defaultOpen>
                     <DossierHealthCheck healthCheck={healthCheck} dossierStatus={dossier.status} />
                   </Accordion>

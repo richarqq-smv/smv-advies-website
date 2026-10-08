@@ -20,11 +20,13 @@ import {
   getMijnProfiel,
 } from '../lib/klantOmgeving/api'
 import { bouwSubsidieAanvraagChecklist } from '../lib/dossier/dossierTaken'
-import { ONDERSTEUNDE_MAATREGELEN } from '../lib/subsidie/isdeIsolatieRegels'
+import { ONDERSTEUNDE_MAATREGELEN, TECHNISCHE_EENHEID_PER_MAATREGEL } from '../lib/subsidie/isdeIsolatieRegels'
 import { ONDERSTEUNDE_APPARAATMAATREGELEN } from '../lib/subsidie/isdeApparaatRegels'
 import { SUBSIDIE_STATUSSEN } from '../lib/subsidie/subsidieEligibility'
 import { bouwSubsidieDocumentData } from '../lib/subsidie/subsidieDocumentData'
 import { bouwSubsidieDocumentHtml } from '../lib/subsidie/subsidieDocumentHtml'
+import { naarCamelCaseSpecificatie } from '../lib/subsidie/subsidieSpecificatieMapping'
+import { IsolatieInvoerVelden, ApparaatInvoerVelden, VentilatieInvoerVelden } from '../components/subsidie/SubsidieInvoerVelden'
 import NotFound from './NotFound'
 
 const INPUT_CLASSNAME = 'w-full rounded-lg border border-border px-3 py-2 text-sm'
@@ -48,22 +50,6 @@ const DOELGROEP_OPTIES = [
   { waarde: 'vve', label: 'VvE' },
   { waarde: 'overig', label: 'Verhuurder / overig' },
 ]
-
-/** camelCase specificatie-rij op basis van de snake_case db-rij — api.js geeft rauwe rijen terug, deze pagina werkt zelf in camelCase zoals de engine dat verwacht. */
-function naarCamelCase(rij) {
-  if (!rij) return null
-  return {
-    uitvoeringsjaar: rij.uitvoeringsjaar,
-    oppervlakteM2: rij.oppervlakte_m2,
-    technischeWaarde: rij.technische_waarde,
-    meldcode: rij.meldcode,
-    isolatieBevestigd: rij.isolatie_bevestigd,
-    notitie: rij.notitie,
-    bedrag: rij.bedrag,
-    bronUrl: rij.bron_url,
-    doelgroep: rij.doelgroep,
-  }
-}
 
 /**
  * Subsidie-aanvraagbegeleiding (opdracht: "Subsidiehulp voor adviseur
@@ -110,7 +96,7 @@ export default function AdminSubsidieBegeleiding() {
         setDossier(dossierRij)
         const perMaatregel = {}
         specs.forEach((s) => {
-          perMaatregel[s.maatregel_key] = naarCamelCase(s)
+          perMaatregel[s.maatregel_key] = naarCamelCaseSpecificatie(s)
         })
         setSpecificaties(perMaatregel)
         const eersteJaar = specs.find((s) => s.uitvoeringsjaar)?.uitvoeringsjaar
@@ -171,7 +157,7 @@ export default function AdminSubsidieBegeleiding() {
     try {
       const payload = { [veld]: waarde }
       const bijgewerkt = await upsertDossierSubsidieSpecificatie(dossierId, maatregelKey, payload)
-      setSpecificaties((v) => ({ ...v, [maatregelKey]: naarCamelCase(bijgewerkt) }))
+      setSpecificaties((v) => ({ ...v, [maatregelKey]: naarCamelCaseSpecificatie(bijgewerkt) }))
     } catch {
       setFout('Opslaan is niet gelukt. Probeer het opnieuw.')
     } finally {
@@ -403,56 +389,13 @@ function IsolatieMaatregelKaart({ m, opslaanBezig, onWijzig, onderdeelCode }) {
         <span className={`rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap ${STATUS_BADGE[m.status]}`}>{m.statusLabel}</span>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-xs text-foreground-muted">
-          Oppervlakte (m²)
-          <input
-            type="number"
-            min="0"
-            step="0.1"
-            className={INPUT_CLASSNAME}
-            defaultValue={m.specificatie?.oppervlakteM2 ?? ''}
-            disabled={opslaanBezig === m.maatregelKey}
-            onBlur={(e) => onWijzig(m.maatregelKey, 'oppervlakteM2', e.target.value === '' ? null : Number(e.target.value))}
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-xs text-foreground-muted">
-          Isolatiewaarde ({m.regel?.technischeEenheidLabel ?? 'Rd, m²K/W'})
-          <input
-            type="number"
-            min="0"
-            step="0.1"
-            className={INPUT_CLASSNAME}
-            defaultValue={m.specificatie?.technischeWaarde ?? ''}
-            disabled={opslaanBezig === m.maatregelKey}
-            onBlur={(e) => onWijzig(m.maatregelKey, 'technischeWaarde', e.target.value === '' ? null : Number(e.target.value))}
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-xs text-foreground-muted">
-          Meldcode
-          <input
-            type="text"
-            className={INPUT_CLASSNAME}
-            placeholder="Vraag de leverancier/installateur"
-            defaultValue={m.specificatie?.meldcode ?? ''}
-            disabled={opslaanBezig === m.maatregelKey}
-            onBlur={(e) => onWijzig(m.maatregelKey, 'meldcode', e.target.value)}
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-xs text-foreground-muted">
-          Is er isolatie aangebracht?
-          <select
-            className={SELECT_CLASSNAME}
-            value={m.specificatie?.isolatieBevestigd ?? 'onbekend'}
-            disabled={opslaanBezig === m.maatregelKey}
-            onChange={(e) => onWijzig(m.maatregelKey, 'isolatieBevestigd', e.target.value)}
-          >
-            <option value="onbekend">Nog onbekend</option>
-            <option value="ja">Ja</option>
-            <option value="nee">Nee</option>
-          </select>
-        </label>
-      </div>
+      <IsolatieInvoerVelden
+        maatregelKey={m.maatregelKey}
+        specificatie={m.specificatie}
+        opslaanBezig={opslaanBezig}
+        onWijzig={onWijzig}
+        technischeEenheidLabel={TECHNISCHE_EENHEID_PER_MAATREGEL[m.maatregelKey]}
+      />
 
       <p className="mt-3 text-xs text-foreground-muted italic">{m.redenen.join(' ')}</p>
 
@@ -508,56 +451,7 @@ function ApparaatMaatregelKaart({ m, opslaanBezig, onWijzig }) {
         <span className={`rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap ${STATUS_BADGE[m.status]}`}>{m.statusLabel}</span>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-xs text-foreground-muted sm:col-span-2">
-          Wordt dit apparaat geïnstalleerd?
-          <select
-            className={SELECT_CLASSNAME}
-            value={m.specificatie?.isolatieBevestigd ?? 'onbekend'}
-            disabled={opslaanBezig === m.maatregelKey}
-            onChange={(e) => onWijzig(m.maatregelKey, 'isolatieBevestigd', e.target.value)}
-          >
-            <option value="onbekend">Nog onbekend</option>
-            <option value="ja">Ja</option>
-            <option value="nee">Nee</option>
-          </select>
-        </label>
-        <label className="flex flex-col gap-1 text-xs text-foreground-muted">
-          Meldcode (van het specifieke apparaat)
-          <input
-            type="text"
-            className={INPUT_CLASSNAME}
-            placeholder="Zoek op in de RVO-meldcodelijst"
-            defaultValue={m.specificatie?.meldcode ?? ''}
-            disabled={opslaanBezig === m.maatregelKey}
-            onBlur={(e) => onWijzig(m.maatregelKey, 'meldcode', e.target.value)}
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-xs text-foreground-muted">
-          Subsidiebedrag (van de meldcodepagina)
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            className={INPUT_CLASSNAME}
-            placeholder="Bijv. 1925,00"
-            defaultValue={m.specificatie?.bedrag ?? ''}
-            disabled={opslaanBezig === m.maatregelKey}
-            onBlur={(e) => onWijzig(m.maatregelKey, 'bedrag', e.target.value === '' ? null : Number(e.target.value))}
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-xs text-foreground-muted sm:col-span-2">
-          URL van de meldcodepagina van dit apparaat
-          <input
-            type="url"
-            className={INPUT_CLASSNAME}
-            placeholder="https://www.rvo.nl/meldcodes-..."
-            defaultValue={m.specificatie?.bronUrl ?? ''}
-            disabled={opslaanBezig === m.maatregelKey}
-            onBlur={(e) => onWijzig(m.maatregelKey, 'bronUrl', e.target.value)}
-          />
-        </label>
-      </div>
+      <ApparaatInvoerVelden maatregelKey={m.maatregelKey} specificatie={m.specificatie} opslaanBezig={opslaanBezig} onWijzig={onWijzig} />
 
       <p className="mt-3 text-xs text-foreground-muted italic">{m.redenen.join(' ')}</p>
 
@@ -602,32 +496,7 @@ function VentilatieMaatregelKaart({ m, opslaanBezig, onWijzig }) {
       </div>
       <p className="mb-3 text-xs text-foreground-muted">Alleen subsidiabel in combinatie met minimaal één andere subsidiabele isolatiemaatregel in dit dossier (harde RVO-voorwaarde).</p>
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-xs text-foreground-muted">
-          Meldcode (ventilatie-eenheid)
-          <input
-            type="text"
-            className={INPUT_CLASSNAME}
-            placeholder="Zoek op in de RVO-meldcodelijst"
-            defaultValue={m.specificatie?.meldcode ?? ''}
-            disabled={opslaanBezig === 'ventilatie'}
-            onBlur={(e) => onWijzig('ventilatie', 'meldcode', e.target.value)}
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-xs text-foreground-muted">
-          Wordt dit geïnstalleerd?
-          <select
-            className={SELECT_CLASSNAME}
-            value={m.specificatie?.isolatieBevestigd ?? 'onbekend'}
-            disabled={opslaanBezig === 'ventilatie'}
-            onChange={(e) => onWijzig('ventilatie', 'isolatieBevestigd', e.target.value)}
-          >
-            <option value="onbekend">Nog onbekend</option>
-            <option value="ja">Ja</option>
-            <option value="nee">Nee</option>
-          </select>
-        </label>
-      </div>
+      <VentilatieInvoerVelden specificatie={m.specificatie} opslaanBezig={opslaanBezig} onWijzig={onWijzig} />
 
       <p className="mt-3 text-xs text-foreground-muted italic">{m.redenen.join(' ')}</p>
 

@@ -210,6 +210,26 @@ export const MAATREGEL_LABELS = {
   glasTriple: 'Triple glas',
 }
 
+/**
+ * De technische-eenheid-labels (Rd vs. U-waarde) per jaar in
+ * ISDE_ISOLATIE_REGELS opvragen, zoals eerst gedaan werd, vereist een
+ * bekend uitvoeringsjaar — vóórdat dat jaar bekend is (bv. tijdens de
+ * opname, die chronologisch vaak vóór de subsidiepagina gebeurt) viel de
+ * eenheid dan altijd terug op de Rd-standaardwaarde, ook voor glas. De
+ * eenheid (Rd of U) is echter een intrinsieke eigenschap van de
+ * MAATREGEL zelf, niet van het jaar — daarom hier apart, jaar-onafhankelijk
+ * vastgelegd zodat de juiste eenheid altijd getoond kan worden, ook vóór
+ * er een uitvoeringsjaar is gekozen.
+ */
+export const TECHNISCHE_EENHEID_PER_MAATREGEL = {
+  dakisolatie: 'Rd, m²K/W',
+  gevelisolatie: 'Rd, m²K/W',
+  vloerisolatie: 'Rd, m²K/W',
+  bodemisolatie: 'Rd, m²K/W',
+  glasHrpp: 'U, W/m²K',
+  glasTriple: 'U, W/m²K',
+}
+
 /** Geeft de regelset voor dit jaar+maatregel, of `null` als er (nog) geen regelset voor dat jaar/die maatregel bestaat — nooit terugvallen op een ander jaar. */
 export function vindRegel(jaar, maatregelKey) {
   if (!jaar) return null

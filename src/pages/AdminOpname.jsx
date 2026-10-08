@@ -13,8 +13,11 @@ import {
   setOpnameChecklistItem,
   updateOpnameStatus,
   getMijnProfiel,
+  listDossierSubsidieSpecificaties,
+  upsertDossierSubsidieSpecificatie,
 } from '../lib/klantOmgeving/api'
 import { magOpnameBewerken, OPNAME_STATUS_LABELS, berekenChecklistVoortgang, groepeerWaarnemingenPerOnderdeel, OPNAME_ONDERDEEL_CODES } from '../lib/klantOmgeving/opname'
+import { naarSpecificatiesPerMaatregel, naarCamelCaseSpecificatie } from '../lib/subsidie/subsidieSpecificatieMapping'
 import { OpnameStapper } from '../components/klantOmgeving/opname/OpnameStapper'
 import { OpnameBasisgegevensStap } from '../components/klantOmgeving/opname/OpnameBasisgegevensStap'
 import { OpnameOnderdelenStap } from '../components/klantOmgeving/opname/OpnameOnderdelenStap'
@@ -53,13 +56,22 @@ export default function AdminOpname() {
   const [huidigeIndex, setHuidigeIndex] = useState(0)
   const [afrondenBezig, setAfrondenBezig] = useState(false)
   const [afrondenFout, setAfrondenFout] = useState(null)
+  const [subsidieSpecificaties, setSubsidieSpecificaties] = useState({})
+  const [subsidieOpslaanBezig, setSubsidieOpslaanBezig] = useState(null)
 
   useEffect(() => {
     let actief = true
     setLaden(true)
     setNietGevonden(false)
-    Promise.all([getDossier(dossierId), getOpname(opnameId), listOpnameWaarnemingen(opnameId), listOpnameChecklistItems(opnameId), getDocumentenVoorOpname(opnameId)])
-      .then(([d, o, w, c, docs]) => {
+    Promise.all([
+      getDossier(dossierId),
+      getOpname(opnameId),
+      listOpnameWaarnemingen(opnameId),
+      listOpnameChecklistItems(opnameId),
+      getDocumentenVoorOpname(opnameId),
+      listDossierSubsidieSpecificaties(dossierId),
+    ])
+      .then(([d, o, w, c, docs, subsidieRijen]) => {
         if (!actief) return
         if (o.dossier_id !== dossierId) {
           setNietGevonden(true)
@@ -70,6 +82,7 @@ export default function AdminOpname() {
         setWaarnemingen(w)
         setChecklistItems(c)
         setDocumenten(docs)
+        setSubsidieSpecificaties(naarSpecificatiesPerMaatregel(subsidieRijen))
       })
       .catch(() => actief && setNietGevonden(true))
       .finally(() => actief && setLaden(false))
@@ -146,6 +159,17 @@ export default function AdminOpname() {
     setDocumenten((rows) => [doc, ...rows])
   }
 
+  /** Schrijft rechtstreeks naar dossier_subsidie_specificaties — dezelfde tabel/upsert als AdminSubsidieBegeleiding.jsx, dus wat hier wordt ingevuld staat daar meteen (opdracht: "gegevens één keer invoeren"). */
+  async function subsidieWijzig(maatregelKey, veld, waarde) {
+    setSubsidieOpslaanBezig(maatregelKey)
+    try {
+      const bijgewerkt = await upsertDossierSubsidieSpecificatie(dossierId, maatregelKey, { [veld]: waarde })
+      setSubsidieSpecificaties((v) => ({ ...v, [maatregelKey]: naarCamelCaseSpecificatie(bijgewerkt) }))
+    } finally {
+      setSubsidieOpslaanBezig(null)
+    }
+  }
+
   if (laden) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-8">
@@ -198,6 +222,9 @@ export default function AdminOpname() {
             onWaarnemingChange={waarnemingChange}
             onWaarnemingVerwijderd={waarnemingVerwijderd}
             onDocumentGeupload={documentGeupload}
+            subsidieSpecificaties={subsidieSpecificaties}
+            subsidieOpslaanBezig={subsidieOpslaanBezig}
+            onSubsidieWijzig={subsidieWijzig}
           />
         ) : huidigeStap.key === 'checklist' ? (
           <OpnameChecklistStap checklistItems={checklistItems} magBewerken={magBewerken} onToggle={checklistToggle} />
