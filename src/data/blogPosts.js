@@ -10,6 +10,285 @@ import { ROUTES } from '../lib/routes.js'
  */
 export const BLOG_POSTS = [
   {
+    slug: 'mjop-en-verduurzamingsadvies-verschil',
+    category: 'Aanpak',
+    title: 'MJOP en verduurzamingsadvies voor uw bedrijfspand: wat is het verschil?',
+    excerpt:
+      'Een meerjarenonderhoudsplan en een verduurzamingsadvies worden vaak met elkaar verward, maar beantwoorden een andere vraag. Wat een MJOP wel en niet doet, en hoe dit zich verhoudt tot verduurzaming van uw bedrijfspand.',
+    date: '12 november 2026',
+    isoDate: '2026-11-12',
+    readTime: '6 min',
+    bodyAvailable: true,
+    sections: [
+      {
+        type: 'p',
+        parts: [
+          'Heeft u al een meerjarenonderhoudsplan (MJOP) voor uw bedrijfspand, dan is een logische vraag: heeft een apart verduurzamingsadvies dan nog zin? Of omgekeerd: moet u eerst een MJOP laten opstellen voordat u aan verduurzaming kunt beginnen? Beide vragen komen voort uit hetzelfde misverstand, namelijk dat een MJOP en een verduurzamingsadvies hetzelfde zouden zijn. Dat zijn ze niet.',
+        ],
+      },
+      { type: 'h2', text: 'Wat is een MJOP?' },
+      {
+        type: 'p',
+        parts: [
+          'Een meerjarenonderhoudsplan brengt in kaart welk onderhoud en welke vervanging van bouwdelen en installaties de komende jaren nodig zijn, en wanneer. Denk aan het schilderwerk van de gevel, de levensduur van de dakbedekking, of het moment waarop een verwarmingsinstallatie technisch aan vervanging toe is. De planperiode verschilt per opdrachtgever en pand, maar een MJOP kijkt doorgaans meerdere jaren vooruit en wordt na een aantal jaren geactualiseerd, omdat de werkelijke staat van een pand kan afwijken van de eerdere inschatting.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'De technische basis van een MJOP is meestal een conditiemeting: een manier om de staat van bouw- en installatiedelen objectief vast te leggen, vaak volgens de NEN 2767-methodiek. Daarbij wordt per bouwdeel een conditiescore bepaald, die vervolgens de basis vormt voor de onderhoudsplanning. Dit is sectorbrede achtergrondinformatie over hoe een MJOP doorgaans wordt opgebouwd, geen beschrijving van hoe SMV Advies zelf werkt — SMV Advies stelt namelijk geen MJOP op (zie hieronder).',
+        ],
+      },
+      { type: 'h2', text: 'Waarin een verduurzamingsadvies verschilt' },
+      {
+        type: 'p',
+        parts: [
+          'Een MJOP gaat over onderhoud en vervanging: wat moet er gebeuren om het pand in stand te houden? Een verduurzamingsadvies stelt een andere vraag: welke maatregelen verlagen het energiegebruik, verbeteren het comfort of verlagen de energiekosten, en in welke volgorde is dat voor úw pand het meest logisch? Dat kan gaan om isolatie, installaties, opwek of gedrag — onderwerpen die in een MJOP meestal niet of maar zijdelings aan de orde komen, omdat een MJOP primair kijkt naar de staat van wat er al is, niet naar wat er anders of beter zou kunnen.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'Dat onderscheid is ook precies waarom de twee documenten elkaar aanvullen in plaats van vervangen. Een MJOP zegt bijvoorbeeld dat het dak van uw bedrijfshal binnen enkele jaren aan vervanging toe is. Een verduurzamingsadvies voegt daar de vraag aan toe of dat vervangingsmoment ook het logische moment is om de dakisolatie te verbeteren — zie ook ons artikel over ',
+          { text: 'dakisolatie voor uw bedrijfspand', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
+          '. Zonder die koppeling loopt u het risico dat onderhoud en verduurzaming los van elkaar worden gepland, terwijl ze vaak juist in elkaars verlengde liggen.',
+        ],
+      },
+      { type: 'h2', text: 'Heeft u al een MJOP? Dan sluit een advies erop aan' },
+      {
+        type: 'p',
+        parts: [
+          'Heeft u voor uw bedrijfspand al een MJOP, dan is dat waardevolle input: het geeft al zicht op geplande onderhouds- en vervangingsmomenten. Een verduurzamingsadvies kijkt dan vooral naar de vraag welke verduurzamingsmaatregelen daar logisch op aansluiten, en welke zelfstandig interessant genoeg zijn om niet op een onderhoudsmoment te wachten. Dat is ook de reden dat wij, net als toegelicht in onze ',
+          { text: 'werkwijze', to: ROUTES.werkwijze },
+          ', zelf geen MJOP opstellen: dat is een ander vakgebied, met een andere insteek.',
+        ],
+      },
+      { type: 'h2', text: 'Heeft u nog geen MJOP? Dan heeft een advies alsnog zin' },
+      {
+        type: 'p',
+        parts: [
+          'Andersom geldt ook: het ontbreken van een MJOP is geen reden om verduurzaming uit te stellen. Een verduurzamingsadvies begint bij het pand en het energiegebruik zoals dat nu is, en geeft op basis daarvan een prioritering van maatregelen — zie ook ons artikel over ',
+          { text: 'waar u als ondernemer het beste kunt beginnen', to: ROUTES.blogPost('verduurzamen-bedrijfspand-waar-begin-je') },
+          '. Een MJOP is dus geen voorwaarde voor een zinvol verduurzamingsadvies, al kan het de onderhoudskant van het verhaal wel completer maken op het moment dat u die alsnog laat opstellen.',
+        ],
+      },
+      { type: 'h2', text: 'Hoe dit samenkomt in een SMV-traject' },
+      {
+        type: 'callout',
+        text: [
+          'Onze ',
+          { text: 'pakketten', to: ROUTES.pakketten },
+          ' richten zich altijd op verduurzaming, niet op het opstellen van een MJOP. Heeft u al een MJOP, geef dat gerust aan: dan nemen we de geplande onderhoudsmomenten mee in de afweging welke verduurzamingsmaatregelen op welk moment het meest logisch zijn.',
+        ],
+      },
+      { type: 'h2', text: 'Conclusie' },
+      {
+        type: 'p',
+        parts: [
+          'Een MJOP en een verduurzamingsadvies beantwoorden een andere vraag: het ene gaat over in stand houden, het andere over verbeteren. Heeft u beide, dan versterken ze elkaar. Heeft u er maar één, dan is dat geen belemmering om met de andere te beginnen. Twijfelt u wat voor uw bedrijfspand in de Hoeksche Waard de logische volgende stap is? Bekijk ook de veelgemaakte ',
+          { text: 'valkuilen bij het verduurzamen van een bedrijfspand', to: ROUTES.blogPost('veelgemaakte-fouten-verduurzamen-bedrijfspand') },
+          '.',
+        ],
+      },
+    ],
+    cta: {
+      label: 'Start de gratis energie-indicatie',
+      to: ROUTES.energieIndicatie,
+      text: 'Benieuwd hoe verduurzaming voor uw bedrijfspand eruitziet, met of zonder bestaand MJOP? Onze gratis energie-indicatie geeft een eerste, vrijblijvend beeld.',
+    },
+  },
+  {
+    slug: 'veelgemaakte-fouten-verduurzamen-bedrijfspand',
+    category: 'Inzicht',
+    title: '7 veelgemaakte fouten bij het verduurzamen van een bedrijfspand',
+    excerpt:
+      'Verduurzamen van een bedrijfspand gaat vaak mis door de volgorde, niet door de techniek. Zeven fouten die ondernemers in de praktijk het vaakst maken, en hoe u ze voorkomt.',
+    date: '29 oktober 2026',
+    isoDate: '2026-10-29',
+    readTime: '7 min',
+    bodyAvailable: true,
+    sections: [
+      {
+        type: 'p',
+        parts: [
+          'De meeste ondernemers die hun bedrijfspand willen verduurzamen, maken geen technische fout. De installatie die ze kiezen werkt, de isolatie die ze aanbrengen isoleert. Waar het vaker misgaat, is in de volgorde en de voorbereiding: een maatregel die op zichzelf goed is, maar op het verkeerde moment of zonder het juiste inzicht wordt uitgevoerd. Dit zijn zeven fouten die we in de praktijk het vaakst tegenkomen.',
+        ],
+      },
+      { type: 'h2', text: '1. Beginnen bij een maatregel in plaats van bij inzicht' },
+      {
+        type: 'p',
+        parts: [
+          'Een leverancier belt over zonnepanelen, een installateur wijst op een warmtepomp: het is verleidelijk om met die maatregel te beginnen. Maar zonder eerst te weten waar de energie in uw pand naartoe gaat, is niet te zeggen of dat ook de maatregel is die het meeste oplevert. Zie voor een praktische aanpak ons artikel over ',
+          { text: 'waar u als ondernemer het beste kunt beginnen', to: ROUTES.blogPost('verduurzamen-bedrijfspand-waar-begin-je') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: '2. De verkeerde volgorde aanhouden' },
+      {
+        type: 'p',
+        parts: [
+          'Eerst een nieuwe installatie kiezen en pas daarna naar de isolatie kijken — of andersom, zonder te kijken of dat voor uw pand wel de logische volgorde is — kan ervoor zorgen dat een investering niet optimaal aansluit op de rest van het pand. Een warmtepomp die wordt gedimensioneerd vóór een isolatieverbetering, kan achteraf te groot of te klein blijken. Welke volgorde voor uw situatie logisch is, leest u in ons artikel over ',
+          { text: 'isoleren of eerst de installatie aanpakken', to: ROUTES.blogPost('bedrijfspand-isoleren-of-installatie-eerst') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: '3. Subsidie en fiscaal voordeel pas achteraf checken' },
+      {
+        type: 'p',
+        parts: [
+          'Bij veel regelingen moet u een subsidie of fiscaal voordeel aanvragen vóórdat u een verplichting aangaat bij een leverancier of installateur — achteraf is bij meerdere regelingen simpelweg niet meer mogelijk. Wie eerst tekent en pas daarna gaat uitzoeken welke regelingen van toepassing zijn, loopt dat voordeel dan ook mis. Meer hierover leest u in ons overzicht van ',
+          { text: 'EIA, ISDE en SDE++', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: '4. Geen rekening houden met de beschikbare netcapaciteit' },
+      {
+        type: 'p',
+        parts: [
+          'Een warmtepomp, laadpalen of een groter zonnepanelenveld vragen meer capaciteit van uw elektriciteitsaansluiting. Pas bij de uitvoering ontdekken dat een zwaardere aansluiting nodig is — en dat die aanvraag in een congestiegebied op een wachtlijst kan belanden — kost onnodig tijd. Voor de situatie in onze eigen regio leest u meer in ons artikel over ',
+          { text: 'netcongestie in de Hoeksche Waard', to: ROUTES.blogPost('netcongestie-hoeksche-waard') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: '5. Ventilatie over het hoofd zien' },
+      {
+        type: 'p',
+        parts: [
+          'Ventilatie krijgt in verduurzamingsplannen vaak weinig aandacht, terwijl het zowel een wettelijke eis is als een plek waar energie kan worden bespaard. Een ventilatiesysteem dat niet is afgestemd op het werkelijke gebruik van het pand, kan onnodig energie verbruiken zonder dat dit opvalt. Zie ons artikel over ',
+          { text: 'ventilatie in uw bedrijfspand', to: ROUTES.blogPost('ventilatie-in-uw-bedrijfspand') },
+          ' voor de eisen en de besparingsmogelijkheden.',
+        ],
+      },
+      { type: 'h2', text: '6. Aannemen dat nieuw altijd beter is dan bestaand' },
+      {
+        type: 'p',
+        parts: [
+          'Een bestaande installatie vervangen voelt als vooruitgang, maar is niet altijd de beste investering. Functioneert de huidige installatie nog goed en sluit die aan op het gebruik van het pand, dan kan vervangen juist een onnodige kostenpost zijn. Of een alternatief zoals een warmtepomp voor uw situatie verstandig is, hangt af van het gebouw, de warmtevraag en de bestaande installatie — zie ',
+          { text: 'wanneer een warmtepomp een verstandige keuze is', to: ROUTES.blogPost('warmtepomp-bedrijfspand-verstandige-keuze') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: '7. De bouwkundige staat van het pand niet laten meewegen' },
+      {
+        type: 'p',
+        parts: [
+          'Een installatiekeuze maken zonder te weten hoe het pand er bouwkundig voor staat, is als een nieuwe motor inbouwen zonder naar de carrosserie te kijken. Warmteverlies via gevel, dak, vloer of beglazing beïnvloedt direct welke installatie wel of niet logisch is. Waarom dit vooraf beoordelen zoveel uitmaakt, leest u in ons artikel over ',
+          { text: 'bouwkundige beoordeling vóór verduurzaming', to: ROUTES.blogPost('bouwkundige-beoordeling-voor-verduurzaming') },
+          '.',
+        ],
+      },
+      {
+        type: 'callout',
+        title: 'Eén gemene deler',
+        text: 'Alle zeven fouten hierboven ontstaan niet door een slechte maatregel, maar door een maatregel zonder voldoende inzicht vooraf. Dat inzicht is precies waar een QuickScan of Premium-analyse mee begint.',
+      },
+      { type: 'h2', text: 'Conclusie' },
+      {
+        type: 'p',
+        parts: [
+          'De meeste van deze fouten zijn eenvoudig te voorkomen, zodra u weet dat ze bestaan. Begin daarom niet bij de maatregel die het hardst wordt aangeboden, maar bij inzicht in uw eigen pand: energiegebruik, bouwkundige staat, installaties en de volgorde waarin dat voor uw situatie het meest logisch is.',
+        ],
+      },
+    ],
+    cta: {
+      label: 'Start de gratis energie-indicatie',
+      to: ROUTES.energieIndicatie,
+      text: 'Wilt u voorkomen dat u een van deze fouten maakt? Onze gratis energie-indicatie geeft een eerste, vrijblijvend beeld van waar u voor uw pand het beste kunt beginnen.',
+    },
+  },
+  {
+    slug: 'bouwkundige-beoordeling-voor-verduurzaming',
+    category: 'Aanpak',
+    title: 'Waarom een bouwkundige beoordeling vóór verduurzaming het verschil maakt',
+    excerpt:
+      'Een installatie kiezen zonder de bouwkundige staat van uw pand te kennen, is gokken met een investering. Wat een bouwkundige beoordeling inhoudt, en waarom dit vóór verduurzaming een logische stap is.',
+    date: '15 oktober 2026',
+    isoDate: '2026-10-15',
+    readTime: '6 min',
+    bodyAvailable: true,
+    sections: [
+      {
+        type: 'p',
+        parts: [
+          'Bij verduurzaming gaat de aandacht al snel naar installaties: een warmtepomp, zonnepanelen, nieuwe verlichting. Minder vaak krijgt de vraag aandacht die daar eigenlijk aan voorafgaat: in welke bouwkundige staat verkeert het pand zelf? Die vraag bepaalt mede of een installatiekeuze logisch is, en wat daarvan het effect zal zijn.',
+        ],
+      },
+      { type: 'h2', text: 'Wat een bouwkundige beoordeling inhoudt' },
+      {
+        type: 'p',
+        parts: [
+          'Een bouwkundige beoordeling brengt de staat van de belangrijkste onderdelen van het pand in kaart: gevel, dak, vloer en beglazing, en de manier waarop deze onderdelen samen bijdragen aan warmteverlies of -behoud. Daarbij wordt gekeken naar wat er daadwerkelijk aanwezig is en in welke staat dat verkeert — geen aannames op basis van bouwjaar alleen, want twee panden uit dezelfde periode kunnen door eerdere verbouwingen of onderhoud bouwkundig behoorlijk verschillen.',
+        ],
+      },
+      { type: 'h2', text: 'Waarom dit vóór een installatiekeuze relevant is' },
+      {
+        type: 'p',
+        parts: [
+          'Een installatie wordt gedimensioneerd op de warmtevraag van het pand. Is die warmtevraag hoog door een slecht geïsoleerde gebouwschil, dan vraagt dat een andere — vaak grotere en duurdere — installatie dan bij een goed geïsoleerd pand. Daarom is de volgorde waarin u isolatie en installatie beoordeelt niet willekeurig: zie ook ons artikel over ',
+          { text: 'isoleren of eerst de installatie aanpakken', to: ROUTES.blogPost('bedrijfspand-isoleren-of-installatie-eerst') },
+          '. Een bouwkundige beoordeling geeft u het inzicht om die afweging te maken vóórdat u een installatie vastlegt, niet pas daarna.',
+        ],
+      },
+      { type: 'h2', text: 'Welke onderdelen komen aan bod' },
+      {
+        type: 'p',
+        parts: ['In de praktijk gaat het meestal om dezelfde vier bouwdelen, aangevuld met de aanwezige installaties:'],
+      },
+      {
+        type: 'ul',
+        items: [
+          'Gevel (spouwmuur) — vaak een van de grootste warmteverliezers bij een onvoldoende geïsoleerde spouw.',
+          'Dak — zie ook ons artikel over dakisolatie voor de details hierover.',
+          'Vloer of bodem — vooral relevant bij onverwarmde kruipruimtes of een pand zonder vloerisolatie.',
+          'Beglazing — enkel glas of verouderd dubbel glas laat aanzienlijk meer warmte door dan moderne beglazing.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'Voor de gevel en het dak geldt bovendien dat de maatregel vaak het meest logisch is op een moment dat er toch al onderhoud of vervanging gepland staat — zie ons artikel over ',
+          { text: 'dakisolatie voor uw bedrijfspand', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
+          '.',
+        ],
+      },
+      { type: 'h2', text: 'Wat een bouwkundige beoordeling niet is' },
+      {
+        type: 'p',
+        parts: [
+          'Een bouwkundige beoordeling in het kader van verduurzaming is geen formele bouwkundige keuring en geen constructieve veiligheidsinspectie. Het doel is niet om de constructieve staat van het pand te certificeren, maar om te begrijpen hoe de gebouwschil bijdraagt aan het energiegebruik, zodat verduurzamingsmaatregelen daarop kunnen worden afgestemd. Voor een formele keuring of certificering is een andere, gespecialiseerde partij nodig.',
+        ],
+      },
+      { type: 'h2', text: 'Hoe dit in een SMV-traject past' },
+      {
+        type: 'callout',
+        text: [
+          'Een gedetailleerde bouwkundige en installatietechnische analyse, op basis van een fysieke opname van uw pand, maakt onderdeel uit van het ',
+          { text: 'Premium Pakket', to: ROUTES.pakketten },
+          '. Zo weet u, vóórdat u in een installatie investeert, waar uw pand bouwkundig staat en wat dat betekent voor de maatregelen die daarna volgen.',
+        ],
+      },
+      { type: 'h2', text: 'Verschillende panden, verschillende uitgangssituatie' },
+      {
+        type: 'p',
+        parts: [
+          'In de Hoeksche Waard lopen de bouwperiodes van bedrijfspanden flink uiteen: van oudere winkelpanden in de dorpskernen tot recentere bedrijfshallen op de lokale bedrijventerreinen. Dat verschil in bouwperiode en eerdere verbouwingen is precies de reden dat een bouwkundige beoordeling per pand wordt gedaan, niet op basis van een algemene inschatting voor "panden uit die tijd".',
+        ],
+      },
+      { type: 'h2', text: 'Conclusie' },
+      {
+        type: 'p',
+        parts: [
+          'Een installatie kiezen zonder de bouwkundige staat van uw pand te kennen, betekent dat u een deel van de onderbouwing mist. Begin daarom bij het pand zelf, en bepaal van daaruit welke installatie en welke volgorde van maatregelen logisch zijn.',
+        ],
+      },
+    ],
+    cta: {
+      label: 'Start de gratis energie-indicatie',
+      to: ROUTES.energieIndicatie,
+      text: 'Wilt u eerst een globaal beeld voordat u een bouwkundige beoordeling overweegt? Onze gratis energie-indicatie geeft een eerste, vrijblijvend startpunt.',
+    },
+  },
+  {
     slug: 'verduurzamingsmaatregelen-bedrijfspand',
     category: 'Inzicht',
     title: 'Welke verduurzamingsmaatregelen leveren bij een bedrijfspand echt iets op?',
