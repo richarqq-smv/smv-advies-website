@@ -116,6 +116,43 @@ function controleerAdvies({ adviespunten = [], openSignalenAantal = null }) {
 }
 
 /**
+ * OPNAME: is er een locatiebezoek geregistreerd, en is minstens één
+ * daarvan afgerond? Geëxporteerd, zie controleerKlant hierboven.
+ * `opnames` is optioneel: dossierweergaves die dit (nog) niet laden geven
+ * simpelweg `[]` mee — zelfde patroon als offertes/adviespunten.
+ */
+export function controleerOpname({ opnames = [] }) {
+  if (opnames.length === 0) {
+    return { status: HEALTH_STATUS.ONTBREEKT, reden: 'Nog geen opname (locatiebezoek) gestart.' }
+  }
+  if (!opnames.some((o) => o.status === 'afgerond')) {
+    return { status: HEALTH_STATUS.AANDACHT, reden: 'Opname gestart, nog niet afgerond.' }
+  }
+  return { status: HEALTH_STATUS.GEREED, reden: 'Opname afgerond.' }
+}
+
+/**
+ * SUBSIDIES: feitelijk — is er een subsidietraject vastgelegd, en is dat
+ * traject afgerond (toegekend/afgewezen/verantwoord) of nog in
+ * behandeling? Geen oordeel over de kans van slagen. Pakket-onafhankelijk
+ * (pakketarchitectuurronde, 2026-10-08): subsidie-backenddata bestaat
+ * voor elk dossier, dus deze functie kent zelf geen pakketbegrip — de
+ * aanroeper beslist via `subsidiesZichtbaar` of de categorie überhaupt
+ * meeweegt (zie bouwDossierHealthCheck hieronder). Geëxporteerd, zie
+ * controleerKlant hierboven.
+ */
+export function controleerSubsidies({ subsidies = [] }) {
+  if (subsidies.length === 0) {
+    return { status: HEALTH_STATUS.ONTBREEKT, reden: 'Nog geen subsidietraject vastgelegd.' }
+  }
+  const nogInBehandeling = subsidies.some((s) => s.status === 'voorbereiding' || s.status === 'ingediend')
+  if (nogInBehandeling) {
+    return { status: HEALTH_STATUS.AANDACHT, reden: 'Subsidietraject vastgelegd, nog in behandeling.' }
+  }
+  return { status: HEALTH_STATUS.GEREED, reden: 'Subsidietraject(en) afgerond (toegekend/afgewezen/verantwoord).' }
+}
+
+/**
  * OFFERTE: puur administratief (geen oordeel over acceptatie/afwijzing) —
  * is er een offerte, en is die al daadwerkelijk verstuurd (dus niet meer
  * hangend als concept)? `offertes` is optioneel: dossierweergaves die dit
@@ -148,8 +185,9 @@ function controleerOfferte({ offertes = [] }) {
  *   aan dit Dossier gekoppeld kan worden (EnergieDossierKoppeling.jsx).
  * - mjop: de bestaande MJOP-tool.
  * - advies: geen actie — wordt al direct op dezelfde dossierpagina beheerd.
- * - offerte: al direct zichtbaar verderop op dezelfde dossierpagina, dus
- *   een anchor (`href`) in plaats van een routewijziging (`to`).
+ * - offerte/opname/subsidies: al direct zichtbaar verderop op dezelfde
+ *   dossierpagina, dus een anchor (`href`) in plaats van een
+ *   routewijziging (`to`) — zelfde patroon voor alle drie.
  */
 function bepaalActie(categorieKey, status, dossierId) {
   if (status === HEALTH_STATUS.GEREED) return null
@@ -158,10 +196,14 @@ function bepaalActie(categorieKey, status, dossierId) {
       return { label: 'Klant aanvullen', to: voegDossierContextToe(ROUTES.account, dossierId) }
     case 'pand':
       return { label: 'Pand aanvullen', to: voegDossierContextToe(ROUTES.mjopTool, dossierId) }
+    case 'opname':
+      return { label: 'Opname starten/openen', href: '#opnames-sectie' }
     case 'energie':
       return { label: 'Energie-indicatie toevoegen', to: voegDossierContextToe(ROUTES.energieIndicatie, dossierId) }
     case 'mjop':
       return { label: 'MJOP koppelen', to: voegDossierContextToe(ROUTES.mjopTool, dossierId) }
+    case 'subsidies':
+      return { label: 'Subsidies bijhouden', href: '#subsidies-sectie' }
     case 'offerte':
       return { label: 'Offerte bekijken', href: '#offertes-sectie' }
     default:
@@ -181,6 +223,16 @@ function bepaalActie(categorieKey, status, dossierId) {
  * categorie te kunnen bouwen (zie bepaalActie) — zonder `dossierId` krijgt
  * elke niet-gereed-categorie nog steeds een actie, alleen dan zonder
  * dossiercontext-querystring.
+ *
+ * `opnames`/`subsidies` (optioneel, zie controleerOpname/controleerSubsidies
+ * hierboven). Subsidie-backenddata (dossier_subsidies, admin-only RLS,
+ * zie 0035_dossier_subsidies.sql) bestaat en is administratief bruikbaar
+ * voor ÉLK pakket — pakket bepaalt nooit of de data/categorie bestaat,
+ * alleen wie hem mag zien (pakketarchitectuurronde, 2026-10-08: "pakket ≠
+ * datamodel"). Daarom bepaalt de AANROEPER via `subsidiesZichtbaar` of de
+ * categorie wordt opgenomen: in de admin altijd (ongeacht pakket, zie
+ * DossierDetail.jsx), voor een klant alleen als het pakket dat
+ * commercieel omvat. Dit bestand kent zelf geen specifieke pakketnaam meer.
  */
 export function bouwDossierHealthCheck({
   klant,
@@ -190,14 +242,19 @@ export function bouwDossierHealthCheck({
   mjopSnapshot,
   adviespunten = [],
   offertes = [],
+  opnames = [],
+  subsidies = [],
+  subsidiesZichtbaar = false,
   openSignalenAantal = null,
   dossierId = null,
 }) {
   const categorieen = {
     klant: controleerKlant({ klant, contactpersoon }),
     pand: controleerPand({ pand }),
+    opname: controleerOpname({ opnames }),
     energie: controleerEnergie({ energieSnapshot }),
     mjop: controleerMjop({ mjopSnapshot }),
+    ...(subsidiesZichtbaar ? { subsidies: controleerSubsidies({ subsidies }) } : {}),
     advies: controleerAdvies({ adviespunten, openSignalenAantal }),
     offerte: controleerOfferte({ offertes }),
   }
@@ -220,8 +277,101 @@ export function bouwDossierHealthCheck({
 export const HEALTH_CATEGORIE_LABELS = {
   klant: 'Klant',
   pand: 'Pand',
+  opname: 'Opname',
   energie: 'Energie',
   mjop: 'MJOP',
+  subsidies: 'Subsidies',
   advies: 'Advies',
   offerte: 'Offerte',
+}
+
+/**
+ * UX-herontwerp (2026-10-08) — vertaalt bouwDossierHealthCheck()'s feitelijke
+ * categorieën naar de herkenbare adviesworkflow-volgorde uit de opdracht
+ * (Klant/Pand → Opname → MJOP → Energie → Subsidies → Advies → Rapport →
+ * Afronden) en wijst precies ÉÉN concrete volgende stap aan. Zelf geen
+ * nieuwe feitelijke controle: "Klant"+"Pand" worden hier samengevoegd tot
+ * één "Gegevens"-stap (het slechtste van de twee statussen, met de
+ * bijbehorende actie) — puur een presentatiekeuze, de twee onderliggende
+ * categorieën blijven in `categorieen` zelf ongewijzigd beschikbaar voor de
+ * gedetailleerde Health Check-weergave.
+ *
+ * "Rapport" en "Afronden" hebben geen eigen feitelijke categorie (er is
+ * geen opgeslagen "rapport gegenereerd"-vlag in de database, zie
+ * AdviesrapportGenerator.jsx — het rapport is een puur client-side .docx-
+ * export zonder server-side status) — vandaar nooit een verzonnen
+ * `gereed`/`ontbreekt` voor Rapport, alleen een vervolgactie zodra alles
+ * ervoor gereed is. "Afronden" gebruikt wél een echte, bestaande status:
+ * `dossier.status === 'afgerond'`.
+ */
+const VOLGENDE_STAP_VOLGORDE = [
+  { key: 'gegevens', categorieKeys: ['klant', 'pand'], label: 'Gegevens' },
+  { key: 'opname', categorieKeys: ['opname'], label: 'Opname' },
+  { key: 'mjop', categorieKeys: ['mjop'], label: 'MJOP' },
+  { key: 'energie', categorieKeys: ['energie'], label: 'Energie' },
+  { key: 'subsidies', categorieKeys: ['subsidies'], label: 'Subsidies' },
+  { key: 'advies', categorieKeys: ['advies'], label: 'Advies' },
+]
+
+/** Slechtste status van een lijst statussen (ontbreekt > aandacht > gereed) — voor de "Gegevens"-samenvoeging hierboven. */
+function slechtsteStatus(statussen) {
+  if (statussen.includes(HEALTH_STATUS.ONTBREEKT)) return HEALTH_STATUS.ONTBREEKT
+  if (statussen.includes(HEALTH_STATUS.AANDACHT)) return HEALTH_STATUS.AANDACHT
+  return HEALTH_STATUS.GEREED
+}
+
+/**
+ * Bouwt de genummerde workflow-stappen voor de voortgangsweergave
+ * (DossierHealthCheck.jsx) — alleen stappen waarvan de onderliggende
+ * categorie(ën) daadwerkelijk in `categorieen` voorkomen (zodat
+ * "Subsidies" bijvoorbeeld niet verschijnt bij een Basis/Premium-dossier,
+ * zie bouwDossierHealthCheck hierboven), plus altijd "Rapport" en
+ * "Afronden" aan het einde.
+ */
+export function bouwWorkflowStappen({ categorieen, dossierStatus }) {
+  const stappen = VOLGENDE_STAP_VOLGORDE.filter((stap) => stap.categorieKeys.every((k) => categorieen[k]))
+    .map((stap) => {
+      const relevanteCategorieen = stap.categorieKeys.map((k) => categorieen[k])
+      const status = slechtsteStatus(relevanteCategorieen.map((c) => c.status))
+      const metActie = relevanteCategorieen.find((c) => c.status !== HEALTH_STATUS.GEREED)
+      return { key: stap.key, label: stap.label, status, actie: metActie?.actie ?? null }
+    })
+
+  const allesGereed = stappen.every((s) => s.status === HEALTH_STATUS.GEREED)
+  stappen.push({
+    key: 'rapport',
+    label: 'Rapport',
+    status: null, // bewust geen gereed/ontbreekt — zie moduledoc hierboven
+    actie: allesGereed ? { label: 'Rapport maken', href: '#rapport-sectie' } : null,
+  })
+  stappen.push({
+    key: 'afronden',
+    label: 'Afronden',
+    status: dossierStatus === 'afgerond' ? HEALTH_STATUS.GEREED : null,
+    actie: dossierStatus === 'afgerond' ? null : { label: 'Dossier afronden', href: '#advies-sectie' },
+  })
+  return stappen
+}
+
+/**
+ * Bepaalt de ÉÉN meest relevante volgende stap voor de prominente banner
+ * boven aan de dossierpagina (DossierVolgendeStap.jsx) — de eerste stap in
+ * de workflowvolgorde die nog niet `gereed` is. Is alles gereed, dan wijst
+ * de banner naar het rapport (of, als het dossier al is afgerond, naar
+ * niets meer — er is dan geen volgende stap).
+ */
+export function bepaalVolgendeStap({ categorieen, dossierStatus }) {
+  if (dossierStatus === 'afgerond') {
+    return { titel: 'Dossier is afgerond', toelichting: 'Het advies ligt vast en kan niet meer worden gewijzigd.', actie: null }
+  }
+  const stappen = bouwWorkflowStappen({ categorieen, dossierStatus })
+  const eersteOpenStap = stappen.find((s) => s.status !== null && s.status !== HEALTH_STATUS.GEREED)
+  if (eersteOpenStap) {
+    return { titel: `Volgende stap: ${eersteOpenStap.label}`, toelichting: null, actie: eersteOpenStap.actie }
+  }
+  return {
+    titel: 'Alles compleet — rapport kan worden opgesteld',
+    toelichting: null,
+    actie: { label: 'Rapport maken', href: '#rapport-sectie' },
+  }
 }

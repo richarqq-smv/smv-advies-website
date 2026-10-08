@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { bouwDossierHealthCheck, HEALTH_STATUS } from './dossierHealthCheck.js'
+import { bouwDossierHealthCheck, bouwWorkflowStappen, bepaalVolgendeStap, HEALTH_STATUS } from './dossierHealthCheck.js'
 import { ROUTES } from '../routes.js'
 
 function volledigeFixture() {
@@ -12,6 +12,7 @@ function volledigeFixture() {
     mjopSnapshot: { components: [{ id: 'c1' }] },
     adviespunten: [{ adviespunt_id: 'a1' }],
     offertes: [{ id: 'o1', status: 'verstuurd' }],
+    opnames: [{ opname_id: 'op-1', status: 'afgerond' }],
     openSignalenAantal: 0,
   }
 }
@@ -176,4 +177,116 @@ test('ACTIE: advies krijgt nooit een actie, ook niet als adviespunten ontbreken'
   const { categorieen } = bouwDossierHealthCheck({ ...volledigeFixture(), adviespunten: [], dossierId: 'd-1' })
   assert.equal(categorieen.advies.status, HEALTH_STATUS.ONTBREEKT)
   assert.equal(categorieen.advies.actie, null)
+})
+
+// --- OPNAME (UX-herontwerp, 2026-10-08) -------------------------------------
+
+test('OPNAME: geen opnames is ontbreekt', () => {
+  const { categorieen } = bouwDossierHealthCheck({ ...volledigeFixture(), opnames: [] })
+  assert.equal(categorieen.opname.status, HEALTH_STATUS.ONTBREEKT)
+})
+
+test('OPNAME: opname gestart maar geen enkele afgerond is aandacht', () => {
+  const { categorieen } = bouwDossierHealthCheck({ ...volledigeFixture(), opnames: [{ opname_id: 'op-1', status: 'concept' }] })
+  assert.equal(categorieen.opname.status, HEALTH_STATUS.AANDACHT)
+})
+
+test('OPNAME: minstens één afgeronde opname tussen meerdere is gereed', () => {
+  const { categorieen } = bouwDossierHealthCheck({
+    ...volledigeFixture(),
+    opnames: [{ opname_id: 'op-1', status: 'concept' }, { opname_id: 'op-2', status: 'afgerond' }],
+  })
+  assert.equal(categorieen.opname.status, HEALTH_STATUS.GEREED)
+})
+
+test('ACTIE: opname-actie is een anchor op dezelfde pagina', () => {
+  const { categorieen } = bouwDossierHealthCheck({ ...volledigeFixture(), opnames: [] })
+  assert.deepEqual(categorieen.opname.actie, { label: 'Opname starten/openen', href: '#opnames-sectie' })
+})
+
+// --- SUBSIDIES (UX-herontwerp, 2026-10-08) ----------------------------------
+
+test('SUBSIDIES: telt alleen mee als eigen categorie als de aanroeper subsidiesZichtbaar=true meegeeft (pakket-onafhankelijk — aanroeper bepaalt dit op basis van rol/pakket)', () => {
+  const nietZichtbaar = bouwDossierHealthCheck({ ...volledigeFixture(), subsidiesZichtbaar: false })
+  assert.equal('subsidies' in nietZichtbaar.categorieen, false)
+  const zichtbaar = bouwDossierHealthCheck({ ...volledigeFixture(), subsidiesZichtbaar: true, subsidies: [] })
+  assert.equal('subsidies' in zichtbaar.categorieen, true)
+})
+
+test('SUBSIDIES: geen subsidies vastgelegd is ontbreekt', () => {
+  const { categorieen } = bouwDossierHealthCheck({ ...volledigeFixture(), subsidiesZichtbaar: true, subsidies: [] })
+  assert.equal(categorieen.subsidies.status, HEALTH_STATUS.ONTBREEKT)
+})
+
+test('SUBSIDIES: traject in voorbereiding/ingediend is aandacht', () => {
+  const { categorieen } = bouwDossierHealthCheck({
+    ...volledigeFixture(),
+    subsidiesZichtbaar: true,
+    subsidies: [{ subsidie_id: 's1', status: 'ingediend' }],
+  })
+  assert.equal(categorieen.subsidies.status, HEALTH_STATUS.AANDACHT)
+})
+
+test('SUBSIDIES: traject toegekend/afgewezen/verantwoord is gereed', () => {
+  const { categorieen } = bouwDossierHealthCheck({
+    ...volledigeFixture(),
+    subsidiesZichtbaar: true,
+    subsidies: [{ subsidie_id: 's1', status: 'toegekend' }],
+  })
+  assert.equal(categorieen.subsidies.status, HEALTH_STATUS.GEREED)
+})
+
+// --- WORKFLOW-STAPPEN / VOLGENDE STAP (UX-herontwerp, 2026-10-08) ----------
+
+test('bouwWorkflowStappen: Gegevens combineert klant+pand tot één stap, altijd Rapport+Afronden erbij', () => {
+  const { categorieen } = bouwDossierHealthCheck(volledigeFixture())
+  const stappen = bouwWorkflowStappen({ categorieen, dossierStatus: 'open' })
+  assert.deepEqual(stappen.map((s) => s.key), ['gegevens', 'opname', 'mjop', 'energie', 'advies', 'rapport', 'afronden'])
+})
+
+test('bouwWorkflowStappen: Subsidies-stap verschijnt alleen als de categorie bestaat (subsidiesZichtbaar=true)', () => {
+  const { categorieen } = bouwDossierHealthCheck({ ...volledigeFixture(), subsidiesZichtbaar: true, subsidies: [{ subsidie_id: 's1', status: 'toegekend' }] })
+  const stappen = bouwWorkflowStappen({ categorieen, dossierStatus: 'open' })
+  assert.ok(stappen.some((s) => s.key === 'subsidies'))
+})
+
+test('bouwWorkflowStappen: Gegevens-stap neemt de slechtste status van klant/pand over', () => {
+  const { categorieen } = bouwDossierHealthCheck({ ...volledigeFixture(), pand: {} }) // pand ontbreekt
+  const stappen = bouwWorkflowStappen({ categorieen, dossierStatus: 'open' })
+  const gegevens = stappen.find((s) => s.key === 'gegevens')
+  assert.equal(gegevens.status, HEALTH_STATUS.ONTBREEKT)
+})
+
+test('bouwWorkflowStappen: Rapport en Afronden krijgen nooit een verzonnen gereed/ontbreekt-status', () => {
+  const { categorieen } = bouwDossierHealthCheck(volledigeFixture())
+  const stappen = bouwWorkflowStappen({ categorieen, dossierStatus: 'open' })
+  assert.equal(stappen.find((s) => s.key === 'rapport').status, null)
+  assert.equal(stappen.find((s) => s.key === 'afronden').status, null)
+})
+
+test('bouwWorkflowStappen: Afronden toont wél de echte dossierstatus zodra het dossier is afgerond', () => {
+  const { categorieen } = bouwDossierHealthCheck(volledigeFixture())
+  const stappen = bouwWorkflowStappen({ categorieen, dossierStatus: 'afgerond' })
+  assert.equal(stappen.find((s) => s.key === 'afronden').status, HEALTH_STATUS.GEREED)
+})
+
+test('bepaalVolgendeStap: wijst naar de eerste niet-gereed stap in de workflowvolgorde', () => {
+  const { categorieen } = bouwDossierHealthCheck({ ...volledigeFixture(), mjopSnapshot: null }) // mjop ontbreekt
+  const stap = bepaalVolgendeStap({ categorieen, dossierStatus: 'open' })
+  assert.equal(stap.titel, 'Volgende stap: MJOP')
+  assert.ok(stap.actie)
+})
+
+test('bepaalVolgendeStap: alles gereed en dossier nog open wijst naar het rapport', () => {
+  const { categorieen } = bouwDossierHealthCheck(volledigeFixture())
+  const stap = bepaalVolgendeStap({ categorieen, dossierStatus: 'open' })
+  assert.equal(stap.titel, 'Alles compleet — rapport kan worden opgesteld')
+  assert.deepEqual(stap.actie, { label: 'Rapport maken', href: '#rapport-sectie' })
+})
+
+test('bepaalVolgendeStap: een afgerond dossier heeft geen volgende stap meer', () => {
+  const { categorieen } = bouwDossierHealthCheck(volledigeFixture())
+  const stap = bepaalVolgendeStap({ categorieen, dossierStatus: 'afgerond' })
+  assert.equal(stap.titel, 'Dossier is afgerond')
+  assert.equal(stap.actie, null)
 })

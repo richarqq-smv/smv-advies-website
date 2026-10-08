@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { X, ArrowSquareOut } from '@phosphor-icons/react'
 import { UitloggenKnop } from '../auth/UitloggenKnop'
-import { ADMIN_BEHEER_NAV_ITEMS, ADMIN_ADMINISTRATIE_NAV_ITEMS, ADMIN_EXTERNE_NAV_ITEMS } from '../../data/adminNavigation'
+import { ADMIN_NAV_GROEPEN, ADMIN_EXTERNE_NAV_ITEMS } from '../../data/adminNavigation'
 import { useLockBodyScroll } from '../../hooks/useLockBodyScroll'
 import { cn } from '../../lib/cn'
 
@@ -37,34 +37,25 @@ export function AdminMobileNav({ open, onClose }) {
         </div>
 
         <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4">
-          {ADMIN_BEHEER_NAV_ITEMS.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              onClick={onClose}
-              className={({ isActive }) =>
-                cn('flex min-h-11 items-center rounded-md px-3.5 py-3 text-base font-medium text-primary', isActive ? 'bg-muted text-accent' : 'hover:bg-muted')
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
-
-          <div className="my-2 border-t border-border" />
-
-          {ADMIN_ADMINISTRATIE_NAV_ITEMS.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              onClick={onClose}
-              className={({ isActive }) =>
-                cn('flex min-h-11 items-center rounded-md px-3.5 py-3 text-base font-medium text-primary', isActive ? 'bg-muted text-accent' : 'hover:bg-muted')
-              }
-            >
-              {item.label}
-            </NavLink>
+          {ADMIN_NAV_GROEPEN.map((groep, i) => (
+            <div key={groep.label}>
+              {i > 0 ? <div className="my-2 border-t border-border" /> : null}
+              {/* Zichtbaar groepslabel — in de drawer is, anders dan de compacte desktopbalk, genoeg ruimte om de 3 groepen ("Werk"/"Advies"/"Administratie") met naam te tonen i.p.v. alleen een scheidingslijn. */}
+              <p className="mt-1 mb-1.5 px-3.5 text-xs font-semibold tracking-[0.08em] text-foreground-muted uppercase">{groep.label}</p>
+              {groep.items.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.end}
+                  onClick={onClose}
+                  className={({ isActive }) =>
+                    cn('flex min-h-11 items-center rounded-md px-3.5 py-3 text-base font-medium text-primary', isActive ? 'bg-muted text-accent' : 'hover:bg-muted')
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
           ))}
 
           {/*

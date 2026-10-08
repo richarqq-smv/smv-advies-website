@@ -86,7 +86,13 @@ test('api.js: koppelfuncties voor maatregelen/documenten bestaan en gebruiken de
 })
 
 test('DossierSubsidies.jsx: accepteert adviespunten/documenten als props (bestaande, al dossiergebonden lijsten) en is admin-only', () => {
-  assert.match(COMPONENT, /export function DossierSubsidies\(\{ dossierId, magBeheren, adviespunten = \[\], documenten = \[\] \}\)/)
+  // Pakketarchitectuurronde (2026-10-08): pand/mjopSnapshot/energieSnapshot
+  // toegevoegd t.b.v. de Subsidiecheck (SubsidieCheck.jsx) — zelfde
+  // bestaande dossiergebonden data, geen nieuwe fetch, geen pakketcheck.
+  assert.match(
+    COMPONENT,
+    /export function DossierSubsidies\(\{ dossierId, magBeheren, adviespunten = \[\], documenten = \[\], pand = null, mjopSnapshot = null, energieSnapshot = null \}\)/,
+  )
   assert.match(COMPONENT, /if \(!magBeheren\) return null/)
 })
 
@@ -104,7 +110,15 @@ test('DossierSubsidies.jsx: filtert al-gekoppelde adviespunten/documenten uit de
 
 test('DossierSubsidies.jsx: geen nieuwe upload-input, geen regelingendatabase/matching-UI (scope-grens Fase 2)', () => {
   assert.equal(/type="file"/.test(COMPONENT), false)
-  assert.equal(/subsidie_regelingen|\/admin\/subsidies|mogelijk relevant/.test(COMPONENT), false)
+  // UX-herontwerp (2026-10-08, Fase 5): de /admin/subsidies-grens hierboven
+  // is bewust opgeheven — de opdracht vraagt juist om vanuit een dossier
+  // door te kunnen klikken naar de bestaande RVO-referentielijst (zie
+  // ROUTES.adminSubsidies hieronder). "mogelijk relevant"/een eigen
+  // regelingendatabase blijven wél buiten scope: geen nieuwe matching-
+  // logica, geen verzonnen eligibility — alleen een link naar de al
+  // bestaande, puur-lezende referentielijst.
+  assert.equal(/subsidie_regelingen|mogelijk relevant/.test(COMPONENT), false)
+  assert.match(COMPONENT, /ROUTES\.adminSubsidies/)
 })
 
 test('DossierSubsidies.jsx: koppelen/ontkoppelen loopt via de nieuwe api.js-functies', () => {
@@ -114,8 +128,16 @@ test('DossierSubsidies.jsx: koppelen/ontkoppelen loopt via de nieuwe api.js-func
   })
 })
 
-test('DossierDetail.jsx: nieuwe Subsidies-sectie is Gold-only en admin-only, en DossierTaken blijft ongewijzigd ernaast bestaan (regressie)', () => {
-  assert.match(DOSSIER_DETAIL, /isAdmin && dossier\.pakket_id === 'gold' \? \(\s*<Accordion title="Subsidies">\s*<DossierSubsidies/)
+test('DossierDetail.jsx: nieuwe Subsidies-sectie is admin-only (sinds de pakketarchitectuurronde NIET meer Gold-only), DossierTaken/Subsidiebegeleiding blijft bewust wél Gold-only (regressie)', () => {
+  // Pakketarchitectuurronde (2026-10-08): subsidie-administratie is
+  // backendmatig/administratief voor élk pakket beschikbaar (0035_dossier_
+  // subsidies.sql heeft geen pakketcheck) — de admin-UI-gate hier is dus
+  // teruggebracht tot uitsluitend `isAdmin`. "Subsidiebegeleiding &
+  // oplevering" (DossierTaken) blijft bewust wél Gold-only: dat is een
+  // echte, commerciële SMV-dienst (hands-on aanvraag-/opleveringsbegeleiding),
+  // geen backend-capability-vraag.
+  assert.match(DOSSIER_DETAIL, /\{isAdmin \? \(\s*(?:\/\/[^\n]*\n\s*)+<Accordion title="Subsidies" id="subsidies-sectie">\s*<DossierSubsidies/)
+  assert.equal(/isAdmin && dossier\.pakket_id === 'gold' \?[^\n]*\n\s*(?:\/\/[^\n]*\n\s*)?<Accordion title="Subsidies"/.test(DOSSIER_DETAIL), false)
   assert.match(DOSSIER_DETAIL, /isAdmin && dossier\.pakket_id === 'gold' \? \(\s*<Accordion title="Subsidiebegeleiding & oplevering">\s*<DossierTaken/)
 })
 

@@ -33,12 +33,23 @@ test('adminNavigation.js: geen Porkbun API-sleutel, credential of iframe-gerelat
   assert.equal(/apikey|api_key|secret|iframe/i.test(bron), false)
 })
 
-test('AdminMobileNav.jsx: rendert ADMIN_EXTERNE_NAV_ITEMS direct na ADMIN_ADMINISTRATIE_NAV_ITEMS (dus onder BTW, de laatste administratie-link)', () => {
-  const bron = leesZonderComments('..', '..', 'components', 'admin', 'AdminMobileNav.jsx')
-  const administratieIndex = bron.indexOf('ADMIN_ADMINISTRATIE_NAV_ITEMS.map')
-  const externeIndex = bron.indexOf('ADMIN_EXTERNE_NAV_ITEMS.map')
-  assert.ok(administratieIndex > -1, 'ADMIN_ADMINISTRATIE_NAV_ITEMS.map niet gevonden')
-  assert.ok(externeIndex > administratieIndex, 'ADMIN_EXTERNE_NAV_ITEMS.map staat niet na ADMIN_ADMINISTRATIE_NAV_ITEMS.map')
+test('AdminMobileNav.jsx: rendert ADMIN_EXTERNE_NAV_ITEMS direct na de 3 navigatiegroepen (dus onder BTW, de laatste administratie-link)', () => {
+  // UX-herontwerp (2026-10-08): de drawer rendert sinds de 3-groepen-indeling
+  // (Werk/Advies/Administratie, zie ADMIN_NAV_GROEPEN) ADMIN_NAV_GROEPEN.map
+  // in plaats van de twee losse arrays van voorheen — zelfde controle, nu op
+  // de nieuwe, gegroepeerde bron. "Administratie" is en blijft de laatste
+  // groep in ADMIN_NAV_GROEPEN (adminNavigation.js), dus de volgorde-garantie
+  // blijft hetzelfde: e-mail staat nog steeds onder BTW, de laatste link.
+  const bronNav = leesZonderComments('..', '..', 'components', 'admin', 'AdminMobileNav.jsx')
+  const groepenIndex = bronNav.indexOf('ADMIN_NAV_GROEPEN.map')
+  const externeIndex = bronNav.indexOf('ADMIN_EXTERNE_NAV_ITEMS.map')
+  assert.ok(groepenIndex > -1, 'ADMIN_NAV_GROEPEN.map niet gevonden')
+  assert.ok(externeIndex > groepenIndex, 'ADMIN_EXTERNE_NAV_ITEMS.map staat niet na ADMIN_NAV_GROEPEN.map')
+
+  const bronData = leesZonderComments('..', '..', 'data', 'adminNavigation.js')
+  const groepenMatch = bronData.match(/export const ADMIN_NAV_GROEPEN = \[([\s\S]*?)\]/)
+  assert.ok(groepenMatch, 'ADMIN_NAV_GROEPEN niet gevonden in adminNavigation.js')
+  assert.match(groepenMatch[1].trim(), /label: 'Administratie'[\s\S]*$/, 'Administratie is niet de laatste groep in ADMIN_NAV_GROEPEN')
 })
 
 test('AdminMobileNav.jsx: externe link opent in nieuw tabblad zonder de huidige sessie/tab kwijt te raken (target="_blank" rel="noopener noreferrer"), geen iframe', () => {

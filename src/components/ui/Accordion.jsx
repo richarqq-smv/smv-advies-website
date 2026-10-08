@@ -10,12 +10,12 @@ import { CaretDown } from '@phosphor-icons/react'
  * Zo blijft elke component exact hetzelfde, ook op de plekken waar hij
  * zonder Accordion wordt hergebruikt (Account.jsx/Klantgesprek.jsx).
  */
-export function Accordion({ title, defaultOpen = false, children }) {
+export function Accordion({ title, defaultOpen = false, children, id }) {
   const [open, setOpen] = useState(defaultOpen)
   const contentId = useId()
 
   return (
-    <div>
+    <div id={id}>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}

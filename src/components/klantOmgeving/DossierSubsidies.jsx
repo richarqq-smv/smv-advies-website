@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Trash, Plus } from '@phosphor-icons/react'
+import { Trash, Plus, ArrowSquareOut } from '@phosphor-icons/react'
 import { Button } from '../ui/Button'
+import { ROUTES } from '../../lib/routes'
 import {
   listDossierSubsidies,
   addDossierSubsidie,
@@ -14,6 +15,7 @@ import {
   ontkoppelSubsidieDocument,
 } from '../../lib/klantOmgeving/api'
 import { SUBSIDIE_STATUSSEN, sorteerSubsidies } from '../../lib/dossier/dossierSubsidie'
+import { SubsidieCheck } from './SubsidieCheck'
 
 const INPUT_CLASSNAME = 'w-full rounded-lg border border-border px-3 py-2 text-sm'
 const SELECT_CLASSNAME = 'rounded-lg border border-border px-2 py-1.5 text-xs'
@@ -35,7 +37,7 @@ const LEEG_FORMULIER = { regelingNaam: '', verwachtBedrag: '', deadline: '' }
  * bewerk-UI, dezelfde deferred status als dossier_taken.notitie elders
  * in dit project — de API ondersteunt het veld al voor een latere ronde.
  */
-export function DossierSubsidies({ dossierId, magBeheren, adviespunten = [], documenten = [] }) {
+export function DossierSubsidies({ dossierId, magBeheren, adviespunten = [], documenten = [], pand = null, mjopSnapshot = null, energieSnapshot = null }) {
   const [laden, setLaden] = useState(true)
   const [subsidies, setSubsidies] = useState([])
   const [maatregelenPerSubsidie, setMaatregelenPerSubsidie] = useState({})
@@ -70,6 +72,13 @@ export function DossierSubsidies({ dossierId, magBeheren, adviespunten = [], doc
 
   const gesorteerd = sorteerSubsidies(subsidies)
 
+  /** Zet een nieuw aangemaakte dossier_subsidies-rij in alle drie de bijbehorende states — gedeeld tussen het handmatige formulier hieronder en SubsidieCheck's "Toevoegen als subsidietraject"-actie, zodat er maar één opslagpad is. */
+  function nieuweSubsidieToegevoegd(nieuw) {
+    setSubsidies((v) => [...v, nieuw])
+    setMaatregelenPerSubsidie((v) => ({ ...v, [nieuw.subsidie_id]: [] }))
+    setDocumentenPerSubsidie((v) => ({ ...v, [nieuw.subsidie_id]: [] }))
+  }
+
   async function voegToe() {
     if (!nieuweWaarde.regelingNaam.trim()) return setFout('Vul een regelingnaam in.')
     setFout(null)
@@ -80,9 +89,7 @@ export function DossierSubsidies({ dossierId, magBeheren, adviespunten = [], doc
         verwachtBedrag: nieuweWaarde.verwachtBedrag ? Number(nieuweWaarde.verwachtBedrag) : null,
         deadline: nieuweWaarde.deadline || null,
       })
-      setSubsidies((v) => [...v, nieuw])
-      setMaatregelenPerSubsidie((v) => ({ ...v, [nieuw.subsidie_id]: [] }))
-      setDocumentenPerSubsidie((v) => ({ ...v, [nieuw.subsidie_id]: [] }))
+      nieuweSubsidieToegevoegd(nieuw)
       setNieuwFormulierOpen(false)
       setNieuweWaarde(LEEG_FORMULIER)
     } catch {
@@ -178,8 +185,27 @@ export function DossierSubsidies({ dossierId, magBeheren, adviespunten = [], doc
 
   return (
     <div className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
-      <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Subsidie-administratie</p>
-      <h3 className="mb-4 text-xl text-primary">Subsidies</h3>
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Subsidie-administratie</p>
+          <h3 className="text-xl text-primary">Subsidies</h3>
+        </div>
+        {/*
+          UX-herontwerp (2026-10-08, Fase 5): de dossiergebonden subsidie-
+          administratie hieronder (regeling/bedrag/status/deadline) en de
+          losse RVO-referentielijst (/admin/subsidies, maandelijks
+          gesynchroniseerd — zie AdminSubsidies.jsx) waren tot nu toe twee
+          volledig gescheiden schermen. Deze link is de enige wijziging:
+          vanuit een dossier direct naar die referentielijst kunnen
+          doorklikken om te zoeken welke regeling relevant is, zonder de
+          lijst zelf te dupliceren of hier bedragen/percentages/eligibility
+          te verzinnen (die staan bewust niet in de RVO-brondata, zie
+          AdminSubsidies.jsx).
+        */}
+        <Button as="link" to={ROUTES.adminSubsidies} variant="ghost" size="sm">
+          Bekijk RVO-regelingen <ArrowSquareOut size={14} />
+        </Button>
+      </div>
 
       {gesorteerd.length === 0 ? <p className="text-sm text-foreground-muted">Nog geen subsidies vastgelegd.</p> : null}
 
@@ -357,6 +383,16 @@ export function DossierSubsidies({ dossierId, magBeheren, adviespunten = [], doc
           {fout}
         </p>
       ) : null}
+
+      <SubsidieCheck
+        dossierId={dossierId}
+        pand={pand}
+        mjopSnapshot={mjopSnapshot}
+        energieSnapshot={energieSnapshot}
+        subsidies={subsidies}
+        magBeheren={magBeheren}
+        onSubsidieToegevoegd={nieuweSubsidieToegevoegd}
+      />
     </div>
   )
 }

@@ -10,6 +10,7 @@ import { Accordion } from '../components/ui/Accordion'
 import { ROUTES } from '../lib/routes'
 import { DossierWerkruimte } from '../components/klantOmgeving/DossierWerkruimte'
 import { DossierHealthCheck } from '../components/klantOmgeving/DossierHealthCheck'
+import { DossierVolgendeStap } from '../components/klantOmgeving/DossierVolgendeStap'
 import { EnergieSnapshot } from '../components/klantOmgeving/EnergieSnapshot'
 import { EnergieUitnodiging } from '../components/klantOmgeving/EnergieUitnodiging'
 import { CommercieleKansSectie } from '../components/klantOmgeving/CommercieleKansSectie'
@@ -31,6 +32,8 @@ import {
   getDocumentDownloadUrl,
   checkIsAdmin,
   archiveerDossier,
+  listOpnamesVoorDossier,
+  listDossierSubsidies,
 } from '../lib/klantOmgeving/api'
 import { magDossierArchiveren } from '../lib/klantOmgeving/dossierArchief'
 import { bouwDossierHealthCheck } from '../lib/klantOmgeving/dossierHealthCheck'
@@ -78,6 +81,13 @@ export default function DossierDetail() {
   // beoordelen. Zelfde RLS (offertes_select_klant/offertes_select_admin),
   // dus nooit meer zichtbaar dan wat deze sessie al mag zien.
   const [offertesVoorHealthCheck, setOffertesVoorHealthCheck] = useState([])
+  // UX-herontwerp (2026-10-08): zelfde lichte, los-van-de-echte-sectie
+  // lezing als offertesVoorHealthCheck hierboven — uitsluitend om de
+  // nieuwe OPNAME/SUBSIDIES-categorieën feitelijk te kunnen beoordelen in
+  // de Health Check/"Volgende stap"-banner. OpnamesSectie/DossierSubsidies
+  // blijven zelfstandig met hun eigen beheer-UI.
+  const [opnamesVoorHealthCheck, setOpnamesVoorHealthCheck] = useState([])
+  const [subsidiesVoorHealthCheck, setSubsidiesVoorHealthCheck] = useState([])
   // Klantreis-ronde: documenten/facturen die al aan dit dossier gekoppeld
   // zijn zichtbaar maken op de dossierpagina zelf — hergebruikt de
   // bestaande, al RLS-beveiligde queries (zelfde functies als /account),
@@ -130,6 +140,19 @@ export default function DossierDetail() {
       actief = false
     }
   }, [dossierId, offerteRefresh])
+
+  useEffect(() => {
+    let actief = true
+    listOpnamesVoorDossier(dossierId)
+      .then((rows) => actief && setOpnamesVoorHealthCheck(rows))
+      .catch(() => {}) // Zelfde veilige stiltefout als de offertes-lezing hierboven.
+    listDossierSubsidies(dossierId)
+      .then((rows) => actief && setSubsidiesVoorHealthCheck(rows))
+      .catch(() => {})
+    return () => {
+      actief = false
+    }
+  }, [dossierId])
 
   useEffect(() => {
     let actief = true
@@ -203,10 +226,18 @@ export default function DossierDetail() {
       mjopSnapshot: dossier.mjop_snapshot,
       adviespunten,
       offertes: offertesVoorHealthCheck,
+      opnames: opnamesVoorHealthCheck,
+      subsidies: subsidiesVoorHealthCheck,
+      // Pakketarchitectuurronde (2026-10-08): subsidie-backenddata bestaat
+      // voor elk pakket (geen "gold-only" meer, zie DossierSubsidies.jsx) —
+      // zichtbaarheid is een rolkwestie (admin altijd, klant alleen bij
+      // Gold), geen datamodelkwestie. bouwDossierHealthCheck zelf kent
+      // daarom geen "gold"-begrip meer, alleen dit expliciete booleantje.
+      subsidiesZichtbaar: isAdmin || dossier.pakket_id === 'gold',
       openSignalenAantal,
       dossierId: dossier.dossier_id,
     })
-  }, [dossier, adviespunten, offertesVoorHealthCheck, openSignalenAantal])
+  }, [dossier, adviespunten, offertesVoorHealthCheck, opnamesVoorHealthCheck, subsidiesVoorHealthCheck, openSignalenAantal, isAdmin])
 
   return (
     <>
@@ -281,12 +312,17 @@ export default function DossierDetail() {
                 </p>
               ) : null}
               {healthCheck ? (
-                <Accordion title="Voortgang" defaultOpen>
-                  <DossierHealthCheck healthCheck={healthCheck} />
-                </Accordion>
+                <>
+                  {/* UX-herontwerp (2026-10-08): altijd zichtbaar, niet ingeklapt — "weet ik wat ik nu moet doen?" mag nooit achter een accordion verstopt zitten. */}
+                  <DossierVolgendeStap categorieen={healthCheck.categorieen} dossierStatus={dossier.status} />
+                  <Accordion title="Voortgang" defaultOpen>
+                    <DossierHealthCheck healthCheck={healthCheck} dossierStatus={dossier.status} />
+                  </Accordion>
+                </>
               ) : null}
               <PakketControle dossier={dossier} onDossierChange={setDossier} magBeheren={isAdmin} />
-              <Accordion title="Adviesdossier · Advies" defaultOpen>
+              {/* Anchor voor de Werkvolgorde/Health Check-actie "Dossier afronden" — de knop zelf staat al binnen DossierWerkruimte. */}
+              <Accordion title="Adviesdossier · Advies" defaultOpen id="advies-sectie">
                 <DossierWerkruimte
                   dossier={dossier}
                   adviespunten={adviespunten}
@@ -301,15 +337,27 @@ export default function DossierDetail() {
                   <BouwkundigeAnalyse dossier={dossier} onDossierChange={setDossier} magBeheren={isAdmin} />
                 </Accordion>
               ) : null}
-              {isAdmin ? <OpnamesSectie dossierId={dossier.dossier_id} /> : null}
-              {isAdmin ? <AdviesrapportGenerator dossier={dossier} adviespunten={adviespunten} /> : null}
-              {isAdmin && dossier.pakket_id === 'gold' ? (
-                <Accordion title="Subsidies">
+              {/* Anchor voor de Werkvolgorde/Health Check-actie "Opname starten/openen". */}
+              <div id="opnames-sectie">{isAdmin ? <OpnamesSectie dossierId={dossier.dossier_id} /> : null}</div>
+              {/* Anchor voor de Werkvolgorde-actie "Rapport maken" zodra alles ervoor gereed is. */}
+              <div id="rapport-sectie">{isAdmin ? <AdviesrapportGenerator dossier={dossier} adviespunten={adviespunten} /> : null}</div>
+              {isAdmin ? (
+                // Pakketarchitectuurronde (2026-10-08): subsidie-administratie is
+                // backendmatig en administratief voor élk pakket beschikbaar (zie
+                // 0035_dossier_subsidies.sql — admin-only RLS, geen pakketcheck) —
+                // pakket bepaalt dus nooit meer of een admin deze sectie ziet,
+                // alleen of een klant hem ooit te zien krijgt (die sectie is al
+                // isAdmin-only en blijft dat). Anchor voor de Werkvolgorde/Health
+                // Check-actie "Subsidies bijhouden".
+                <Accordion title="Subsidies" id="subsidies-sectie">
                   <DossierSubsidies
                     dossierId={dossier.dossier_id}
                     magBeheren={isAdmin}
                     adviespunten={adviespunten}
                     documenten={documentenVoorDossier}
+                    pand={dossier.panden}
+                    mjopSnapshot={dossier.mjop_snapshot}
+                    energieSnapshot={dossier.energie_snapshot}
                   />
                 </Accordion>
               ) : null}

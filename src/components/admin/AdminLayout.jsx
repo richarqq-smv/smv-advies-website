@@ -5,7 +5,7 @@ import { ROUTES } from '../../lib/routes'
 import { UitloggenKnop } from '../auth/UitloggenKnop'
 import { Container } from '../ui/Container'
 import { useMediaQuery } from '../../hooks/useMediaQuery'
-import { ADMIN_BEHEER_NAV_ITEMS, ADMIN_ADMINISTRATIE_NAV_ITEMS } from '../../data/adminNavigation'
+import { ADMIN_NAV_GROEPEN } from '../../data/adminNavigation'
 import { AdminMobileNav } from './AdminMobileNav'
 
 /**
@@ -65,16 +65,17 @@ export function AdminLayout() {
             </div>
 
             <nav aria-label="Admin" className="hidden items-center gap-1 lg:flex">
-              {ADMIN_BEHEER_NAV_ITEMS.map((item) => (
-                <NavLink key={item.to} to={item.to} end={item.end} className={navLinkClassName}>
-                  {item.label}
-                </NavLink>
-              ))}
-              <span className="mx-1.5 h-5 w-px bg-border" aria-hidden="true" />
-              {ADMIN_ADMINISTRATIE_NAV_ITEMS.map((item) => (
-                <NavLink key={item.to} to={item.to} end={item.end} className={navLinkClassName}>
-                  {item.label}
-                </NavLink>
+              {ADMIN_NAV_GROEPEN.map((groep, i) => (
+                <div key={groep.label} className="flex items-center gap-1">
+                  {i > 0 ? <span className="mx-1.5 h-5 w-px bg-border" aria-hidden="true" /> : null}
+                  {/* Groepslabel alleen voor screenreaders — de scheidingsstreep hierboven is op desktop al genoeg visueel onderscheid, geen extra tekst nodig in de toch al compacte balk. */}
+                  <span className="sr-only">{groep.label}</span>
+                  {groep.items.map((item) => (
+                    <NavLink key={item.to} to={item.to} end={item.end} className={navLinkClassName}>
+                      {item.label}
+                    </NavLink>
+                  ))}
+                </div>
               ))}
             </nav>
 
