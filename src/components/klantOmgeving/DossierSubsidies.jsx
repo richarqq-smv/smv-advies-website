@@ -72,10 +72,20 @@ export function DossierSubsidies({ dossierId, magBeheren, adviespunten = [], doc
 
   const gesorteerd = sorteerSubsidies(subsidies)
 
-  /** Zet een nieuw aangemaakte dossier_subsidies-rij in alle drie de bijbehorende states — gedeeld tussen het handmatige formulier hieronder en SubsidieCheck's "Toevoegen als subsidietraject"-actie, zodat er maar één opslagpad is. */
-  function nieuweSubsidieToegevoegd(nieuw) {
+  /**
+   * Zet een nieuw aangemaakte dossier_subsidies-rij in alle drie de
+   * bijbehorende states — gedeeld tussen het handmatige formulier
+   * hieronder en SubsidieCheck's "Toevoegen als subsidietraject"-actie,
+   * zodat er maar één opslagpad is. `koppeling` (optioneel, traceer-
+   * baarheidsronde 2026-10-09): als SubsidieCheck het aanleidende signaal
+   * al automatisch kon koppelen aan een bestaand adviespunt (via de
+   * bestaande koppelSubsidieMaatregel()), komt die koppeling hier binnen
+   * zodat de "Maatregelen"-lijst direct klopt, zonder dat de adviseur het
+   * nog handmatig moet doen.
+   */
+  function nieuweSubsidieToegevoegd(nieuw, koppeling = null) {
     setSubsidies((v) => [...v, nieuw])
-    setMaatregelenPerSubsidie((v) => ({ ...v, [nieuw.subsidie_id]: [] }))
+    setMaatregelenPerSubsidie((v) => ({ ...v, [nieuw.subsidie_id]: koppeling ? [koppeling] : [] }))
     setDocumentenPerSubsidie((v) => ({ ...v, [nieuw.subsidie_id]: [] }))
   }
 
@@ -390,6 +400,7 @@ export function DossierSubsidies({ dossierId, magBeheren, adviespunten = [], doc
         mjopSnapshot={mjopSnapshot}
         energieSnapshot={energieSnapshot}
         subsidies={subsidies}
+        adviespunten={adviespunten}
         magBeheren={magBeheren}
         onSubsidieToegevoegd={nieuweSubsidieToegevoegd}
       />
