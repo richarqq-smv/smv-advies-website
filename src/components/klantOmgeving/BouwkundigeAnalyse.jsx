@@ -17,6 +17,12 @@ const BOUWDELEN = [
   { key: 'beglazing', label: 'Beglazing', eis: 'U ≤ 1,65' },
 ]
 
+// Vaste, beperkte keuzelijst i.p.v. een vrij invoerveld (voorkomt spelling-
+// varianten als "slecht"/"Slecht"/"matig" naast elkaar in het rapport).
+// Een eerder opgeslagen, afwijkende waarde (bv. uit oudere dossiers) wordt
+// nooit stilzwijgend overschreven — zie de render hieronder.
+const BEOORDELING_OPTIES = ['Goed', 'Voldoende', 'Matig', 'Slecht']
+
 function leeg() {
   return { waarde: '', eenheid: 'Rc', beoordeling: '', opmerking: '' }
 }
@@ -83,7 +89,21 @@ export function BouwkundigeAnalyse({ dossier, onDossierChange, magBeheren }) {
                   <option value="U">U</option>
                 </select>
               </div>
-              <input className={`${INPUT_CLASSNAME} sm:col-span-1`} placeholder="Beoordeling" value={waarden[b.key].beoordeling} onChange={(e) => wijzig(b.key, 'beoordeling', e.target.value)} />
+              <select
+                className={`${INPUT_CLASSNAME} sm:col-span-1`}
+                value={waarden[b.key].beoordeling}
+                onChange={(e) => wijzig(b.key, 'beoordeling', e.target.value)}
+              >
+                <option value="">Beoordeling...</option>
+                {!BEOORDELING_OPTIES.includes(waarden[b.key].beoordeling) && waarden[b.key].beoordeling ? (
+                  <option value={waarden[b.key].beoordeling}>{waarden[b.key].beoordeling}</option>
+                ) : null}
+                {BEOORDELING_OPTIES.map((optie) => (
+                  <option key={optie} value={optie}>
+                    {optie}
+                  </option>
+                ))}
+              </select>
               <input className={`${INPUT_CLASSNAME} sm:col-span-2`} placeholder="Opmerking" value={waarden[b.key].opmerking} onChange={(e) => wijzig(b.key, 'opmerking', e.target.value)} />
             </div>
           </div>
