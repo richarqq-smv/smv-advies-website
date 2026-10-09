@@ -33,6 +33,25 @@ export function magOvergangNaar(huidigeStatus, nieuweStatus) {
 }
 
 /**
+ * Admin-UX-ronde (2026-10-09, UX-auditrapport §4): een factuur mag alleen
+ * vanuit een offerte worden aangemaakt die daadwerkelijk aan de klant is
+ * aangeboden ('verstuurd') of al akkoord is ('geaccepteerd') — nooit vanuit
+ * een 'concept' (nog niet verstuurd) of een terminale afwijzing/annulering.
+ * Moet exact overeenkomen met bewaak_factuur_offerte_status()
+ * (supabase/migrations/0044_factuur_alleen_vanuit_geldige_offerte.sql) —
+ * zelfde "UI en database putten uit precies dezelfde bron"-opzet als
+ * OFFERTE_TOEGESTANE_OVERGANGEN hierboven. De database blijft de echte,
+ * niet te omzeilen handhaving; dit is uitsluitend voor de UI (welke knop
+ * tonen) en een vroege, begrijpelijke melding vóór de aanroep.
+ */
+export const FACTUUR_TOEGESTANE_OFFERTE_STATUSSEN = ['verstuurd', 'geaccepteerd']
+
+/** Of er vanuit deze offertestatus een factuur mag worden aangemaakt — pure afgeleide, geen eigen bron van waarheid. */
+export function magFactuurMakenVanuitOfferte(offerteStatus) {
+  return FACTUUR_TOEGESTANE_OFFERTE_STATUSSEN.includes(offerteStatus)
+}
+
+/**
  * Gold-scope-signaal (werkfase Fase 11 — eenvoudige interne scopebewaking,
  * geen projectmanagement/urenregistratie/CRM). Gold's scope is en blijft
  * vaste tekst in packages.js (features/scopeNote) — dit voegt geen nieuwe

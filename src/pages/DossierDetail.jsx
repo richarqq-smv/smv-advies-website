@@ -18,6 +18,7 @@ import { OfferteEditor } from '../components/klantOmgeving/OfferteEditor'
 import { OffertesHistorie } from '../components/klantOmgeving/OffertesHistorie'
 import { AdviesrapportGenerator } from '../components/klantOmgeving/AdviesrapportGenerator'
 import { OpnamesSectie } from '../components/klantOmgeving/OpnamesSectie'
+import { PandSectie } from '../components/klantOmgeving/PandSectie'
 import { PakketControle } from '../components/klantOmgeving/PakketControle'
 import { BouwkundigeAnalyse } from '../components/klantOmgeving/BouwkundigeAnalyse'
 import { DossierTaken } from '../components/klantOmgeving/DossierTaken'
@@ -374,6 +375,7 @@ export default function DossierDetail() {
                   </Accordion>
                 </>
               ) : null}
+              {isAdmin ? <PandSectie pand={dossier.panden} onPandChange={(bijgewerktPand) => setDossier((d) => ({ ...d, panden: bijgewerktPand }))} /> : null}
               <PakketControle dossier={dossier} onDossierChange={setDossier} magBeheren={isAdmin} />
               {/* Anchor voor de Werkvolgorde/Health Check-actie "Dossier afronden" — de knop zelf staat al binnen DossierWerkruimte. */}
               <Accordion title="Adviesdossier · Advies" defaultOpen id="advies-sectie">

@@ -79,7 +79,7 @@ function opnameReferentie(waarnemingen, onderdeel) {
  * beoordeling (eligibility), ontbrekende gegevens, en — als combinatie al
  * bekend is — het berekeningsresultaat van berekenCombinatie().
  */
-function bouwMaatregelData({ maatregelKey, specificatie, combinatieResultaat, opnameWaarnemingen }) {
+function bouwMaatregelData({ maatregelKey, specificatie, combinatieResultaat, opnameWaarnemingen, aangeraakt = false }) {
   const eligibility = beoordeelMaatregel({ maatregelKey, specificatie: specificatie ?? {} })
   return {
     maatregelKey,
@@ -93,11 +93,12 @@ function bouwMaatregelData({ maatregelKey, specificatie, combinatieResultaat, op
     specificatie: specificatie ?? null,
     berekening: combinatieResultaat ?? null,
     opnameReferentie: opnameWaarnemingen ?? [],
+    aangeraakt,
   }
 }
 
 /** Zelfde rol als bouwMaatregelData(), maar voor apparaatmaatregelen (warmtepomp/zonneboiler). */
-function bouwApparaatMaatregelData({ apparaatKey, specificatie, combinatieResultaat, opnameWaarnemingen }) {
+function bouwApparaatMaatregelData({ apparaatKey, specificatie, combinatieResultaat, opnameWaarnemingen, aangeraakt = false }) {
   const eligibility = beoordeelApparaatMaatregel({ apparaatKey, specificatie: specificatie ?? {} })
   return {
     maatregelKey: apparaatKey,
@@ -111,6 +112,7 @@ function bouwApparaatMaatregelData({ apparaatKey, specificatie, combinatieResult
     specificatie: specificatie ?? null,
     berekening: combinatieResultaat ?? null,
     opnameReferentie: opnameWaarnemingen ?? [],
+    aangeraakt,
   }
 }
 
@@ -124,7 +126,7 @@ function bouwApparaatMaatregelData({ apparaatKey, specificatie, combinatieResult
  * beoordeelVentilatie() als die voorwaarde niet is vervuld, in plaats
  * van een status te tonen die feitelijk niet houdbaar is.
  */
-function bouwVentilatieMaatregelData({ specificatie, combinatieResultaat, heeftIsolatieContext }) {
+function bouwVentilatieMaatregelData({ specificatie, combinatieResultaat, heeftIsolatieContext, aangeraakt = false }) {
   const eligibility = beoordeelVentilatie({ specificatie: specificatie ?? {} })
   const moetDowngraden = !heeftIsolatieContext && BEREKENBAAR_VOOR_COMBINATIE.has(eligibility.status)
 
@@ -141,6 +143,7 @@ function bouwVentilatieMaatregelData({ specificatie, combinatieResultaat, heeftI
       specificatie: specificatie ?? null,
       berekening: null,
       opnameReferentie: [],
+      aangeraakt,
     }
   }
 
@@ -156,6 +159,7 @@ function bouwVentilatieMaatregelData({ specificatie, combinatieResultaat, heeftI
     specificatie: specificatie ?? null,
     berekening: combinatieResultaat ?? null,
     opnameReferentie: [],
+    aangeraakt,
   }
 }
 
@@ -276,22 +280,32 @@ export function bouwSubsidieDocumentData({
   }
   const combinatie = berekenCombinatie(combinatieInvoer)
 
-  const maatregelen = alleRuw.map(({ maatregelKey, soort, specificatie }) => {
+  const maatregelen = alleRuw.map(({ maatregelKey, soort, specificatie, aangeraakt }) => {
     const berekeningResultaat = combinatie.resultaten.find((r) => r.maatregelKey === maatregelKey) ?? null
     const onderdeelCode = OPNAME_ONDERDEEL_PER_MAATREGEL[maatregelKey] ?? null
     const opnameWaarnemingen = onderdeelCode ? opnameReferentie(waarnemingen, onderdeelCode) : []
     return soort === 'apparaat'
-      ? bouwApparaatMaatregelData({ apparaatKey: maatregelKey, specificatie, combinatieResultaat: berekeningResultaat, opnameWaarnemingen })
-      : bouwMaatregelData({ maatregelKey, specificatie, combinatieResultaat: berekeningResultaat, opnameWaarnemingen })
+      ? bouwApparaatMaatregelData({ apparaatKey: maatregelKey, specificatie, combinatieResultaat: berekeningResultaat, opnameWaarnemingen, aangeraakt })
+      : bouwMaatregelData({ maatregelKey, specificatie, combinatieResultaat: berekeningResultaat, opnameWaarnemingen, aangeraakt })
   })
   const ventilatieBerekening = combinatie.resultaten.find((r) => r.maatregelKey === 'ventilatie') ?? null
   maatregelen.push(
-    bouwVentilatieMaatregelData({ specificatie: ventilatieSpecificatie, combinatieResultaat: ventilatieBerekening, heeftIsolatieContext: isolatieOnafhankelijkSubsidiabel }),
+    bouwVentilatieMaatregelData({
+      specificatie: ventilatieSpecificatie,
+      combinatieResultaat: ventilatieBerekening,
+      heeftIsolatieContext: isolatieOnafhankelijkSubsidiabel,
+      aangeraakt: ventilatieAangeraakt,
+    }),
   )
 
   const bronnenRuw = [...new Set(maatregelen.map((m) => m.regel?.bron).filter(Boolean).map((b) => JSON.stringify(b)))].map((s) => JSON.parse(s))
   const bronnen = controleerBronnen(bronnenRuw)
 
+  // Alle ontbrekende velden, over elke ondersteunde maatregel heen — puur
+  // informatief (getoond in de "Nog aan te vullen"-kaart), bevat dus ook
+  // velden van maatregelen die deze adviseur voor dit dossier nooit heeft
+  // aangeraakt (bv. zonneboiler in een dossier dat alleen over dakisolatie
+  // gaat) — dat is normaal en blokkeert niets.
   const ontbrekendeVelden = []
   if (!uitvoeringsjaar && !maatregelen.some((m) => m.specificatie?.uitvoeringsjaar)) ontbrekendeVelden.push('Uitvoeringsjaar')
   maatregelen.forEach((m) => {
@@ -299,6 +313,30 @@ export function bouwSubsidieDocumentData({
       if (!ontbrekendeVelden.includes(g)) ontbrekendeVelden.push(g)
     })
   })
+
+  // Admin-UX-ronde (2026-10-09, UX-auditrapport §3): de daadwerkelijk
+  // BLOKKERENDE ontbrekende velden voor het genereren van het
+  // subsidieblad — uitsluitend van maatregelen die de adviseur voor dit
+  // dossier heeft aangeraakt (anders zou elk denkbaar, nooit ingevuld
+  // ISDE-onderdeel het genereren blijven blokkeren) én waarvan de status
+  // NIET_VOLDOENDE_GEGEVENS is: de enige status in deze engine die
+  // letterlijk betekent "er is nog geen zinnige uitspraak te doen" (zie
+  // subsidieEligibility.js's moduledoc). Elke andere status (ook
+  // "controle vereist"/"waarschijnlijk van toepassing") is al een
+  // beredeneerde conclusie met een reden — die velden zijn aanvullende
+  // informatie, geen blokkade. Fiscale (EIA/MIA/Vamil) ontbrekende
+  // gegevens (investeringsbedrag/-datum) horen hier bewust nooit bij: die
+  // worden nergens in deze applicatie ingevoerd, dus zouden het genereren
+  // permanent blokkeren — ze blijven uitsluitend informatief in het
+  // document zelf (zie subsidieDocumentDocx.js).
+  const kritiekeOntbrekendeVelden = []
+  maatregelen
+    .filter((m) => m.aangeraakt && m.status === SUBSIDIE_STATUSSEN.NIET_VOLDOENDE_GEGEVENS)
+    .forEach((m) => {
+      m.ontbrekendeGegevens.forEach((g) => {
+        if (!kritiekeOntbrekendeVelden.includes(g)) kritiekeOntbrekendeVelden.push(g)
+      })
+    })
 
   const regionaal = bouwRegionaleSectie({ postcode, plaats })
   const actielijst = bouwActielijst({ maatregelen, bronnen })
@@ -317,6 +355,13 @@ export function bouwSubsidieDocumentData({
     specificatiesPerMaatregel,
   })
 
+  // Heeft deze adviseur voor dit dossier überhaupt al iets ingevoerd? Een
+  // genereerknop voor een volledig leeg dossier (geen enkele maatregel
+  // aangeraakt, geen fiscale aanleiding gevonden) levert een zinloos,
+  // inhoudsloos document op — andere situatie dan "wel iets ingevuld, nog
+  // niet compleet" (kritiekeOntbrekendeVelden hierboven).
+  const heeftInhoud = maatregelen.some((m) => m.aangeraakt) || fiscaleRegelingen.length > 0
+
   return {
     meta: {
       klantnaam,
@@ -329,6 +374,8 @@ export function bouwSubsidieDocumentData({
     maatregelen,
     combinatie,
     ontbrekendeVelden,
+    kritiekeOntbrekendeVelden,
+    heeftInhoud,
     bronnen,
     regionaal,
     actielijst,

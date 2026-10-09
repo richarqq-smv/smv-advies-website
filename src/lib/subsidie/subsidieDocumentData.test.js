@@ -21,6 +21,75 @@ test('zonder dossierbreed jaar en zonder maatregel-jaar: "Uitvoeringsjaar" staat
   assert.ok(data.ontbrekendeVelden.includes('Uitvoeringsjaar'))
 })
 
+// Admin-UX-ronde (2026-10-09, UX-auditrapport §3): kritiekeOntbrekendeVelden/
+// heeftInhoud bepalen of "Subsidieblad genereren" geblokkeerd wordt
+// (AdminSubsidieBegeleiding.jsx) — alleen AANGERAAKTE maatregelen met
+// status "niet_voldoende_gegevens" mogen blokkeren; een nooit aangeraakte
+// maatregel (bv. zonneboiler in een dakisolatie-dossier) nooit.
+test('een volledig leeg dossier (geen enkele maatregel aangeraakt): heeftInhoud is false, kritiekeOntbrekendeVelden is leeg', () => {
+  const data = bouwSubsidieDocumentData({ dossier: DOSSIER })
+  assert.equal(data.heeftInhoud, false)
+  assert.deepEqual(data.kritiekeOntbrekendeVelden, [])
+})
+
+test('een aangeraakte maatregel zonder oppervlakte/Rd-waarde (niet_voldoende_gegevens): blokkeert via kritiekeOntbrekendeVelden, heeftInhoud is true', () => {
+  const data = bouwSubsidieDocumentData({
+    dossier: DOSSIER,
+    uitvoeringsjaar: 2026,
+    specificatiesPerMaatregel: { dakisolatie: { isolatieBevestigd: 'ja' } }, // aangeraakt, maar oppervlakte/Rd ontbreken
+  })
+  const dak = data.maatregelen.find((m) => m.maatregelKey === 'dakisolatie')
+  assert.equal(dak.status, 'niet_voldoende_gegevens')
+  assert.equal(data.heeftInhoud, true)
+  assert.ok(data.kritiekeOntbrekendeVelden.some((v) => v.includes('dakisolatie')))
+})
+
+test('een nooit aangeraakte maatregel blokkeert nooit, ook niet als die zelf ook "niet_voldoende_gegevens" zou zijn', () => {
+  const data = bouwSubsidieDocumentData({
+    dossier: DOSSIER,
+    uitvoeringsjaar: 2026,
+    specificatiesPerMaatregel: { dakisolatie: { oppervlakteM2: 40, technischeWaarde: 3.5, isolatieBevestigd: 'ja' } },
+  })
+  const gevel = data.maatregelen.find((m) => m.maatregelKey === 'gevelisolatie')
+  assert.equal(gevel.aangeraakt, false)
+  assert.equal(gevel.status, 'niet_voldoende_gegevens') // feitelijk ook incompleet, maar nooit aangeraakt
+  assert.ok(!data.kritiekeOntbrekendeVelden.some((v) => v.includes('gevelisolatie')))
+})
+
+test('een complete, aangeraakte maatregel (van_toepassing) blokkeert niet', () => {
+  const data = bouwSubsidieDocumentData({
+    dossier: DOSSIER,
+    uitvoeringsjaar: 2026,
+    specificatiesPerMaatregel: { dakisolatie: { oppervlakteM2: 40, technischeWaarde: 3.5, isolatieBevestigd: 'ja', meldcode: 'KA12345' } },
+  })
+  const dak = data.maatregelen.find((m) => m.maatregelKey === 'dakisolatie')
+  assert.equal(dak.status, 'van_toepassing')
+  assert.equal(data.heeftInhoud, true)
+  assert.deepEqual(data.kritiekeOntbrekendeVelden, [])
+})
+
+test('een aangeraakte maatregel met status "controle_vereist" (bv. afwijkende doelgroep) blokkeert niet — dat is al een beredeneerde conclusie, geen "niet_voldoende_gegevens"', () => {
+  const data = bouwSubsidieDocumentData({
+    dossier: DOSSIER,
+    uitvoeringsjaar: 2026,
+    specificatiesPerMaatregel: { dakisolatie: { doelgroep: 'zakelijk' } },
+  })
+  const dak = data.maatregelen.find((m) => m.maatregelKey === 'dakisolatie')
+  assert.equal(dak.status, 'controle_vereist')
+  assert.deepEqual(data.kritiekeOntbrekendeVelden, [])
+})
+
+test('alleen een fiscale (EIA/MIA/Vamil) aanleiding, geen enkele ISDE-maatregel aangeraakt: heeftInhoud is true, maar blokkeert niet (fiscale ontbrekende gegevens blokkeren nooit)', () => {
+  const data = bouwSubsidieDocumentData({
+    dossier: { ...DOSSIER, panden: { ...DOSSIER.panden, gebruikstype: 'horeca' } },
+    uitvoeringsjaar: 2026,
+    mjopInsights: [{ componentId: 'c1', recommendations: [{ measureName: 'Dakisolatie vervangen' }] }],
+  })
+  assert.ok(data.fiscaleRegelingen.length > 0)
+  assert.equal(data.heeftInhoud, true)
+  assert.deepEqual(data.kritiekeOntbrekendeVelden, [])
+})
+
 test('dossierbreed jaar vult een maatregel zonder eigen jaar aan, zonder een al ingevuld maatregel-jaar te overschrijven', () => {
   const data = bouwSubsidieDocumentData({
     dossier: DOSSIER,

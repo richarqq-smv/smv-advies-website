@@ -243,6 +243,10 @@ export default function AdminSubsidieBegeleiding() {
 
   async function genereerSubsidieblad() {
     if (!documentData || !dossier) return
+    if (!kanGenereren) {
+      setFout('Het subsidieblad kan nog niet worden gegenereerd: vul eerst de ontbrekende verplichte gegevens aan.')
+      return
+    }
     setGenererenBezig(true)
     setFout(null)
     try {
@@ -269,6 +273,16 @@ export default function AdminSubsidieBegeleiding() {
   if (laden) return null
   if (nietGevonden || !dossier) return <NotFound />
 
+  // UX-auditronde 2026-10-09, feature 4: "Subsidieblad genereren" mag niet
+  // zomaar een document opleveren terwijl de aangeraakte maatregelen nog
+  // onvoldoende gegevens hebben om iets te kunnen zeggen (zie
+  // kritiekeOntbrekendeVelden in subsidieDocumentData.js — bewust beperkt
+  // tot aangeraakte maatregelen + NIET_VOLDOENDE_GEGEVENS, nooit tot
+  // niet-aangeraakte maatregelen of de fiscale Investeringsbedrag/-datum-
+  // velden, die nergens in de app invoerbaar zijn).
+  const kritiekeOntbrekendeVelden = documentData?.kritiekeOntbrekendeVelden ?? []
+  const heeftInhoud = documentData?.heeftInhoud ?? false
+  const kanGenereren = heeftInhoud && kritiekeOntbrekendeVelden.length === 0
   const officieleBron = documentData?.bronnen?.[0] ?? null
   const isolatieMaatregelen = documentData?.maatregelen.filter((m) => m.soort === 'isolatie') ?? []
   const apparaatMaatregelen = documentData?.maatregelen.filter((m) => m.soort === 'apparaat') ?? []
@@ -460,8 +474,37 @@ export default function AdminSubsidieBegeleiding() {
               )}
             </div>
 
+            {!kanGenereren ? (
+              <div className="flex gap-3 rounded-2xl border border-amber-300 bg-amber-50 p-5">
+                <WarningCircle size={20} className="mt-0.5 shrink-0 text-amber-700" />
+                <div>
+                  <h2 className="text-base font-medium text-amber-900">Subsidieblad genereren is nog niet mogelijk</h2>
+                  {!heeftInhoud ? (
+                    <p className="mt-1 text-sm text-amber-900">
+                      Er zijn nog geen opnamegegevens voor een maatregel of fiscale regeling vastgelegd in dit dossier. Vul eerst de opname
+                      en/of de maatregelgegevens hieronder in.
+                    </p>
+                  ) : (
+                    <>
+                      <p className="mt-1 text-sm text-amber-900">
+                        Deze gegevens zijn nog niet voldoende om de subsidie te kunnen bepalen voor de maatregelen die al zijn
+                        vastgelegd. Vul de volgende verplichte gegevens aan (zie ook "Nog aan te vullen" hierboven):
+                      </p>
+                      <ul className="mt-2 flex flex-col gap-1">
+                        {kritiekeOntbrekendeVelden.map((v) => (
+                          <li key={v} className="text-sm text-amber-900">
+                            ☐ {v}
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                </div>
+              </div>
+            ) : null}
+
             <div className="flex flex-wrap gap-3">
-              <Button type="button" variant="primary" onClick={genereerSubsidieblad} disabled={genererenBezig}>
+              <Button type="button" variant="primary" onClick={genereerSubsidieblad} disabled={genererenBezig || !kanGenereren}>
                 <FileArrowDown size={16} /> {genererenBezig ? 'Subsidiedocument wordt gegenereerd...' : 'Subsidieblad genereren'}
               </Button>
               {officieleBron ? (

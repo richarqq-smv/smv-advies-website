@@ -127,6 +127,31 @@ async function vindOpenDossier(klantId, pandId) {
 }
 
 /**
+ * Admin-only: maakt in één atomaire databasetransactie een nieuwe Klant +
+ * Pand + Klant-Pand-koppeling + Dossier aan (UX-auditronde 2026-10-09,
+ * §0 — tot nu toe bestond hier geen enkele admin-flow voor, alleen de
+ * klant-zelf-service-RPC's registreer_klant()/maak_pand_en_koppel()).
+ * Roept de nieuwe `admin_maak_klant_pand_dossier()`-RPC aan
+ * (0043_admin_klant_pand_dossier_aanmaken.sql): die controleert zelf
+ * `is_admin()` en faalt de hele transactie als er iets misgaat — er kan
+ * dus nooit een gedeeltelijk aangemaakte combinatie ontstaan, ook niet
+ * door dubbelklikken (elke klik is een volledig nieuwe, zelfstandige
+ * transactie; de UI-knop zelf voorkomt dubbele verzending door `bezig`).
+ *
+ * `klant`: `{ naam, bedrijfsnaam, email, telefoon }`. `pand`: zelfde
+ * camelCase-vorm als `maakPandEnKoppel()`'s `pandInput` hierboven
+ * (`omschrijving/adres/postcode/plaats/bouwjaar/gebruikstype/
+ * vloeroppervlak/bouwlagen/gebruikers/energiebron/
+ * verwarmingssysteemType/energielabel/opmerkingen/ontstaanVia`).
+ * Geeft het nieuwe `dossier_id` terug.
+ */
+export async function maakKlantPandDossierAlsAdmin({ klant, pand, pakketId = null }) {
+  return throwOnError(
+    await supabase.rpc('admin_maak_klant_pand_dossier', { p_klant: klant, p_pand: pand, p_pakket_id: pakketId }),
+  )
+}
+
+/**
  * Opent een Adviesdossier voor een Klant + Pand — of hergebruikt een al
  * bestaand open Dossier voor exact deze combinatie (zelfde regel als de
  * bestaande interne flow, lib/dossier/openDossier.js). Retourneert

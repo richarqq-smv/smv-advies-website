@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Archive, DownloadSimple, Trash, WarningCircle } from '@phosphor-icons/react'
+import { Archive, DownloadSimple, PencilSimple, Plus, Trash, WarningCircle } from '@phosphor-icons/react'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
+import { TextField } from '../components/ui/TextField'
 import { AdminTerugKnop } from '../components/admin/AdminTerugKnop'
+import { NieuweKlantModal } from '../components/admin/NieuweKlantModal'
 import { ROUTES } from '../lib/routes'
-import { adminListKlanten, adminListDossiers, adminImporteerKlant, archiveerDossier, archiveerKlant } from '../lib/klantOmgeving/api'
+import { adminListKlanten, adminListDossiers, adminImporteerKlant, archiveerDossier, archiveerKlant, updateKlant } from '../lib/klantOmgeving/api'
 import { magDossierArchiveren } from '../lib/klantOmgeving/dossierArchief'
 import { magKlantArchiveren, dossiersDieMeeArchiveren } from '../lib/klantOmgeving/klantArchief'
+import { valideerKlantRegistratie } from '../lib/klantOmgeving/klantValidatie'
 import { loadAllKlanten, loadAllPanden, loadAllDossiers, loadAllKlantPandRelaties } from '../lib/dossier'
 import { bouwDossiersCsv, triggerCsvDownload } from '../lib/klantOmgeving/csvExport'
 
@@ -67,6 +70,22 @@ export default function AdminDossiers() {
   const [archiveerKlantId, setArchiveerKlantId] = useState(null)
   const [archiveerKlantBezig, setArchiveerKlantBezig] = useState(false)
   const [archiveerKlantFoutId, setArchiveerKlantFoutId] = useState(null)
+
+  // Nieuwe klant/pand/dossier aanmaken (UX-auditronde 2026-10-09, §0) —
+  // zie components/admin/NieuweKlantModal.jsx voor het formulier zelf en
+  // de admin_maak_klant_pand_dossier()-RPC voor de atomaire aanmaak.
+  const [nieuweKlantModalOpen, setNieuweKlantModalOpen] = useState(false)
+  const [nieuwDossierId, setNieuwDossierId] = useState(null)
+
+  // Klant bewerken (naam/bedrijfsnaam/e-mail/telefoon) — hergebruikt
+  // dezelfde updateKlant()/valideerKlantRegistratie() als de klant-eigen
+  // /account-pagina (RLS klanten_update staat is_admin() al toe, dus geen
+  // nieuwe databasewijziging nodig, alleen deze UI).
+  const [bewerkKlantId, setBewerkKlantId] = useState(null)
+  const [bewerkForm, setBewerkForm] = useState(null)
+  const [bewerkFouten, setBewerkFouten] = useState({})
+  const [bewerkBezig, setBewerkBezig] = useState(false)
+  const [bewerkFout, setBewerkFout] = useState(null)
 
   useEffect(() => {
     laadAlles()
@@ -163,6 +182,49 @@ export default function AdminDossiers() {
     }
   }
 
+  function openNieuweKlantModal() {
+    setNieuwDossierId(null)
+    setNieuweKlantModalOpen(true)
+  }
+
+  async function klantAangemaakt(dossierId) {
+    setNieuweKlantModalOpen(false)
+    setNieuwDossierId(dossierId)
+    await laadAlles()
+  }
+
+  function startBewerken(klant) {
+    setBewerkKlantId(klant.klant_id)
+    setBewerkForm({ naam: klant.naam ?? '', bedrijfsnaam: klant.bedrijfsnaam ?? '', email: klant.email ?? '', telefoon: klant.telefoon ?? '' })
+    setBewerkFouten({})
+    setBewerkFout(null)
+  }
+
+  function annuleerBewerken() {
+    setBewerkKlantId(null)
+    setBewerkForm(null)
+  }
+
+  async function opslaanBewerking(e) {
+    e.preventDefault()
+    const fouten = valideerKlantRegistratie(bewerkForm)
+    setBewerkFouten(fouten)
+    if (Object.keys(fouten).length > 0) return
+
+    setBewerkBezig(true)
+    setBewerkFout(null)
+    try {
+      const bijgewerkt = await updateKlant(bewerkKlantId, bewerkForm)
+      setKlanten((rows) => rows.map((k) => (k.klant_id === bewerkKlantId ? bijgewerkt : k)))
+      setBewerkKlantId(null)
+      setBewerkForm(null)
+    } catch {
+      setBewerkFout('Opslaan is niet gelukt. Probeer het opnieuw.')
+    } finally {
+      setBewerkBezig(false)
+    }
+  }
+
   const gefilterdeKlanten = klanten.filter((k) => {
     const q = zoekterm.trim().toLowerCase()
     if (!q) return true
@@ -216,8 +278,27 @@ export default function AdminDossiers() {
                 </div>
               ) : null}
 
+              {nieuwDossierId ? (
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-accent/40 bg-accent/5 p-5">
+                  <p className="text-sm font-medium text-primary">Klant, pand en dossier zijn aangemaakt.</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Button to={ROUTES.adminDossierDetail(nieuwDossierId)} size="sm">
+                      Open dossier
+                    </Button>
+                    <Button type="button" variant="ghost" size="sm" onClick={() => setNieuwDossierId(null)}>
+                      Sluiten
+                    </Button>
+                  </div>
+                </div>
+              ) : null}
+
               <div>
-                <h2 className="mb-3 text-lg text-primary">Klanten ({klanten.length})</h2>
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                  <h2 className="text-lg text-primary">Klanten ({klanten.length})</h2>
+                  <Button type="button" size="sm" onClick={openNieuweKlantModal}>
+                    <Plus size={15} /> Nieuwe klant toevoegen
+                  </Button>
+                </div>
                 <input
                   type="search"
                   placeholder="Zoek op naam, bedrijfsnaam of e-mail"
@@ -230,7 +311,49 @@ export default function AdminDossiers() {
                 ) : (
                   <ul className="flex flex-col gap-2">
                     {gefilterdeKlanten.map((k) =>
-                      archiveerKlantId === k.klant_id ? (
+                      bewerkKlantId === k.klant_id ? (
+                        <li key={k.klant_id} className="rounded-lg border border-accent/40 bg-accent/5 px-4 py-3 text-sm">
+                          <form onSubmit={opslaanBewerking} className="flex flex-col gap-3">
+                            <div className="grid gap-3 sm:grid-cols-2">
+                              <TextField id={`bk-naam-${k.klant_id}`} label="Naam" value={bewerkForm.naam} onChange={(v) => setBewerkForm((f) => ({ ...f, naam: v }))} error={bewerkFouten.naam} required />
+                              <TextField
+                                id={`bk-bedrijfsnaam-${k.klant_id}`}
+                                label="Bedrijfsnaam"
+                                value={bewerkForm.bedrijfsnaam}
+                                onChange={(v) => setBewerkForm((f) => ({ ...f, bedrijfsnaam: v }))}
+                              />
+                              <TextField
+                                id={`bk-email-${k.klant_id}`}
+                                label="E-mailadres"
+                                type="email"
+                                value={bewerkForm.email}
+                                onChange={(v) => setBewerkForm((f) => ({ ...f, email: v }))}
+                                error={bewerkFouten.email}
+                              />
+                              <TextField
+                                id={`bk-telefoon-${k.klant_id}`}
+                                label="Telefoonnummer"
+                                value={bewerkForm.telefoon}
+                                onChange={(v) => setBewerkForm((f) => ({ ...f, telefoon: v }))}
+                                error={bewerkFouten.telefoon}
+                              />
+                            </div>
+                            {bewerkFout ? (
+                              <p role="alert" className="text-xs font-medium text-error">
+                                {bewerkFout}
+                              </p>
+                            ) : null}
+                            <div className="flex flex-wrap gap-2">
+                              <Button type="submit" size="sm" disabled={bewerkBezig}>
+                                {bewerkBezig ? 'Bezig...' : 'Opslaan'}
+                              </Button>
+                              <Button type="button" variant="ghost" size="sm" onClick={annuleerBewerken} disabled={bewerkBezig}>
+                                Annuleren
+                              </Button>
+                            </div>
+                          </form>
+                        </li>
+                      ) : archiveerKlantId === k.klant_id ? (
                         <li key={k.klant_id}>
                           <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-accent/40 bg-accent/5 px-4 py-3 text-sm">
                             <span className="text-primary">
@@ -270,18 +393,23 @@ export default function AdminDossiers() {
                                 ) : null}
                               </div>
                             </div>
-                            {magKlantArchiveren(k) ? (
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setArchiveerKlantId(k.klant_id)}
-                                aria-label="Klant naar archief"
-                                title="Klant naar archief"
-                              >
-                                <Archive size={16} />
+                            <div className="flex shrink-0 items-center gap-1">
+                              <Button type="button" variant="ghost" size="sm" onClick={() => startBewerken(k)} aria-label="Klant bewerken" title="Klant bewerken">
+                                <PencilSimple size={16} />
                               </Button>
-                            ) : null}
+                              {magKlantArchiveren(k) ? (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setArchiveerKlantId(k.klant_id)}
+                                  aria-label="Klant naar archief"
+                                  title="Klant naar archief"
+                                >
+                                  <Archive size={16} />
+                                </Button>
+                              ) : null}
+                            </div>
                           </div>
                           {archiveerKlantFoutId === k.klant_id ? (
                             <p role="alert" className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-error">
@@ -384,6 +512,8 @@ export default function AdminDossiers() {
           )}
         </Container>
       </Section>
+
+      {nieuweKlantModalOpen ? <NieuweKlantModal onClose={() => setNieuweKlantModalOpen(false)} onAangemaakt={klantAangemaakt} /> : null}
     </>
   )
 }

@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { FileText, Trash, WarningCircle } from '@phosphor-icons/react'
 import { Button } from '../ui/Button'
 import { ROUTES } from '../../lib/routes'
-import { getOffertesVoorDossier, deleteOfferte, updateOfferteStatus, getFacturenVoorDossier, createFactuur, getFactuurInstellingen } from '../../lib/klantOmgeving/api'
-import { euro, formatDatumNl, OFFERTE_TOEGESTANE_OVERGANGEN } from '../../lib/klantOmgeving/offerte'
+import { getOfferte, getOffertesVoorDossier, deleteOfferte, updateOfferteStatus, getFacturenVoorDossier, createFactuur, getFactuurInstellingen } from '../../lib/klantOmgeving/api'
+import { euro, formatDatumNl, OFFERTE_TOEGESTANE_OVERGANGEN, magFactuurMakenVanuitOfferte } from '../../lib/klantOmgeving/offerte'
 import { berekenFactuurTotalen, bouwFactuurKlantSnapshot, bouwFactuurRegelsVanuitOfferte, standaardVervaldatum } from '../../lib/klantOmgeving/factuur'
 
 // Knoptekst per mogelijke volgende status — alleen de overgangen die
@@ -108,6 +108,7 @@ export function OffertesHistorie({ dossierId, refreshSignal, magBeheren = false,
   const [facturenPerOfferte, setFacturenPerOfferte] = useState({})
   const [factuurMakenBezig, setFactuurMakenBezig] = useState(null) // offerte.id
   const [factuurMakenFoutId, setFactuurMakenFoutId] = useState(null)
+  const [factuurMakenFoutBericht, setFactuurMakenFoutBericht] = useState(null)
 
   useEffect(() => {
     let actief = true
@@ -156,12 +157,36 @@ export function OffertesHistorie({ dossierId, refreshSignal, magBeheren = false,
    * de offerte (bouwFactuurRegelsVanuitOfferte) — de offerte zelf wordt
    * hier nooit aangepast, en een latere wijziging van de offerte raakt
    * deze factuur niet meer (zie factuur.js/0014_facturen.sql).
+   *
+   * Admin-UX-ronde (2026-10-09, UX-auditrapport §4): een factuur mag alleen
+   * vanuit een 'verstuurd'/'geaccepteerd'-offerte worden aangemaakt (zie
+   * magFactuurMakenVanuitOfferte(), offerte.js). De knop zelf is al
+   * verborgen voor een andere status (zie render hieronder), maar de
+   * status kan tussen het laden van deze lijst en het klikken zijn
+   * veranderd (bv. in een andere browsertab) — daarom wordt de actuele
+   * status hier opnieuw bij de database opgehaald (getOfferte()) vlak
+   * vóór de aanroep, in plaats van te vertrouwen op de al geladen
+   * `offerte`-prop. De echte, niet te omzeilen handhaving blijft de
+   * database-trigger bewaak_factuur_offerte_status()
+   * (0044_factuur_alleen_vanuit_geldige_offerte.sql) — deze check is een
+   * vroege, begrijpelijke melding, geen vervanging daarvan.
    */
   async function maakFactuur(offerte) {
     setFactuurMakenBezig(offerte.id)
     setFactuurMakenFoutId(null)
+    setFactuurMakenFoutBericht(null)
     try {
-      const regels = bouwFactuurRegelsVanuitOfferte(offerte)
+      const actuele = await getOfferte(offerte.id)
+      if (!magFactuurMakenVanuitOfferte(actuele.status)) {
+        setFactuurMakenFoutId(offerte.id)
+        setFactuurMakenFoutBericht(
+          `Een factuur kan alleen worden aangemaakt vanuit een offerte met status "Verstuurd" of "Geaccepteerd" (huidige status: "${STATUS_LABELS[actuele.status] ?? actuele.status}"). Vernieuw deze pagina om de actuele status te zien.`,
+        )
+        setFactuurMakenBezig(null)
+        setOffertes((rows) => rows.map((o) => (o.id === offerte.id ? actuele : o)))
+        return
+      }
+      const regels = bouwFactuurRegelsVanuitOfferte(actuele)
       const totalen = berekenFactuurTotalen(regels)
       const klantSnapshot = bouwFactuurKlantSnapshot({ klant, contactpersoon })
       const instellingen = await getFactuurInstellingen()
@@ -180,6 +205,7 @@ export function OffertesHistorie({ dossierId, refreshSignal, magBeheren = false,
       navigate(ROUTES.adminFactuurDetail(factuur.factuur_id))
     } catch {
       setFactuurMakenFoutId(offerte.id)
+      setFactuurMakenFoutBericht(null)
       setFactuurMakenBezig(null)
     }
   }
@@ -318,7 +344,7 @@ export function OffertesHistorie({ dossierId, refreshSignal, magBeheren = false,
                         <Button as="link" to={ROUTES.adminFactuurDetail(facturenPerOfferte[offerte.id].factuur_id)} variant="ghost" size="sm">
                           <FileText size={15} /> Factuur {facturenPerOfferte[offerte.id].factuurnummer}
                         </Button>
-                      ) : magBeheren ? (
+                      ) : magBeheren && magFactuurMakenVanuitOfferte(offerte.status) ? (
                         <Button type="button" variant="outline" size="sm" onClick={() => maakFactuur(offerte)} disabled={factuurMakenBezig === offerte.id}>
                           <FileText size={15} /> Factuur maken
                         </Button>
@@ -343,7 +369,7 @@ export function OffertesHistorie({ dossierId, refreshSignal, magBeheren = false,
               {magBeheren && factuurMakenFoutId === offerte.id ? (
                 <p role="alert" className="mt-2 flex items-center gap-1.5 text-xs font-medium text-error">
                   <WarningCircle size={13} weight="fill" />
-                  Factuur aanmaken is niet gelukt. Probeer het opnieuw.
+                  {factuurMakenFoutBericht ?? 'Factuur aanmaken is niet gelukt. Probeer het opnieuw.'}
                 </p>
               ) : null}
             </div>

@@ -45,6 +45,7 @@ Adviespunten van een afgerond Dossier: dezelfde dubbele aanpak (RLS-policy die d
 | `is_admin()` | Ja | `user_roles` heeft geen policy voor `authenticated`; zonder DEFINER zou dit altijd `false` teruggeven. Geen parameter, dus niet te misbruiken voor andermans rol. |
 | `registreer_klant()` | Ja | `klanten`/`contactpersonen` hebben geen open INSERT voor customers. Gebruikt uitsluitend `auth.uid()`, nooit een meegegeven account-parameter. |
 | `maak_pand_en_koppel()` | Ja | Zelfde reden; controleert `is_member_of_klant()` vóór elke insert. |
+| `admin_maak_klant_pand_dossier()` (2026-10-09) | Ja | Admin-equivalent van `registreer_klant()`+`maak_pand_en_koppel()` voor een klant zonder eigen account: controleert `is_admin()` vóór elke insert, bouwt Klant+Pand+koppeling+Dossier atomair op in één transactie (nooit een gedeeltelijke combinatie). |
 | `handle_new_user()` (trigger op `auth.users`) | Ja | Moet `profiles`/`user_roles` kunnen vullen bij registratie, vóór er enige policy-context is. Alleen aangeroepen door Postgres zelf. |
 | `bewaak_dossier_integriteit()` / `bewaak_adviespunt_integriteit()` (triggers) | Nee (invoker) | Moeten juist binnen de al door RLS beperkte context van de uitvoerende actie blijven. |
 

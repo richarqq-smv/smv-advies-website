@@ -7,8 +7,8 @@ import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
 import { TextField } from '../components/ui/TextField'
 import { ROUTES } from '../lib/routes'
-import { adminListKosten, createKostenpost, updateKostenpostStatus, verwijderKostenpost } from '../lib/klantOmgeving/api'
-import { KOSTEN_CATEGORIEEN, KOSTEN_CATEGORIE_LABELS, berekenKostenBedragen, valideerKostenpost } from '../lib/klantOmgeving/kosten'
+import { adminListKosten, createKostenpost, updateKostenpostStatus, verwijderKostenpost, getFactuurInstellingen } from '../lib/klantOmgeving/api'
+import { KOSTEN_CATEGORIEEN, KOSTEN_CATEGORIE_LABELS, BTW_PERCENTAGE_OPTIES, berekenKostenBedragen, valideerKostenpost } from '../lib/klantOmgeving/kosten'
 import { euro, formatDatumNl } from '../lib/klantOmgeving/offerte'
 
 const SELECT_CLASSNAME =
@@ -18,8 +18,31 @@ function vandaagIso() {
   return new Date().toISOString().slice(0, 10)
 }
 
-function leegFormulier() {
-  return { datum: vandaagIso(), leverancier: '', omschrijving: '', categorie: 'overig', bedragExclBtw: '', btwPercentage: '21' }
+/**
+ * Admin-UX-ronde (2026-10-09, UX-auditrapport §5): `standaardBtw` komt uit
+ * de Administratie-instelling `standaard_btw_percentage` (getFactuurInstellingen(),
+ * zie het laad-effect hieronder) — nooit meer een hardcoded "21" die de
+ * ingestelde waarde kan tegenspreken. `null` betekent "nog niet geladen of
+ * niet beschikbaar": het formulier start dan zonder enige btw-keuze, zodat
+ * de adviseur bewust zelf moet kiezen in plaats van stilzwijgend op een
+ * verzonnen standaard te vertrouwen.
+ */
+function leegFormulier(standaardBtw = null) {
+  const isStandaardOptie = standaardBtw != null && BTW_PERCENTAGE_OPTIES.includes(standaardBtw)
+  return {
+    datum: vandaagIso(),
+    leverancier: '',
+    omschrijving: '',
+    categorie: 'overig',
+    bedragExclBtw: '',
+    btwKeuze: isStandaardOptie ? String(standaardBtw) : standaardBtw != null ? 'anders' : '',
+    btwPercentageAnders: !isStandaardOptie && standaardBtw != null ? String(standaardBtw) : '',
+  }
+}
+
+/** Het daadwerkelijke numerieke btw-percentage voor dit formulier, afgeleid uit de dropdown-keuze (of het vrije "Anders"-veld). */
+function btwPercentageVanFormulier(formulier) {
+  return formulier.btwKeuze === 'anders' ? formulier.btwPercentageAnders : formulier.btwKeuze
 }
 
 /**
@@ -36,10 +59,17 @@ export default function AdminKosten() {
   const [fout, setFout] = useState(null)
   const [kosten, setKosten] = useState([])
 
-  const [formulier, setFormulier] = useState(leegFormulier)
+  const [formulier, setFormulier] = useState(() => leegFormulier())
   const [fouten, setFouten] = useState({})
   const [opslaanBezig, setOpslaanBezig] = useState(false)
   const [opslaanFout, setOpslaanFout] = useState(false)
+
+  // Standaard btw-percentage uit Administratie-instellingen (Admin-UX-ronde
+  // 2026-10-09, UX-auditrapport §5) — `null` zolang nog niet bekend, zie
+  // leegFormulier() hierboven voor hoe dat zich vertaalt naar het
+  // formulier (geen keuze voorgeselecteerd i.p.v. een gegokte "21").
+  const [standaardBtwStatus, setStandaardBtwStatus] = useState('laden') // 'laden' | 'geladen' | 'fout'
+  const [standaardBtw, setStandaardBtw] = useState(null)
 
   const [verwijderId, setVerwijderId] = useState(null)
   const [verwijderBezig, setVerwijderBezig] = useState(false)
@@ -58,13 +88,37 @@ export default function AdminKosten() {
     }
   }, [])
 
+  useEffect(() => {
+    let actief = true
+    getFactuurInstellingen()
+      .then((instellingen) => {
+        if (!actief) return
+        const waarde = instellingen?.standaard_btw_percentage != null ? Number(instellingen.standaard_btw_percentage) : null
+        setStandaardBtw(waarde)
+        setStandaardBtwStatus('geladen')
+        setFormulier(leegFormulier(waarde))
+      })
+      .catch(() => {
+        if (!actief) return
+        // Bewust GEEN hardcoded terugval — zie leegFormulier(): zonder
+        // bekende standaard start het btw-veld leeg, de adviseur kiest dan
+        // altijd zelf expliciet in plaats van op een gegokte waarde te
+        // vertrouwen.
+        setStandaardBtwStatus('fout')
+      })
+    return () => {
+      actief = false
+    }
+  }, [])
+
   function wijzigVeld(veld, waarde) {
     setFormulier((f) => ({ ...f, [veld]: waarde }))
   }
 
   async function voegToe(e) {
     e.preventDefault()
-    const gevonden = valideerKostenpost(formulier)
+    const btwPercentageRuw = btwPercentageVanFormulier(formulier)
+    const gevonden = valideerKostenpost({ ...formulier, btwPercentage: btwPercentageRuw })
     setFouten(gevonden)
     if (Object.keys(gevonden).length > 0) return
 
@@ -72,7 +126,7 @@ export default function AdminKosten() {
     setOpslaanFout(false)
     try {
       const bedragExclBtw = Number(formulier.bedragExclBtw)
-      const btwPercentage = Number(formulier.btwPercentage)
+      const btwPercentage = Number(btwPercentageRuw)
       const { btwBedrag, totaalInclBtw } = berekenKostenBedragen({ bedragExclBtw, btwPercentage })
       const nieuw = await createKostenpost({
         datum: formulier.datum,
@@ -85,7 +139,7 @@ export default function AdminKosten() {
         totaalInclBtw,
       })
       setKosten((rows) => [nieuw, ...rows])
-      setFormulier(leegFormulier())
+      setFormulier(leegFormulier(standaardBtw))
       setFouten({})
     } catch {
       setOpslaanFout(true)
@@ -197,17 +251,39 @@ export default function AdminKosten() {
                 <label htmlFor="kosten-btw" className="mb-2 block text-sm font-medium text-primary">
                   Btw%<span className="ml-1 text-accent">*</span>
                 </label>
-                <input
-                  id="kosten-btw"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={formulier.btwPercentage}
-                  onChange={(e) => wijzigVeld('btwPercentage', e.target.value)}
-                  className={SELECT_CLASSNAME}
-                />
+                <select id="kosten-btw" value={formulier.btwKeuze} onChange={(e) => wijzigVeld('btwKeuze', e.target.value)} className={SELECT_CLASSNAME}>
+                  <option value="" disabled>
+                    Kies een percentage...
+                  </option>
+                  {BTW_PERCENTAGE_OPTIES.map((p) => (
+                    <option key={p} value={String(p)}>
+                      {p}%
+                    </option>
+                  ))}
+                  <option value="anders">Anders...</option>
+                </select>
+                {standaardBtwStatus === 'fout' ? (
+                  <p className="mt-1.5 text-xs text-amber-700">Standaard btw-percentage kon niet worden geladen — kies hier handmatig een percentage.</p>
+                ) : null}
                 {fouten.btwPercentage ? <p className="mt-1.5 text-xs font-medium text-error">{fouten.btwPercentage}</p> : null}
               </div>
+              {formulier.btwKeuze === 'anders' ? (
+                <div>
+                  <label htmlFor="kosten-btw-anders" className="mb-2 block text-sm font-medium text-primary">
+                    Afwijkend btw-percentage<span className="ml-1 text-accent">*</span>
+                  </label>
+                  <input
+                    id="kosten-btw-anders"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    value={formulier.btwPercentageAnders}
+                    onChange={(e) => wijzigVeld('btwPercentageAnders', e.target.value)}
+                    className={SELECT_CLASSNAME}
+                  />
+                </div>
+              ) : null}
             </div>
             {opslaanFout ? (
               <p role="alert" className="flex items-center gap-1.5 text-sm font-medium text-error">

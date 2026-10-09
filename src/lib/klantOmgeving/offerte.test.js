@@ -10,6 +10,8 @@ import {
   OFFERTE_TOEGESTANE_OVERGANGEN,
   magOvergangNaar,
   beoordeelGoldMeerwerk,
+  FACTUUR_TOEGESTANE_OFFERTE_STATUSSEN,
+  magFactuurMakenVanuitOfferte,
 } from './offerte.js'
 
 // Lokale, minimale fixtures — bewust geen import van src/data/packages.js:
@@ -619,6 +621,30 @@ test('magOvergangNaar: elke terminale status (geaccepteerd/afgewezen/geannuleerd
 
 test('magOvergangNaar: onbekende status geeft nooit een toegestane overgang', () => {
   assert.equal(magOvergangNaar('onbekend', 'verstuurd'), false)
+})
+
+// Admin-UX-ronde (2026-10-09, UX-auditrapport §4): "Factuur maken" mag
+// uitsluitend vanuit 'verstuurd'/'geaccepteerd' — nooit vanuit 'concept'
+// (nog niet verstuurd) of een terminale afwijzing/annulering. Moet exact
+// overeenkomen met bewaak_factuur_offerte_status()
+// (0044_factuur_alleen_vanuit_geldige_offerte.sql), zie de parallelle
+// broncontrole in facturenVanuitOfferteBroncontrole.test.js.
+test('magFactuurMakenVanuitOfferte: alle vijf offertestatussen, exact de juiste twee toegestaan', () => {
+  assert.equal(magFactuurMakenVanuitOfferte('concept'), false)
+  assert.equal(magFactuurMakenVanuitOfferte('verstuurd'), true)
+  assert.equal(magFactuurMakenVanuitOfferte('geaccepteerd'), true)
+  assert.equal(magFactuurMakenVanuitOfferte('afgewezen'), false)
+  assert.equal(magFactuurMakenVanuitOfferte('geannuleerd'), false)
+})
+
+test('magFactuurMakenVanuitOfferte: onbekende/lege status is nooit toegestaan', () => {
+  assert.equal(magFactuurMakenVanuitOfferte('onbekend'), false)
+  assert.equal(magFactuurMakenVanuitOfferte(undefined), false)
+  assert.equal(magFactuurMakenVanuitOfferte(null), false)
+})
+
+test('FACTUUR_TOEGESTANE_OFFERTE_STATUSSEN bevat exact verstuurd en geaccepteerd, niets anders', () => {
+  assert.deepEqual([...FACTUUR_TOEGESTANE_OFFERTE_STATUSSEN].sort(), ['geaccepteerd', 'verstuurd'])
 })
 
 test('OFFERTE_TOEGESTANE_OVERGANGEN dekt exact de vijf bestaande statussen als bron- of doelstatus, geen extra verzonnen status', () => {

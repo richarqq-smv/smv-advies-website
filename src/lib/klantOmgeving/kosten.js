@@ -17,6 +17,27 @@ export const KOSTEN_CATEGORIEEN = [
 export const KOSTEN_CATEGORIE_LABELS = Object.fromEntries(KOSTEN_CATEGORIEEN.map((c) => [c.id, c.label]))
 const KOSTEN_CATEGORIE_IDS = new Set(KOSTEN_CATEGORIEEN.map((c) => c.id))
 
+// Admin-UX-ronde (2026-10-09, UX-auditrapport §5): de drie daadwerkelijk
+// bestaande Nederlandse btw-tarieven, plus "Anders" voor een bewust
+// afwijkend percentage (bijv. 0% voor een kostenpost uit het buitenland
+// met verlegde btw) — nooit een vrij invoerveld zonder enige keuze, dat
+// was precies de foutgevoelige situatie die dit moest oplossen.
+export const BTW_PERCENTAGE_OPTIES = [0, 9, 21]
+
+// Een btw-percentage is per definitie 0-100 — ruimer dan de drie
+// standaardtarieven (voor "Anders"), maar een harde bovengrens tegen een
+// tikfout (bijv. "210" i.p.v. "21") die anders stilzwijgend in het
+// BTW-overzicht en Resultaat terecht zou komen.
+const BTW_PERCENTAGE_MAX = 100
+
+/** Eindige, niet-negatieve numerieke waarde binnen 0-100 — gedeeld door het formulier (AdminKosten.jsx) én valideerKostenpost() hieronder, zodat beide nooit uit de pas kunnen lopen. */
+export function isGeldigBtwPercentage(waarde) {
+  if (typeof waarde === 'string' && waarde.trim() === '') return false
+  if (waarde == null) return false
+  const getal = Number(waarde)
+  return Number.isFinite(getal) && getal >= 0 && getal <= BTW_PERCENTAGE_MAX
+}
+
 export const KOSTEN_STATUSSEN = [
   { id: 'open', label: 'Open' },
   { id: 'betaald', label: 'Betaald' },
@@ -41,7 +62,7 @@ export function valideerKostenpost({ leverancier, omschrijving, categorie, datum
   if (!heeftWaarde(omschrijving)) fouten.omschrijving = 'Vul een omschrijving in.'
   if (!KOSTEN_CATEGORIE_IDS.has(categorie)) fouten.categorie = 'Kies een geldige categorie.'
   if (!heeftWaarde(datum)) fouten.datum = 'Vul een datum in.'
-  if (!(Number(bedragExclBtw) >= 0)) fouten.bedragExclBtw = 'Vul een geldig bedrag in.'
-  if (!(Number(btwPercentage) >= 0)) fouten.btwPercentage = 'Vul een geldig btw-percentage in.'
+  if (!(Number.isFinite(Number(bedragExclBtw)) && Number(bedragExclBtw) >= 0)) fouten.bedragExclBtw = 'Vul een geldig bedrag in.'
+  if (!isGeldigBtwPercentage(btwPercentage)) fouten.btwPercentage = `Vul een geldig btw-percentage in (0 t/m ${BTW_PERCENTAGE_MAX}).`
   return fouten
 }
