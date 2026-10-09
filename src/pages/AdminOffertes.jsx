@@ -48,7 +48,7 @@ export default function AdminOffertes() {
       <Seo title="Offertes" description="Overzicht van alle offertes." noindex />
       <PageHero eyebrow="Beheer" title="Offertes" description="Alle offertes, over alle klanten en dossiers heen." />
       <Section tone="white" noTopPadding>
-        <Container className="max-w-3xl">
+        <Container wide>
           <AdminTerugKnop />
           {laden ? (
             <p className="text-sm text-foreground-muted">Bezig met laden...</p>

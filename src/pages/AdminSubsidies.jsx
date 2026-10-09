@@ -72,7 +72,7 @@ export default function AdminSubsidies() {
         description="Maandelijks gesynchroniseerde referentielijst van actuele RVO-subsidiepagina's — vindplaats en link naar de officiële regeling, geen percentages of bedragen (die staan alleen op de RVO-pagina zelf)."
       />
       <Section tone="white" noTopPadding>
-        <Container className="max-w-3xl">
+        <Container wide>
           <AdminTerugKnop />
 
           {!laden && syncStatus ? (

@@ -72,7 +72,7 @@ export default function AdminOpenstaand() {
       <Seo title="Openstaand" description="Openstaande facturen, met vervaldatum en status." noindex />
       <PageHero eyebrow="Administratie" title="Openstaand" description="Verzonden facturen die nog niet betaald zijn." />
       <Section tone="white" noTopPadding>
-        <Container className="max-w-3xl">
+        <Container wide>
           <Button as="link" to={ROUTES.adminAdministratie} variant="ghost" size="sm" className="mb-5">
             <ArrowLeft size={16} /> Administratie
           </Button>

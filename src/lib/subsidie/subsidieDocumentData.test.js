@@ -214,4 +214,33 @@ test('geen dossier/pand/klant (lege input) crasht niet en levert lege, geen-gok-
   assert.equal(data.maatregelen.length, 10)
   data.maatregelen.forEach((m) => assert.equal(m.status, 'niet_voldoende_gegevens'))
   assert.equal(data.regionaal.locatieBekend, false)
+  assert.deepEqual(data.fiscaleRegelingen, [])
+})
+
+// --- EIA/MIA/Vamil (2026-10-09) ---
+
+test('fiscaleRegelingen is zonder mjop/energie-insights een lege array, nooit een gok', () => {
+  const data = bouwSubsidieDocumentData({ dossier: DOSSIER })
+  assert.deepEqual(data.fiscaleRegelingen, [])
+})
+
+test('fiscaleRegelingen blijft volledig gescheiden van maatregelen/combinatie — geen vermenging van ISDE en fiscale regelingen in één totaal', () => {
+  const data = bouwSubsidieDocumentData({
+    dossier: { ...DOSSIER, panden: { ...DOSSIER.panden, gebruikstype: 'horeca' } },
+    mjopInsights: [{ componentId: 'c1', recommendations: [{ measureName: 'Dakisolatie vervangen' }] }],
+  })
+  assert.ok(data.fiscaleRegelingen.length > 0)
+  data.fiscaleRegelingen.forEach((r) => {
+    assert.equal(data.maatregelen.some((m) => m.maatregelKey === r.bedrijfsmiddel.id), false)
+  })
+  assert.equal('fiscaleRegelingen' in data.combinatie, false)
+})
+
+test('fiscaleRegelingen respecteert de pandtype-grens: een niet-zakelijk pand geeft niet_van_toepassing', () => {
+  const data = bouwSubsidieDocumentData({
+    dossier: { ...DOSSIER, panden: { ...DOSSIER.panden, gebruikstype: 'woning' } },
+    mjopInsights: [{ componentId: 'c1', recommendations: [{ measureName: 'Dakisolatie vervangen' }] }],
+  })
+  assert.ok(data.fiscaleRegelingen.length > 0)
+  data.fiscaleRegelingen.forEach((r) => assert.equal(r.status, 'niet_van_toepassing'))
 })

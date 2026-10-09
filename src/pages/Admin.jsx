@@ -83,7 +83,7 @@ export default function Admin() {
       <Seo title="SMV Admin" description="Overzicht van klanten, dossiers, planning en openstaande acties." noindex />
       <PageHero eyebrow="Beheer" title="SMV Admin" description="Overzicht van klanten, dossiers, planning en openstaande acties." />
       <Section tone="white" noTopPadding>
-        <Container className="max-w-3xl">
+        <Container wide>
           {laden ? (
             <p className="text-sm text-foreground-muted">Bezig met laden...</p>
           ) : (

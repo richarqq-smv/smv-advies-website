@@ -85,7 +85,7 @@ export default function AdminInstellingen() {
       <Seo title="Instellingen" description="Bedrijfs- en factuurgegevens." noindex />
       <PageHero eyebrow="Administratie" title="Instellingen" description="Bedrijfs- en betaalgegevens die op elke nieuwe factuur worden gebruikt." />
       <Section tone="white" noTopPadding>
-        <Container className="max-w-2xl">
+        <Container wide>
           <Button as="link" to={ROUTES.adminAdministratie} variant="ghost" size="sm" className="mb-5">
             <ArrowLeft size={16} /> Administratie
           </Button>

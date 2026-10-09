@@ -180,7 +180,7 @@ export default function AdminDossiers() {
       <Seo title="Klanten & dossiers" description="Beheer klanten, panden en adviesdossiers." noindex />
       <PageHero eyebrow="Beheer" title="Klanten & dossiers" description="Beheer klanten, panden en adviesdossiers." />
       <Section tone="white" noTopPadding>
-        <Container className="max-w-3xl">
+        <Container wide>
           <AdminTerugKnop />
           {laden ? (
             <p className="text-sm text-foreground-muted">Bezig met laden...</p>

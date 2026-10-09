@@ -48,7 +48,7 @@ export default function AdminFacturen() {
       <Seo title="Facturen" description="Overzicht van alle facturen." noindex />
       <PageHero eyebrow="Beheer" title="Facturen" description="Alle facturen, over alle klanten en dossiers heen." />
       <Section tone="white" noTopPadding>
-        <Container className="max-w-4xl">
+        <Container wide>
           <AdminTerugKnop />
           <div className="mb-5 flex flex-wrap gap-1.5">
             {FILTERS.map((f) => (

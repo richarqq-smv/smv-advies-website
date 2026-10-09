@@ -75,7 +75,7 @@ export default function AdminAdministratie() {
       <Seo title="Administratie" description="Financieel overzicht: omzet, openstaand, btw en resultaat." noindex />
       <PageHero eyebrow="Beheer" title="Administratie" description="Wat moet u vandaag weten over facturatie en btw." />
       <Section tone="white" noTopPadding>
-        <Container className="max-w-3xl">
+        <Container wide>
           <AdminTerugKnop />
           {laden ? (
             <p className="text-sm text-foreground-muted">Bezig met laden...</p>

@@ -29,6 +29,8 @@
  * geopend.
  */
 import { SUBSIDIE_STATUS_LABELS } from './subsidieEligibility.js'
+import { FISCAAL_RELEVANTIE_STATUS_LABELS } from './fiscaleKoppeling.js'
+import { FISCALE_REGELING_PARAMETERS, FISCALE_REGELING_SOORT_LABELS } from './fiscaleRegelingParameters.js'
 
 const SMV_PRIMARY = '#16293a'
 const SMV_ACCENT = '#9d7720'
@@ -160,6 +162,57 @@ function combinatieSectie(data) {
     ${combinatie.totaalBerekenbaar ? `<p class="totaal"><strong>Totaal indicatief bedrag (alle maatregelen):</strong> ${euro(combinatie.totaalBedrag)}</p>` : '<p class="ontbrekend">Totaalbedrag nog niet berekenbaar — zie de ontbrekende gegevens per maatregel hierboven.</p>'}`
 }
 
+function fiscaalStatusKlasse(status) {
+  if (status === 'mogelijk_relevant') return 'status-positief'
+  if (status === 'niet_van_toepassing') return 'status-negatief'
+  return 'status-neutraal'
+}
+
+/**
+ * EIA/MIA/Vamil-sectie (2026-10-09) — bewust een VOLLEDIG APARTE sectie van
+ * de ISDE-maatregelen hierboven: andere soort regeling (fiscale aftrek/
+ * afschrijving, geen directe subsidie), dus nooit in hetzelfde
+ * totaalbedrag/dezelfde tabel gemengd (opdracht §7/§11: "Tel bedragen uit
+ * verschillende soorten regelingen niet op tot één misleidend
+ * subsidietotaal"). Per bedrijfsmiddel: officiële titel/code, regeling(en)
+ * met hun fiscale soort-label, reden voor selectie, percentage(s) zoals
+ * bekend (nooit een netto belastingvoordeel berekend), ontbrekende
+ * gegevens, procedure en bron.
+ */
+function fiscaleRegelingenSectie(fiscaleRegelingen = []) {
+  if (fiscaleRegelingen.length === 0) {
+    return `<h2>EIA / MIA / Vamil — fiscale regelingen</h2><p>Op basis van de huidige dossiergegevens (MJOP/Energie-indicatie/opname) is nog geen concrete aanleiding gevonden voor een EIA-, MIA- of Vamil-bedrijfsmiddel. Dit betekent niet dat er geen regeling van toepassing kan zijn — vul de dossiergegevens verder aan of controleer de officiële Milieu- en Energielijst 2026 handmatig.</p>`
+  }
+  const rijen = fiscaleRegelingen
+    .map(({ bedrijfsmiddel: b, status, redenen, ontbrekendeGegevens }) => {
+      const regelingLabels = b.regelingen.map((r) => `${FISCALE_REGELING_PARAMETERS[r]?.naam ?? r.toUpperCase()} (${FISCALE_REGELING_SOORT_LABELS[FISCALE_REGELING_PARAMETERS[r]?.soort] ?? '—'})`).join(' + ')
+      const percentageTekst = [
+        b.fiscaalParameter?.percentage != null ? `${b.regelingen.includes('eia') ? 'EIA' : 'MIA'}: ${b.fiscaalParameter.percentage}% aftrek` : null,
+        b.fiscaalParameterVamil?.percentage != null ? `Vamil: tot ${b.fiscaalParameterVamil.percentage}% willekeurig afschrijven` : null,
+      ]
+        .filter(Boolean)
+        .join(' · ')
+      return `
+        <h3>${escapeHtml(b.titel)}${b.bedrijfsmiddelcode ? ` (code ${escapeHtml(b.bedrijfsmiddelcode)})` : ''}</h3>
+        <table><tbody>
+          <tr><th>Regeling(en)</th><td>${escapeHtml(regelingLabels)}</td></tr>
+          <tr><th>Status</th><td><span class="${fiscaalStatusKlasse(status)}">${escapeHtml(FISCAAL_RELEVANTIE_STATUS_LABELS[status] ?? status)}</span></td></tr>
+          <tr><th>Reden voor selectie</th><td>${escapeHtml(redenen.join(' '))}</td></tr>
+          <tr><th>Fiscale parameter(s)</th><td>${percentageTekst ? escapeHtml(percentageTekst) : 'Niet bedrijfsmiddel-specifiek bevestigd — controle vereist op de officiële pagina.'}</td></tr>
+          <tr><th>Investeringsgrenzen</th><td>${escapeHtml(`Minimaal € ${b.investeringsgrenzen.minimum.toLocaleString('nl-NL')}${b.investeringsgrenzen.maximum != null ? `, maximaal € ${b.investeringsgrenzen.maximum.toLocaleString('nl-NL')}` : ''}`)}</td></tr>
+          ${ontbrekendeGegevens.length > 0 ? `<tr><th>Ontbrekende gegevens</th><td>${escapeHtml(ontbrekendeGegevens.join(', '))}</td></tr>` : ''}
+          <tr><th>Vereiste bewijsstukken</th><td>${escapeHtml(b.vereisteBewijsstukken.join(', '))}</td></tr>
+          <tr><th>Procedure</th><td>${escapeHtml(b.procedure.omschrijving)}</td></tr>
+          <tr><th>Officiële bron</th><td>${linkHtml(b.bron.url, b.bron.label)} — gecontroleerd op ${escapeHtml(b.bron.gecontroleerdOp)}</td></tr>
+        </tbody></table>`
+    })
+    .join('\n')
+  return `
+    <h2>EIA / MIA / Vamil — fiscale regelingen</h2>
+    <p>EIA, MIA en Vamil zijn GEEN directe subsidie — het zijn fiscale regelingen (investeringsaftrek resp. willekeurige afschrijving) die de fiscale winst beïnvloeden. Het daadwerkelijke belastingvoordeel hangt af van het toepasselijke belastingtarief en de fiscale positie van de onderneming; dat wordt hier niet berekend. De onderstaande mogelijkheden zijn zoekaanleidingen op basis van dit dossier, geen automatische toekenning — de daadwerkelijke fiscale kwalificatie wordt uitsluitend door RVO/de Belastingdienst vastgesteld.</p>
+    ${rijen}`
+}
+
 function specifiekeSubsidies(data) {
   return `
     <section class="pagina">
@@ -182,6 +235,7 @@ function specifiekeSubsidies(data) {
           ? `<ol>${data.actielijst.map((stap) => `<li>${escapeHtml(stap)}</li>`).join('')}</ol>`
           : '<p>Er zijn nog geen maatregelen voldoende vastgesteld om een concrete actielijst te tonen.</p>'
       }
+      ${fiscaleRegelingenSectie(data.fiscaleRegelingen)}
       <h2>Overige categorieën (nog niet geautomatiseerd)</h2>
       <p>De volgende categorieën zijn onderzocht maar worden door dit systeem (nog) niet automatisch beoordeeld. Dit betekent niet dat er geen subsidie bestaat — controleer dit handmatig vóór u een aanvraag indient.</p>
       ${

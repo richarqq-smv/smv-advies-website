@@ -63,7 +63,7 @@ export default function AdminBtw() {
       <Seo title="Btw-overzicht" description="Btw-overzicht per periode, met onderliggende facturen en kosten." noindex />
       <PageHero eyebrow="Administratie" title="Btw-overzicht" description="Omzet, kosten en btw-saldo per periode, met elke onderliggende transactie." />
       <Section tone="white" noTopPadding>
-        <Container className="max-w-3xl">
+        <Container wide>
           <Button as="link" to={ROUTES.adminAdministratie} variant="ghost" size="sm" className="mb-5">
             <ArrowLeft size={16} /> Administratie
           </Button>

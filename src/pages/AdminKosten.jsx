@@ -124,7 +124,7 @@ export default function AdminKosten() {
       <Seo title="Kosten" description="Bedrijfskosten registreren en beheren." noindex />
       <PageHero eyebrow="Administratie" title="Kosten" description="Bedrijfskosten die meetellen in het BTW-overzicht en het resultaat." />
       <Section tone="white" noTopPadding>
-        <Container className="max-w-3xl">
+        <Container wide>
           <Button as="link" to={ROUTES.adminAdministratie} variant="ghost" size="sm" className="mb-5">
             <ArrowLeft size={16} /> Administratie
           </Button>

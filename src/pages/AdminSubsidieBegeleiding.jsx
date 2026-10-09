@@ -18,6 +18,8 @@ import {
   updateDossierTaak,
   uploadDocument,
   getMijnProfiel,
+  addDossierSubsidie,
+  listDossierSubsidies,
 } from '../lib/klantOmgeving/api'
 import { bouwSubsidieAanvraagChecklist } from '../lib/dossier/dossierTaken'
 import { ONDERSTEUNDE_MAATREGELEN, TECHNISCHE_EENHEID_PER_MAATREGEL } from '../lib/subsidie/isdeIsolatieRegels'
@@ -27,6 +29,10 @@ import { bouwSubsidieDocumentData } from '../lib/subsidie/subsidieDocumentData'
 import { bouwSubsidieDocumentHtml } from '../lib/subsidie/subsidieDocumentHtml'
 import { naarCamelCaseSpecificatie } from '../lib/subsidie/subsidieSpecificatieMapping'
 import { IsolatieInvoerVelden, ApparaatInvoerVelden, VentilatieInvoerVelden } from '../components/subsidie/SubsidieInvoerVelden'
+import { FISCAAL_RELEVANTIE_STATUS_LABELS } from '../lib/subsidie/fiscaleKoppeling'
+import { FISCALE_REGELING_PARAMETERS, FISCALE_REGELING_SOORT_LABELS } from '../lib/subsidie/fiscaleRegelingParameters'
+import { buildInsights } from '../lib/mjop/linking'
+import { buildEnergieInsights } from '../lib/dossier/energieInsights'
 import NotFound from './NotFound'
 
 const INPUT_CLASSNAME = 'w-full rounded-lg border border-border px-3 py-2 text-sm'
@@ -39,6 +45,12 @@ const STATUS_BADGE = {
   [SUBSIDIE_STATUSSEN.NIET_VOLDOENDE_GEGEVENS]: 'bg-muted text-foreground-muted',
   [SUBSIDIE_STATUSSEN.NIET_VAN_TOEPASSING]: 'bg-error-bg text-error',
   [SUBSIDIE_STATUSSEN.VOORWAARDE_ONTBREEKT]: 'bg-amber-100 text-amber-800',
+}
+
+const FISCAAL_STATUS_BADGE = {
+  mogelijk_relevant: 'bg-accent/10 text-accent',
+  controle_vereist: 'bg-amber-100 text-amber-800',
+  niet_van_toepassing: 'bg-error-bg text-error',
 }
 
 const ONDERDEEL_PER_MAATREGEL = { dakisolatie: 'dak', gevelisolatie: 'gevel', vloerisolatie: 'vloer', glasHrpp: 'glas', glasTriple: 'glas' }
@@ -79,6 +91,8 @@ export default function AdminSubsidieBegeleiding() {
   const [genererenBezig, setGenererenBezig] = useState(false)
   const [fout, setFout] = useState(null)
   const [laatstGegenereerd, setLaatstGegenereerd] = useState(null)
+  const [bestaandeSubsidies, setBestaandeSubsidies] = useState([])
+  const [toevoegenBezigId, setToevoegenBezigId] = useState(null)
 
   useEffect(() => {
     let actief = true
@@ -90,8 +104,9 @@ export default function AdminSubsidieBegeleiding() {
       listOpnamesVoorDossier(dossierId),
       listDossierTaken(dossierId),
       getMijnProfiel(),
+      listDossierSubsidies(dossierId),
     ])
-      .then(async ([dossierRij, specs, opnames, takenRijen, profiel]) => {
+      .then(async ([dossierRij, specs, opnames, takenRijen, profiel, subsidieRijen]) => {
         if (!actief) return
         setDossier(dossierRij)
         const perMaatregel = {}
@@ -105,6 +120,7 @@ export default function AdminSubsidieBegeleiding() {
         if (eersteDoelgroep) setDoelgroep(eersteDoelgroep)
         setTaken(takenRijen.filter((t) => t.categorie === 'subsidie'))
         setAdviseurNaam(profiel?.naam ?? null)
+        setBestaandeSubsidies(subsidieRijen)
         const alleWaarnemingen = (await Promise.all(opnames.map((o) => listOpnameWaarnemingen(o.opname_id)))).flat()
         if (actief) setWaarnemingen(alleWaarnemingen)
       })
@@ -115,6 +131,14 @@ export default function AdminSubsidieBegeleiding() {
     }
   }, [dossierId])
 
+  // EIA/MIA/Vamil-uitbreidingsronde (2026-10-09): zelfde insights-functies
+  // als SubsidieCheck.jsx/DossierDetail.jsx al gebruiken — geen nieuwe
+  // berekeningslogica, puur hergebruik. bouwSubsidieDocumentData() kan deze
+  // functies niet zelf importeren (zie de moduledoc daar), dus deze pagina
+  // berekent ze en geeft de resultaten door.
+  const mjopInsights = useMemo(() => (dossier?.mjop_snapshot?.components ? buildInsights(dossier.mjop_snapshot) : []), [dossier])
+  const energieInsights = useMemo(() => buildEnergieInsights(dossier?.energie_snapshot), [dossier])
+
   const documentData = useMemo(() => {
     if (!dossier) return null
     return bouwSubsidieDocumentData({
@@ -123,8 +147,34 @@ export default function AdminSubsidieBegeleiding() {
       waarnemingen,
       uitvoeringsjaar: uitvoeringsjaar ? Number(uitvoeringsjaar) : null,
       adviseurNaam,
+      mjopInsights,
+      energieInsights,
     })
-  }, [dossier, specificaties, waarnemingen, uitvoeringsjaar, adviseurNaam])
+  }, [dossier, specificaties, waarnemingen, uitvoeringsjaar, adviseurNaam, mjopInsights, energieInsights])
+
+  const bestaandeRegelingNamen = useMemo(() => new Set(bestaandeSubsidies.map((s) => s.regeling_naam.trim().toLowerCase())), [bestaandeSubsidies])
+
+  /**
+   * "Toevoegen aan dossier" voor een EIA/MIA/Vamil-bedrijfsmiddel —
+   * hergebruikt EXACT dezelfde addDossierSubsidie()/dossier_subsidies als
+   * de ISDE-regelingen en de generieke RVO-index (SubsidieCheck.jsx): geen
+   * tweede opslagpad, geen nieuwe tabel. De regelingnaam bevat de code en
+   * regeling(en) zodat de rij in de dossier_subsidies-lijst zelfstandig
+   * herkenbaar blijft.
+   */
+  async function fiscaalToevoegenAlsTraject(bedrijfsmiddel) {
+    setToevoegenBezigId(bedrijfsmiddel.id)
+    setFout(null)
+    try {
+      const regelingNaam = `${bedrijfsmiddel.regelingen.map((r) => r.toUpperCase()).join('/')} — ${bedrijfsmiddel.titel}${bedrijfsmiddel.bedrijfsmiddelcode ? ` (code ${bedrijfsmiddel.bedrijfsmiddelcode})` : ''}`
+      const nieuw = await addDossierSubsidie(dossierId, { regelingNaam })
+      setBestaandeSubsidies((v) => [...v, nieuw])
+    } catch {
+      setFout('Toevoegen aan dossier is niet gelukt. Probeer het opnieuw.')
+    } finally {
+      setToevoegenBezigId(null)
+    }
+  }
 
   async function opslaanJaar(waarde) {
     setUitvoeringsjaar(waarde)
@@ -213,7 +263,7 @@ export default function AdminSubsidieBegeleiding() {
     <>
       <Seo title="Subsidiebegeleiding" description="Subsidiebegeleiding voor dit dossier." noindex />
       <Section tone="white" noTopPadding>
-        <Container>
+        <Container wide>
           <AdminTerugKnop to={ROUTES.adminDossierDetail(dossierId)} label="Terug naar dossier" />
 
           <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Subsidiebegeleiding</p>
@@ -309,6 +359,36 @@ export default function AdminSubsidieBegeleiding() {
                 <p className={`mt-1 text-sm ${documentData.regionaal.locatieBekend ? 'text-amber-900' : 'text-foreground-muted'}`}>{documentData.regionaal.boodschap}</p>
               </div>
             ) : null}
+
+            <div id="eia-mia-vamil-sectie">
+              <h2 className="mb-1 text-sm font-semibold tracking-[0.1em] text-foreground-muted uppercase">EIA / MIA / Vamil — fiscale regelingen</h2>
+              <p className="mb-3 text-xs text-foreground-muted">
+                Dit zijn géén directe subsidies, maar fiscale regelingen (investeringsaftrek resp. willekeurige afschrijving). Het daadwerkelijke
+                belastingvoordeel hangt af van het belastingtarief en de fiscale positie van de onderneming — dat wordt hier niet berekend.
+              </p>
+              {documentData?.fiscaleRegelingen.length > 0 ? (
+                <div className="grid gap-4 lg:grid-cols-2">
+                  {documentData.fiscaleRegelingen.map((r) => (
+                    <FiscaleRegelingKaart
+                      key={r.bedrijfsmiddel.id}
+                      resultaat={r}
+                      alAanDossierToegevoegd={bestaandeRegelingNamen.has(
+                        `${r.bedrijfsmiddel.regelingen.map((reg) => reg.toUpperCase()).join('/')} — ${r.bedrijfsmiddel.titel}${r.bedrijfsmiddel.bedrijfsmiddelcode ? ` (code ${r.bedrijfsmiddel.bedrijfsmiddelcode})` : ''}`
+                          .trim()
+                          .toLowerCase(),
+                      )}
+                      toevoegenBezig={toevoegenBezigId === r.bedrijfsmiddel.id}
+                      onToevoegen={() => fiscaalToevoegenAlsTraject(r.bedrijfsmiddel)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="rounded-lg border border-dashed border-border px-4 py-5 text-center text-sm text-foreground-muted">
+                  Op basis van de huidige dossiergegevens (MJOP/Energie-indicatie/opname) is nog geen concrete aanleiding gevonden voor een EIA-,
+                  MIA- of Vamil-bedrijfsmiddel.
+                </p>
+              )}
+            </div>
 
             {documentData?.ontbrekendeVelden.length > 0 ? (
               <div className="rounded-2xl border border-amber-300 bg-amber-50 p-5">
@@ -527,6 +607,109 @@ function VentilatieMaatregelKaart({ m, opslaanBezig, onWijzig }) {
           Bron: {m.regel.bron.label} — gecontroleerd op {m.regel.bron.gecontroleerdOp}
         </p>
       ) : null}
+    </div>
+  )
+}
+
+/**
+ * Compacte kaart voor één EIA/MIA/Vamil-bedrijfsmiddel (opdracht §8.3): in
+ * één oogopslag naam/code/regeling/reden/status/bron, de volledige
+ * voorwaarden/bewijsstukken/procedure pas achter een <details>-uitklap —
+ * geen lange pagina met alle tekst meteen zichtbaar. Eén primaire actie
+ * ("Toevoegen aan dossier"), geen meerdere gelijkwaardige knoppen.
+ */
+function FiscaleRegelingKaart({ resultaat, alAanDossierToegevoegd, toevoegenBezig, onToevoegen }) {
+  const { bedrijfsmiddel: b, status, redenen, ontbrekendeGegevens } = resultaat
+  const regelingLabels = b.regelingen.map((r) => FISCALE_REGELING_PARAMETERS[r]?.naam ?? r.toUpperCase()).join(' + ')
+  const percentages = [
+    b.fiscaalParameter?.percentage != null ? `${FISCALE_REGELING_SOORT_LABELS[b.fiscaalParameter.type]}: ${b.fiscaalParameter.percentage}%` : null,
+    b.fiscaalParameterVamil?.percentage != null ? `Vamil: tot ${b.fiscaalParameterVamil.percentage}% willekeurig afschrijven` : null,
+  ].filter(Boolean)
+
+  return (
+    <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+      <div className="mb-2 flex flex-wrap items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className="font-medium text-primary">
+            {b.titel}
+            {b.bedrijfsmiddelcode ? <span className="text-foreground-muted"> (code {b.bedrijfsmiddelcode})</span> : null}
+          </p>
+          <p className="text-xs text-foreground-muted">{regelingLabels}</p>
+        </div>
+        <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap ${FISCAAL_STATUS_BADGE[status]}`}>
+          {FISCAAL_RELEVANTIE_STATUS_LABELS[status]}
+        </span>
+      </div>
+
+      <p className="text-xs text-foreground-muted italic">{redenen[0]}</p>
+
+      {percentages.length > 0 ? <p className="mt-2 text-sm font-medium text-primary">{percentages.join(' · ')}</p> : null}
+
+      {ontbrekendeGegevens.length > 0 ? (
+        <p className="mt-2 text-xs text-amber-700">Nog te controleren: {ontbrekendeGegevens.join(', ')}.</p>
+      ) : null}
+
+      <details className="mt-3 text-xs text-foreground-muted">
+        <summary className="cursor-pointer font-medium text-accent select-none">Volledige voorwaarden en procedure</summary>
+        <div className="mt-2 flex flex-col gap-2">
+          <p>{b.toepassingsgebied}</p>
+          {b.technischeVoorwaarden.length > 0 ? (
+            <div>
+              <p className="font-medium text-foreground">Technische voorwaarden</p>
+              <ul className="mt-0.5 list-disc pl-4">
+                {b.technischeVoorwaarden.map((v, i) => (
+                  <li key={i}>{v}</li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+          {b.uitsluitingen.length > 0 ? (
+            <div>
+              <p className="font-medium text-foreground">Uitsluitingen</p>
+              <ul className="mt-0.5 list-disc pl-4">
+                {b.uitsluitingen.map((v, i) => (
+                  <li key={i}>{v}</li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+          {b.samenloop.length > 0 ? (
+            <div>
+              <p className="font-medium text-foreground">Samenloop met andere regelingen</p>
+              <ul className="mt-0.5 list-disc pl-4">
+                {b.samenloop.map((v, i) => (
+                  <li key={i}>{v}</li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+          <p>
+            <span className="font-medium text-foreground">Vereiste bewijsstukken: </span>
+            {b.vereisteBewijsstukken.join(', ')}
+          </p>
+          <p>
+            <span className="font-medium text-foreground">Procedure: </span>
+            {b.procedure.omschrijving}
+          </p>
+          <p>
+            <span className="font-medium text-foreground">Officiële bron: </span>
+            <a href={b.bron.url} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+              {b.bron.label}
+            </a>{' '}
+            — gecontroleerd op {b.bron.gecontroleerdOp}
+          </p>
+        </div>
+      </details>
+
+      <div className="mt-3">
+        {alAanDossierToegevoegd ? (
+          <span className="text-xs font-medium text-primary">Al toegevoegd aan dit dossier</span>
+        ) : (
+          <Button type="button" variant="outline" size="sm" onClick={onToevoegen} disabled={toevoegenBezig}>
+            {toevoegenBezig ? 'Bezig...' : 'Toevoegen aan dossier'}
+          </Button>
+        )}
+      </div>
     </div>
   )
 }

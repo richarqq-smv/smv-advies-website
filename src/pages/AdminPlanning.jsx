@@ -109,7 +109,7 @@ export default function AdminPlanning() {
       <Seo title="Planning" description="Interne agenda: afspraken, bezoeken en gesprekken." noindex />
       <PageHero eyebrow="Beheer" title="Planning" description="Afspraken, bezoeken en gesprekken." />
       <Section tone="white" noTopPadding>
-        <Container className="max-w-5xl">
+        <Container wide>
           <AdminTerugKnop />
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2">

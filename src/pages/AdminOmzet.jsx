@@ -87,7 +87,7 @@ export default function AdminOmzet() {
       <Seo title="Omzet" description="Omzetoverzicht per maand, per klant en per factuur." noindex />
       <PageHero eyebrow="Administratie" title="Omzet" description="Omzet excl. btw, gebaseerd op daadwerkelijk verstuurde facturen." />
       <Section tone="white" noTopPadding>
-        <Container className="max-w-3xl">
+        <Container wide>
           <Button as="link" to={ROUTES.adminAdministratie} variant="ghost" size="sm" className="mb-5">
             <ArrowLeft size={16} /> Administratie
           </Button>

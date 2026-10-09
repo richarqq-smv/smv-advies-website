@@ -58,7 +58,7 @@ test('koppelRvoRegelingenAanDossier: een regeling die al in dossier_subsidies st
 })
 
 test('koppelRvoRegelingenAanDossier: tekst-match met een signaal geeft "mogelijk relevant" én retourneert het concrete matchende signaal (traceerbaarheid)', () => {
-  const rvoItems = [{ id: 'r1', titel: 'Zonnepanelen-subsidie', intro: 'Voor bedrijven die zonnepanelen plaatsen' }]
+  const rvoItems = [{ id: 'r1', titel: 'Zonnepanelen-subsidie', intro: 'Voor bedrijven die zonnepanelen plaatsen', onderwerpen: ['Klimaat en energie'] }]
   const signaal = { tekst: 'zonnepanelen', bron: { type: 'energie', label: 'Zonnepanelen', energieMaatregelId: 'Zonnepanelen' } }
   const [resultaat] = koppelRvoRegelingenAanDossier({ rvoItems, signalen: [signaal] })
   assert.equal(resultaat.status, SUBSIDIE_CHECK_STATUSSEN.MOGELIJK_RELEVANT)
@@ -83,7 +83,7 @@ test('koppelRvoRegelingenAanDossier: signalen van 1-2 tekens geven nooit een mat
 })
 
 test('koppelRvoRegelingenAanDossier: zoekt ook in sectoren/onderwerpen/doelgroepen/tags, niet alleen titel/intro', () => {
-  const rvoItems = [{ id: 'r1', titel: 'Regeling X', intro: '', sectoren: [], onderwerpen: [], doelgroepen: ['horeca'], tags: [] }]
+  const rvoItems = [{ id: 'r1', titel: 'Regeling X', intro: '', sectoren: [], onderwerpen: ['Klimaat en energie'], doelgroepen: ['horeca'], tags: [] }]
   const signaal = { tekst: 'horeca', bron: { type: 'pand', label: 'Horeca' } }
   const [resultaat] = koppelRvoRegelingenAanDossier({ rvoItems, signalen: [signaal] })
   assert.equal(resultaat.status, SUBSIDIE_CHECK_STATUSSEN.MOGELIJK_RELEVANT)
@@ -96,6 +96,41 @@ test('koppelRvoRegelingenAanDossier: verzint nooit bedragen/percentages/eligibil
   assert.equal('percentage' in resultaat, false)
   assert.equal('eligibility' in resultaat, false)
   assert.equal('inAanmerking' in resultaat, false)
+})
+
+// Semantische-selectieronde (opdracht §3.1/§8.2, 2026-10-09): een
+// tekstmatch alleen is niet meer genoeg om tussen de concrete
+// gebouwmaatregelen te verschijnen — zonder "Klimaat en energie" in
+// onderwerpen blijft het item "te beoordelen" (algemene
+// regelingenzoeker), ook al matcht de tekst letterlijk. Dit is precies
+// het ECHTE, live-geverifieerde probleem: rvo_subsidie_index bevat
+// bijvoorbeeld "Innovatiekrediet" met doelgroep "MKB (ook zzp)" en een
+// brede sectorenlijst inclusief "Toerisme recreatie en horeca" — dat zou
+// zonder deze filter ten onrechte als "mogelijk relevant" verschijnen bij
+// een horeca-pand.
+test('koppelRvoRegelingenAanDossier: een algemene financierings-/innovatieregeling (geen "Klimaat en energie" in onderwerpen) blijft "te beoordelen", ook bij een letterlijke tekstmatch', () => {
+  const rvoItems = [
+    {
+      id: 'r1',
+      titel: 'Innovatiekrediet',
+      intro: 'Financiering voor innovatieve projecten',
+      sectoren: ['Toerisme recreatie en horeca'],
+      onderwerpen: ['Innovatie, onderzoek en onderwijs'],
+      doelgroepen: ['MKB (ook zzp)'],
+    },
+  ]
+  const signaal = { tekst: 'horeca', bron: { type: 'pand', label: 'Horeca' } }
+  const [resultaat] = koppelRvoRegelingenAanDossier({ rvoItems, signalen: [signaal] })
+  assert.equal(resultaat.status, SUBSIDIE_CHECK_STATUSSEN.TE_BEOORDELEN)
+  assert.deepEqual(resultaat.matchendeSignalen, [])
+})
+
+test('koppelRvoRegelingenAanDossier: "Klimaat en energie" + tekstmatch blijft wél "mogelijk relevant" (het signaal zelf is nog steeds het matchingcriterium, alleen de categorie wordt extra gecontroleerd)', () => {
+  const rvoItems = [{ id: 'r1', titel: 'MIA\\Vamil voor investeringen in gebouwen', intro: '', onderwerpen: ['Klimaat en energie'], doelgroepen: ['MKB (ook zzp)'] }]
+  const signaal = { tekst: 'horeca', bron: { type: 'pand', label: 'Horeca' } }
+  const rvoItemsMetMatch = [{ ...rvoItems[0], sectoren: ['Toerisme recreatie en horeca'] }]
+  const [resultaat] = koppelRvoRegelingenAanDossier({ rvoItems: rvoItemsMetMatch, signalen: [signaal] })
+  assert.equal(resultaat.status, SUBSIDIE_CHECK_STATUSSEN.MOGELIJK_RELEVANT)
 })
 
 test('vindGekoppeldAdviespunt: Energie-signaal matcht exact op het bevroren maatregelNaam van een gepromoveerd adviespunt', () => {

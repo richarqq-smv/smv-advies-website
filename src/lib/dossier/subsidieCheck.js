@@ -100,6 +100,29 @@ function rvoItemTekst(item) {
     .toLowerCase()
 }
 
+// Semantische-selectieronde (opdracht §3.1/§8.2, 2026-10-09) —
+// ONDERZOEKSRESULTAAT: rvo_subsidie_index bevat de volledige "Subsidie- en
+// financieringswijzer"-feed, waarvan de overgrote meerderheid algemene
+// financierings-/innovatieregelingen zijn (Innovatiekrediet, Borgstelling
+// MKB-kredieten, Garantie Ondernemingsfinanciering, Groeifaciliteit,
+// Eurostars, WBSO, Seed Capital — live gecontroleerd via Supabase) die
+// zuiver op tekstmatch ("horeca" in hun brede sectorenlijst) tussen de
+// concrete gebouwmaatregelen terechtkwamen. Een tweede, generieke
+// bedrijfsmiddel-/jaartallendatabase bouwen om dit te filteren zou een
+// tweede subsidieplatform zijn; in plaats daarvan wordt het al aanwezige
+// `onderwerpen`-veld gebruikt (deel van dezelfde brondata, geen nieuwe
+// bron): alleen een item met "Klimaat en energie" in `onderwerpen` kan
+// nog als "mogelijk relevant" tussen de concrete maatregelen verschijnen.
+// Een zuiver financierings-/innovatie-item (onderwerp "Innovatie,
+// onderzoek en onderwijs" oid.) matcht daardoor nooit meer, ook niet bij
+// een toevallige tekstmatch — het blijft gewoon beschikbaar in "Overige
+// regelingen" (TE_BEOORDELEN), nooit stilzwijgend verwijderd.
+const KLIMAAT_ENERGIE_ONDERWERP = 'Klimaat en energie'
+
+function isKlimaatEnergieRegeling(item) {
+  return (item.onderwerpen ?? []).includes(KLIMAAT_ENERGIE_ONDERWERP)
+}
+
 /** Woorden van 3+ tekens, om toevallige een-/twee-letter-matches (bv. "nl", kale afkortingen zonder context) te vermijden. Geeft de daadwerkelijk matchende signalen terug (met herkomst), niet alleen een boolean. */
 function matchendeSignalen(tekst, signalen) {
   return signalen.filter((signaal) => signaal.tekst.length > 2 && tekst.includes(signaal.tekst))
@@ -137,8 +160,12 @@ export function koppelRvoRegelingenAanDossier({ rvoItems = [], signalen = [], be
     }
 
     const matches = matchendeSignalen(rvoItemTekst(item), signalen)
-    const status = matches.length > 0 ? SUBSIDIE_CHECK_STATUSSEN.MOGELIJK_RELEVANT : SUBSIDIE_CHECK_STATUSSEN.TE_BEOORDELEN
-    return { item, bestaandeSubsidie: null, status, matchendeSignalen: matches }
+    // Zie isKlimaatEnergieRegeling() hierboven: een tekstmatch alleen is
+    // niet genoeg — zonder "Klimaat en energie" in onderwerpen blijft het
+    // item in de TE_BEOORDELEN-groep (algemene regelingenzoeker), nooit
+    // tussen de concrete gebouwmaatregelen.
+    const status = matches.length > 0 && isKlimaatEnergieRegeling(item) ? SUBSIDIE_CHECK_STATUSSEN.MOGELIJK_RELEVANT : SUBSIDIE_CHECK_STATUSSEN.TE_BEOORDELEN
+    return { item, bestaandeSubsidie: null, status, matchendeSignalen: status === SUBSIDIE_CHECK_STATUSSEN.MOGELIJK_RELEVANT ? matches : [] }
   })
 }
 

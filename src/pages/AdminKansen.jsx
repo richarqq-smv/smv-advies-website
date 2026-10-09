@@ -42,7 +42,7 @@ export default function AdminKansen() {
       <Seo title="Commerciële kansen" description="Dossiers met een vastgelegde interne commerciële kans." noindex />
       <PageHero eyebrow="Beheer" title="Commerciële kansen" description="Dossiers waarvoor een interne commerciële vervolgstap is vastgelegd." />
       <Section tone="white" noTopPadding>
-        <Container className="max-w-3xl">
+        <Container wide>
           <AdminTerugKnop />
           {laden ? (
             <p className="text-sm text-foreground-muted">Bezig met laden...</p>

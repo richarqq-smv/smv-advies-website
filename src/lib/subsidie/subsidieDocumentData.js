@@ -15,6 +15,7 @@ import { beoordeelVentilatie } from './subsidieVentilatieEligibility.js'
 import { berekenCombinatie } from './subsidieCalculator.js'
 import { controleerBronnen } from './subsidieBronControle.js'
 import { nietOndersteundeCategorieen } from './subsidieInventaris.js'
+import { vindRelevanteFiscaleBedrijfsmiddelen } from './fiscaleKoppeling.js'
 
 const BEREKENBAAR_VOOR_COMBINATIE = new Set([SUBSIDIE_STATUSSEN.VAN_TOEPASSING, SUBSIDIE_STATUSSEN.WAARSCHIJNLIJK_VAN_TOEPASSING])
 
@@ -188,8 +189,27 @@ const OPNAME_ONDERDEEL_PER_MAATREGEL = {
  * opgeslagen) is het dossierbrede jaar dat de adviseur op het
  * subsidiescherm kan instellen — ontbreekt dat, dan geldt voor elke
  * maatregel zonder eigen jaar automatisch "jaar ontbreekt" (opdracht §5).
+ *
+ * `mjopInsights`/`energieInsights` (EIA/MIA/Vamil-uitbreidingsronde,
+ * 2026-10-09): optionele, AL DOOR DE AANROEPER BEREKENDE insight-arrays
+ * (buildInsights()/buildEnergieInsights()) — zelfde patroon als
+ * subsidieCheck.js hergebruikt voor de RVO-index-koppeling. Dit bestand
+ * importeert die functies bewust niet zelf (lib/mjop/linking.js kan niet
+ * door de kale node--test-runner worden opgelost, zie subsidieCheck.js's
+ * moduledoc) — de aanroeper (AdminSubsidieBegeleiding.jsx, onder Vite)
+ * berekent ze. Puur optioneel: zonder insights wordt `fiscaleRegelingen`
+ * gewoon een lege array (geen crash, geen gok).
  */
-export function bouwSubsidieDocumentData({ dossier, specificatiesPerMaatregel = {}, waarnemingen = [], uitvoeringsjaar = null, adviseurNaam = null, datum = null } = {}) {
+export function bouwSubsidieDocumentData({
+  dossier,
+  specificatiesPerMaatregel = {},
+  waarnemingen = [],
+  uitvoeringsjaar = null,
+  adviseurNaam = null,
+  datum = null,
+  mjopInsights = [],
+  energieInsights = [],
+} = {}) {
   const { klantnaam, pandadres, postcode, plaats } = bouwKlantgegevens(dossier)
 
   const isolatieRuw = ONDERSTEUNDE_MAATREGELEN.map((maatregelKey) => {
@@ -282,6 +302,20 @@ export function bouwSubsidieDocumentData({ dossier, specificatiesPerMaatregel = 
   const regionaal = bouwRegionaleSectie({ postcode, plaats })
   const actielijst = bouwActielijst({ maatregelen, bronnen })
 
+  // EIA/MIA/Vamil (2026-10-09) — volledig gescheiden van de ISDE-
+  // maatregelen hierboven: andere soort regeling (fiscale aftrek/
+  // afschrijving i.p.v. directe subsidie), andere beoordelingslogica
+  // (relevantie + pandtype-grens i.p.v. Rd/U-waarde-eligibility). Nooit in
+  // `maatregelen`/`combinatie` meegeteld — dat zou fiscaal voordeel en
+  // directe subsidie tot één misleidend totaalbedrag optellen.
+  const fiscaleRegelingen = vindRelevanteFiscaleBedrijfsmiddelen({
+    pand: dossier?.panden ?? null,
+    mjopInsights,
+    energieInsights,
+    waarnemingen,
+    specificatiesPerMaatregel,
+  })
+
   return {
     meta: {
       klantnaam,
@@ -298,6 +332,7 @@ export function bouwSubsidieDocumentData({ dossier, specificatiesPerMaatregel = 
     regionaal,
     actielijst,
     nietOndersteund: nietOndersteundeCategorieen(),
+    fiscaleRegelingen,
   }
 }
 

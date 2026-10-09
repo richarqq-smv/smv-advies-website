@@ -121,3 +121,41 @@ test('escaped user-controlled tekst (klantnaam) om HTML-injectie te voorkomen', 
   assert.equal(html.includes('<script>alert(1)</script>'), false)
   assert.match(html, /&lt;script&gt;/)
 })
+
+// --- EIA/MIA/Vamil (2026-10-09) ---
+
+test('zonder fiscale aanleiding toont het document een nette lege-staat voor de EIA/MIA/Vamil-sectie, geen "geen subsidie"', () => {
+  const html = bouwSubsidieDocumentHtml(bouwSubsidieDocumentData({ dossier: DOSSIER, uitvoeringsjaar: 2026 }))
+  assert.match(html, /EIA \/ MIA \/ Vamil — fiscale regelingen/)
+  assert.match(html, /nog geen concrete aanleiding gevonden/)
+})
+
+test('met fiscale aanleiding (zakelijk pand + MJOP-signaal) toont het document EIA-bedrijfsmiddelen met code, status en bron — gescheiden van de ISDE-tabellen', () => {
+  const data = bouwSubsidieDocumentData({
+    dossier: { ...DOSSIER, panden: { ...DOSSIER.panden, gebruikstype: 'horeca' } },
+    uitvoeringsjaar: 2026,
+    mjopInsights: [{ componentId: 'c1', recommendations: [{ measureName: 'Dakisolatie vervangen' }] }],
+  })
+  const html = bouwSubsidieDocumentHtml(data)
+  assert.match(html, /Biobased isolatie voor bestaande constructies/)
+  assert.match(html, /code 210404/)
+  assert.match(html, /Mogelijk relevant/)
+  assert.match(html, /rvo\.nl\/milieu-en-energielijst-2026\/210404/)
+})
+
+test('EIA/MIA/Vamil-sectie benoemt expliciet dat het GEEN directe subsidie is en geen netto belastingvoordeel berekent', () => {
+  const html = bouwSubsidieDocumentHtml(compleetData())
+  assert.match(html, /GEEN directe subsidie/)
+  assert.match(html, /belastingvoordeel.*hangt af/)
+})
+
+test('Vamil wordt in het document nooit als percentage-subsidie gepresenteerd, altijd als "willekeurig afschrijven"', () => {
+  const data = bouwSubsidieDocumentData({
+    dossier: { ...DOSSIER, panden: { ...DOSSIER.panden, gebruikstype: 'horeca' } },
+    energieInsights: [{ energieMaatregelId: 'e1', maatregelNaam: 'Groendak aanleggen' }],
+  })
+  const html = bouwSubsidieDocumentHtml(data)
+  const vamilIndex = html.indexOf('Vamil: tot')
+  assert.notEqual(vamilIndex, -1)
+  assert.match(html.slice(vamilIndex, vamilIndex + 60), /willekeurig afschrijven/)
+})

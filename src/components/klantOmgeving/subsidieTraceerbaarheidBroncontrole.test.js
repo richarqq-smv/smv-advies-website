@@ -40,7 +40,7 @@ test('SubsidieCheck.jsx: "Toevoegen als subsidietraject" gebruikt nog steeds uit
 })
 
 test('SubsidieCheck.jsx: koppelt de aanleiding alleen aan een adviespunt via de AL BESTAANDE koppelSubsidieMaatregel() (dossier_subsidie_maatregelen) — geen nieuwe koppelfunctie, geen nieuwe tabel', () => {
-  assert.match(SUBSIDIE_CHECK, /import \{ adminListRvoSubsidieIndex, addDossierSubsidie, koppelSubsidieMaatregel \} from '\.\.\/\.\.\/lib\/klantOmgeving\/api'/)
+  assert.match(SUBSIDIE_CHECK, /import \{ adminListRvoSubsidieIndex, addDossierSubsidie, koppelSubsidieMaatregel, listDossierSubsidieSpecificaties \} from '\.\.\/\.\.\/lib\/klantOmgeving\/api'/)
   const functieMatch = SUBSIDIE_CHECK.match(/async function toevoegenAlsTraject\([\s\S]*?\n  \}/)[0]
   assert.match(functieMatch, /koppelSubsidieMaatregel\(nieuw\.subsidie_id, gevondenAdviespunt\.adviespunt_id\)/)
 })
