@@ -260,6 +260,16 @@ test('doelgroep overig (verhuurder e.d.) -> controle vereist, geen SVOH-tarief v
   assert.equal(r.regel, null)
 })
 
+test('doelgroep zakelijk -> controle vereist met expliciete verwijzing naar EIA/MIA/Vamil, geen zakelijk ISDE-tarief verzonnen', () => {
+  const r = beoordeelMaatregel({
+    maatregelKey: 'dakisolatie',
+    specificatie: { uitvoeringsjaar: 2026, oppervlakteM2: 120, technischeWaarde: 3.5, meldcode: 'KA30327', isolatieBevestigd: 'ja', doelgroep: 'zakelijk' },
+  })
+  assert.equal(r.status, SUBSIDIE_STATUSSEN.CONTROLE_VEREIST)
+  assert.match(r.redenen[0], /EIA\/MIA\/Vamil/)
+  assert.equal(r.regel, null)
+})
+
 test('doelgroep eigenaar_bewoner (standaard, ook impliciet) -> normale ISDE-beoordeling, geen controle vereist om deze reden', () => {
   const r = beoordeelMaatregel({
     maatregelKey: 'dakisolatie',

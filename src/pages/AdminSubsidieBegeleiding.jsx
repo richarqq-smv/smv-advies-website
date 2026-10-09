@@ -26,13 +26,14 @@ import { ONDERSTEUNDE_MAATREGELEN, TECHNISCHE_EENHEID_PER_MAATREGEL } from '../l
 import { ONDERSTEUNDE_APPARAATMAATREGELEN } from '../lib/subsidie/isdeApparaatRegels'
 import { SUBSIDIE_STATUSSEN } from '../lib/subsidie/subsidieEligibility'
 import { bouwSubsidieDocumentData } from '../lib/subsidie/subsidieDocumentData'
-import { bouwSubsidieDocumentHtml } from '../lib/subsidie/subsidieDocumentHtml'
+import { genereerSubsidieDocumentDocxBlob, bouwSubsidieDocumentBestandsnaam } from '../lib/subsidie/subsidieDocumentDocx'
 import { naarCamelCaseSpecificatie } from '../lib/subsidie/subsidieSpecificatieMapping'
 import { IsolatieInvoerVelden, ApparaatInvoerVelden, VentilatieInvoerVelden } from '../components/subsidie/SubsidieInvoerVelden'
 import { FISCAAL_RELEVANTIE_STATUS_LABELS } from '../lib/subsidie/fiscaleKoppeling'
 import { FISCALE_REGELING_PARAMETERS, FISCALE_REGELING_SOORT_LABELS } from '../lib/subsidie/fiscaleRegelingParameters'
 import { buildInsights } from '../lib/mjop/linking'
 import { buildEnergieInsights } from '../lib/dossier/energieInsights'
+import { isZakelijkPand } from '../lib/klantOmgeving/afspraakBeschikbaarheid'
 import NotFound from './NotFound'
 
 const INPUT_CLASSNAME = 'w-full rounded-lg border border-border px-3 py-2 text-sm'
@@ -57,8 +58,14 @@ const ONDERDEEL_PER_MAATREGEL = { dakisolatie: 'dak', gevelisolatie: 'gevel', vl
 
 const ALLE_MAATREGEL_KEYS = [...ONDERSTEUNDE_MAATREGELEN, ...ONDERSTEUNDE_APPARAATMAATREGELEN, 'ventilatie']
 
+// "zakelijk" toegevoegd in de EIA/MIA/Vamil-uitbreidingsronde
+// (2026-10-09, 0042_dossier_subsidie_specificaties_doelgroep_zakelijk.sql):
+// ISDE in deze engine is onderzocht voor woningeigenaren — een zakelijk
+// pand (kantoor/horeca/bedrijfshal e.d.) hoort hier expliciet niet
+// stilzwijgend als "eigenaar_bewoner" te worden behandeld.
 const DOELGROEP_OPTIES = [
   { waarde: 'eigenaar_bewoner', label: 'Eigenaar-bewoner (ISDE)' },
+  { waarde: 'zakelijk', label: 'Zakelijk pand / ondernemer (EIA/MIA/Vamil)' },
   { waarde: 'vve', label: 'VvE' },
   { waarde: 'overig', label: 'Verhuurder / overig' },
 ]
@@ -117,7 +124,16 @@ export default function AdminSubsidieBegeleiding() {
         const eersteJaar = specs.find((s) => s.uitvoeringsjaar)?.uitvoeringsjaar
         if (eersteJaar) setUitvoeringsjaar(String(eersteJaar))
         const eersteDoelgroep = specs.find((s) => s.doelgroep && s.doelgroep !== 'eigenaar_bewoner')?.doelgroep
-        if (eersteDoelgroep) setDoelgroep(eersteDoelgroep)
+        if (eersteDoelgroep) {
+          setDoelgroep(eersteDoelgroep)
+        } else if (specs.length === 0 && isZakelijkPand(dossierRij.panden?.gebruikstype)) {
+          // Nog niets opgeslagen voor dit dossier én het pandtype is al
+          // bekend als zakelijk — toon direct de juiste suggestie i.p.v.
+          // "eigenaar_bewoner" te laten staan totdat de adviseur het zelf
+          // opmerkt. Puur een UI-default: pas bij de eerste daadwerkelijke
+          // wijziging (opslaanDoelgroep) wordt dit ook echt opgeslagen.
+          setDoelgroep('zakelijk')
+        }
         setTaken(takenRijen.filter((t) => t.categorie === 'subsidie'))
         setAdviseurNaam(profiel?.naam ?? null)
         setBestaandeSubsidies(subsidieRijen)
@@ -230,12 +246,11 @@ export default function AdminSubsidieBegeleiding() {
     setGenererenBezig(true)
     setFout(null)
     try {
-      const html = bouwSubsidieDocumentHtml(documentData)
-      const datumSlug = new Date().toISOString().slice(0, 10)
-      const bestandsnaam = `SMV-Subsidieadvies-${dossier.dossier_id}-${datumSlug}.html`
-      const file = new File([html], bestandsnaam, { type: 'text/html' })
+      const blob = await genereerSubsidieDocumentDocxBlob(documentData)
+      const bestandsnaam = bouwSubsidieDocumentBestandsnaam(documentData)
+      const file = new File([blob], bestandsnaam, { type: blob.type })
       await uploadDocument({ klantId: dossier.klant_id, dossierId: dossier.dossier_id, file, omschrijving: 'Subsidieadvies (gegenereerd)' })
-      const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }))
+      const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
       a.download = bestandsnaam
@@ -299,7 +314,9 @@ export default function AdminSubsidieBegeleiding() {
                   </option>
                 ))}
               </select>
-              {doelgroep !== 'eigenaar_bewoner' ? (
+              {doelgroep === 'zakelijk' ? (
+                <p className="mt-1 text-xs text-amber-700">ISDE hierboven geldt niet voor een zakelijk pand — bekijk de EIA/MIA/Vamil-sectie verderop.</p>
+              ) : doelgroep !== 'eigenaar_bewoner' ? (
                 <p className="mt-1 text-xs text-amber-700">Deze doelgroep (SVVE/SVOH) is nog niet in de engine geïmplementeerd — controleer de officiële voorwaarden zelf.</p>
               ) : null}
             </div>
@@ -619,7 +636,7 @@ function VentilatieMaatregelKaart({ m, opslaanBezig, onWijzig }) {
  * ("Toevoegen aan dossier"), geen meerdere gelijkwaardige knoppen.
  */
 function FiscaleRegelingKaart({ resultaat, alAanDossierToegevoegd, toevoegenBezig, onToevoegen }) {
-  const { bedrijfsmiddel: b, status, redenen, ontbrekendeGegevens } = resultaat
+  const { bedrijfsmiddel: b, status, redenen, ontbrekendeGegevens, gekoppeldeGegevens = [] } = resultaat
   const regelingLabels = b.regelingen.map((r) => FISCALE_REGELING_PARAMETERS[r]?.naam ?? r.toUpperCase()).join(' + ')
   const percentages = [
     b.fiscaalParameter?.percentage != null ? `${FISCALE_REGELING_SOORT_LABELS[b.fiscaalParameter.type]}: ${b.fiscaalParameter.percentage}%` : null,
@@ -644,6 +661,12 @@ function FiscaleRegelingKaart({ resultaat, alAanDossierToegevoegd, toevoegenBezi
       <p className="text-xs text-foreground-muted italic">{redenen[0]}</p>
 
       {percentages.length > 0 ? <p className="mt-2 text-sm font-medium text-primary">{percentages.join(' · ')}</p> : null}
+
+      {gekoppeldeGegevens.length > 0 ? (
+        <p className="mt-2 text-xs text-foreground-muted">
+          Al bekend uit dossier: {gekoppeldeGegevens.map((g) => `${g.label}: ${g.waarde}`).join('; ')}.
+        </p>
+      ) : null}
 
       {ontbrekendeGegevens.length > 0 ? (
         <p className="mt-2 text-xs text-amber-700">Nog te controleren: {ontbrekendeGegevens.join(', ')}.</p>

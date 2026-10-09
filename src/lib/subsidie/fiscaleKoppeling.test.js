@@ -83,6 +83,35 @@ test('vindRelevanteFiscaleBedrijfsmiddelen: een "controle_vereist"-bedrijfsmidde
   assert.equal(zonnepanelen.status, FISCAAL_RELEVANTIE_STATUS.CONTROLE_VEREIST)
 })
 
+test('vindRelevanteFiscaleBedrijfsmiddelen: al ingevulde ISDE-oppervlakte (dakisolatie) wordt hergebruikt als gekoppeldeGegevens i.p.v. alleen als "ontbrekend" getoond', () => {
+  const resultaten = vindRelevanteFiscaleBedrijfsmiddelen({
+    pand: ZAKELIJK_PAND,
+    specificatiesPerMaatregel: { dakisolatie: { oppervlakteM2: 120 } },
+  })
+  const biobasedIsolatie = resultaten.find((r) => r.bedrijfsmiddel.id === 'eia-210404')
+  assert.ok(biobasedIsolatie)
+  assert.equal(biobasedIsolatie.status, FISCAAL_RELEVANTIE_STATUS.MOGELIJK_RELEVANT)
+  assert.deepEqual(biobasedIsolatie.gekoppeldeGegevens, [{ label: 'Oppervlakte Dakisolatie', waarde: '120 m²', bron: 'Al vastgelegd bij de ISDE-specificatie van deze maatregel' }])
+  // Investeringsbedrag/-datum blijven echt ontbrekend — die registreert de ISDE-engine nergens, dus mag nooit verzonnen worden.
+  assert.deepEqual(biobasedIsolatie.ontbrekendeGegevens, ['Investeringsbedrag', 'Investeringsdatum (koopovereenkomst/bestelling)'])
+})
+
+test('vindRelevanteFiscaleBedrijfsmiddelen: zonder ISDE-specificatie (alleen een MJOP-signaal) is gekoppeldeGegevens leeg, geen gegokte waarde', () => {
+  const resultaten = vindRelevanteFiscaleBedrijfsmiddelen({
+    pand: ZAKELIJK_PAND,
+    mjopInsights: [{ componentId: 'c1', recommendations: [{ measureName: 'Dakisolatie vervangen' }] }],
+  })
+  resultaten.forEach((r) => assert.deepEqual(r.gekoppeldeGegevens, []))
+})
+
+test('vindRelevanteFiscaleBedrijfsmiddelen: een niet-zakelijk pand geeft nooit gekoppeldeGegevens, ook niet met een ISDE-oppervlakte', () => {
+  const resultaten = vindRelevanteFiscaleBedrijfsmiddelen({
+    pand: WONING,
+    specificatiesPerMaatregel: { dakisolatie: { oppervlakteM2: 120 } },
+  })
+  resultaten.forEach((r) => assert.deepEqual(r.gekoppeldeGegevens, []))
+})
+
 test('vindRelevanteFiscaleBedrijfsmiddelen is alfabetisch gesorteerd op titel', () => {
   const resultaten = vindRelevanteFiscaleBedrijfsmiddelen({
     pand: ZAKELIJK_PAND,

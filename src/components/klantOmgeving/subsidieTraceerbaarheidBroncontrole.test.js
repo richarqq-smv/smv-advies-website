@@ -78,7 +78,9 @@ test('Geen nieuwe migratie toegevoegd voor DEZE traceerbaarheidsronde: dossier_s
   // de traceerbaarheidsronde die deze test oorspronkelijk vastlegde. Deze
   // test blijft de oorspronkelijke invariant bewaken (geen 4e/5e
   // subsidietabel die dossier_subsidies/rvo_subsidie_index zou dupliceren),
-  // niet "nooit meer een migratie".
+  // niet "nooit meer een migratie". 0042 (2026-10-09, EIA/MIA/Vamil-
+  // vervolgronde) voegt een los daarvan gerechtvaardigde doelgroepwaarde
+  // toe aan dezelfde, al bestaande tabel — geen nieuwe tabel.
   const migratiesDir = path.join(HIER, '..', '..', '..', 'supabase', 'migrations')
   const bestanden = readdirSync(migratiesDir)
   const subsidieMigraties = bestanden.filter((f) => /subsidie/i.test(f))
@@ -88,5 +90,6 @@ test('Geen nieuwe migratie toegevoegd voor DEZE traceerbaarheidsronde: dossier_s
     '0038_dossier_subsidie_specificaties.sql',
     '0039_dossier_subsidie_specificaties_uitbreiding.sql',
     '0040_dossier_subsidie_specificaties_glas_ventilatie.sql',
+    '0042_dossier_subsidie_specificaties_doelgroep_zakelijk.sql',
   ])
 })

@@ -57,7 +57,11 @@ test('OpnameSubsidieKaart.jsx: schakelt de velden uit wanneer de opname niet mee
   assert.match(SUBSIDIE_KAART, /const disabled = !magBewerken/)
 })
 
-test('geen nieuwe migratie nodig voor deze koppeling — dossier_subsidie_specificaties (0038-0040) wordt hergebruikt, geen vierde migratie toegevoegd', () => {
+test('geen nieuwe migratie nodig voor deze koppeling — dossier_subsidie_specificaties (0038-0040) wordt hergebruikt, geen vierde migratie toegevoegd voor de opname-koppeling zelf', () => {
+  // Bijgewerkt (2026-10-09, EIA/MIA/Vamil-vervolgronde): 0042 voegt wél een
+  // nieuwe, los daarvan gerechtvaardigde migratie toe (doelgroep "zakelijk"),
+  // dit bestand blijft uitsluitend bevestigen dat de opname-koppeling zelf
+  // (dit bestand se eigen onderwerp) geen EIGEN migratie nodig had.
   const migratiesDir = path.join(HIER, '..', '..', 'supabase', 'migrations')
   const bestanden = readdirSync(migratiesDir)
   const subsidieMigraties = bestanden.filter((f) => /subsidie/i.test(f))
@@ -67,5 +71,6 @@ test('geen nieuwe migratie nodig voor deze koppeling — dossier_subsidie_specif
     '0038_dossier_subsidie_specificaties.sql',
     '0039_dossier_subsidie_specificaties_uitbreiding.sql',
     '0040_dossier_subsidie_specificaties_glas_ventilatie.sql',
+    '0042_dossier_subsidie_specificaties_doelgroep_zakelijk.sql',
   ])
 })

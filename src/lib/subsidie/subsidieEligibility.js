@@ -55,15 +55,26 @@ function ontbrekendeGegevensVoor({ uitvoeringsjaar, oppervlakteM2, technischeWaa
 
 /**
  * Doelgroepen anders dan eigenaar-bewoner (VvE → SVVE, verhuurder/overig
- * → SVOH) kennen een eigen regeling met eigen tarieven — niet bevestigd
- * in deze engine (opdracht §2/§12/§13: expliciet onderscheid maken, maar
- * nooit een tarieventabel verzinnen die niet betrouwbaar is vastgesteld).
- * Een niet-standaard doelgroep levert daarom altijd Controle vereist op,
- * vóórdat er naar technische volledigheid wordt gekeken.
+ * → SVOH, zakelijk pand → EIA/MIA/Vamil) kennen een eigen regeling met
+ * eigen tarieven — niet bevestigd in deze engine (opdracht §2/§12/§13:
+ * expliciet onderscheid maken, maar nooit een tarieventabel verzinnen die
+ * niet betrouwbaar is vastgesteld). Een niet-standaard doelgroep levert
+ * daarom altijd Controle vereist op, vóórdat er naar technische
+ * volledigheid wordt gekeken.
+ *
+ * "zakelijk" (EIA/MIA/Vamil-uitbreidingsronde, 2026-10-09): ISDE in deze
+ * engine is onderzocht voor woningeigenaren (zie isdeIsolatieRegels.js'
+ * eigen bronvermelding) — voor een zakelijk pand (kantoor/horeca/
+ * bedrijfshal e.d.) is dat normaliter niet de juiste regeling. In plaats
+ * van die mismatch te verbergen achter een generieke "niet geïmplementeerd"-
+ * tekst, verwijst de redengeving expliciet door naar de EIA/MIA/Vamil-
+ * sectie op dezelfde pagina (fiscaleKoppeling.js), die wél voor zakelijke
+ * panden is onderzocht.
  */
 const DOELGROEP_LABELS = {
   vve: 'VvE (mogelijk SVVE)',
   overig: 'verhuurder/overige doelgroep (mogelijk SVOH)',
+  zakelijk: 'zakelijk pand/ondernemer',
 }
 
 /**
@@ -78,6 +89,17 @@ const DOELGROEP_LABELS = {
 export function beoordeelMaatregel({ maatregelKey, specificatie = {} } = {}) {
   const { uitvoeringsjaar = null, oppervlakteM2 = null, technischeWaarde = null, meldcode = null, isolatieBevestigd = 'onbekend', doelgroep = 'eigenaar_bewoner' } = specificatie
   const ontbrekendeGegevens = ontbrekendeGegevensVoor({ uitvoeringsjaar, oppervlakteM2, technischeWaarde, meldcode, isolatieBevestigd }, maatregelKey)
+
+  if (doelgroep === 'zakelijk') {
+    return {
+      status: SUBSIDIE_STATUSSEN.CONTROLE_VEREIST,
+      redenen: [
+        'Doelgroep zakelijk pand/ondernemer — ISDE in deze engine is onderzocht voor woningeigenaren en is normaliter niet van toepassing op een zakelijk pand. Bekijk de EIA/MIA/Vamil-sectie op deze pagina voor de fiscale regelingen die wél voor zakelijke panden zijn onderzocht.',
+      ],
+      ontbrekendeGegevens,
+      regel: null,
+    }
+  }
 
   if (doelgroep && doelgroep !== 'eigenaar_bewoner') {
     return {

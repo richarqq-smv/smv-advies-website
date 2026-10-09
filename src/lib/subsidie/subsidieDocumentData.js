@@ -4,8 +4,9 @@
  * uitsluitend een gestructureerd data-object, vult zelf geen document,
  * roept geen AI aan, verzint geen bedragen die niet uit de regelset of
  * ingevoerde specificaties komen. Dit ÉÉN object is de bron voor zowel
- * het scherm (SubsidieBegeleiding.jsx) als het gegenereerde subsidieblad
- * (subsidieDocumentHtml.js) — ze kunnen dus nooit uit elkaar lopen.
+ * het scherm (AdminSubsidieBegeleiding.jsx) als het gegenereerde
+ * subsidieblad (.docx, zie subsidieDocumentDocx.js) — ze kunnen dus nooit
+ * uit elkaar lopen.
  */
 import { ONDERSTEUNDE_MAATREGELEN, MAATREGEL_LABELS } from './isdeIsolatieRegels.js'
 import { ONDERSTEUNDE_APPARAATMAATREGELEN, APPARAAT_LABELS } from './isdeApparaatRegels.js'

@@ -17,6 +17,7 @@
     "@phosphor-icons/react": "^2.1.10",
     "@supabase/supabase-js": "^2.117.1",
     "clsx": "^2.1.1",
+    "docx": "^9.9.0",
     "jszip": "^3.10.2",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

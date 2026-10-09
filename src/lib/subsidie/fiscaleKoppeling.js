@@ -22,6 +22,7 @@
  */
 import { isZakelijkPand } from '../klantOmgeving/afspraakBeschikbaarheid.js'
 import { FISCALE_BEDRIJFSMIDDELEN, FISCALE_CATEGORIE } from './fiscaleBedrijfsmiddelen.js'
+import { MAATREGEL_LABELS } from './isdeIsolatieRegels.js'
 
 export const FISCAAL_RELEVANTIE_STATUS = {
   MOGELIJK_RELEVANT: 'mogelijk_relevant',
@@ -109,7 +110,11 @@ export function bepaalFiscaleCategorieSignalen({ mjopInsights = [], energieInsig
     if (!specificatie) return
     const categorie = MAATREGELKEY_NAAR_CATEGORIE[maatregelKey]
     if (!categorie) return
-    voegToe(categorie, maatregelKey, { type: 'isde_specificatie', label: maatregelKey })
+    // oppervlakteM2 meenemen in het signaal zelf (i.p.v. alleen de
+    // maatregelnaam) — dat is de al ingevulde ISDE-waarde die hergebruikt
+    // kan worden i.p.v. opnieuw als "ontbrekend" te tonen (opdracht:
+    // gegevens uit de subsidieomgeving linken aan eerder ingevulde dingen).
+    voegToe(categorie, maatregelKey, { type: 'isde_specificatie', label: maatregelKey, oppervlakteM2: specificatie.oppervlakteM2 ?? null })
   })
 
   return perCategorie
@@ -121,6 +126,24 @@ export function bepaalFiscaleCategorieSignalen({ mjopInsights = [], energieInsig
  * brondata-kwaliteit) en de hier berekende relevantiestatus
  * (dossier-eigenschap) zijn bewust gescheiden — zie fiscaleBedrijfsmiddelen.js.
  */
+/**
+ * Haalt uit de matchende signalen de al ingevulde ISDE-waarden
+ * (oppervlakteM2 per maatregel) die hergebruikt kunnen worden i.p.v.
+ * opnieuw opgevraagd te worden — de daadwerkelijke koppeling aan eerder
+ * ingevulde dossiergegevens. Alleen signalen met een bekende waarde
+ * leveren een regel op; zonder bekende waarde (of geen isde_specificatie-
+ * signaal) is het resultaat een lege lijst, nooit een gok.
+ */
+function gekoppeldeGegevensVoor(matchendeSignalen) {
+  return matchendeSignalen
+    .filter((s) => s.bron.type === 'isde_specificatie' && s.bron.oppervlakteM2 != null)
+    .map((s) => ({
+      label: `Oppervlakte ${MAATREGEL_LABELS[s.bron.label] ?? s.bron.label}`,
+      waarde: `${s.bron.oppervlakteM2} m²`,
+      bron: 'Al vastgelegd bij de ISDE-specificatie van deze maatregel',
+    }))
+}
+
 function beoordeelFiscaalBedrijfsmiddel({ bedrijfsmiddel, pand, matchendeSignalen }) {
   const gebruikstype = pand?.gebruikstype ?? null
 
@@ -129,6 +152,7 @@ function beoordeelFiscaalBedrijfsmiddel({ bedrijfsmiddel, pand, matchendeSignale
       status: FISCAAL_RELEVANTIE_STATUS.CONTROLE_VEREIST,
       redenen: ['Pandtype van dit pand is nog niet ingevuld — EIA/MIA/Vamil geldt uitsluitend voor bedrijfsmatig gebruikte panden/bedrijfsmiddelen, niet voor een privéwoning.'],
       ontbrekendeGegevens: ['Pandtype (gebruikstype)'],
+      gekoppeldeGegevens: [],
     }
   }
 
@@ -137,6 +161,7 @@ function beoordeelFiscaalBedrijfsmiddel({ bedrijfsmiddel, pand, matchendeSignale
       status: FISCAAL_RELEVANTIE_STATUS.NIET_VAN_TOEPASSING,
       redenen: [`Pandtype "${gebruikstype}" is niet aangemerkt als zakelijk — EIA/MIA/Vamil is uitsluitend van toepassing op bedrijfsmatig gebruikte panden, niet op een privéwoning.`],
       ontbrekendeGegevens: [],
+      gekoppeldeGegevens: [],
     }
   }
 
@@ -145,6 +170,7 @@ function beoordeelFiscaalBedrijfsmiddel({ bedrijfsmiddel, pand, matchendeSignale
       status: FISCAAL_RELEVANTIE_STATUS.CONTROLE_VEREIST,
       redenen: ['Onderwerp is relevant voor dit dossier, maar er is geen betrouwbare, specifieke bedrijfsmiddelcode voor 2026 gevonden — controleer de officiële Milieu- en Energielijst 2026 zelf.'],
       ontbrekendeGegevens: ['Bevestigde bedrijfsmiddelcode', 'Investeringsbedrag', 'Investeringsdatum'],
+      gekoppeldeGegevens: gekoppeldeGegevensVoor(matchendeSignalen),
     }
   }
 
@@ -157,6 +183,7 @@ function beoordeelFiscaalBedrijfsmiddel({ bedrijfsmiddel, pand, matchendeSignale
       'De daadwerkelijke fiscale kwalificatie wordt uitsluitend door RVO/de Belastingdienst vastgesteld — deze applicatie is begeleiding, geen fiscale beoordeling.',
     ],
     ontbrekendeGegevens: ['Investeringsbedrag', 'Investeringsdatum (koopovereenkomst/bestelling)'],
+    gekoppeldeGegevens: gekoppeldeGegevensVoor(matchendeSignalen),
   }
 }
 

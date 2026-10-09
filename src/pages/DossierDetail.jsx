@@ -272,7 +272,7 @@ export default function DossierDetail() {
       <Seo title="Adviesdossier" description="Bekijk en beheer het adviesdossier van dit pand." noindex />
       <PageHero eyebrow="Adviesdossier" title={dossier?.panden?.omschrijving || dossier?.panden?.adres || 'Adviesdossier'} description={dossier?.klanten ? `${dossier.klanten.naam || dossier.klanten.bedrijfsnaam}` : undefined} />
       <Section tone="white" noTopPadding>
-        <Container className="max-w-2xl">
+        <Container wide={isAdmin} className={isAdmin ? undefined : 'max-w-2xl'}>
           {/*
             UX-ronde: duidelijke terugknop naar het dossieroverzicht. Dat
             overzicht is voor een klant Account.jsx (/account, panden/
