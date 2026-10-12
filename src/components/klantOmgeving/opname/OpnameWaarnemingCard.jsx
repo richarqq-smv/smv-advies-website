@@ -39,7 +39,7 @@ const INPUT_CLASSNAME =
  * offline-queue: geen concrete aanleiding om aan te nemen dat inspecteurs
  * structureel zonder dekking werken).
  */
-export function OpnameWaarnemingCard({ index, waarneming, magBewerken, documenten, klantId, opnameId, onWaarnemingChange, onVerwijderd, onDocumentGeupload }) {
+export function OpnameWaarnemingCard({ index, waarneming, magBewerken, documenten, klantId, dossierId, opnameId, onWaarnemingChange, onVerwijderd, onDocumentGeupload }) {
   const [velden, setVelden] = useState(() => Object.fromEntries(VELD_LABELS.map((v) => [v.veld, waarneming[v.veld] ?? ''])))
   const [open, setOpen] = useState(() => waarnemingHeeftInhoud(waarneming) === false)
   const [opslaanStatus, setOpslaanStatus] = useState('opgeslagen') // 'opgeslagen' | 'bezig' | 'fout'
@@ -107,7 +107,7 @@ export function OpnameWaarnemingCard({ index, waarneming, magBewerken, documente
     setUploadFout(false)
     setUploadBezig(true)
     try {
-      const doc = await uploadDocument({ klantId, opnameId, opnameWaarnemingId: waarneming.waarneming_id, file })
+      const doc = await uploadDocument({ klantId, dossierId, opnameId, opnameWaarnemingId: waarneming.waarneming_id, file })
       onDocumentGeupload(doc)
     } catch {
       setUploadFout(true)

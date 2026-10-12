@@ -8,6 +8,7 @@ import { Button } from '../components/ui/Button'
 import { TextField } from '../components/ui/TextField'
 import { ROUTES } from '../lib/routes'
 import { getFactuurInstellingen, updateFactuurInstellingen } from '../lib/klantOmgeving/api'
+import { isGeldigBtwPercentage } from '../lib/klantOmgeving/kosten.js'
 
 const SELECT_CLASSNAME =
   'w-full rounded-lg border border-border bg-white px-3.5 py-2.5 text-sm text-primary focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none'
@@ -27,6 +28,7 @@ export default function AdminInstellingen() {
   const [opslaanBezig, setOpslaanBezig] = useState(false)
   const [opslaanFout, setOpslaanFout] = useState(false)
   const [opgeslagen, setOpgeslagen] = useState(false)
+  const [btwFout, setBtwFout] = useState(null)
 
   useEffect(() => {
     let actief = true
@@ -59,11 +61,17 @@ export default function AdminInstellingen() {
 
   function wijzigVeld(veld, waarde) {
     setOpgeslagen(false)
+    if (veld === 'standaardBtwPercentage') setBtwFout(null)
     setFormulier((f) => ({ ...f, [veld]: waarde }))
   }
 
   async function opslaan(e) {
     e.preventDefault()
+    if (!isGeldigBtwPercentage(formulier.standaardBtwPercentage)) {
+      setBtwFout('Vul een geldig btw-percentage in (0 t/m 100).')
+      return
+    }
+    setBtwFout(null)
     setOpslaanBezig(true)
     setOpslaanFout(false)
     try {
@@ -131,11 +139,19 @@ export default function AdminInstellingen() {
                     id="inst-btw"
                     type="number"
                     min="0"
+                    max="100"
                     step="0.01"
                     value={formulier.standaardBtwPercentage}
                     onChange={(e) => wijzigVeld('standaardBtwPercentage', e.target.value)}
+                    aria-invalid={btwFout ? 'true' : undefined}
+                    aria-describedby={btwFout ? 'inst-btw-fout' : undefined}
                     className={SELECT_CLASSNAME}
                   />
+                  {btwFout ? (
+                    <p id="inst-btw-fout" role="alert" className="mt-1.5 text-xs font-medium text-error">
+                      {btwFout}
+                    </p>
+                  ) : null}
                 </div>
               </div>
 

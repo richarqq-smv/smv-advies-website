@@ -13,6 +13,22 @@
 export const BTW_PERCENTAGE = 21
 
 /**
+ * Statuslabels (implementatieronde 2026-10-12, punt 7D) — één bron voor
+ * Account.jsx en OffertesHistorie.jsx, die voorheen allebei hun eigen,
+ * identieke kopie van deze vier statussen hadden. Zelfde patroon als
+ * FACTUUR_STATUSSEN/FACTUUR_STATUS_LABELS in factuur.js. De statussen zelf
+ * (en hun betekenis) zijn ongewijzigd — alleen de plek waar ze vandaan komen.
+ */
+export const OFFERTE_STATUSSEN = [
+  { id: 'concept', label: 'Concept' },
+  { id: 'verstuurd', label: 'Verstuurd' },
+  { id: 'geaccepteerd', label: 'Geaccepteerd' },
+  { id: 'afgewezen', label: 'Afgewezen' },
+  { id: 'geannuleerd', label: 'Geannuleerd' },
+]
+export const OFFERTE_STATUS_LABELS = Object.fromEntries(OFFERTE_STATUSSEN.map((s) => [s.id, s.label]))
+
+/**
  * Toegestane statusovergangen (werkfase Fase 2 — offerte-lifecycle). Moet
  * exact overeenkomen met `toegestane_overgangen` in
  * bewaak_offerte_integriteit() (supabase/migrations/0005_offertes.sql) —

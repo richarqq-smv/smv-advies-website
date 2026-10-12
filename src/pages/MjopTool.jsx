@@ -26,12 +26,12 @@ export default function MjopTool() {
     <>
       <Seo
         title="MJOP & verduurzamingsplanning"
-        description="Intern adviesinstrument van SMV Advies: onderhoud, vervanging en verduurzaming van een bedrijfspand in één overzicht."
+        description="Hulpmiddel van SMV Advies om onderhoud, vervanging en verduurzaming van uw bedrijfspand in één overzicht te plannen."
         noindex
       />
 
       <PageHero
-        eyebrow="Intern adviesinstrument"
+        eyebrow="Uw pand"
         title="MJOP & verduurzamingsplanning"
         description="Breng onderhoud, vervanging en verduurzaming van uw bedrijfspand samen in één overzicht. Een onderhoudsmoment kan ook een logisch moment zijn om verduurzaming mee te nemen. Deze tool helpt om die momenten overzichtelijk in beeld te brengen."
       />

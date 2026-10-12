@@ -216,6 +216,7 @@ export default function AdminOpname() {
             waarnemingenPerOnderdeel={waarnemingenPerOnderdeel}
             magBewerken={magBewerken}
             opnameId={opnameId}
+            dossierId={dossierId}
             klantId={dossier.klant_id}
             documenten={documenten}
             onWaarnemingToegevoegd={waarnemingToegevoegd}

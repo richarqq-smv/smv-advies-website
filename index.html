@@ -2,22 +2,29 @@
 <html lang="nl">
   <head>
     <meta charset="UTF-8" />
-    <script>
-      // Consent Mode v2 default — must run unconditionally on every page
-      // load, before the Google tag itself (which loads only after the
-      // cookiebanner's "Accepteren", see src/lib/analytics.js). This is
-      // the one and only place 'consent','default' is declared.
-      window.dataLayer = window.dataLayer || []
-      function gtag() {
-        dataLayer.push(arguments)
-      }
-      gtag('consent', 'default', {
-        ad_storage: 'denied',
-        ad_user_data: 'denied',
-        ad_personalization: 'denied',
-        analytics_storage: 'denied',
-      })
-    </script>
+    <!--
+      Beveiligingsronde (2026-10-12): de Content-Security-Policy-meta-tag
+      wordt NIET hier in de brontemplate gezet, maar pas door
+      scripts/prerender.mjs in elk gegenereerd dist/*.html-bestand
+      geïnjecteerd (zie dat bestand). Reden: deze index.html is ook de
+      template die `vite dev` rechtstreeks serveert, en Vite's eigen
+      React-Refresh-preamble/HMR-client gebruiken zelf inline scripts die
+      een strikte CSP zou blokkeren — dat zou de lokale dev-server breken.
+      In productie (dist/) is er geen HMR en kan een strikte CSP wél.
+
+      De twee vroeger inline Consent-Mode/gtag-scripts hieronder zijn wel
+      al verplaatst naar /consent-mode.js en /gtag-init.js (externe,
+      same-origin bestanden) — dat is onafhankelijk van de CSP-vraag en
+      verandert niets aan het gedrag, in dev of productie.
+    -->
+    <!--
+      Consent Mode v2 default — must run unconditionally on every page
+      load, before the Google tag itself (which loads only after the
+      cookiebanner's "Accepteren", see src/lib/analytics.js). This is
+      the one and only place 'consent','default' is declared. Extern
+      bestand i.p.v. inline, zie CSP-toelichting hierboven.
+    -->
+    <script src="/consent-mode.js"></script>
     <!--
       Static gtag.js tag, per Google's own documented pattern. Loading it
       unconditionally (rather than via dynamic document.createElement,
@@ -29,10 +36,7 @@
       visitor clicks "Accepteren".
     -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CE0DFH59Z9"></script>
-    <script>
-      gtag('js', new Date())
-      gtag('config', 'G-CE0DFH59Z9')
-    </script>
+    <script src="/gtag-init.js"></script>
     <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="/favicon.png" sizes="any" />
     <link rel="apple-touch-icon" href="/favicon-180.png" />

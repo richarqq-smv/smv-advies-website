@@ -21,7 +21,9 @@ export default function WachtwoordVergeten() {
     setFout(null)
     setBezig(true)
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email)
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}${ROUTES.wachtwoordHerstellen}`,
+      })
       if (error) throw error
       setVerzonden(true)
     } catch (err) {

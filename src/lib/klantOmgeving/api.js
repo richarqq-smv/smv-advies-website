@@ -49,6 +49,20 @@ export async function registreerKlant({ naam, bedrijfsnaam, email, telefoon }) {
   )
 }
 
+/**
+ * Implementatieronde 2026-10-12, punt 3: koppelcode tegen dubbele
+ * klantrecords (0048_klant_koppelcode.sql) — admin-only generator, geeft
+ * de ruwe code precies één keer terug.
+ */
+export async function genereerKlantKoppelcode(klantId) {
+  return throwOnError(await supabase.rpc('admin_genereer_klant_koppelcode', { p_klant_id: klantId }))
+}
+
+/** Self-service: koppelt het ingelogde account aan de klant van deze code, als alternatief voor registreerKlant() (nieuwe klant). */
+export async function koppelKlantMetCode({ code, naam, email = null, telefoon = null }) {
+  return throwOnError(await supabase.rpc('koppel_klant_met_code', { p_code: code, p_naam: naam, p_email: email, p_telefoon: telefoon }))
+}
+
 // --- Pand ------------------------------------------------------------------
 
 export async function listPandenVoorKlant(klantId) {

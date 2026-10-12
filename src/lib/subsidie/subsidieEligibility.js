@@ -32,6 +32,16 @@ export const SUBSIDIE_STATUSSEN = {
   // precondition die niet in deze vijf past (bv. "alleen bestaande bouw,
   // geen nieuwbouw") — voor dakisolatie/gevelisolatie nu niet nodig.
   VOORWAARDE_ONTBREEKT: 'voorwaarde_ontbreekt',
+  // Eigen status (2026-10-12), losgetrokken van CONTROLE_VEREIST: een
+  // niet-ondersteunde doelgroep (zakelijk/vve/overig) is in déze engine
+  // een BLIJVEND gegeven — kan nooit alsnog "van toepassing" worden,
+  // in tegenstelling tot een echte CONTROLE_VEREIST (bv. onbekende
+  // isolatiebevestiging, ontbrekende regelset), die nog kan wijzigen
+  // zodra de adviseur meer invult. Dit onderscheid is nodig zodat
+  // berekenCombinatie() een blijvend-niet-subsidiabele maatregel niet
+  // langer het totaal van de wél al vastgestelde maatregelen laat
+  // blokkeren (zie subsidieCalculator.js).
+  DOELGROEP_NIET_ONDERSTEUND: 'doelgroep_niet_ondersteund',
 }
 
 export const SUBSIDIE_STATUS_LABELS = {
@@ -41,6 +51,7 @@ export const SUBSIDIE_STATUS_LABELS = {
   [SUBSIDIE_STATUSSEN.NIET_VOLDOENDE_GEGEVENS]: 'Niet voldoende gegevens',
   [SUBSIDIE_STATUSSEN.NIET_VAN_TOEPASSING]: 'Niet van toepassing',
   [SUBSIDIE_STATUSSEN.VOORWAARDE_ONTBREEKT]: 'Voorwaarde ontbreekt',
+  [SUBSIDIE_STATUSSEN.DOELGROEP_NIET_ONDERSTEUND]: 'Doelgroep niet ondersteund in ISDE',
 }
 
 function ontbrekendeGegevensVoor({ uitvoeringsjaar, oppervlakteM2, technischeWaarde, meldcode, isolatieBevestigd }, maatregelKey) {
@@ -92,7 +103,7 @@ export function beoordeelMaatregel({ maatregelKey, specificatie = {} } = {}) {
 
   if (doelgroep === 'zakelijk') {
     return {
-      status: SUBSIDIE_STATUSSEN.CONTROLE_VEREIST,
+      status: SUBSIDIE_STATUSSEN.DOELGROEP_NIET_ONDERSTEUND,
       redenen: [
         'Doelgroep zakelijk pand/ondernemer — ISDE in deze engine is onderzocht voor woningeigenaren en is normaliter niet van toepassing op een zakelijk pand. Bekijk de EIA/MIA/Vamil-sectie op deze pagina voor de fiscale regelingen die wél voor zakelijke panden zijn onderzocht.',
       ],
@@ -103,7 +114,7 @@ export function beoordeelMaatregel({ maatregelKey, specificatie = {} } = {}) {
 
   if (doelgroep && doelgroep !== 'eigenaar_bewoner') {
     return {
-      status: SUBSIDIE_STATUSSEN.CONTROLE_VEREIST,
+      status: SUBSIDIE_STATUSSEN.DOELGROEP_NIET_ONDERSTEUND,
       redenen: [`Doelgroep ${DOELGROEP_LABELS[doelgroep] ?? doelgroep} — deze regeling is nog niet in deze engine geïmplementeerd. Controleer de officiële voorwaarden voor deze doelgroep op rvo.nl voordat u verder gaat.`],
       ontbrekendeGegevens,
       regel: null,

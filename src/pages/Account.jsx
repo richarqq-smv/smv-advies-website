@@ -13,6 +13,7 @@ import { ROUTES } from '../lib/routes'
 import {
   getMijnKlant,
   registreerKlant,
+  koppelKlantMetCode,
   updateMijnContactpersoon,
   updateKlant,
   listPandenVoorKlant,
@@ -30,20 +31,12 @@ import {
 } from '../lib/klantOmgeving/api'
 import { AdviespuntKaart } from '../components/dossier/AdviesBeheer'
 import { valideerKlantRegistratie } from '../lib/klantOmgeving/klantValidatie'
-import { leesDossierContext } from '../lib/klantOmgeving/dossierNavigatie'
+import { leesDossierContext, voegDossierContextToe } from '../lib/klantOmgeving/dossierNavigatie'
 import { bouwAccountActies } from '../lib/klantOmgeving/accountActies'
-import { euro, formatDatumNl } from '../lib/klantOmgeving/offerte'
+import { euro, formatDatumNl, OFFERTE_STATUS_LABELS } from '../lib/klantOmgeving/offerte'
 import { FACTUUR_STATUS_LABELS } from '../lib/klantOmgeving/factuur'
 
 const LEEG_PAND = { omschrijving: '', adres: '', postcode: '', plaats: '', gebruikstype: '' }
-
-const OFFERTE_STATUS_LABELS = {
-  concept: 'Concept',
-  verstuurd: 'Verstuurd',
-  geaccepteerd: 'Geaccepteerd',
-  afgewezen: 'Afgewezen',
-  geannuleerd: 'Geannuleerd',
-}
 
 const SECTIES = [
   { id: 'gegevens', label: 'Mijn gegevens' },
@@ -97,9 +90,27 @@ export default function Account() {
   const [registratieFout, setRegistratieFout] = useState(null)
   const [registratieVeldFouten, setRegistratieVeldFouten] = useState({})
 
+  // Implementatieronde 2026-10-12, punt 3: alternatief voor registreerKlant()
+  // wanneer een medewerker deze klant al heeft aangemaakt (admin_maak_klant_
+  // pand_dossier) en de klant een koppelcode van SMV heeft ontvangen — zie
+  // koppel_klant_met_code() in 0048_klant_koppelcode.sql.
+  const [koppelModus, setKoppelModus] = useState(false)
+  const [koppelcode, setKoppelcode] = useState({ code: '', naam: '', email: '', telefoon: '' })
+  const [koppelBezig, setKoppelBezig] = useState(false)
+  const [koppelFout, setKoppelFout] = useState(null)
+
   useEffect(() => {
     if (!user) return
-    setRegistratie((v) => ({ ...v, email: user.email ?? v.email }))
+    // naam/bedrijfsnaam komen uit de auth-metadata die Registreren.jsx al
+    // meegeeft bij signup — hier voor het eerst gebruikt, zodat een klant
+    // deze niet nog een keer hoeft te typen. Overschrijft nooit een al
+    // ingevulde waarde (v.naam/v.bedrijfsnaam blijven leidend).
+    setRegistratie((v) => ({
+      ...v,
+      naam: v.naam || user.user_metadata?.naam || '',
+      bedrijfsnaam: v.bedrijfsnaam || user.user_metadata?.bedrijfsnaam || '',
+      email: user.email ?? v.email,
+    }))
     laadAlles()
   }, [user])
 
@@ -157,6 +168,33 @@ export default function Account() {
     }
   }
 
+  async function submitKoppelcode(e) {
+    e.preventDefault()
+    setKoppelFout(null)
+    if (!koppelcode.code.trim() || !koppelcode.naam.trim()) {
+      setKoppelFout('Vul de koppelcode en uw naam in.')
+      return
+    }
+    setKoppelBezig(true)
+    try {
+      await koppelKlantMetCode({
+        code: koppelcode.code.trim(),
+        naam: koppelcode.naam.trim(),
+        email: koppelcode.email.trim() || null,
+        telefoon: koppelcode.telefoon.trim() || null,
+      })
+      await laadAlles()
+    } catch (err) {
+      // De RPC (koppel_klant_met_code, 0048_klant_koppelcode.sql) geeft al
+      // een correcte, klantgerichte Nederlandse foutmelding terug (bv.
+      // "Deze koppelcode is ongeldig, verlopen of al gebruikt.") — exact
+      // hetzelfde patroon als TelefonischeAfspraakSectie.jsx.
+      setKoppelFout(err.message || 'Koppelen is niet gelukt. Probeer het opnieuw.')
+    } finally {
+      setKoppelBezig(false)
+    }
+  }
+
   const acties = klant ? bouwAccountActies({ klant, contactpersoon, panden, dossiers }) : []
 
   return (
@@ -179,7 +217,34 @@ export default function Account() {
 
           {laden ? (
             <p className="text-sm text-foreground-muted">Bezig met laden...</p>
-          ) : !klant ? (
+          ) : !klant ? koppelModus ? (
+            <form onSubmit={submitKoppelcode} className="flex flex-col gap-5 rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
+              <div>
+                <h2 className="text-lg text-primary">Koppelcode invullen</h2>
+                <p className="mt-1 text-sm text-foreground-muted">Heeft u van SMV Advies een koppelcode ontvangen omdat uw bedrijfsgegevens al bij ons bekend zijn? Vul de code hieronder in om uw account te koppelen.</p>
+              </div>
+              <TextField id="acc-koppelcode" label="Koppelcode" required value={koppelcode.code} onChange={(v) => setKoppelcode((s) => ({ ...s, code: v }))} />
+              <TextField id="acc-koppel-naam" label="Naam" required value={koppelcode.naam} onChange={(v) => setKoppelcode((s) => ({ ...s, naam: v }))} />
+              <div className="grid gap-5 sm:grid-cols-2">
+                <TextField id="acc-koppel-email" label="E-mailadres" type="email" value={koppelcode.email} onChange={(v) => setKoppelcode((s) => ({ ...s, email: v }))} />
+                <TextField id="acc-koppel-telefoon" label="Telefoonnummer" type="tel" value={koppelcode.telefoon} onChange={(v) => setKoppelcode((s) => ({ ...s, telefoon: v }))} />
+              </div>
+              {koppelFout ? <p role="alert" className="text-sm font-medium text-error">{koppelFout}</p> : null}
+              <Button type="submit" disabled={koppelBezig}>
+                {koppelBezig ? 'Bezig...' : 'Account koppelen'}
+              </Button>
+              <button
+                type="button"
+                onClick={() => {
+                  setKoppelModus(false)
+                  setKoppelFout(null)
+                }}
+                className="text-left text-sm text-foreground-muted underline hover:text-accent"
+              >
+                Toch geen koppelcode — bedrijfsgegevens zelf invullen
+              </button>
+            </form>
+          ) : (
             <form onSubmit={submitRegistratie} className="flex flex-col gap-5 rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
               <div>
                 <h2 className="text-lg text-primary">Bedrijfsgegevens</h2>
@@ -196,6 +261,9 @@ export default function Account() {
               <Button type="submit" disabled={registratieBezig}>
                 {registratieBezig ? 'Bezig...' : 'Bedrijfsgegevens opslaan'}
               </Button>
+              <button type="button" onClick={() => setKoppelModus(true)} className="text-left text-sm text-foreground-muted underline hover:text-accent">
+                Heeft u een koppelcode van SMV Advies ontvangen?
+              </button>
             </form>
           ) : (
             <div className="flex flex-col gap-6">
@@ -209,7 +277,7 @@ export default function Account() {
 
               <MijnGegevens contactpersoon={contactpersoon} onOpgeslagen={setContactpersoon} />
               <MijnBedrijf klant={klant} onOpgeslagen={setKlant} />
-              <MijnPanden panden={panden} setPanden={setPanden} klant={klant} setDossiers={setDossiers} />
+              <MijnPanden panden={panden} setPanden={setPanden} klant={klant} dossiers={dossiers} setDossiers={setDossiers} />
               <MijnDossiers dossiers={dossiers} />
               <MijnAdvies dossiers={dossiers} adviespuntenPerDossier={adviespuntenPerDossier} />
               <MijnDocumenten klant={klant} documenten={documenten} setDocumenten={setDocumenten} dossiers={dossiers} />
@@ -424,7 +492,7 @@ function MijnBedrijf({ klant, onOpgeslagen }) {
 
 // --- Mijn panden --------------------------------------------------
 
-function MijnPanden({ panden, setPanden, klant, setDossiers }) {
+function MijnPanden({ panden, setPanden, klant, dossiers, setDossiers }) {
   const [nieuwPandModus, setNieuwPandModus] = useState(false)
   const [nieuwPand, setNieuwPand] = useState(LEEG_PAND)
   const [pandBezig, setPandBezig] = useState(false)
@@ -434,6 +502,9 @@ function MijnPanden({ panden, setPanden, klant, setDossiers }) {
   const [bewerkForm, setBewerkForm] = useState(null)
   const [bewerkBezig, setBewerkBezig] = useState(false)
   const [bewerkFout, setBewerkFout] = useState(null)
+
+  const [dossierOpenenBezigPandId, setDossierOpenenBezigPandId] = useState(null)
+  const [dossierOpenenFoutPandId, setDossierOpenenFoutPandId] = useState(null)
 
   async function submitNieuwPand(e) {
     e.preventDefault()
@@ -487,9 +558,16 @@ function MijnPanden({ panden, setPanden, klant, setDossiers }) {
   }
 
   async function openDossierVoorPand(pand) {
-    const { dossier } = await openOfHergebruikDossier({ klantId: klant.klant_id, pandId: pand.pand_id, pand })
-    setDossiers((v) => [dossier, ...v.filter((d) => d.dossier_id !== dossier.dossier_id)])
-    window.location.assign(ROUTES.dossier(dossier.dossier_id))
+    setDossierOpenenBezigPandId(pand.pand_id)
+    setDossierOpenenFoutPandId(null)
+    try {
+      const { dossier } = await openOfHergebruikDossier({ klantId: klant.klant_id, pandId: pand.pand_id, pand })
+      setDossiers((v) => [dossier, ...v.filter((d) => d.dossier_id !== dossier.dossier_id)])
+      window.location.assign(ROUTES.dossier(dossier.dossier_id))
+    } catch {
+      setDossierOpenenFoutPandId(pand.pand_id)
+      setDossierOpenenBezigPandId(null)
+    }
   }
 
   return (
@@ -559,16 +637,24 @@ function MijnPanden({ panden, setPanden, klant, setDossiers }) {
                 {pand.plaats ? <p className="text-sm text-foreground-muted">{pand.adres ? `${pand.adres}, ` : ''}{pand.postcode} {pand.plaats}</p> : null}
                 {pand.gebruikstype ? <p className="text-sm text-foreground-muted">{pand.gebruikstype}{pand.bouwjaar ? `, bouwjaar ${pand.bouwjaar}` : ''}{pand.vloeroppervlak ? `, ${pand.vloeroppervlak} m²` : ''}</p> : null}
                 <div className="mt-3 flex flex-wrap items-center gap-3">
-                  <Link to={ROUTES.mjopTool} className="text-sm font-medium text-accent hover:underline">
+                  <Link
+                    to={voegDossierContextToe(ROUTES.mjopTool, dossiers.find((d) => d.pand_id === pand.pand_id)?.dossier_id)}
+                    className="text-sm font-medium text-accent hover:underline"
+                  >
                     MJOP starten/bekijken
                   </Link>
-                  <Button type="button" variant="outline" size="sm" onClick={() => openDossierVoorPand(pand)}>
-                    Adviesdossier openen
+                  <Button type="button" variant="outline" size="sm" onClick={() => openDossierVoorPand(pand)} disabled={dossierOpenenBezigPandId === pand.pand_id}>
+                    {dossierOpenenBezigPandId === pand.pand_id ? 'Bezig...' : 'Adviesdossier openen'}
                   </Button>
                   <Button type="button" variant="ghost" size="sm" onClick={() => startBewerken(pand)}>
                     Pandgegevens aanpassen
                   </Button>
                 </div>
+                {dossierOpenenFoutPandId === pand.pand_id ? (
+                  <p role="alert" className="mt-2 text-sm font-medium text-error">
+                    Adviesdossier openen is niet gelukt. Probeer het opnieuw.
+                  </p>
+                ) : null}
               </li>
             ),
           )}

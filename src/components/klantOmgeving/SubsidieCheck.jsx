@@ -113,7 +113,16 @@ export function SubsidieCheck({ dossierId, pand, mjopSnapshot, energieSnapshot, 
 
   const isdeAangeraakt = documentData.maatregelen.filter((m) => m.specificatie != null)
   const isdeRelevant = isdeAangeraakt.filter((m) => ISDE_RELEVANT_STATUSSEN.includes(m.status))
-  const isdeControle = isdeAangeraakt.filter((m) => m.status === SUBSIDIE_STATUSSEN.CONTROLE_VEREIST)
+  // Zowel een "echte" CONTROLE_VEREIST (kan nog wijzigen) als de nieuwe,
+  // blijvende DOELGROEP_NIET_ONDERSTEUND (zakelijk/vve/overig — zie
+  // subsidieEligibility.js) horen in deze samenvatting bij "controle
+  // vereist": in beide gevallen moet de klant/adviseur zelf verder kijken,
+  // alleen de reden verschilt. Zonder deze toevoeging zou een
+  // zakelijk-pand-maatregel stilzwijgend uit alle drie de tellingen
+  // verdwijnen (niet relevant, niet controle, niet ontbrekend).
+  const isdeControle = isdeAangeraakt.filter(
+    (m) => m.status === SUBSIDIE_STATUSSEN.CONTROLE_VEREIST || m.status === SUBSIDIE_STATUSSEN.DOELGROEP_NIET_ONDERSTEUND,
+  )
   const isdeOntbrekend = isdeAangeraakt.filter((m) => m.status === SUBSIDIE_STATUSSEN.NIET_VOLDOENDE_GEGEVENS)
 
   const fiscaalRelevant = documentData.fiscaleRegelingen.filter((r) => r.status === FISCAAL_RELEVANTIE_STATUS.MOGELIJK_RELEVANT)

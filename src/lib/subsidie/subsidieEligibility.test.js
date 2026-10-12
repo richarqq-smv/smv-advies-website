@@ -239,33 +239,37 @@ test('Triple glas: U-waarde boven het maximum (0,7) -> niet van toepassing', () 
   assert.equal(r.status, SUBSIDIE_STATUSSEN.NIET_VAN_TOEPASSING)
 })
 
-// --- Doelgroep (opdracht §2/§13: VvE/overig krijgen expliciet "controle vereist", geen SVVE/SVOH-tarief verzonnen) ---
+// --- Doelgroep (opdracht §2/§13: VvE/overig/zakelijk krijgen een eigen,
+// blijvende status DOELGROEP_NIET_ONDERSTEUND (2026-10-12) — losgetrokken
+// van CONTROLE_VEREIST omdat dit in deze engine nooit meer "van
+// toepassing" kan worden, in tegenstelling tot een echte CONTROLE_VEREIST
+// die nog kan wijzigen. Geen SVVE/SVOH/zakelijk-ISDE-tarief verzonnen.) ---
 
-test('doelgroep VvE -> controle vereist, ook als alle technische gegevens compleet zijn', () => {
+test('doelgroep VvE -> doelgroep niet ondersteund, ook als alle technische gegevens compleet zijn', () => {
   const r = beoordeelMaatregel({
     maatregelKey: 'dakisolatie',
     specificatie: { uitvoeringsjaar: 2026, oppervlakteM2: 120, technischeWaarde: 3.5, meldcode: 'KA30327', isolatieBevestigd: 'ja', doelgroep: 'vve' },
   })
-  assert.equal(r.status, SUBSIDIE_STATUSSEN.CONTROLE_VEREIST)
+  assert.equal(r.status, SUBSIDIE_STATUSSEN.DOELGROEP_NIET_ONDERSTEUND)
   assert.match(r.redenen[0], /VvE/)
   assert.equal(r.regel, null) // geen SVVE-tarief verzonnen
 })
 
-test('doelgroep overig (verhuurder e.d.) -> controle vereist, geen SVOH-tarief verzonnen', () => {
+test('doelgroep overig (verhuurder e.d.) -> doelgroep niet ondersteund, geen SVOH-tarief verzonnen', () => {
   const r = beoordeelMaatregel({
     maatregelKey: 'dakisolatie',
     specificatie: { uitvoeringsjaar: 2026, oppervlakteM2: 120, technischeWaarde: 3.5, meldcode: 'KA30327', isolatieBevestigd: 'ja', doelgroep: 'overig' },
   })
-  assert.equal(r.status, SUBSIDIE_STATUSSEN.CONTROLE_VEREIST)
+  assert.equal(r.status, SUBSIDIE_STATUSSEN.DOELGROEP_NIET_ONDERSTEUND)
   assert.equal(r.regel, null)
 })
 
-test('doelgroep zakelijk -> controle vereist met expliciete verwijzing naar EIA/MIA/Vamil, geen zakelijk ISDE-tarief verzonnen', () => {
+test('doelgroep zakelijk -> doelgroep niet ondersteund met expliciete verwijzing naar EIA/MIA/Vamil, geen zakelijk ISDE-tarief verzonnen', () => {
   const r = beoordeelMaatregel({
     maatregelKey: 'dakisolatie',
     specificatie: { uitvoeringsjaar: 2026, oppervlakteM2: 120, technischeWaarde: 3.5, meldcode: 'KA30327', isolatieBevestigd: 'ja', doelgroep: 'zakelijk' },
   })
-  assert.equal(r.status, SUBSIDIE_STATUSSEN.CONTROLE_VEREIST)
+  assert.equal(r.status, SUBSIDIE_STATUSSEN.DOELGROEP_NIET_ONDERSTEUND)
   assert.match(r.redenen[0], /EIA\/MIA\/Vamil/)
   assert.equal(r.regel, null)
 })

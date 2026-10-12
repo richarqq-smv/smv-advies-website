@@ -59,7 +59,10 @@ test('RequireAuth.jsx: wacht op het laden van de auth-status vóór een redirect
 })
 
 test('Inloggen.jsx: navigeert na een geslaagde login terug naar location.state?.van (bestaande, hier alleen eindelijk gevulde architectuur — geen nieuwe bouwen)', () => {
-  assert.match(INLOGGEN, /navigate\(location\.state\?\.van \?\? ROUTES\.home\)/)
+  // Implementatieronde 2026-10-12, punt 7B: location.state?.van gaat sinds
+  // dan niet meer ongevalideerd naar navigate() — veiligeInterneBestemming()
+  // weigert een niet-same-origin pad (defense-in-depth tegen open redirect).
+  assert.match(INLOGGEN, /navigate\(veiligeInterneBestemming\(location\.state\?\.van\) \?\? ROUTES\.home\)/)
 })
 
 test('MjopTool.jsx: blijft de dossierId-query-param lezen via searchParams, ongewijzigd door de auth-verhuizing', () => {

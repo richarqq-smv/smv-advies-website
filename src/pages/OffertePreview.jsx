@@ -6,6 +6,7 @@ import { Button } from '../components/ui/Button'
 import { OfferteDocument } from '../components/klantOmgeving/OfferteDocument'
 import { getOfferte, getFactuurInstellingen } from '../lib/klantOmgeving/api'
 import { ROUTES } from '../lib/routes'
+import { COMPANY } from '../data/company'
 
 /**
  * Preview- en printpagina voor één opgeslagen offerte (Fase 3). Bewust
@@ -84,9 +85,24 @@ export default function OffertePreview() {
               Deze offerte bestaat niet, of u heeft er geen toegang toe.
             </p>
           ) : (
-            <div className="rounded-2xl border border-border bg-white p-8 shadow-sm print:rounded-none print:border-0 print:p-0 print:shadow-none sm:p-12">
-              <OfferteDocument offerte={offerte} instellingen={instellingen} />
-            </div>
+            <>
+              {offerte.status === 'concept' || offerte.status === 'verstuurd' ? (
+                <div className="mb-4 rounded-lg border border-accent/30 bg-accent/5 px-4 py-3 text-sm text-primary print:hidden">
+                  Wilt u akkoord gaan met deze offerte? Druk deze af, onderteken 'm, en stuur een foto of scan naar{' '}
+                  <a href={`mailto:${COMPANY.contactEmail}`} className="font-medium text-accent hover:underline">
+                    {COMPANY.contactEmail}
+                  </a>
+                  . Heeft u vragen? Bel gerust{' '}
+                  <a href={COMPANY.phoneHref} className="font-medium text-accent hover:underline">
+                    {COMPANY.phone}
+                  </a>
+                  .
+                </div>
+              ) : null}
+              <div className="rounded-2xl border border-border bg-white p-8 shadow-sm print:rounded-none print:border-0 print:p-0 print:shadow-none sm:p-12">
+                <OfferteDocument offerte={offerte} instellingen={instellingen} />
+              </div>
+            </>
           )}
         </div>
       </div>

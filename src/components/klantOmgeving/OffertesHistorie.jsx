@@ -4,7 +4,7 @@ import { FileText, Trash, WarningCircle } from '@phosphor-icons/react'
 import { Button } from '../ui/Button'
 import { ROUTES } from '../../lib/routes'
 import { getOfferte, getOffertesVoorDossier, deleteOfferte, updateOfferteStatus, getFacturenVoorDossier, createFactuur, getFactuurInstellingen } from '../../lib/klantOmgeving/api'
-import { euro, formatDatumNl, OFFERTE_TOEGESTANE_OVERGANGEN, magFactuurMakenVanuitOfferte } from '../../lib/klantOmgeving/offerte'
+import { euro, formatDatumNl, OFFERTE_TOEGESTANE_OVERGANGEN, OFFERTE_STATUS_LABELS, magFactuurMakenVanuitOfferte } from '../../lib/klantOmgeving/offerte'
 import { berekenFactuurTotalen, bouwFactuurKlantSnapshot, bouwFactuurRegelsVanuitOfferte, standaardVervaldatum } from '../../lib/klantOmgeving/factuur'
 
 // Knoptekst per mogelijke volgende status — alleen de overgangen die
@@ -23,14 +23,6 @@ const OVERGANG_LABEL = {
 // expliciete bevestigingsstap, zelfde patroon als "Verwijderen" hieronder.
 const TERMINALE_STATUSSEN = new Set(['geaccepteerd', 'afgewezen', 'geannuleerd'])
 
-const STATUS_LABELS = {
-  concept: 'Concept',
-  verstuurd: 'Verstuurd',
-  geaccepteerd: 'Geaccepteerd',
-  afgewezen: 'Afgewezen',
-  geannuleerd: 'Geannuleerd',
-}
-
 // Uitsluitend visuele indeling binnen de bestaande kleurtokens (geen
 // nieuwe kleuren) — geen aparte "verlopen"-status, zie OfferteStatusBadge.
 const STATUS_CLASSES = {
@@ -44,7 +36,7 @@ const STATUS_CLASSES = {
 function OfferteStatusBadge({ status }) {
   return (
     <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold tracking-wide ${STATUS_CLASSES[status] ?? STATUS_CLASSES.concept}`}>
-      {STATUS_LABELS[status] ?? status}
+      {OFFERTE_STATUS_LABELS[status] ?? status}
     </span>
   )
 }
@@ -180,7 +172,7 @@ export function OffertesHistorie({ dossierId, refreshSignal, magBeheren = false,
       if (!magFactuurMakenVanuitOfferte(actuele.status)) {
         setFactuurMakenFoutId(offerte.id)
         setFactuurMakenFoutBericht(
-          `Een factuur kan alleen worden aangemaakt vanuit een offerte met status "Verstuurd" of "Geaccepteerd" (huidige status: "${STATUS_LABELS[actuele.status] ?? actuele.status}"). Vernieuw deze pagina om de actuele status te zien.`,
+          `Een factuur kan alleen worden aangemaakt vanuit een offerte met status "Verstuurd" of "Geaccepteerd" (huidige status: "${OFFERTE_STATUS_LABELS[actuele.status] ?? actuele.status}"). Vernieuw deze pagina om de actuele status te zien.`,
         )
         setFactuurMakenBezig(null)
         setOffertes((rows) => rows.map((o) => (o.id === offerte.id ? actuele : o)))

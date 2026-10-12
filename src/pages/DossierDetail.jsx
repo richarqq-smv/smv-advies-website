@@ -23,6 +23,7 @@ import { PakketControle } from '../components/klantOmgeving/PakketControle'
 import { BouwkundigeAnalyse } from '../components/klantOmgeving/BouwkundigeAnalyse'
 import { DossierTaken } from '../components/klantOmgeving/DossierTaken'
 import { DossierSubsidies } from '../components/klantOmgeving/DossierSubsidies'
+import { DossierSubsidiesKlantWeergave } from '../components/klantOmgeving/DossierSubsidiesKlantWeergave'
 import { TelefonischeAfspraakSectie } from '../components/klantOmgeving/TelefonischeAfspraakSectie'
 import {
   getDossier,
@@ -426,10 +427,8 @@ export default function DossierDetail() {
                 // Pakketarchitectuurronde (2026-10-08): subsidie-administratie is
                 // backendmatig en administratief voor élk pakket beschikbaar (zie
                 // 0035_dossier_subsidies.sql — admin-only RLS, geen pakketcheck) —
-                // pakket bepaalt dus nooit meer of een admin deze sectie ziet,
-                // alleen of een klant hem ooit te zien krijgt (die sectie is al
-                // isAdmin-only en blijft dat). Anchor voor de Werkvolgorde/Health
-                // Check-actie "Subsidies bijhouden".
+                // pakket bepaalt dus nooit meer of een admin deze sectie ziet.
+                // Anchor voor de Werkvolgorde/Health Check-actie "Subsidies bijhouden".
                 <Accordion title="Subsidies" id="subsidies-sectie">
                   <DossierSubsidies
                     dossierId={dossier.dossier_id}
@@ -441,7 +440,33 @@ export default function DossierDetail() {
                     energieSnapshot={dossier.energie_snapshot}
                   />
                 </Accordion>
-              ) : null}
+              ) : dossier.pakket_id === 'gold' ? (
+                // Implementatieronde 2026-10-12, punt 2: read-only klantweergave
+                // voor een Gold-klant — zelfde #subsidies-sectie-anchor als
+                // hierboven, zodat de "Subsidies bijhouden"-actie uit de Health
+                // Check niet langer een dode link is voor een Gold-klant.
+                // Database-grens: 0047_subsidie_klant_gold_inzicht.sql (klant
+                // ziet alleen eigen dossierdata, niet de admin-only
+                // subsidiespecificaties/RVO-referentielijst).
+                <Accordion title="Subsidies" id="subsidies-sectie">
+                  <DossierSubsidiesKlantWeergave dossierId={dossier.dossier_id} />
+                </Accordion>
+              ) : (
+                // Niet-Gold-klant: zelfde anchor, maar een upgrade-teaser i.p.v.
+                // de sectie zelf verbergen — de klant ziet dat dit onderdeel
+                // bestaat, niet een lege/dode plek.
+                <div id="subsidies-sectie" className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
+                  <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Subsidiebegeleiding</p>
+                  <h3 className="mb-2 text-xl text-primary">Subsidies</h3>
+                  <p className="mb-4 text-sm text-foreground-muted">
+                    Upgrade naar Gold voor de subsidie-inzichten. Met Gold ziet u hier welke subsidieregelingen SMV Advies voor u in behandeling heeft,
+                    inclusief status, verwacht bedrag en de stappen die nog genomen moeten worden.
+                  </p>
+                  <Button as="link" to={ROUTES.pakketAnchor('gold')} variant="outline" size="sm">
+                    Bekijk Gold
+                  </Button>
+                </div>
+              )}
               {isAdmin && dossier.pakket_id === 'gold' ? (
                 <Accordion title="Subsidiebegeleiding & oplevering">
                   <DossierTaken

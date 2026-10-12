@@ -9,6 +9,7 @@ import { Button } from '../components/ui/Button'
 import { WachtwoordVeld } from '../components/auth/WachtwoordVeld'
 import { supabase } from '../lib/supabaseClient'
 import { vertaalAuthFout } from '../lib/auth/errors'
+import { veiligeInterneBestemming } from '../lib/auth/veiligeRedirect'
 import { ROUTES } from '../lib/routes'
 
 export default function Inloggen() {
@@ -28,8 +29,10 @@ export default function Inloggen() {
       if (error) throw error
       // Na de klant-/adminomgeving (volgende stap) hier redirecten naar de
       // juiste bestemming op basis van rol; tot die tijd terug naar waar de
-      // gebruiker vandaan kwam, of de homepage.
-      navigate(location.state?.van ?? ROUTES.home)
+      // gebruiker vandaan kwam, of de homepage. veiligeInterneBestemming()
+      // weigert een niet-same-origin pad (zie dat bestand) — defense-in-
+      // depth, want RequireAuth.jsx zet `van` zelf altijd al same-origin.
+      navigate(veiligeInterneBestemming(location.state?.van) ?? ROUTES.home)
     } catch (err) {
       setFout(vertaalAuthFout(err))
     } finally {
@@ -63,7 +66,7 @@ export default function Inloggen() {
               <Link to={ROUTES.wachtwoordVergeten} className="text-accent hover:underline">
                 Wachtwoord vergeten?
               </Link>
-              <Link to={ROUTES.registreren} className="text-accent hover:underline">
+              <Link to={ROUTES.registreren} state={location.state} className="text-accent hover:underline">
                 Nog geen account? Aanmaken
               </Link>
             </div>

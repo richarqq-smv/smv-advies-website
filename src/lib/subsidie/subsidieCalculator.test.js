@@ -120,6 +120,20 @@ test('combinatie: dak compleet maar gevel nog incompleet -> dak telt niet mee in
   assert.equal(dakResultaat.tarief, 16.25) // enkel tarief, want de gevel telt niet mee als die niet subsidiabel/berekenbaar is
 })
 
+test('combinatie: dak is "doelgroep niet ondersteund" (zakelijk pand), gevel wél berekenbaar -> totaal blokkeert NIET langer (2026-10-12-fix) — dak kan nooit meer alsnog subsidiabel worden, dus er valt niets meer af te wachten', () => {
+  const c = berekenCombinatie([
+    { maatregelKey: 'dakisolatie', eligibility: beoordeelMaatregel({ maatregelKey: 'dakisolatie', specificatie: { uitvoeringsjaar: 2026, oppervlakteM2: 120, technischeWaarde: 3.5, meldcode: 'KA30327', isolatieBevestigd: 'ja', doelgroep: 'zakelijk' } }), oppervlakteM2: 120 },
+    { maatregelKey: 'gevelisolatie', eligibility: eligGevel(), oppervlakteM2: 60 },
+  ])
+  // Dak telt niet mee in combinatieAantal (nooit subsidiabel in deze engine) -> gevel krijgt het enkele tarief, geen verdubbeling.
+  assert.equal(c.combinatieAantal, 1)
+  assert.equal(c.combinatieVanToepassing, false)
+  assert.equal(c.totaalBerekenbaar, true)
+  assert.equal(c.totaalBedrag, 1215) // uitsluitend het gevelbedrag — dak draagt nooit bij
+  const dakResultaat = c.resultaten.find((r) => r.maatregelKey === 'dakisolatie')
+  assert.equal(dakResultaat.berekenbaar, false) // blijft zelf niet berekenbaar, maar blokkeert het totaal van de rest niet meer
+})
+
 // --- Combinatie-categorie bij glas (uitbreidingsronde) ---
 
 function eligGlas(maatregelKey, { technischeWaarde = 1.0, meldcode = 'X', isolatieBevestigd = 'ja', uitvoeringsjaar = 2026, oppervlakteM2 = 10 } = {}) {

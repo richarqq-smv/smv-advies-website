@@ -75,14 +75,14 @@ test('een complete, aangeraakte maatregel (van_toepassing) blokkeert niet', () =
   assert.deepEqual(data.kritiekeOntbrekendeVelden, [])
 })
 
-test('een aangeraakte maatregel met status "controle_vereist" (bv. afwijkende doelgroep) blokkeert niet — dat is al een beredeneerde conclusie, geen "niet_voldoende_gegevens"', () => {
+test('een aangeraakte maatregel met status "doelgroep_niet_ondersteund" (afwijkende doelgroep) blokkeert niet — dat is al een beredeneerde, blijvende conclusie, geen "niet_voldoende_gegevens"', () => {
   const data = bouwSubsidieDocumentData({
     dossier: DOSSIER,
     uitvoeringsjaar: 2026,
     specificatiesPerMaatregel: { dakisolatie: { doelgroep: 'zakelijk' } },
   })
   const dak = data.maatregelen.find((m) => m.maatregelKey === 'dakisolatie')
-  assert.equal(dak.status, 'controle_vereist')
+  assert.equal(dak.status, 'doelgroep_niet_ondersteund')
   assert.deepEqual(data.kritiekeOntbrekendeVelden, [])
 })
 

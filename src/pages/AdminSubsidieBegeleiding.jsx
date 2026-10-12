@@ -46,6 +46,7 @@ const STATUS_BADGE = {
   [SUBSIDIE_STATUSSEN.NIET_VOLDOENDE_GEGEVENS]: 'bg-muted text-foreground-muted',
   [SUBSIDIE_STATUSSEN.NIET_VAN_TOEPASSING]: 'bg-error-bg text-error',
   [SUBSIDIE_STATUSSEN.VOORWAARDE_ONTBREEKT]: 'bg-amber-100 text-amber-800',
+  [SUBSIDIE_STATUSSEN.DOELGROEP_NIET_ONDERSTEUND]: 'bg-muted text-foreground-muted',
 }
 
 const FISCAAL_STATUS_BADGE = {

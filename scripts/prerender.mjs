@@ -5,8 +5,9 @@
 // GitHub Pages — a static host with no rewrite rules — has actual content
 // to serve (with a real 200) for every route. The dist-ssr/ server bundle
 // is deleted at the end so it never reaches the deployed site.
-import { readFile, writeFile, mkdir, rm } from 'node:fs/promises'
+import { readFile, writeFile, mkdir, rm, readdir } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
+import { createHash } from 'node:crypto'
 import path from 'node:path'
 import { ROUTES as ROUTE_PATHS } from '../src/lib/routes.js'
 import { BLOG_POSTS } from '../src/data/blogPosts.js'
@@ -48,6 +49,7 @@ const ROUTES = [
   ROUTE_PATHS.inloggen,
   ROUTE_PATHS.registreren,
   ROUTE_PATHS.wachtwoordVergeten,
+  ROUTE_PATHS.wachtwoordHerstellen,
   // /account en /admin zijn achter RequireAuth/RequireAdmin (client-side
   // guards, zie App.jsx) altijd lege shells bij een niet-ingelogde SSR-
   // render — zelfde soort statische bestand nodig voor een directe
@@ -156,6 +158,85 @@ function escapeForInlineScript(json) {
   return json.replace(/</g, '\\u003c')
 }
 
+async function listHtmlFiles(dir) {
+  const out = []
+  for (const entry of await readdir(dir, { withFileTypes: true })) {
+    const p = path.join(dir, entry.name)
+    if (entry.isDirectory()) out.push(...(await listHtmlFiles(p)))
+    else if (entry.name.endsWith('.html')) out.push(p)
+  }
+  return out
+}
+
+// Matcht elk <script>-element en onderscheidt "echt extern" (heeft een
+// src-attribuut) van "inline" (de tekst ertussen is de payload) — alleen
+// de laatste categorie heeft een CSP script-src-hash nodig.
+const SCRIPT_TAG_RE = /<script([^>]*)>([\s\S]*?)<\/script>/g
+
+function verzamelInlineScriptHashes(html, hashes) {
+  SCRIPT_TAG_RE.lastIndex = 0
+  let match
+  while ((match = SCRIPT_TAG_RE.exec(html))) {
+    const [, attrs, content] = match
+    if (/\bsrc\s*=/.test(attrs)) continue
+    if (content.trim() === '') continue
+    hashes.add(createHash('sha256').update(content, 'utf8').digest('base64'))
+  }
+}
+
+/**
+ * Beveiligingsronde (2026-10-12): voegt een Content-Security-Policy-
+ * meta-tag toe aan elk gegenereerd dist/*.html-bestand — NIET aan de
+ * brontemplate (index.html), want die wordt ook rechtstreeks door
+ * `vite dev` geserveerd en Vite's eigen React-Refresh/HMR-client
+ * gebruikt zelf inline scripts die een strikte CSP zou blokkeren.
+ *
+ * script-src staat op 'self' + het Google-tag-domein, zonder
+ * 'unsafe-inline': de overgebleven inline scripts in de uitvoer zijn
+ * stuk voor stuk build-time gegenereerd en nooit gebaseerd op
+ * gebruikersinvoer (JSON-LD structured-data uit Seo.jsx/structuredData.js,
+ * en React's eigen SSR/streaming-hydratiescripts) — die worden daarom
+ * via hun exacte sha256-hash toegestaan in plaats van met 'unsafe-inline'
+ * blanco vertrouwd. Een echt geïnjecteerd aanvallersscript heeft nooit
+ * een van deze hashes en wordt dus alsnog geblokkeerd. Twee builds na
+ * elkaar kunnen een ander Vite-asset-bestandsnaam-hash opleveren, maar
+ * nooit een andere SCRIPT-inhoud, dus dit blijft stabiel per build.
+ *
+ * X-Frame-Options/frame-ancestors kunnen hier bewust niet mee: die
+ * werken alleen als echte HTTP-responseheader, nooit via een meta-tag
+ * (CSP-spec) — dat vereist een hostingwijziging, zie eindrapport.
+ */
+async function injecteerContentSecurityPolicy() {
+  const files = await listHtmlFiles(distDir)
+  const htmlPerBestand = new Map()
+  const hashes = new Set()
+  for (const file of files) {
+    const html = await readFile(file, 'utf-8')
+    htmlPerBestand.set(file, html)
+    verzamelInlineScriptHashes(html, hashes)
+  }
+
+  const scriptSrcBronnen = ["'self'", 'https://www.googletagmanager.com', ...[...hashes].sort().map((h) => `'sha256-${h}'`)].join(' ')
+  const content = [
+    "default-src 'self'",
+    `script-src ${scriptSrcBronnen}`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: https://www.google-analytics.com https://*.google-analytics.com",
+    "font-src 'self'",
+    "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://api.emailjs.com",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "object-src 'none'",
+  ].join('; ')
+  const metaTag = `<meta http-equiv="Content-Security-Policy" content="${content}" />`
+
+  for (const [file, html] of htmlPerBestand) {
+    const bijgewerkt = html.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />\n    ${metaTag}`)
+    await writeFile(file, bijgewerkt, 'utf-8')
+  }
+  console.log(`CSP geïnjecteerd in ${htmlPerBestand.size} dist/*.html-bestanden (${hashes.size} inline-scripthashes).`)
+}
+
 async function main() {
   const template = await readFile(path.join(distDir, 'index.html'), 'utf-8')
   const { render } = await import(`file://${ssrEntry.replace(/\\/g, '/')}`)
@@ -191,6 +272,8 @@ async function main() {
   )
   await writeFile(path.join(distDir, '404.html'), notFoundPageHtml, 'utf-8')
   console.log('prerendered 404 fallback -> dist/404.html')
+
+  await injecteerContentSecurityPolicy()
 
   await rm(ssrDir, { recursive: true, force: true })
 }

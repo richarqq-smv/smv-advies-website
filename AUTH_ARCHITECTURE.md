@@ -18,7 +18,8 @@ Voortbouwend op de bestaande `src/lib/routes.js`-conventie (één bron van waarh
 |---|---|---|
 | `/inloggen` | E-mail + wachtwoord, "wachtwoord vergeten"-link | Publiek bereikbaar, redirect naar klantomgeving als al ingelogd |
 | `/registreren` | Naam, e-mail, wachtwoord, wachtwoordbevestiging, evt. bedrijfsnaam | Publiek bereikbaar |
-| `/wachtwoord-vergeten` | E-mail invoeren, reset-link via Supabase | Publiek bereikbaar |
+| `/wachtwoord-vergeten` | E-mail invoeren, reset-link via Supabase (`resetPasswordForEmail(email, { redirectTo: .../wachtwoord-herstellen })`) | Publiek bereikbaar |
+| `/wachtwoord-herstellen` | Vervolg op de reset-link: nieuw wachtwoord instellen via `updateUser({ password })`, met een eigen melding bij een ongeldige/verlopen link | Publiek bereikbaar (de recovery-sessie uit de e-maillink is de enige autorisatie) |
 | `/MJOP-Tool` | Bestaande interne tool | Ongewijzigd, geen inlogvereiste — blijft het localStorage-gebaseerde interne prototype (zie DATABASE_ARCHITECTURE.md, "Klantomgeving en adminoverzicht") |
 | `/account` | Echte klantomgeving: bedrijfsgegevens, panden, dossiers | Achter `RequireAuth` |
 | `/dossier/:dossierId` | Advies bekijken/beheren voor één Dossier | Achter `RequireAuth`; RLS bepaalt of de rij zichtbaar is. Niet geprerenderd (zie routes.js) |

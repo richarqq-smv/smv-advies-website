@@ -26,6 +26,7 @@ const MjopTool = lazy(() => import('./pages/MjopTool'))
 const Inloggen = lazy(() => import('./pages/Inloggen'))
 const Registreren = lazy(() => import('./pages/Registreren'))
 const WachtwoordVergeten = lazy(() => import('./pages/WachtwoordVergeten'))
+const WachtwoordHerstellen = lazy(() => import('./pages/WachtwoordHerstellen'))
 const Account = lazy(() => import('./pages/Account'))
 const DossierDetail = lazy(() => import('./pages/DossierDetail'))
 const OffertePreview = lazy(() => import('./pages/OffertePreview'))
@@ -158,6 +159,7 @@ export default function App() {
           <Route path={ROUTES.inloggen} element={<Inloggen />} />
           <Route path={ROUTES.registreren} element={<Registreren />} />
           <Route path={ROUTES.wachtwoordVergeten} element={<WachtwoordVergeten />} />
+          <Route path={ROUTES.wachtwoordHerstellen} element={<WachtwoordHerstellen />} />
 
           <Route element={<RequireAuth />}>
             {/*

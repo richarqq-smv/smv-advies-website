@@ -101,8 +101,24 @@ export function berekenCombinatie(maatregelen = []) {
       : { maatregelKey: m.maatregelKey, ...berekenSubsidieVoorMaatregel({ eligibility: m.eligibility, oppervlakteM2: m.oppervlakteM2, combinatieAantal }) },
   )
 
-  const alleBerekenbaar = resultaten.length > 0 && resultaten.every((r) => r.berekenbaar)
-  const totaalBedrag = alleBerekenbaar ? Math.round(resultaten.reduce((som, r) => som + r.bedrag, 0) * 100) / 100 : null
+  // Een maatregel die BLIJVEND niet kan bijdragen (NIET_VAN_TOEPASSING, of
+  // DOELGROEP_NIET_ONDERSTEUND — zie subsidieEligibility.js) mag het
+  // totaal van de overige, al wél vastgestelde maatregelen niet blokkeren:
+  // die kan per definitie nooit meer alsnog subsidiabel worden, dus er
+  // valt niets meer af te wachten. Een maatregel die nog ECHT onzeker is
+  // (NIET_VOLDOENDE_GEGEVENS, een "gewone" CONTROLE_VEREIST zoals
+  // onbekende isolatiebevestiging of een ontbrekende regelset) blokkeert
+  // het totaal wél terecht — die kan het combinatietarief van de andere
+  // maatregelen nog laten veranderen zodra er meer bekend wordt.
+  const blokkerendeStatussen = maatregelen
+    .map((m, i) => ({ status: m.eligibility?.status, resultaat: resultaten[i] }))
+    .filter(({ status }) => status !== SUBSIDIE_STATUSSEN.NIET_VAN_TOEPASSING && status !== SUBSIDIE_STATUSSEN.DOELGROEP_NIET_ONDERSTEUND)
+  const alleBerekenbaar = blokkerendeStatussen.length > 0 && blokkerendeStatussen.every(({ resultaat }) => resultaat.berekenbaar)
+  const totaalBedrag = alleBerekenbaar
+    ? Math.round(
+        blokkerendeStatussen.reduce((som, { resultaat }) => som + resultaat.bedrag, 0) * 100,
+      ) / 100
+    : null
 
   return {
     combinatieVanToepassing: combinatieAantal >= 2,

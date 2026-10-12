@@ -24,6 +24,7 @@ export function OpnameOnderdelenStap({
   waarnemingenPerOnderdeel,
   magBewerken,
   opnameId,
+  dossierId,
   klantId,
   documenten,
   onWaarnemingToegevoegd,
@@ -110,6 +111,7 @@ export function OpnameOnderdelenStap({
                       magBewerken={magBewerken}
                       documenten={documenten}
                       klantId={klantId}
+                      dossierId={dossierId}
                       opnameId={opnameId}
                       onWaarnemingChange={onWaarnemingChange}
                       onVerwijderd={onWaarnemingVerwijderd}

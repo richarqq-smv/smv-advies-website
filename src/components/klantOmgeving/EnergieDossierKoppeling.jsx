@@ -87,10 +87,29 @@ export function EnergieDossierKoppeling({ values, result, voorkeurDossierId = nu
     }
   }, [authLaden, user, voorkeurDossierId])
 
-  // Niet ingelogd, of nog bezig met bepalen of er een sessie is: helemaal
-  // niets tonen — de publieke tool blijft daarmee pixel-voor-pixel
-  // hetzelfde voor een anonieme bezoeker.
-  if (authLaden || !user) return null
+  // Nog bezig met bepalen of er een sessie is: niets tonen (voorkomt een
+  // flits van de verkeerde variant). Pas als dat bekend is, maakt een
+  // anonieme bezoeker het verschil met een ingelogde klant uit — zelfde
+  // patroon als MjopKlantKoppeling.jsx hieronder.
+  if (authLaden) return null
+
+  if (!user) {
+    return (
+      <div className="mt-8 rounded-2xl border border-accent/30 bg-accent/5 p-6 text-sm print:hidden">
+        <p className="text-primary">
+          <Link to={ROUTES.inloggen} className="font-medium text-accent hover:underline">
+            Log in
+          </Link>{' '}
+          of{' '}
+          <Link to={ROUTES.registreren} className="font-medium text-accent hover:underline">
+            maak een account aan
+          </Link>{' '}
+          om dit resultaat te bewaren bij een dossier.
+        </p>
+      </div>
+    )
+  }
+
   if (status === 'laden') return null
 
   if (status === 'geen-klant') {

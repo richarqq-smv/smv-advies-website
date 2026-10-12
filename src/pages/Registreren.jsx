@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
@@ -9,11 +9,11 @@ import { Button } from '../components/ui/Button'
 import { WachtwoordVeld } from '../components/auth/WachtwoordVeld'
 import { supabase } from '../lib/supabaseClient'
 import { vertaalAuthFout } from '../lib/auth/errors'
+import { MIN_WACHTWOORD_LENGTE } from '../lib/auth/wachtwoord'
 import { ROUTES } from '../lib/routes'
 
-const MIN_WACHTWOORD_LENGTE = 8
-
 export default function Registreren() {
+  const location = useLocation()
   const [naam, setNaam] = useState('')
   const [bedrijfsnaam, setBedrijfsnaam] = useState('')
   const [email, setEmail] = useState('')
@@ -106,7 +106,7 @@ export default function Registreren() {
 
               <p className="text-sm text-foreground-muted">
                 Heeft u al een account?{' '}
-                <Link to={ROUTES.inloggen} className="text-accent hover:underline">
+                <Link to={ROUTES.inloggen} state={location.state} className="text-accent hover:underline">
                   Inloggen
                 </Link>
               </p>

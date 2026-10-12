@@ -157,6 +157,12 @@ export function EnergieSnapshot({ snapshot }) {
             <p className="text-sm text-foreground-muted">Geen maatregelen opgeslagen bij deze meting.</p>
           )}
         </div>
+
+        <div className="rounded-lg bg-muted px-5 py-4 text-xs leading-relaxed text-foreground-muted">
+          <strong className="font-semibold text-primary">Let op: dit is een indicatie, geen officieel energielabel en geen garantie.</strong>{' '}
+          Deze inschatting is gebaseerd op de destijds ingevulde gegevens en realistische vuistregels — niet op een officiële meting volgens NTA 8800.
+          Voor betrouwbare cijfers en een onderbouwd plan is een fysieke inmeting door SMV Advies nodig.
+        </div>
       </div>
     </div>
   )

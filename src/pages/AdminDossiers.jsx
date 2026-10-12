@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Archive, DownloadSimple, PencilSimple, Plus, Trash, WarningCircle } from '@phosphor-icons/react'
+import { Archive, DownloadSimple, Key, PencilSimple, Plus, Trash, WarningCircle } from '@phosphor-icons/react'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
@@ -10,7 +10,7 @@ import { TextField } from '../components/ui/TextField'
 import { AdminTerugKnop } from '../components/admin/AdminTerugKnop'
 import { NieuweKlantModal } from '../components/admin/NieuweKlantModal'
 import { ROUTES } from '../lib/routes'
-import { adminListKlanten, adminListDossiers, adminImporteerKlant, archiveerDossier, archiveerKlant, updateKlant } from '../lib/klantOmgeving/api'
+import { adminListKlanten, adminListDossiers, adminImporteerKlant, archiveerDossier, archiveerKlant, updateKlant, genereerKlantKoppelcode } from '../lib/klantOmgeving/api'
 import { magDossierArchiveren } from '../lib/klantOmgeving/dossierArchief'
 import { magKlantArchiveren, dossiersDieMeeArchiveren } from '../lib/klantOmgeving/klantArchief'
 import { valideerKlantRegistratie } from '../lib/klantOmgeving/klantValidatie'
@@ -70,6 +70,13 @@ export default function AdminDossiers() {
   const [archiveerKlantId, setArchiveerKlantId] = useState(null)
   const [archiveerKlantBezig, setArchiveerKlantBezig] = useState(false)
   const [archiveerKlantFoutId, setArchiveerKlantFoutId] = useState(null)
+
+  // Klantkoppelcode (implementatieronde 2026-10-12, punt 3) — de ruwe code
+  // komt maar één keer terug (0048_klant_koppelcode.sql slaat uitsluitend
+  // de hash op), vandaar bewaard in state i.p.v. opnieuw opvraagbaar.
+  const [koppelcodeBezigId, setKoppelcodeBezigId] = useState(null)
+  const [koppelcodePerKlant, setKoppelcodePerKlant] = useState({})
+  const [koppelcodeFoutId, setKoppelcodeFoutId] = useState(null)
 
   // Nieuwe klant/pand/dossier aanmaken (UX-auditronde 2026-10-09, §0) —
   // zie components/admin/NieuweKlantModal.jsx voor het formulier zelf en
@@ -203,6 +210,19 @@ export default function AdminDossiers() {
   function annuleerBewerken() {
     setBewerkKlantId(null)
     setBewerkForm(null)
+  }
+
+  async function genereerKoppelcode(klantId) {
+    setKoppelcodeBezigId(klantId)
+    setKoppelcodeFoutId(null)
+    try {
+      const code = await genereerKlantKoppelcode(klantId)
+      setKoppelcodePerKlant((v) => ({ ...v, [klantId]: code }))
+    } catch {
+      setKoppelcodeFoutId(klantId)
+    } finally {
+      setKoppelcodeBezigId(null)
+    }
   }
 
   async function opslaanBewerking(e) {
@@ -397,6 +417,17 @@ export default function AdminDossiers() {
                               <Button type="button" variant="ghost" size="sm" onClick={() => startBewerken(k)} aria-label="Klant bewerken" title="Klant bewerken">
                                 <PencilSimple size={16} />
                               </Button>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => genereerKoppelcode(k.klant_id)}
+                                disabled={koppelcodeBezigId === k.klant_id}
+                                aria-label="Koppelcode genereren"
+                                title="Koppelcode genereren (voor een klant die nog geen account heeft)"
+                              >
+                                <Key size={16} />
+                              </Button>
                               {magKlantArchiveren(k) ? (
                                 <Button
                                   type="button"
@@ -416,6 +447,24 @@ export default function AdminDossiers() {
                               <WarningCircle size={13} weight="fill" />
                               Archiveren is niet gelukt. Probeer het opnieuw.
                             </p>
+                          ) : null}
+                          {koppelcodeFoutId === k.klant_id ? (
+                            <p role="alert" className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-error">
+                              <WarningCircle size={13} weight="fill" />
+                              Koppelcode genereren is niet gelukt. Probeer het opnieuw.
+                            </p>
+                          ) : null}
+                          {koppelcodePerKlant[k.klant_id] ? (
+                            <div className="mt-2 rounded-lg border border-accent/40 bg-accent/5 px-3 py-2 text-xs">
+                              <p className="text-primary">
+                                Koppelcode (geldig 14 dagen, eenmalig te gebruiken — geef deze alleen aan{' '}
+                                <strong>{k.naam || k.bedrijfsnaam || 'deze klant'}</strong> door):
+                              </p>
+                              <p className="mt-1 font-mono text-sm font-semibold break-all text-accent">{koppelcodePerKlant[k.klant_id]}</p>
+                              <p className="mt-1 text-foreground-muted">
+                                De klant vult deze code in bij "Heb je een koppelcode?" op de registratiepagina. Deze code wordt hier niet opnieuw getoond.
+                              </p>
+                            </div>
                           ) : null}
                         </li>
                       ),
