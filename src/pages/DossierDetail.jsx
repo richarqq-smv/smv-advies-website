@@ -271,7 +271,11 @@ export default function DossierDetail() {
   return (
     <>
       <Seo title="Adviesdossier" description="Bekijk en beheer het adviesdossier van dit pand." noindex />
-      <PageHero eyebrow="Adviesdossier" title={dossier?.panden?.omschrijving || dossier?.panden?.adres || 'Adviesdossier'} description={dossier?.klanten ? `${dossier.klanten.naam || dossier.klanten.bedrijfsnaam}` : undefined} />
+      <PageHero
+        eyebrow={dossier?.dossier_nummer ? `Adviesdossier · ${dossier.dossier_nummer}` : 'Adviesdossier'}
+        title={dossier?.panden?.omschrijving || dossier?.panden?.adres || 'Adviesdossier'}
+        description={dossier?.klanten ? `${dossier.klanten.naam || dossier.klanten.bedrijfsnaam}` : undefined}
+      />
       <Section tone="white" noTopPadding>
         <Container wide={isAdmin} className={isAdmin ? undefined : 'max-w-2xl'}>
           {/*

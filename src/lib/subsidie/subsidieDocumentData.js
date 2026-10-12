@@ -367,6 +367,7 @@ export function bouwSubsidieDocumentData({
       klantnaam,
       pandadres,
       dossierId: dossier?.dossier_id ?? null,
+      dossierNummer: dossier?.dossier_nummer ?? null,
       datumGegenereerd: formatDatum(datum),
       adviseur: adviseurNaam,
       uitvoeringsjaar,

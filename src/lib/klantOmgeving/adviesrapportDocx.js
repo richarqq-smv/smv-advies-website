@@ -307,10 +307,18 @@ function veiligeBestandsnaam(tekst) {
 
 const PAKKET_BESTANDSNAAM = { basis: 'quickscan', premium: 'premium', gold: 'gold' }
 
+/**
+ * Uniforme SMV-documentbenoeming (2026-10-12, zie 0045_dossier_nummer.sql):
+ * begint met het dossiernummer, zodat elk document van een dossier
+ * hetzelfde herkenbare voorvoegsel heeft als offertes/facturen
+ * ("SMV-OFF-2026-0035"/"SMV-FAC-2026-0009"). Zelfde conventie als
+ * bouwSubsidieDocumentBestandsnaam() in subsidieDocumentDocx.js.
+ */
 export function bouwAdviesrapportBestandsnaam({ dossier, pakketId }) {
   const naam = veiligeBestandsnaam(dossier?.panden?.omschrijving || dossier?.klanten?.naam || dossier?.dossier_id)
   const pakketSlug = PAKKET_BESTANDSNAAM[pakketId] ?? 'rapport'
-  return `adviesrapport-${pakketSlug}-${naam}.docx`
+  const prefix = dossier?.dossier_nummer ? `${dossier.dossier_nummer}_` : ''
+  return `${prefix}adviesrapport-${pakketSlug}-${naam}.docx`
 }
 
 /** Losse download-stap (geen hergeneratie) — zodat de UI eerst een blob kan tonen/controleren (ontbrekendeVelden/waarschuwingen) vóórdat de daadwerkelijke download start. */

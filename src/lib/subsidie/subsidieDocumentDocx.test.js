@@ -55,6 +55,12 @@ test('bouwSubsidieDocumentBestandsnaam() crasht niet zonder klantnaam/dossierId 
   assert.match(naam, /^SMV-Subsidieadvies-dossier-\d{4}-\d{2}-\d{2}\.docx$/)
 })
 
+test('bouwSubsidieDocumentBestandsnaam() begint met het dossiernummer als dat bekend is (uniforme SMV-documentbenoeming, 0045_dossier_nummer.sql)', () => {
+  const data = bouwSubsidieDocumentData({ dossier: { ...DOSSIER, dossier_nummer: 'SMV-DOS-2026-0004' } })
+  const naam = bouwSubsidieDocumentBestandsnaam(data)
+  assert.match(naam, /^SMV-DOS-2026-0004_SMV-Subsidieadvies-[a-zA-Z0-9-]+-\d{4}-\d{2}-\d{2}\.docx$/)
+})
+
 test('met fiscale aanleiding (zakelijk pand + MJOP-signaal) genereert het document zonder te crashen en is substantieel groter dan zonder', async () => {
   const zonderFiscaal = await genereerSubsidieDocumentDocxBlob(bouwSubsidieDocumentData({ dossier: DOSSIER, uitvoeringsjaar: 2026 }))
   const metFiscaal = await genereerSubsidieDocumentDocxBlob(compleetData())

@@ -478,6 +478,7 @@ export default function AdminDossiers() {
                                   <span className="min-w-0">
                                     <span className="block truncate font-medium text-primary">{d.klanten?.naam || d.klanten?.bedrijfsnaam || 'Onbekende klant'}</span>
                                     <span className="block truncate text-xs text-foreground-muted">{d.panden?.omschrijving || d.panden?.adres || 'Onbekend pand'}</span>
+                                    {d.dossier_nummer ? <span className="block truncate text-xs text-foreground-muted/70">{d.dossier_nummer}</span> : null}
                                   </span>
                                   <DossierStatusBadge status={d.status} />
                                 </Link>

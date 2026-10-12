@@ -326,9 +326,18 @@ function veiligeBestandsnaam(tekst) {
   )
 }
 
-/** Bestandsnaam voor de download/upload — zelfde conventie als bouwAdviesrapportBestandsnaam() in adviesrapportDocx.js. */
+/**
+ * Bestandsnaam voor de download/upload — uniforme SMV-documentbenoeming
+ * (2026-10-12, zie 0045_dossier_nummer.sql): begint met het dossiernummer
+ * zodat elk document van een dossier hetzelfde herkenbare voorvoegsel
+ * heeft, net als bouwAdviesrapportBestandsnaam() in adviesrapportDocx.js.
+ * Een bestandsnaam die al met "SMV-DOS-" begint wordt door de
+ * documenten_benoem_met_dossiernummer-trigger niet nogmaals voorzien van
+ * een voorvoegsel bij het uploaden.
+ */
 export function bouwSubsidieDocumentBestandsnaam(data) {
   const naam = veiligeBestandsnaam(data?.meta?.klantnaam || data?.meta?.dossierId)
   const datumSlug = new Date().toISOString().slice(0, 10)
-  return `SMV-Subsidieadvies-${naam}-${datumSlug}.docx`
+  const prefix = data?.meta?.dossierNummer ? `${data.meta.dossierNummer}_` : ''
+  return `${prefix}SMV-Subsidieadvies-${naam}-${datumSlug}.docx`
 }

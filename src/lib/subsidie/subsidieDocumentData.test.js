@@ -16,6 +16,13 @@ test('correcte dossiergegevens: klantnaam/pandadres/dossierId komen uit dossier.
   assert.equal(data.meta.uitvoeringsjaar, 2026)
 })
 
+test('meta.dossierNummer komt uit dossier.dossier_nummer, en is null zonder dossier (0045_dossier_nummer.sql)', () => {
+  const metNummer = bouwSubsidieDocumentData({ dossier: { ...DOSSIER, dossier_nummer: 'SMV-DOS-2026-0004' }, uitvoeringsjaar: 2026 })
+  assert.equal(metNummer.meta.dossierNummer, 'SMV-DOS-2026-0004')
+  const zonder = bouwSubsidieDocumentData({})
+  assert.equal(zonder.meta.dossierNummer, null)
+})
+
 test('zonder dossierbreed jaar en zonder maatregel-jaar: "Uitvoeringsjaar" staat in ontbrekendeVelden', () => {
   const data = bouwSubsidieDocumentData({ dossier: DOSSIER })
   assert.ok(data.ontbrekendeVelden.includes('Uitvoeringsjaar'))
