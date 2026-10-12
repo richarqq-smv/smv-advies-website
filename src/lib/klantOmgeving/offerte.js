@@ -74,6 +74,24 @@ export function beoordeelGoldMeerwerk({ pakketId, meerwerk = [] }) {
 /** Standaard meerwerktarief (Fase 6, commerciële waarheid) — vult alleen een nieuwe meerwerkregel voor, de adviseur kan dit per regel altijd overschrijven. */
 export const MEERWERK_UURTARIEF = 95
 
+/**
+ * Snelkeuzelijst met veelvoorkomende meerwerkregels (2026-10-12) — vult bij
+ * keuze zowel de omschrijving als een standaard, nog aanpasbare prijs voor
+ * (zie OfferteEditor.jsx), maar vervangt nooit het vrije invoerveld: een
+ * adviseur kan nog altijd gewoon zelf typen, dit is uitsluitend een
+ * invulhulp. "Extra locatiebezoek" gebruikt bewust hetzelfde tarief als
+ * MEERWERK_UURTARIEF (één bezoek ≈ één uur, zelfde bestaande voorbeeld als
+ * offerte.test.js).
+ */
+export const MEERWERK_STANDAARD_OPTIES = [
+  { omschrijving: 'Extra locatiebezoek', eenheidsprijs: MEERWERK_UURTARIEF },
+  { omschrijving: 'Herbezoek na opname', eenheidsprijs: MEERWERK_UURTARIEF },
+  { omschrijving: 'Extra adviesuur', eenheidsprijs: MEERWERK_UURTARIEF },
+  { omschrijving: 'Plattegrondtekening', eenheidsprijs: 200 },
+  { omschrijving: 'Aanvullende bouwkundige analyse', eenheidsprijs: 150 },
+  { omschrijving: 'Spoedoplevering', eenheidsprijs: 150 },
+]
+
 /** Vaste tekst uit SMV-Advies Offerte.docx — geen dynamisch profielveld (er is één adviseur). */
 export const OPGESTELD_DOOR_NAAM = 'Richard Schipper'
 

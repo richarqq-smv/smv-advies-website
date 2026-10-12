@@ -12,6 +12,8 @@ import {
   beoordeelGoldMeerwerk,
   FACTUUR_TOEGESTANE_OFFERTE_STATUSSEN,
   magFactuurMakenVanuitOfferte,
+  MEERWERK_UURTARIEF,
+  MEERWERK_STANDAARD_OPTIES,
 } from './offerte.js'
 
 // Lokale, minimale fixtures — bewust geen import van src/data/packages.js:
@@ -679,4 +681,21 @@ test('beoordeelGoldMeerwerk: relevant voor Gold met meerwerk, telt regels en tot
   assert.equal(resultaat.relevant, true)
   assert.equal(resultaat.aantalRegels, 2)
   assert.equal(resultaat.totaal, 285)
+})
+
+test('MEERWERK_STANDAARD_OPTIES: elke optie heeft een niet-lege omschrijving en een geldig, positief standaardbedrag', () => {
+  assert.ok(MEERWERK_STANDAARD_OPTIES.length >= 4)
+  for (const optie of MEERWERK_STANDAARD_OPTIES) {
+    assert.ok(optie.omschrijving.trim().length > 0)
+    assert.ok(Number.isFinite(optie.eenheidsprijs) && optie.eenheidsprijs > 0)
+  }
+  // Geen dubbele omschrijvingen — anders zou de dropdown dezelfde optie twee keer tonen.
+  const unieke = new Set(MEERWERK_STANDAARD_OPTIES.map((o) => o.omschrijving))
+  assert.equal(unieke.size, MEERWERK_STANDAARD_OPTIES.length)
+})
+
+test('MEERWERK_STANDAARD_OPTIES: "Extra locatiebezoek" gebruikt hetzelfde tarief als MEERWERK_UURTARIEF', () => {
+  const optie = MEERWERK_STANDAARD_OPTIES.find((o) => o.omschrijving === 'Extra locatiebezoek')
+  assert.ok(optie, 'verwacht een standaardoptie "Extra locatiebezoek"')
+  assert.equal(optie.eenheidsprijs, MEERWERK_UURTARIEF)
 })

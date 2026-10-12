@@ -8,6 +8,7 @@ import { ROUTES } from '../../lib/routes'
 import {
   BTW_PERCENTAGE,
   MEERWERK_UURTARIEF,
+  MEERWERK_STANDAARD_OPTIES,
   euro,
   bepaalPrijsTier,
   bedragWijktAfVanStandaardprijs,
@@ -28,6 +29,22 @@ function MeerwerkRegelRij({ regel, index, onWijzig, onVerwijder }) {
     <div className="grid gap-3 sm:grid-cols-[1fr_70px_110px_100px_auto] sm:items-end">
       <div>
         {index === 0 ? <label className="mb-1.5 block text-xs font-medium text-primary">Omschrijving</label> : null}
+        <select
+          value=""
+          onChange={(e) => {
+            const optie = MEERWERK_STANDAARD_OPTIES.find((o) => o.omschrijving === e.target.value)
+            if (optie) onWijzig({ ...regel, omschrijving: optie.omschrijving, eenheidsprijs: optie.eenheidsprijs })
+          }}
+          className={`${inputClass} mb-1.5 text-xs text-foreground-muted`}
+          aria-label="Standaard meerwerkoptie kiezen"
+        >
+          <option value="">Standaard optie kiezen (optioneel)...</option>
+          {MEERWERK_STANDAARD_OPTIES.map((optie) => (
+            <option key={optie.omschrijving} value={optie.omschrijving}>
+              {optie.omschrijving} ({euro(optie.eenheidsprijs)})
+            </option>
+          ))}
+        </select>
         <input
           type="text"
           value={regel.omschrijving}
