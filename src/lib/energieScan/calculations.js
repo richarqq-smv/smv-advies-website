@@ -155,7 +155,17 @@ export function berekenMaatregelen(values, huidig) {
   if (values.verwarming === 'volledige_wp') wpRelevant = false
   if (values.verwarming === 'hybride_wp') wpPercentage *= 0.45
   if (values.verwarming === 'stadsverwarming') wpRelevant = false
-  const wpM3 = huidig.gas * wpPercentage
+  // Tegen het resterende gasverbruik berekenen, niet tegen het volledige
+  // huidige verbruik: de isolatiemaatregelen hierboven verlagen de
+  // warmtevraag die de warmtepomp nog hoeft over te nemen. Zonder deze
+  // correctie claimden isolatie en warmtepomp gedeeltelijk dezelfde m3 gas
+  // dubbel, wat de opgetelde "totale besparing" boven het daadwerkelijke
+  // huidige verbruik kon laten uitkomen — fysiek onmogelijk.
+  const overigeRelevanteGasM3 = maatregelen
+    .filter((m) => m.relevant && !m.isElektrisch)
+    .reduce((sum, m) => sum + Math.max(0, m.besparingM3 || 0), 0)
+  const restGasVoorWp = Math.max(0, huidig.gas - overigeRelevanteGasM3)
+  const wpM3 = restGasVoorWp * wpPercentage
   maatregelen.push({
     naam: 'Overstap naar (volledige) warmtepomp',
     toelichting:
@@ -183,6 +193,26 @@ export function berekenMaatregelen(values, huidig) {
     const investeringMid = (m.investeringLaag + m.investeringHoog) / 2
     m.terugverdientijd = m.besparingEuro > 0 ? investeringMid / m.besparingEuro : null
   })
+
+  // Vangnet tegen de resterende dubbeltelling tussen de vier losse
+  // isolatiemaatregelen onderling (elk op zichzelf al bewust conservatief
+  // berekend, maar niet expliciet tegen elkaar afgezet): samen mogen ze
+  // nooit meer gas claimen dan realistisch is — 85% van het huidige
+  // verbruik, met een marge voor basislast/ventilatieverlies die isolatie
+  // alleen niet wegneemt. Schaalt evenredig, zodat de getoonde bedragen
+  // per maatregel en de opgetelde total aan elkaar blijven kloppen.
+  const gasMaatregelen = maatregelen.filter((m) => !m.isElektrisch)
+  const totaleGasM3 = gasMaatregelen.reduce((sum, m) => sum + Math.max(0, m.besparingM3 || 0), 0)
+  const maxRealistischeGasBesparing = huidig.gas * 0.85
+  if (totaleGasM3 > maxRealistischeGasBesparing && totaleGasM3 > 0) {
+    const schaal = maxRealistischeGasBesparing / totaleGasM3
+    gasMaatregelen.forEach((m) => {
+      m.besparingM3 = Math.max(0, m.besparingM3) * schaal
+      m.besparingEuro = m.besparingM3 * GASPRIJS
+      const investeringMid = (m.investeringLaag + m.investeringHoog) / 2
+      m.terugverdientijd = m.besparingEuro > 0 ? investeringMid / m.besparingEuro : null
+    })
+  }
 
   return maatregelen
     .filter((m) => m.relevant && m.besparingEuro > 15)

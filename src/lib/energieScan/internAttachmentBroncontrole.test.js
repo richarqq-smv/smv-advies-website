@@ -32,8 +32,8 @@ test('useEnergieScan.js: de JSON-tekst gaat alleen mee in de interne leadmail (l
   assert.equal(/confirmParams\[ENERGIE_INDICATIE_JSON_PARAM\]/.test(HOOK), false)
 })
 
-test('useEnergieScan.js: verstuurt de interne leadmail nog steeds via de gewone, bestaande sendEmail() — geen sendForm/attachment-pad meer', () => {
-  assert.match(HOOK, /sendEmail\(EMAILJS_TEMPLATE_LEAD, leadParams\)\.catch\(\(\) => \{\}\)/)
+test('useEnergieScan.js: verstuurt de interne leadmail via de gewone, bestaande sendMail() — geen sendForm/attachment-pad', () => {
+  assert.match(HOOK, /sendMail\('energie-lead', leadParams\)\.catch\(\(\) => \{\}\)/)
   assert.equal(/sendEmailWithAttachment|sendForm/.test(HOOK), false)
 })
 
@@ -42,12 +42,8 @@ test('useEnergieScan.js: bouwt de JSON-payload uit internAttachment.js, geen los
   assert.match(HOOK, /buildInterneJsonPayload\(state\.values, result\)/)
 })
 
-test('emailjs.js: geen sendForm/File/DataTransfer-code meer (betaalfunctie, niet beschikbaar op dit EmailJS-plan)', () => {
+test('emailjs.js: geen sendForm/File/DataTransfer-code (EmailJS-SDK is verwijderd, alleen nog de e-mailadresconstanten)', () => {
   assert.equal(/sendEmailWithAttachment|sendForm|DataTransfer|new File\(/.test(EMAILJS), false)
-})
-
-test('emailjs.js: bestaande sendEmail() blijft ongewijzigd aanwezig', () => {
-  assert.match(EMAILJS, /export async function sendEmail\(templateId, params, publicKey\) \{/)
 })
 
 test('ResultsView.jsx: geen publieke JSON-downloadknop — alleen print/PDF en "Opnieuw invullen" blijven bestaan', () => {

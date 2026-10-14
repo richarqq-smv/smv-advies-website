@@ -234,7 +234,7 @@ async function injecteerContentSecurityPolicy() {
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https://www.google-analytics.com https://*.google-analytics.com https://*.trustpilot.net https://*.trustpilot.com",
     "font-src 'self'",
-    "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://api.emailjs.com https://widget.trustpilot.com https://*.trustpilot.com",
+    "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://widget.trustpilot.com https://*.trustpilot.com",
     // De TrustBox-widget rendert zijn inhoud in een iframe. Zonder deze
     // regel valt frame-src terug op default-src 'self', waardoor die
     // iframe stilletjes geblokkeerd wordt en alleen het lege, grijze

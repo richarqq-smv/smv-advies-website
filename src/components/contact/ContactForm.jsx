@@ -3,7 +3,7 @@ import { CheckCircle, LockSimple, SpinnerGap, WarningCircle } from '@phosphor-ic
 import { TextField } from '../ui/TextField'
 import { TextArea } from '../ui/TextArea'
 import { Button } from '../ui/Button'
-import { sendEmail, EMAILJS_TEMPLATE_CONTACT, EMAILJS_PUBLIC_KEY_MJOP } from '../../lib/emailjs'
+import { sendMail } from '../../lib/sendMail'
 import { validateContactForm, buildContactEmailParams } from '../../lib/contactForm'
 import { ROUTES } from '../../lib/routes'
 
@@ -17,9 +17,10 @@ const LEEG = { naam: '', bedrijfsnaam: '', plaats: '', email: '', telefoon: '', 
  * (zie lib/contactForm.js) — bedrijfsnaam, plaats en telefoon zijn
  * optioneel, om de drempel zo laag mogelijk te houden.
  *
- * Verzending loopt via de bestaande EmailJS-infrastructuur (lib/emailjs.js,
- * dezelfde die de energie-indicatie en de MJOP-tool al gebruiken) — geen
- * nieuw backend-systeem.
+ * Verzending loopt via de Supabase Edge Function `send-email`
+ * (supabase/functions/send-email, lib/sendMail.js) — dezelfde die de
+ * energie-indicatie en de MJOP-tool gebruiken, sinds de overstap van
+ * EmailJS naar Resend (2026-10-14).
  */
 export function ContactForm() {
   const [values, setValues] = useState(LEEG)
@@ -44,7 +45,7 @@ export function ContactForm() {
     bezigRef.current = true
     setStatus('submitting')
     try {
-      await sendEmail(EMAILJS_TEMPLATE_CONTACT, buildContactEmailParams(values), EMAILJS_PUBLIC_KEY_MJOP)
+      await sendMail('contact', buildContactEmailParams(values))
       setStatus('success')
       setValues(LEEG)
     } catch {

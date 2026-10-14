@@ -1,74 +1,12 @@
-import emailjs from '@emailjs/browser'
-
 /**
- * EmailJS-configuratie voor de energie-indicatietool. Service-ID,
- * templates en public key komen 1-op-1 uit de originele leadmagnet
- * (SMV_Advies_Energietool_index3.html, LEAD_CONFIG) en blijven ongewijzigd.
- * BUSINESS_EMAIL is de ontvanger voor de interne leadmail — bewust
- * info@smv-advies.nl (niet meer het oude smvadvies@gmail.com), conform de
- * definitieve e-mailadresverdeling.
+ * Overgebleven e-mailadresconstanten na de overstap van EmailJS naar
+ * Resend (2026-10-14, zie supabase/functions/send-email + lib/sendMail.js).
+ * De EmailJS-SDK, public keys en template-ID's zijn verwijderd — het
+ * daadwerkelijke versturen gebeurt nu server-side. Deze twee waarden
+ * blijven hier staan omdat ze ook in de *emailParams.js-bestanden worden
+ * gebruikt om platte merge-velden op te bouwen (de Edge Function bepaalt
+ * zelf, los daarvan, de echte ontvanger — zie BUSINESS_EMAIL/
+ * MJOP_RECIPIENT_EMAIL in supabase/functions/send-email/index.ts).
  */
-export const EMAILJS_PUBLIC_KEY = 'vZrGJyT3MGqMxD9P2'
-export const EMAILJS_SERVICE_ID = 'service_oit2hux'
-export const EMAILJS_TEMPLATE_LEAD = 'template_wyw4bfj' // interne leadmail naar SMV Advies
-export const EMAILJS_TEMPLATE_CONFIRM = 'template_v8tzw3c' // automatische bevestiging naar de lead
 export const BUSINESS_EMAIL = 'info@smv-advies.nl'
-
-/**
- * MJOP-tool (/MJOP-Tool, intern): een eigen template, met de merge-velden
- * uit src/lib/mjop/emailParams.js en Richard@smv-advies.nl als vaste
- * ontvanger (ingesteld in de template zelf). De service-ID-tekst
- * `service_oit2hux` bestaat hier toevallig (opnieuw aangemaakt) onder een
- * ANDER EmailJS-account dan de energie-indicatietemplates, dus dit
- * template heeft zijn eigen public key nodig — zonder die override zou
- * EmailJS het account van de oude templates raadplegen en het nieuwe
- * template niet vinden ("The template ID not found"), wat tijdens het
- * testen ook exact zo bleek. sendEmail() geeft deze publicKey expliciet
- * mee aan emailjs.send() (los van de globale ensureInit() hieronder), dus
- * de bestaande energie-indicatiemails blijven op hun eigen, ongewijzigde
- * account/key verlopen. EMAILJS_PUBLIC_KEY_MJOP is inmiddels ook het
- * account waaronder het contactformulier-template hieronder is aangemaakt
- * (zelfde EmailJS-login als MJOP, niet het energie-indicatie-account) —
- * de naam is historisch, de sleutel wordt nu door beide templates gedeeld.
- */
-export const EMAILJS_TEMPLATE_MJOP = 'template_5koc1ge'
-export const EMAILJS_PUBLIC_KEY_MJOP = '94qfMTUrAn5q0DQQv'
 export const MJOP_RECIPIENT_EMAIL = 'Richard@smv-advies.nl'
-
-/**
- * Contactformulier (/contact, websiteoptimalisatieronde 2026-10-02) —
- * template staat onder hetzelfde EmailJS-account als MJOP (zie hierboven),
- * dus ContactForm.jsx geeft EMAILJS_PUBLIC_KEY_MJOP mee als publicKey-
- * override aan sendEmail(). Zonder die override zoekt EmailJS dit template
- * in het energie-indicatie-account en vindt het niet (live getest, zelfde
- * faalpatroon als bij MJOP destijds).
- */
-export const EMAILJS_TEMPLATE_CONTACT = 'template_w7aknuu'
-
-let initialized = false
-function ensureInit() {
-  if (!initialized) {
-    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY })
-    initialized = true
-  }
-}
-
-/**
- * Verstuurt één EmailJS-template. Gooit met een gebruiksvriendelijke
- * Nederlandse melding bij elke fout (ontbrekend template-ID, netwerkfout
- * of afwijzing door EmailJS) zodat aanroepers een echte foutstatus tonen
- * in plaats van een valse "verzonden"-bevestiging. `publicKey` is optioneel
- * en overschrijft alleen déze aanroep (bijv. voor een template dat onder
- * een ander EmailJS-account hoort dan de globale ensureInit()-sleutel).
- */
-export async function sendEmail(templateId, params, publicKey) {
-  if (!templateId || templateId.startsWith('ONTBREKEND_')) {
-    throw new Error('Verzenden is nog niet geconfigureerd (EmailJS-template ontbreekt).')
-  }
-  ensureInit()
-  try {
-    return await emailjs.send(EMAILJS_SERVICE_ID, templateId, params, publicKey)
-  } catch {
-    throw new Error('Verzenden is niet gelukt. Probeer het later opnieuw.')
-  }
-}

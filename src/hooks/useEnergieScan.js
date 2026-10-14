@@ -4,7 +4,8 @@ import { buildEmailParams } from '../lib/energieScan/emailParams'
 import { buildInterneLeadParams, buildKlantBevestigingParams } from '../lib/energieScan/emailAudiences'
 import { prepareCalculationInput, validateStep1, validateStep2, validateStep3, validateStep4 } from '../lib/energieScan/validation'
 import { buildInterneJsonPayload, ENERGIE_INDICATIE_JSON_PARAM } from '../lib/energieScan/internAttachment'
-import { BUSINESS_EMAIL, EMAILJS_TEMPLATE_CONFIRM, EMAILJS_TEMPLATE_LEAD, sendEmail } from '../lib/emailjs'
+import { BUSINESS_EMAIL } from '../lib/emailjs'
+import { sendMail } from '../lib/sendMail'
 
 const INITIAL_VALUES = {
   pandtype: null,
@@ -147,8 +148,8 @@ export function useEnergieScan() {
       // internAttachment.js), geen downloadbaar bestand.
       leadParams[ENERGIE_INDICATIE_JSON_PARAM] = JSON.stringify(buildInterneJsonPayload(state.values, result), null, 2)
 
-      sendEmail(EMAILJS_TEMPLATE_LEAD, leadParams).catch(() => {})
-      sendEmail(EMAILJS_TEMPLATE_CONFIRM, confirmParams)
+      sendMail('energie-lead', leadParams).catch(() => {})
+      sendMail('energie-confirm', confirmParams)
         .then(() => dispatch({ type: 'LEAD_SENT' }))
         .catch(() => dispatch({ type: 'LEAD_FAILED' }))
     }, 650)

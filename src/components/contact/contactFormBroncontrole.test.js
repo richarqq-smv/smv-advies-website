@@ -21,16 +21,11 @@ function leesZonderComments(...relatievePad) {
   return bron.replace(/\/\*[\s\S]*?\*\//g, '')
 }
 
-test('ContactForm.jsx: hergebruikt sendEmail() uit lib/emailjs.js, geen eigen fetch/XHR naar een nieuw backend', () => {
+test('ContactForm.jsx: hergebruikt sendMail() uit lib/sendMail.js (Supabase Edge Function + Resend), geen eigen fetch/XHR naar een nieuw backend', () => {
   const bron = leesZonderComments('ContactForm.jsx')
-  assert.match(bron, /import \{ sendEmail, EMAILJS_TEMPLATE_CONTACT, EMAILJS_PUBLIC_KEY_MJOP \} from '\.\.\/\.\.\/lib\/emailjs'/)
-  assert.match(bron, /sendEmail\(EMAILJS_TEMPLATE_CONTACT, buildContactEmailParams\(values\), EMAILJS_PUBLIC_KEY_MJOP\)/)
+  assert.match(bron, /import \{ sendMail \} from '\.\.\/\.\.\/lib\/sendMail'/)
+  assert.match(bron, /sendMail\('contact', buildContactEmailParams\(values\)\)/)
   assert.equal(/fetch\(|XMLHttpRequest|axios/.test(bron), false)
-})
-
-test('ContactForm.jsx: geeft de publicKey-override mee — het contactformulier-template staat onder het MJOP-EmailJS-account, niet het energie-indicatie-account', () => {
-  const bronEmailjs = leesZonderComments('..', '..', 'lib', 'emailjs.js')
-  assert.match(bronEmailjs, /export const EMAILJS_PUBLIC_KEY_MJOP = '\w+'/)
 })
 
 test('ContactForm.jsx: valideert met de bestaande validateContactForm() vóór verzending, geen losse inline-validatie', () => {
@@ -52,9 +47,9 @@ test('ContactForm.jsx: alleen naam, e-mail en vraag zijn verplicht (required) �
   assert.deepEqual(new Set(vereisteVelden), new Set(['naam', 'email', 'vraag']))
 })
 
-test('emailjs.js: EMAILJS_TEMPLATE_CONTACT wijst naar een echt EmailJS-template-ID, niet meer naar de ONTBREKEND_-placeholder', () => {
-  const bron = leesZonderComments('..', '..', 'lib', 'emailjs.js')
-  assert.match(bron, /export const EMAILJS_TEMPLATE_CONTACT = 'template_\w+'/)
+test('send-email Edge Function: bouwt een contactmail met een eigen subject/html, geen afhankelijkheid van een extern EmailJS-template', () => {
+  const bron = leesZonderComments('..', '..', '..', 'supabase', 'functions', 'send-email', 'index.ts')
+  assert.match(bron, /function buildContactEmail/)
 })
 
 test('ContactForm.jsx: voorkomt dubbel verzenden bij snel dubbelklikken via een ref-guard (niet alleen de disabled-knop)', () => {
