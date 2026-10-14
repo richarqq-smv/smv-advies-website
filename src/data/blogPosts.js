@@ -396,9 +396,9 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Verduurzamen gaat uiteindelijk niet om zo veel mogelijk maatregelen uitvoeren. Het gaat erom dat u de juiste maatregelen op het juiste moment kiest. Daarom is inzicht in het pand en het energiegebruik een belangrijke eerste stap. Pas daarna kunt u bepalen waar investeren zinvol is en welke maatregelen nog even kunnen wachten. Benieuwd hoe die afweging ',
-          { text: 'in de praktijk', to: ROUTES.cases },
-          ' wordt gemaakt?',
+          'Verduurzamen gaat uiteindelijk niet om zo veel mogelijk maatregelen uitvoeren. Het gaat erom dat u de juiste maatregelen op het juiste moment kiest. Daarom is inzicht in het pand en het energiegebruik een belangrijke eerste stap. Pas daarna kunt u bepalen waar investeren zinvol is en welke maatregelen nog even kunnen wachten. Op ',
+          { text: 'onze werkwijze-pagina', to: ROUTES.werkwijze },
+          ' ziet u hoe we die afweging stap voor stap doorlopen.',
         ],
       },
     ],
@@ -499,9 +499,9 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Het doel van verduurzaming is niet om een specifieke techniek in een gebouw te krijgen, maar om het energiegebruik en de installatie van het pand op een verstandige manier te verbeteren. Soms past daar een warmtepomp bij, soms is eerst een andere maatregel logischer, en soms is het verstandiger om nog even te wachten. Daarom is het verstandig om eerst de situatie van het bedrijfspand in kaart te brengen en daarna pas een keuze voor een installatie te maken. Benieuwd hoe die afweging ',
-          { text: 'in de praktijk', to: ROUTES.cases },
-          ' tot stand komt?',
+          'Het doel van verduurzaming is niet om een specifieke techniek in een gebouw te krijgen, maar om het energiegebruik en de installatie van het pand op een verstandige manier te verbeteren. Soms past daar een warmtepomp bij, soms is eerst een andere maatregel logischer, en soms is het verstandiger om nog even te wachten. Daarom is het verstandig om eerst de situatie van het bedrijfspand in kaart te brengen en daarna pas een keuze voor een installatie te maken, zoals ook beschreven in ons artikel over ',
+          { text: 'welke verduurzamingsmaatregelen echt iets opleveren', to: ROUTES.blogPost('verduurzamingsmaatregelen-bedrijfspand') },
+          '.',
         ],
       },
     ],
@@ -562,7 +562,9 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Dit is een belangrijk verschil: een maatregel kan technisch uitvoerbaar zijn zonder dat het voor uw bedrijfspand direct een logische investering is. Daarom is het nuttig om maatregelen naast elkaar te zetten, bijvoorbeeld op:',
+          'Dit is een belangrijk verschil: een maatregel kan technisch uitvoerbaar zijn zonder dat het voor uw bedrijfspand direct een logische investering is. Daarom is het nuttig om maatregelen naast elkaar te zetten — zie ook ons artikel over ',
+          { text: 'welke verduurzamingsmaatregelen echt iets opleveren', to: ROUTES.blogPost('verduurzamingsmaatregelen-bedrijfspand') },
+          ', bijvoorbeeld op:',
         ],
       },
       {
@@ -620,9 +622,9 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'De eerste stap bij het verduurzamen van een bedrijfspand is daarom niet automatisch isoleren, zonnepanelen plaatsen of een warmtepomp aanschaffen. De eerste stap is begrijpen hoe uw pand functioneert en waar de belangrijkste kansen liggen. Van daaruit kunt u bepalen welke maatregelen prioriteit hebben en welke investeringen kunnen wachten. Dat maakt verduurzamen overzichtelijker en helpt voorkomen dat u geld uitgeeft aan maatregelen die niet goed aansluiten bij uw pand. Benieuwd hoe we deze afweging ',
-          { text: 'in de praktijk', to: ROUTES.cases },
-          ' aanpakken?',
+          'De eerste stap bij het verduurzamen van een bedrijfspand is daarom niet automatisch isoleren, zonnepanelen plaatsen of een warmtepomp aanschaffen. De eerste stap is begrijpen hoe uw pand functioneert en waar de belangrijkste kansen liggen. Van daaruit kunt u bepalen welke maatregelen prioriteit hebben en welke investeringen kunnen wachten. Dat maakt verduurzamen overzichtelijker en helpt voorkomen dat u geld uitgeeft aan maatregelen die niet goed aansluiten bij uw pand. Twijfelt u specifiek over de volgorde van isoleren en installeren? Lees ook ons artikel over ',
+          { text: 'isoleren of eerst de installatie aanpakken', to: ROUTES.blogPost('bedrijfspand-isoleren-of-installatie-eerst') },
+          '.',
         ],
       },
     ],
@@ -653,7 +655,9 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Een bedrijfspand kan op papier veel mogelijkheden hebben, terwijl een deel daarvan in de praktijk weinig oplevert. Kijk daarom eerst naar de basis: hoe wordt het pand gebruikt, welke ruimtes worden verwarmd, op welke momenten is er activiteit, hoe oud zijn de installaties, en waar gaat op dit moment de meeste energie naartoe? Ook de bouwkundige staat van het pand speelt een rol. Denk bijvoorbeeld aan dak, gevel, vloer, ramen en deuren, zie ook ons artikel over ',
+          'Een bedrijfspand kan op papier veel mogelijkheden hebben, terwijl een deel daarvan in de praktijk weinig oplevert. Kijk daarom eerst naar de basis: hoe wordt het pand gebruikt, welke ruimtes worden verwarmd, op welke momenten is er activiteit, hoe oud zijn de installaties, en waar gaat op dit moment de meeste energie naartoe? Ook de bouwkundige staat van het pand speelt een rol. Denk bijvoorbeeld aan dak, gevel, vloer, ramen en deuren — zie ook ons artikel over een ',
+          { text: 'bouwkundige beoordeling vóór verduurzaming', to: ROUTES.blogPost('bouwkundige-beoordeling-voor-verduurzaming') },
+          ' en over ',
           { text: 'dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
           '. Een pand met veel warmteverlies vraagt om een andere aanpak dan een goed geïsoleerd gebouw met een relatief nieuwe installatie.',
         ],

@@ -1,10 +1,94 @@
 # SMV Advies — SEO Content Map
 
-> Actueel overzicht van alle SEO-blogcontent, gebaseerd op de daadwerkelijke inhoud van `src/data/blogPosts.js` (12 artikelen, gecontroleerd op commit `b959d43`). Werk dit bij na elke nieuwe/gewijzigde blogpost. Zie `docs/SEO-ROADMAP.md` voor de strategische context.
+> Actueel overzicht van alle SEO-blogcontent, gebaseerd op de daadwerkelijke inhoud van `src/data/blogPosts.js` (**19 artikelen**, bijgewerkt in fase 20). Werk dit bij na elke nieuwe/gewijzigde blogpost. Zie `docs/SEO-ROADMAP.md` voor de strategische context.
 
 ## Artikelen (nieuwste eerst, zoals in `BLOG_POSTS`)
 
-### 1. Ventilatie in uw bedrijfspand: wettelijke eisen en besparingsmogelijkheden
+### 1. MJOP en verduurzamingsadvies voor uw bedrijfspand: wat is het verschil?
+- **URL**: `/blog/mjop-en-verduurzamingsadvies-verschil`
+- **Slug**: `mjop-en-verduurzamingsadvies-verschil`
+- **Categorie**: Aanpak
+- **Datum**: 2026-11-12 (toekomstig t.o.v. sessiedatum 2026-10-14 — zie "Publicatiedatums" in de roadmap)
+- **Contentcluster**: Aanpak
+- **Primaire zoekintentie**: "verschil MJOP en verduurzamingsadvies, heb ik beide nodig"
+- **Belangrijkste onderwerpen**: wat een MJOP is (conditiemeting, vaak NEN 2767-methodiek — primair geverifieerd, correct), waarin een verduurzamingsadvies verschilt (in stand houden vs. verbeteren), hoe beide elkaar aanvullen, positionering dat SMV zelf geen MJOP opstelt.
+- **Uitgaande interne links**: dakisolatie, werkwijze, verduurzamen-bedrijfspand-waar-begin-je, veelgemaakte-fouten-verduurzamen-bedrijfspand, pakketten.
+- **Inkomende links**: geen op dit moment — nieuwste artikel (isoDate 2026-11-12), nog niet vanuit een ander artikel gelinkt. Aandachtspunt voor een volgende contentfase, geen blocker.
+- **Cannibalisatierisico**: laag — enige artikel dat de MJOP-vs-verduurzamingsadvies-vraag beantwoordt.
+
+### 2. 7 veelgemaakte fouten bij het verduurzamen van een bedrijfspand
+- **URL**: `/blog/veelgemaakte-fouten-verduurzamen-bedrijfspand`
+- **Slug**: `veelgemaakte-fouten-verduurzamen-bedrijfspand`
+- **Categorie**: Inzicht
+- **Datum**: 2026-10-29 (toekomstig — zie "Publicatiedatums" in de roadmap)
+- **Contentcluster**: Inzicht (listicle-stijl, functioneert als hub)
+- **Primaire zoekintentie**: "veelgemaakte fouten verduurzamen bedrijfspand"
+- **Belangrijkste onderwerpen**: zeven fouten (beginnen bij maatregel i.p.v. inzicht, verkeerde volgorde, subsidie te laat checken, netcapaciteit negeren, ventilatie vergeten, "nieuw is altijd beter"-aanname, bouwkundige staat negeren).
+- **Uitgaande interne links**: verduurzamen-bedrijfspand-waar-begin-je, bedrijfspand-isoleren-of-installatie-eerst, eia-isde-sde-subsidies, netcongestie-hoeksche-waard, ventilatie-in-uw-bedrijfspand, warmtepomp-bedrijfspand-verstandige-keuze, bouwkundige-beoordeling-voor-verduurzaming — functioneert als hub die 7 van de andere 18 artikelen samenbrengt.
+- **Inkomende links**: mjop-en-verduurzamingsadvies-verschil.
+- **Cannibalisatierisico**: laag — listicle-opzet is duidelijk onderscheiden van de diepgaandere artikelen waar het naar linkt.
+
+### 3. Waarom een bouwkundige beoordeling vóór verduurzaming het verschil maakt
+- **URL**: `/blog/bouwkundige-beoordeling-voor-verduurzaming`
+- **Slug**: `bouwkundige-beoordeling-voor-verduurzaming`
+- **Categorie**: Aanpak
+- **Datum**: 2026-10-15 (1 dag na sessiedatum — zie "Publicatiedatums" in de roadmap)
+- **Contentcluster**: Aanpak
+- **Primaire zoekintentie**: "bouwkundige beoordeling bedrijfspand vóór verduurzaming"
+- **Belangrijkste onderwerpen**: wat een bouwkundige beoordeling inhoudt (gevel/dak/vloer/beglazing), waarom dit vóór een installatiekeuze relevant is, expliciete afbakening dat dit geen formele keuring/constructieve inspectie is, regionale spreiding in bouwperiodes Hoeksche Waard.
+- **Uitgaande interne links**: bedrijfspand-isoleren-of-installatie-eerst, dakisolatie-voor-uw-bedrijfspand, pakketten (Premium Pakket).
+- **Inkomende links**: veelgemaakte-fouten-verduurzamen-bedrijfspand, bedrijfspand-isoleren-of-installatie-eerst (fase 20).
+- **Cannibalisatierisico**: laag — enige artikel dat de bouwkundige-beoordelingsstap als zelfstandig onderwerp behandelt (dakisolatie gaat over de maatregel zelf, dit artikel over de voorafgaande beoordeling).
+
+### 4. Welke verduurzamingsmaatregelen leveren bij een bedrijfspand echt iets op?
+- **URL**: `/blog/verduurzamingsmaatregelen-bedrijfspand`
+- **Slug**: `verduurzamingsmaatregelen-bedrijfspand`
+- **Categorie**: Inzicht
+- **Datum**: 2026-09-21
+- **Contentcluster**: Aanpak/Inzicht
+- **Primaire zoekintentie**: "welke verduurzamingsmaatregelen leveren echt iets op voor een bedrijfspand"
+- **Belangrijkste onderwerpen**: vijf beoordelingscriteria per maatregel (energie-effect, investering, technische haalbaarheid, gebruik van het pand, het juiste moment), combinaties van maatregelen, prioriteitenlijst (nu/later/eerst onderzoeken/niet doen) i.p.v. boodschappenlijst.
+- **Uitgaande interne links**: dakisolatie, warmtepomp-in-het-mkb, werkwijze (fase 20 — werkwijze vervangt een eerdere, generieke `/cases`-verwijzing door een preciezere bestemming).
+- **Inkomende links**: warmtepomp-bedrijfspand-verstandige-keuze (fase 20), verduurzamen-bedrijfspand-waar-begin-je (fase 20).
+- **Cannibalisatierisico**: middel t.o.v. `verduurzamen-bedrijfspand-waar-begin-je` (beide behandelen "hoe kies ik maatregelen") — bewust onderscheiden: dit artikel is de verdieping op de beoordelingscriteria zelf, het andere artikel is de bredere stappen-gids. Fase 20 heeft beide artikelen naar elkaar laten verwijzen i.p.v. los naast elkaar te laten bestaan.
+
+### 5. Een warmtepomp in een bedrijfspand: wanneer is het een verstandige keuze?
+- **URL**: `/blog/warmtepomp-bedrijfspand-verstandige-keuze`
+- **Slug**: `warmtepomp-bedrijfspand-verstandige-keuze`
+- **Categorie**: Installaties
+- **Datum**: 2026-09-17
+- **Contentcluster**: Installaties
+- **Primaire zoekintentie**: "wanneer is een warmtepomp verstandig voor mijn bedrijfspand"
+- **Belangrijkste onderwerpen**: gebruik van het pand, geschiktheid van het gebouw, afgiftesysteem, bestaande installatie, beschikbare ruimte, invloed op bedrijfsvoering, 10-punts afwegingslijst.
+- **Uitgaande interne links**: dakisolatie, verduurzamingsmaatregelen-bedrijfspand (fase 20 — vervangt een eerdere `/cases`-link).
+- **Inkomende links**: veelgemaakte-fouten-verduurzamen-bedrijfspand.
+- **Cannibalisatierisico**: laag t.o.v. `warmtepomp-in-het-mkb` (bestaand artikel) — dat artikel behandelt geschiktheidscriteria + kosten/subsidie breed, dit nieuwere artikel gaat dieper op de afwegingsfactoren zelf. Enige overlap die bewust bewaakt moet worden bij een toekomstige fase; geen actie ondernomen omdat de invalshoeken (brede geschiktheid vs. gedetailleerde afweging) voldoende onderscheiden zijn.
+
+### 6. Verduurzamen van een bedrijfspand: waar begin je als ondernemer?
+- **URL**: `/blog/verduurzamen-bedrijfspand-waar-begin-je`
+- **Slug**: `verduurzamen-bedrijfspand-waar-begin-je`
+- **Categorie**: Aanpak
+- **Datum**: 2026-09-13
+- **Contentcluster**: Aanpak
+- **Primaire zoekintentie**: "verduurzamen bedrijfspand waar begin ik"
+- **Belangrijkste onderwerpen**: 7-stappenplan (gebruik pand, energiegebruik, gebouw, installaties, mogelijk vs. verstandig, wat kan wachten, meerjarenplan).
+- **Uitgaande interne links**: dakisolatie, verduurzamingsmaatregelen-bedrijfspand (fase 20), bedrijfspand-isoleren-of-installatie-eerst (fase 20 — vervangt een eerdere `/cases`-link), pakketten (QuickScan).
+- **Inkomende links**: mjop-en-verduurzamingsadvies-verschil, veelgemaakte-fouten-verduurzamen-bedrijfspand.
+- **Cannibalisatierisico**: middel — zie bevinding bij `verduurzamingsmaatregelen-bedrijfspand` hierboven; met fase 20 verholpen door wederzijdse links i.p.v. twee los naast elkaar bestaande artikelen met overlappende intentie.
+
+### 7. Moet ik mijn bedrijfspand eerst isoleren of eerst de installatie aanpakken?
+- **URL**: `/blog/bedrijfspand-isoleren-of-installatie-eerst`
+- **Slug**: `bedrijfspand-isoleren-of-installatie-eerst`
+- **Categorie**: Aanpak
+- **Datum**: 2026-09-08
+- **Contentcluster**: Aanpak
+- **Primaire zoekintentie**: "eerst isoleren of installatie aanpakken bedrijfspand"
+- **Belangrijkste onderwerpen**: wanneer isolatie eerst logisch is, wanneer de installatie eerst, een praktische 7-stappen-volgorde.
+- **Uitgaande interne links**: bouwkundige-beoordeling-voor-verduurzaming (fase 20), dakisolatie, warmtepomp-in-het-mkb, werkwijze.
+- **Inkomende links**: veelgemaakte-fouten-verduurzamen-bedrijfspand, bouwkundige-beoordeling-voor-verduurzaming, verduurzamen-bedrijfspand-waar-begin-je (fase 20).
+- **Cannibalisatierisico**: laag — specifieke, nauw afgebakende vraag (volgorde), geen overlap met de bredere "waar begin je"-gids.
+
+### 8. Ventilatie in uw bedrijfspand: wettelijke eisen en besparingsmogelijkheden
 - **URL**: `/blog/ventilatie-in-uw-bedrijfspand`
 - **Slug**: `ventilatie-in-uw-bedrijfspand`
 - **Categorie**: Installaties

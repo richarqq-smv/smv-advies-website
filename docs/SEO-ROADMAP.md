@@ -1,8 +1,8 @@
 # SMV Advies — SEO Roadmap
 
-> Dit document is het permanente projectgeheugen voor het SEO-traject van smv-advies.nl. Elke toekomstige sessie die aan SEO/content werkt, moet dit document eerst lezen (samen met `docs/SEO-CONTENT-MAP.md`) voordat er onderzoek of implementatie plaatsvindt. Laatst bijgewerkt: **afsluiting actieve implementatiefase** (2026-09-04), op basis van commit `1d7b599`.
+> Dit document is het permanente projectgeheugen voor het SEO-traject van smv-advies.nl. Elke toekomstige sessie die aan SEO/content werkt, moet dit document eerst lezen (samen met `docs/SEO-CONTENT-MAP.md`) voordat er onderzoek of implementatie plaatsvindt. Laatst bijgewerkt: **fase 20** (2026-10-14, sessiedatum — zie "Contentoptimalisatie — fase 20" hieronder).
 >
-> **Status: de actieve SEO-implementatiefase is afgesloten na fase 19.** Zie "Projectstatus — actieve implementatie afgesloten" hieronder vóór je een nieuwe fase begint.
+> **Status: de actieve, brede SEO-implementatiefase is afgesloten na fase 19.** Fase 20 was een gericht vervolg op 7 artikelen die na fase 19 zijn toegevoegd en nog niet waren meegenomen in de documentatie/audit — geen nieuwe brede audit. Zie "Projectstatus — actieve implementatie afgesloten" hieronder vóór je een nieuwe brede fase begint.
 
 ## Projectdoel
 
@@ -10,9 +10,9 @@ SMV Advies is een onafhankelijke verduurzamingsadviseur voor mkb-bedrijfspanden 
 
 ## Huidige situatie
 
-- **12 blogartikelen**, gepubliceerd tussen 22 mei 2026 en 4 september 2026 (zie "Uitgevoerde fases").
+- **19 blogartikelen**, gepubliceerd tussen 22 mei 2026 en 12 november 2026 (zie "Uitgevoerde fases"; de 7 artikelen na fase 19 zijn in fase 20 alsnog in de documentatie opgenomen). **Let op**: 3 van deze 19 artikelen hebben een publicatiedatum die op sessiedatum 2026-10-14 nog in de toekomst ligt (15 oktober, 29 oktober en 12 november 2026), maar staan al volledig live/geïndexeerd/in de sitemap — er bestaat geen code-onderscheid tussen "gepland" en "gepubliceerd". Zie "Contentoptimalisatie — fase 20" voor deze bevinding.
 - **7 commerciële/institutionele pagina's**: home, pakketten, energie-indicatie, over, werkwijze, werkgebied, cases, plus faq, contact, privacy, voorwaarden.
-- **Sitemap**: `public/sitemap.xml`, 24 URL's (8 vaste pagina's/overzichten + 12 blogposts + faq/contact/privacy/voorwaarden), handmatig onderhouden — elke nieuwe blogpost vereist een eigen `<url>`-regel.
+- **Sitemap**: `public/sitemap.xml`, 32 URL's (13 vaste pagina's/overzichten, incl. `/blog`-overzicht en `/trustpilot` die sinds fase 19 zijn toegevoegd, + 19 blogposts), handmatig onderhouden en in fase 20 herverifieerd — elke nieuwe blogpost vereist een eigen `<url>`-regel.
 - **robots.txt**: `User-agent: * / Allow: /`, verwijst naar de sitemap. Niet gewijzigd sinds de vroege technische SEO-fase.
 - **Structured data**: `src/lib/structuredData.js` — `getOrganizationSchema()` (ProfessionalService, met volledig NAP: Frans Halsstraat 28, 3262 HG Oud-Beijerland, `areaServed: Hoeksche Waard`), `getWebsiteSchema()`, `getBreadcrumbSchema()`, `getFaqSchema()`, `getBlogPostingSchema()`. Elke pagina krijgt via `<Seo>` altijd Organization + WebSite + paginaspecifieke schema's. Server-side geïnjecteerd door `scripts/prerender.mjs` met `data-seo-ld="true"`, client-side vervangen (niet verdubbeld) bij hydratie.
 - **Analytics/consent**: GA4 via statische `gtag.js`-tag in `index.html`, Google Consent Mode v2, standaard `denied` totdat de gebruiker via de cookiebanner kiest. Getest en bevestigd werkend in elke fase sinds fase 7 (zie "Analytics-status").
@@ -34,6 +34,7 @@ SMV Advies is een onafhankelijke verduurzamingsadviseur voor mkb-bedrijfspanden 
 | 17 | Contentoptimalisatie bestaande artikelen (interne links) | `netcongestie-hoeksche-waard`, `warmtepomp-in-het-mkb`, `led-verlichting-snelste-stap` (bestaande artikelen gewijzigd, geen nieuwe URL) | 2026-09-01 (sessiedatum) | n.v.t. | `edd79e3` | Roadmap-item #3 (gedeeltelijk) uitgevoerd: audit van alle 12 artikelen op actualiteit/dunheid/ontbrekende links wees uit dat drie oudere artikelen (geschreven vóórdat zonnepanelen, laadpalen en energiebesparingsplicht als losse artikelen bestonden) die onderwerpen bij naam noemden zonder te linken. Geen inhoudelijke feiten bleken verouderd (netcongestie's "1 juli 2026"-wachtlijstfeit opnieuw primair geverifieerd en nog steeds correct). Zie "Contentoptimalisatie — fase 17" hieronder voor details. |
 | 18 | Commerciële/conversie- en vertrouwensaudit | `/cases`, `/energie-indicatie`, homepage (bestaande pagina's gewijzigd, geen nieuwe URL) | 2026-09-01 (sessiedatum) | n.v.t. | `15481a0` | Roadmap-item #5 uitgevoerd: audit van homepage, energie-indicatie, contact, cases en sitestructuur op conversie-/vertrouwensknelpunten. Drie concrete, laag-risico fixes doorgevoerd (zie "Commerciële/conversie-audit — fase 18" hieronder). Belangrijkste niet-uitgevoerde bevindingen vereisen eigenaarsinput (echte foto's, KvK-nummer) of zijn een bewuste business-keuze (contactgegevens-gate in de energie-indicatietool) — expliciet gedocumenteerd, niet zelfstandig gewijzigd. |
 | 19 | Vervolgaudit commercieel/conversie (herbevestiging fase 18 + nieuwe bevinding) | `/pakketten` (bestaande pagina gewijzigd, geen nieuwe URL) | 2026-09-04 (sessiedatum) | n.v.t. | `b22051c` | Opdracht kwam binnen met een context die fase 18 niet vermeldde ("fase 15, 16 en 17 zijn afgerond"); `git log` bevestigde dat fase 18 al volledig was uitgevoerd en live stond. In plaats van dezelfde audit te herhalen is gecontroleerd of er sindsdien iets is gewijzigd (KvK nog steeds `null`, alle 6 image-placeholders nog aanwezig — geen eigenaarsinput bijgekomen) en is een pagina onderzocht die fase 18 niet had bekeken: `/pakketten`. Daar bleek de hero dakisolatie/warmtepomp/zonnepanelen/LED-verlichting/EIA/ISDE bij naam te noemen zonder te linken (zelfde, al meermaals opgeloste patroon als fase 17/18), én had de pagina geen enkele link naar `/cases` — een concreet gat in het door de opdracht gevraagde BLOG → DIENST → CASE → CTA-pad. Beide opgelost met inline links, geen andere wijziging. |
+| 20 | Contentoptimalisatie + documentatie-inhaalslag voor 7 artikelen na fase 19 | `mjop-en-verduurzamingsadvies-verschil`, `veelgemaakte-fouten-verduurzamen-bedrijfspand`, `bouwkundige-beoordeling-voor-verduurzaming`, `verduurzamingsmaatregelen-bedrijfspand`, `warmtepomp-bedrijfspand-verstandige-keuze`, `verduurzamen-bedrijfspand-waar-begin-je`, `bedrijfspand-isoleren-of-installatie-eerst` (bestaande artikelen gewijzigd, geen nieuwe URL's) | 2026-10-14 (sessiedatum) | n.v.t. | *(nog niet gecommit — zie "Contentoptimalisatie — fase 20")* | Opdracht vroeg om een volledige SEO/contentoptimalisatie van "alle 16 blogposts"; het werkelijke aantal was 19, waarvan 12 al grondig geaudit waren in fase 15–19. De 7 artikelen die na fase 19 waren toegevoegd, waren nooit geaudit en stonden nog niet in `SEO-CONTENT-MAP.md`/deze roadmap. Scope is daarom beperkt tot die 7 artikelen (bevestigd door de opdrachtgever: "doe maar wat nodig is"). Zie "Contentoptimalisatie — fase 20" voor de volledige bevindingen, inclusief de ontdekking van 3 toekomstige publicatiedatums. |
 
 **Eerdere fases (vóór fase 9, uit git history, ter context)**: de eerste vijf blogartikelen (energielabel-C, netcongestie, dakisolatie, EIA/ISDE/SDE++, warmtepomp, LED, verborgen energieverspillers) en de technische SEO-basis (prerendering, sitemap, structured data, GA4/Consent Mode) zijn in eerdere, niet meer als "Fase N" genummerde sessies gebouwd. Zie git log voor het volledige verloop; de belangrijkste commits zijn `f90060e` (initial commit) t/m `9253087` (laatste inhoudelijke verdieping vóór fase 9).
 
@@ -49,6 +50,7 @@ SMV Advies is een onafhankelijke verduurzamingsadviseur voor mkb-bedrijfspanden 
 - Batterijopslag voor uw bedrijfspand
 - Ventilatie in uw bedrijfspand
 - De warmtepomp in het mkb (`warmtepomp-in-het-mkb`)
+- Een warmtepomp in een bedrijfspand: wanneer is het een verstandige keuze? (`warmtepomp-bedrijfspand-verstandige-keuze`, fase 20) — verdieping op de afwegingsfactoren, naast het bredere `warmtepomp-in-het-mkb`
 
 ### Subsidies / fiscaliteit
 - EIA, ISDE en SDE++ (`eia-isde-sde-subsidies`) — inmiddels een pillar-artikel dat ook KIA en een vergelijkingstabel bevat (sinds de EIA/ISDE/SDE++/KIA-verdieping, commit `0a68552`)
@@ -65,8 +67,16 @@ SMV Advies is een onafhankelijke verduurzamingsadviseur voor mkb-bedrijfspanden 
 
 ### Inzicht
 - Verborgen energieverspillers in uw bedrijfspand (`verborgen-energieverspillers`) — listicle-stijl, functioneert als lichte hub naar LED en dakisolatie
+- 7 veelgemaakte fouten bij het verduurzamen van een bedrijfspand (`veelgemaakte-fouten-verduurzamen-bedrijfspand`, fase 20) — listicle-stijl, functioneert als hub naar 7 andere artikelen
+- Welke verduurzamingsmaatregelen leveren bij een bedrijfspand echt iets op? (`verduurzamingsmaatregelen-bedrijfspand`, fase 20)
 
-*(Categorieën zijn exact zoals ze in `src/data/blogPosts.js` per artikel staan; er bestaan geen andere categorieën in de huidige data.)*
+### Aanpak *(nieuw sinds fase 20 — bestond nog niet als cluster in deze roadmap)*
+- MJOP en verduurzamingsadvies voor uw bedrijfspand: wat is het verschil? (`mjop-en-verduurzamingsadvies-verschil`)
+- Waarom een bouwkundige beoordeling vóór verduurzaming het verschil maakt (`bouwkundige-beoordeling-voor-verduurzaming`)
+- Verduurzamen van een bedrijfspand: waar begin je als ondernemer? (`verduurzamen-bedrijfspand-waar-begin-je`)
+- Moet ik mijn bedrijfspand eerst isoleren of eerst de installatie aanpakken? (`bedrijfspand-isoleren-of-installatie-eerst`)
+
+*(Categorieën zijn exact zoals ze in `src/data/blogPosts.js` per artikel staan. "Aanpak" is de categorie die de 7 fase-20-artikelen grotendeels gebruiken en die nog niet eerder in deze roadmap als apart cluster was opgenomen; zie `docs/SEO-CONTENT-MAP.md` voor de volledige per-artikel-inventaris van alle 19 artikelen.)*
 
 ## Content gaps
 
@@ -149,6 +159,30 @@ Gerichte audit van homepage, `/energie-indicatie`, `/contact`, `/cases` en de si
 
 **Overige onderdelen van de gevraagde audit (homepage, energie-indicatie, contact, cases, trust/autoriteit, lokale SEO)**: opnieuw doorgelopen, geen nieuwe bevindingen ten opzichte van fase 18 — de eerder geïmplementeerde fixes staan nog live en ongewijzigd, en er is geen nieuwe eigenaarsinput beschikbaar gekomen die een van de destijds als "vereist eigenaarsinput" gemarkeerde punten alsnog uitvoerbaar maakt.
 
+## Contentoptimalisatie — fase 20
+
+**Aanleiding en scope-correctie**: de opdracht (extern, ChatGPT-geformuleerd) vroeg om een volledige SEO/contentoptimalisatie van "alle 16 blogposts", met expliciete eisen rond schrijfstijl, zoekintentie, feitencontrole, interne linking, technische SEO en documentatie-updates. Het werkelijke aantal artikelen was 19, niet 16. Van die 19 waren er 12 al grondig geaudit in fase 15 t/m 19 (zie "Contentoptimalisatie — fase 17" en de twee commerciële/conversie-audits hierboven), en deze roadmap verbiedt expliciet een nieuwe brede heraudit zonder concrete trigger (zie "Projectstatus" hieronder). De overige 7 artikelen waren echter na fase 19 toegevoegd en **nooit geaudit of in de documentatie opgenomen** — dat is geen heraudit, maar een legitieme inhaalslag. De scope is daarom beperkt tot deze 7 artikelen; de bestaande 12 zijn niet opnieuw aangeraakt. Bevestigd door de opdrachtgever.
+
+**Kwaliteitsbeoordeling van de 7 artikelen**: alle 7 zijn volledig gelezen. Geen AI-slop-patronen (geen "In de wereld van vandaag…"-achtige openingszinnen, geen overmatige opsommingen zonder inhoud), geen verzonnen klantcases/cijfers/expertiseclaims, consistente hedging bij onzekere feiten, en de "SMV verkoopt geen installaties / is geen keuringsinstantie"-positionering is overal intact. Er was dus geen reden voor een herschrijving — alleen gerichte verbeteringen.
+
+**Feitencontrole**: de enige concrete technische claim in de 7 artikelen (NEN 2767 als gangbare conditiemeet-methodiek voor een MJOP, genoemd in `mjop-en-verduurzamingsadvies-verschil`) is via WebSearch geverifieerd tegen primaire/vakbronnen en is correct en al passend gehedged ("vaak", geen absolute claim). Geen wijziging nodig.
+
+**Doorgevoerde verbeteringen (puur additief — geen bestaande tekst verwijderd of inhoudelijk herschreven)**:
+1. `verduurzamen-bedrijfspand-waar-begin-je`: cross-link toegevoegd naar `verduurzamingsmaatregelen-bedrijfspand` in de stap-5-paragraaf ("mogelijk vs. verstandig"); de generieke slotverwijzing naar `/cases` vervangen door een specifieke link naar `bedrijfspand-isoleren-of-installatie-eerst`.
+2. `verduurzamingsmaatregelen-bedrijfspand`: de generieke slotverwijzing naar `/cases` vervangen door een link naar de werkwijze-pagina (`/werkwijze`).
+3. `warmtepomp-bedrijfspand-verstandige-keuze`: de generieke slotverwijzing naar `/cases` vervangen door een link naar `verduurzamingsmaatregelen-bedrijfspand`.
+4. `bedrijfspand-isoleren-of-installatie-eerst`: cross-link toegevoegd naar `bouwkundige-beoordeling-voor-verduurzaming` in de openingssectie, naast de al bestaande dakisolatie-link.
+
+**Waarom dit nodig was**: de 3 vervangen zinnen waren bijna identiek ("Benieuwd hoe we deze afweging in de praktijk aanpakken?" → `/cases`) over drie verschillende artikelen heen — een lichte vorm van near-duplicate-content in de slotzinnen, en een gemiste kans om bezoekers die één specifieke invalshoek lezen door te verwijzen naar het artikel dat de aanvullende invalshoek behandelt. De twee toegevoegde cross-links dichten een cannibalisatierisico dat in `SEO-CONTENT-MAP.md` is gedocumenteerd: `verduurzamingsmaatregelen-bedrijfspand` en `verduurzamen-bedrijfspand-waar-begin-je` behandelen een vergelijkbare "hoe kies ik maatregelen"-vraag, en `bedrijfspand-isoleren-of-installatie-eerst` / `bouwkundige-beoordeling-voor-verduurzaming` raken elkaar qua onderwerp (bouwkundige staat van het pand).
+
+**Bevinding — toekomstige publicatiedatums (gemeld, niet zelfstandig gewijzigd)**: 3 van de 7 artikelen hebben een `isoDate` die op sessiedatum 2026-10-14 nog in de toekomst ligt: `bouwkundige-beoordeling-voor-verduurzaming` (2026-10-15), `veelgemaakte-fouten-verduurzamen-bedrijfspand` (2026-10-29) en `mjop-en-verduurzamingsadvies-verschil` (2026-11-12). Alle 3 staan al volledig live, geprerenderd, in de sitemap en met volledige JSON-LD (`datePublished` = de toekomstige datum). `src/pages/BlogPost.jsx` heeft geen enkele conditionele logica voor "gepland" vs. "gepubliceerd" — `post.date` is altijd platte tekst. Dit is **niet zelfstandig aangepast**: het bouwen van scheduling-/noindex-logica voor toekomstige datums zou een nieuwe, niet-triviale functionaliteit zijn die de opdracht niet expliciet vroeg en die een eigen afweging vereist (bijv. of dit bewust is — artikelen "vooraf inplannen" — of een fout in eerdere datainvoer). Gemeld hier en in `SEO-CONTENT-MAP.md`; vereist een beslissing van de eigenaar.
+
+**Technische verificatie**: `npm run lint` (0 fouten), `npm run build` (geslaagd, CSP geïnjecteerd in 57 `dist/*.html`-bestanden, 58 inline-scripthashes), `npm test -- --run` (1143/1143 geslaagd, geen regressies). JSON-LD op alle 4 gewijzigde blogpagina's gevalideerd: exact 4 blokken (`ProfessionalService`, `WebSite`, `BreadcrumbList`, `BlogPosting`), geen duplicatie, geen syntaxfouten.
+
+**Documentatie**: `docs/SEO-CONTENT-MAP.md` uitgebreid met de 7 ontbrekende artikelen (zelfde format als de bestaande 12). Deze roadmap bijgewerkt: artikelaantal (12→19), sitemap-URL-aantal (24→32, inclusief de sinds fase 19 toegevoegde `/blog`-overzicht- en `/trustpilot`-pagina's die nog niet in de vorige telling stonden), nieuwe "Aanpak"-cluster toegevoegd, fase-20-rij in de fasetabel, interne-linkstrategietabel uitgebreid met de 7 nieuwe artikelen (zie hieronder).
+
+**Niet gewijzigd / bewust buiten scope**: Supabase/auth/admin-functionaliteit, Trustpilot-integratie, prijzen/pakketten, publicatiedatums van bestaande artikelen, de 12 al geaudite artikelen, en elke pagina/structuur die niet direct met deze 7 artikelen samenhangt — conform de expliciete beperkingen in de opdracht.
+
 ## Interne linkstrategie
 
 Onderstaande is opgebouwd uit de daadwerkelijke `ROUTES.blogPost(...)`-links in `src/data/blogPosts.js` (gecontroleerd per artikel, niet geschat).
@@ -169,6 +203,13 @@ Onderstaande is opgebouwd uit de daadwerkelijke `ROUTES.blogPost(...)`-links in 
 | Warmtepomp | dakisolatie, netcongestie, EIA/ISDE/SDE++, zonnepanelen, laadpalen (fase 17) |
 | LED | EIA/ISDE/SDE++, verborgen energieverspillers, dakisolatie, warmtepomp, energiebesparingsplicht (fase 17) (+ link naar `/cases`) |
 | Verborgen energieverspillers | LED, dakisolatie, ventilatie |
+| MJOP en verduurzamingsadvies-verschil | dakisolatie, werkwijze, verduurzamen-bedrijfspand-waar-begin-je, veelgemaakte-fouten-verduurzamen-bedrijfspand (+ link naar `/pakketten`) |
+| Veelgemaakte fouten verduurzamen bedrijfspand | verduurzamen-bedrijfspand-waar-begin-je, bedrijfspand-isoleren-of-installatie-eerst, EIA/ISDE/SDE++, netcongestie, ventilatie, warmtepomp-bedrijfspand-verstandige-keuze, bouwkundige-beoordeling-voor-verduurzaming (hub-functie, 7 uitgaande links) |
+| Bouwkundige beoordeling vóór verduurzaming | bedrijfspand-isoleren-of-installatie-eerst, dakisolatie (+ link naar `/pakketten`) |
+| Verduurzamingsmaatregelen bedrijfspand | dakisolatie, warmtepomp-in-het-mkb, verduurzamen-bedrijfspand-waar-begin-je (fase 20) (+ link naar `/werkwijze`) |
+| Warmtepomp bedrijfspand verstandige keuze | dakisolatie, verduurzamingsmaatregelen-bedrijfspand (fase 20) |
+| Verduurzamen bedrijfspand: waar begin je | dakisolatie, verduurzamingsmaatregelen-bedrijfspand (fase 20), bedrijfspand-isoleren-of-installatie-eerst (fase 20) (+ link naar `/pakketten`) |
+| Bedrijfspand isoleren of installatie eerst | bouwkundige-beoordeling-voor-verduurzaming (fase 20), dakisolatie, warmtepomp-in-het-mkb (+ link naar `/werkwijze`) |
 
 **Update (fase 15) — ontbrekende inkomende links opgelost**: `batterijopslag-voor-uw-bedrijfspand` en `ventilatie-in-uw-bedrijfspand` hadden na fase 14 geen enkele inkomende link vanuit een ander artikel. In fase 15 is dit verholpen: de bestaande H3 "Batterijopslag" in `netcongestie-hoeksche-waard` linkt nu naar het batterijopslag-artikel, en de ventilatie-passage in `verborgen-energieverspillers` linkt nu naar het ventilatie-artikel. Beide artikelen hebben nu minimaal 1 inkomende link.
 
