@@ -138,9 +138,9 @@ export const PRIVACY_CONTENT = {
       content: [
         'De website van SMV Advies gebruikt functionele en analytische cookies om de website goed te laten werken en het gebruik ervan te begrijpen.',
         'Functionele cookies: noodzakelijk voor de werking van de website en de energie-indicatietool. Hiervoor is geen toestemming vereist.',
-        'Analytische cookies: gebruikt om bezoekersstatistieken te verzamelen (bijv. Google Analytics), waar mogelijk privacyvriendelijk ingesteld.',
+        'Analytische cookies: gebruikt om bezoekersstatistieken te verzamelen (Google Analytics). Deze worden alleen geplaatst na uw uitdrukkelijke toestemming via de cookiebanner; vóór die toestemming (en bij weigering) blijven analytische cookies uit.',
         'Marketing-/trackingcookies: worden alleen geplaatst na uw uitdrukkelijke toestemming via de cookiebanner.',
-        'U kunt cookies te allen tijde weigeren of verwijderen via uw browserinstellingen. Dit kan de werking van (delen van) de website beïnvloeden.',
+        'U kunt uw toestemming op elk moment wijzigen of intrekken via "Cookie-instellingen wijzigen" onderaan deze pagina, of cookies weigeren of verwijderen via uw browserinstellingen. Dit kan de werking van (delen van) de website beïnvloeden.',
       ],
     },
     {

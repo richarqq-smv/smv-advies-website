@@ -12,7 +12,7 @@ import { UspStrip } from '../components/home/UspStrip'
 import { PACKAGES } from '../data/packages'
 import { PACKAGE_DETAILS } from '../data/packageDetails'
 import { FAQ_CATEGORIES } from '../data/faqs'
-import { getBreadcrumbSchema, getFaqSchema } from '../lib/structuredData'
+import { getBreadcrumbSchema, getFaqSchema, getServiceSchema } from '../lib/structuredData'
 import { ROUTES } from '../lib/routes'
 
 const LINK_CLASSNAME = 'font-medium text-accent underline underline-offset-2 hover:text-secondary'
@@ -58,6 +58,7 @@ export default function Pakketten() {
         structuredData={[
           getBreadcrumbSchema([{ name: 'Pakketten', path: ROUTES.pakketten }]),
           getFaqSchema([{ items: PAKKETTEN_FAQ_ITEMS }]),
+          ...getServiceSchema(PACKAGES),
         ]}
       />
 

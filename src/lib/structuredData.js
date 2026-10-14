@@ -1,5 +1,5 @@
-import { COMPANY } from '../data/company'
-import { ROUTES } from './routes'
+import { COMPANY } from '../data/company.js'
+import { ROUTES } from './routes.js'
 
 /**
  * JSON-LD builders. Every value comes from data already published on the
@@ -78,6 +78,38 @@ export function getFaqSchema(categories) {
       },
     })),
   }
+}
+
+/**
+ * Eén Service-schema per pakket uit PACKAGES (src/data/packages.js) —
+ * uitsluitend velden die al op de Pakketten-pagina zelf zichtbaar zijn
+ * (naam, omschrijving, startprijs uit de eerste priceTier). Geen aparte
+ * Product-markup: dit zijn adviesdiensten, geen fysieke producten.
+ */
+export function getServiceSchema(packages) {
+  return packages.map((pkg) => ({
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    serviceType: `${pkg.name} verduurzamingsadvies`,
+    name: `${pkg.name} verduurzamingsadvies voor bedrijfspanden`,
+    description: pkg.description,
+    provider: {
+      '@type': 'ProfessionalService',
+      name: COMPANY.name,
+      url: toUrl(ROUTES.home),
+    },
+    areaServed: {
+      '@type': 'Place',
+      name: COMPANY.region,
+    },
+    url: toUrl(ROUTES.pakketAnchor(pkg.id)),
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'EUR',
+      price: pkg.priceTiers?.[0]?.prijs,
+      description: pkg.priceNote,
+    },
+  }))
 }
 
 export function getBlogPostingSchema(post) {

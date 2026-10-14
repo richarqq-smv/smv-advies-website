@@ -1,5 +1,5 @@
-import { ROUTES } from '../lib/routes'
-import { MEERWERK_UURTARIEF } from '../lib/klantOmgeving/offerte'
+import { ROUTES } from '../lib/routes.js'
+import { MEERWERK_UURTARIEF } from '../lib/klantOmgeving/offerte.js'
 
 /**
  * Commerciële waarheid (Fase 6 — commerciële productimplementatie).

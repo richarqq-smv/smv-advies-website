@@ -21,3 +21,16 @@ export function loadAnalytics() {
 
   window.gtag('consent', 'update', { analytics_storage: 'granted' })
 }
+
+/**
+ * Trekt een eerder gegeven toestemming in (zie Privacy.jsx: "Cookie-
+ * instellingen wijzigen"). Zet analytics_storage terug naar denied en
+ * reset de granted-guard, zodat een latere, nieuwe loadAnalytics()-aanroep
+ * (na opnieuw accepteren) weer werkt i.p.v. stil niets te doen.
+ */
+export function revokeAnalytics() {
+  granted = false
+  if (typeof window.gtag !== 'function') return
+
+  window.gtag('consent', 'update', { analytics_storage: 'denied' })
+}

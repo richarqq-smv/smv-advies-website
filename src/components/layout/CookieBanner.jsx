@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ROUTES } from '../../lib/routes'
-import { loadAnalytics } from '../../lib/analytics'
-import { getStoredConsent, storeConsent } from '../../lib/consent'
+import { loadAnalytics, revokeAnalytics } from '../../lib/analytics'
+import { getStoredConsent, storeConsent, clearConsent, COOKIE_SETTINGS_EVENT } from '../../lib/consent'
 import { Button } from '../ui/Button'
 
 /**
@@ -17,6 +17,20 @@ export function CookieBanner() {
     if (getStoredConsent() === 'accepted') {
       loadAnalytics()
     }
+  }, [])
+
+  // "Cookie-instellingen wijzigen" op de privacypagina stuurt dit event
+  // i.p.v. direct deze component aan te roepen (die staat los/eenmalig in
+  // MainLayout) — zo kan de keuze ook na de eerste banner nog gewijzigd of
+  // ingetrokken worden, zonder een paginareload nodig te hebben.
+  useEffect(() => {
+    function handleReopen() {
+      revokeAnalytics()
+      clearConsent()
+      setVisible(true)
+    }
+    window.addEventListener(COOKIE_SETTINGS_EVENT, handleReopen)
+    return () => window.removeEventListener(COOKIE_SETTINGS_EVENT, handleReopen)
   }, [])
 
   function handleAccept() {
