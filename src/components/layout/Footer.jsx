@@ -108,17 +108,6 @@ export function Footer() {
                 {COMPANY.address.street}, {COMPANY.address.postalCode} {COMPANY.address.city}
               </span>
             </li>
-            <li className="flex items-start gap-2.5">
-              <Star size={18} className="mt-0.5 shrink-0 text-accent-light" />
-              <a
-                href={COMPANY.trustpilotUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block py-1 hover:text-white"
-              >
-                Beoordeel ons op Trustpilot
-              </a>
-            </li>
           </ul>
         </div>
 
