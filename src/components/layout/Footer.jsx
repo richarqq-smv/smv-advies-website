@@ -37,7 +37,7 @@ export function Footer() {
             data-businessunit-id="6abf610ed4ea2cdc6ac6b813"
             data-style-height="52px"
             data-style-width="100%"
-            data-token="b49c3545-1baa-4fc6-866c-8bcabd166184"
+            data-token="7b523343-0274-45cf-a20b-6688c4869c5e"
           >
             <a href="https://nl.trustpilot.com/review/smv-advies.nl" target="_blank" rel="noopener noreferrer">
               Trustpilot
