@@ -232,9 +232,14 @@ async function injecteerContentSecurityPolicy() {
     "default-src 'self'",
     `script-src ${scriptSrcBronnen}`,
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: https://www.google-analytics.com https://*.google-analytics.com https://*.trustpilot.net",
+    "img-src 'self' data: https://www.google-analytics.com https://*.google-analytics.com https://*.trustpilot.net https://*.trustpilot.com",
     "font-src 'self'",
     "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://api.emailjs.com https://widget.trustpilot.com https://*.trustpilot.com",
+    // De TrustBox-widget rendert zijn inhoud in een iframe. Zonder deze
+    // regel valt frame-src terug op default-src 'self', waardoor die
+    // iframe stilletjes geblokkeerd wordt en alleen het lege, grijze
+    // widget-kader overblijft (ontdekt via live screenshot, 2026-10-14).
+    "frame-src 'self' https://widget.trustpilot.com https://*.trustpilot.com",
     "base-uri 'self'",
     "form-action 'self'",
     "object-src 'none'",
