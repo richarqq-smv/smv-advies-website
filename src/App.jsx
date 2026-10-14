@@ -19,6 +19,8 @@ const Cases = lazy(() => import('./pages/Cases'))
 const Blog = lazy(() => import('./pages/Blog'))
 const BlogPost = lazy(() => import('./pages/BlogPost'))
 const Faq = lazy(() => import('./pages/Faq'))
+const Trustpilot = lazy(() => import('./pages/Trustpilot'))
+const TrustpilotRedirect = lazy(() => import('./pages/TrustpilotRedirect'))
 const Contact = lazy(() => import('./pages/Contact'))
 const Privacy = lazy(() => import('./pages/Privacy'))
 const Voorwaarden = lazy(() => import('./pages/Voorwaarden'))
@@ -153,6 +155,9 @@ export default function App() {
           <Route path={ROUTES.blog} element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path={ROUTES.faq} element={<Faq />} />
+          <Route path={ROUTES.trustpilot} element={<Trustpilot />} />
+          <Route path={ROUTES.beoordelingen} element={<TrustpilotRedirect />} />
+          <Route path={ROUTES.recensies} element={<TrustpilotRedirect />} />
           <Route path={ROUTES.contact} element={<Contact />} />
           <Route path={ROUTES.privacy} element={<Privacy />} />
           <Route path={ROUTES.voorwaarden} element={<Voorwaarden />} />

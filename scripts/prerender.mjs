@@ -35,6 +35,12 @@ const ROUTES = [
   ROUTE_PATHS.blog,
   ...BLOG_POSTS.map((post) => ROUTE_PATHS.blogPost(post.slug)),
   ROUTE_PATHS.faq,
+  // Trustpilot-ronde (2026-10-14): wel een echt statisch bestand nodig
+  // voor een directe load/refresh op GitHub Pages, net als elke andere
+  // route hier — zie routes.js voor de noindex-/sitemap-afweging per pad.
+  ROUTE_PATHS.trustpilot,
+  ROUTE_PATHS.beoordelingen,
+  ROUTE_PATHS.recensies,
   ROUTE_PATHS.contact,
   ROUTE_PATHS.privacy,
   ROUTE_PATHS.voorwaarden,
@@ -216,14 +222,19 @@ async function injecteerContentSecurityPolicy() {
     verzamelInlineScriptHashes(html, hashes)
   }
 
-  const scriptSrcBronnen = ["'self'", 'https://www.googletagmanager.com', ...[...hashes].sort().map((h) => `'sha256-${h}'`)].join(' ')
+  const scriptSrcBronnen = [
+    "'self'",
+    'https://www.googletagmanager.com',
+    'https://widget.trustpilot.com',
+    ...[...hashes].sort().map((h) => `'sha256-${h}'`),
+  ].join(' ')
   const content = [
     "default-src 'self'",
     `script-src ${scriptSrcBronnen}`,
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: https://www.google-analytics.com https://*.google-analytics.com",
+    "img-src 'self' data: https://www.google-analytics.com https://*.google-analytics.com https://*.trustpilot.net",
     "font-src 'self'",
-    "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://api.emailjs.com",
+    "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://api.emailjs.com https://widget.trustpilot.com https://*.trustpilot.com",
     "base-uri 'self'",
     "form-action 'self'",
     "object-src 'none'",

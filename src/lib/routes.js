@@ -23,6 +23,17 @@ export const ROUTES = {
   contact: '/contact',
   privacy: '/privacy',
   voorwaarden: '/voorwaarden',
+  // Trustpilot-ronde (2026-10-14) — eigen pagina met uitleg + de echte
+  // Trustpilot-widget/link, bewust NIET in NAV_ITEMS (expliciete wens:
+  // geen menu-item), wel geïndexeerd (dit is juist bedoeld om gevonden
+  // te worden, dus geen noindex en wel in sitemap.xml, in tegenstelling
+  // tot mjopTool hierboven). /beoordelingen en /recensies zijn twee
+  // synoniem-URL's die er puur naartoe doorverwijzen (TrustpilotRedirect),
+  // zodat beide zoektermen een werkende pagina vinden — wel noindex (geen
+  // duplicate content) en niet in sitemap.xml, zie App.jsx/prerender.mjs.
+  trustpilot: '/trustpilot',
+  beoordelingen: '/beoordelingen',
+  recensies: '/recensies',
   // Intern adviesinstrument, bewust niet in NAV_ITEMS/sitemap opgenomen en
   // geserveerd met noindex — zie src/pages/MjopTool.jsx.
   mjopTool: '/MJOP-Tool',

@@ -37,6 +37,15 @@
     -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CE0DFH59Z9"></script>
     <script src="/gtag-init.js"></script>
+    <!--
+      Trustpilot TrustBox "Review Collector" (Deel en promoot > Website-
+      widgets, gratis in elk plan) — zelfde patroon als gtag.js hierboven:
+      statische, onvoorwaardelijke async script-tag i.p.v. dynamisch
+      geïnjecteerd, zodat het de widget-div in Footer.jsx altijd kan
+      vinden zodra het script laadt (de div staat al in de geprerenderde
+      HTML, dus geen race condition met React-hydratie).
+    -->
+    <script type="text/javascript" src="https://widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
     <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="/favicon.png" sizes="any" />
     <link rel="apple-touch-icon" href="/favicon-180.png" />

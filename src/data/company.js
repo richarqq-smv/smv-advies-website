@@ -30,4 +30,14 @@ export const COMPANY = {
   kvk: null, // fill in the real KvK number here once known — see comment above
   region: 'Hoeksche Waard',
   responseTime: 'Binnen 1 werkdag reactie',
+  // Trustpilot-profiel aangemaakt 17 sep 2026, nog 0 reviews op het
+  // moment van bouwen. URL bevestigd uit de echte widget-embedcode die
+  // vanuit het Trustpilot-dashboard is gekopieerd (Deel en promoot >
+  // Website-widgets > Review Collector), niet geraden.
+  trustpilotUrl: 'https://nl.trustpilot.com/review/smv-advies.nl',
+  linkedinUrl: 'https://www.linkedin.com/company/smv-advies',
+  // Nog geen Instagram-account aangemaakt — zelfde null-conventie als kvk
+  // hierboven. Footer.jsx toont de Instagram-knop daarom niet-klikbaar
+  // totdat hier een echte URL staat.
+  instagramUrl: null,
 }
