@@ -35,6 +35,10 @@ export function getOrganizationSchema() {
       name: COMPANY.region,
     },
     description: 'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in de Hoeksche Waard.',
+    // sameAs: alleen echte, al elders op de site gebruikte kanalen (zie
+    // COMPANY.linkedinUrl, ook in Footer.jsx) — geen KVK-link zolang
+    // company.js kvk: null heeft, die bestaat dan nog niet.
+    sameAs: [COMPANY.linkedinUrl].filter(Boolean),
   }
 }
 
@@ -122,7 +126,16 @@ export function getBlogPostingSchema(post) {
     datePublished: post.isoDate,
     url,
     mainEntityOfPage: url,
-    author: { '@type': 'Organization', name: COMPANY.name },
+    // Person i.p.v. Organization (tot 2026-10-14): Richard heeft bevestigd
+    // zelf verantwoordelijk te zijn voor de bloginhoud (E-E-A-T-signaal
+    // voor zoekmachines/AI — zie COMPANY.founder hierboven voor de bron).
+    author: {
+      '@type': 'Person',
+      name: COMPANY.founder.name,
+      jobTitle: COMPANY.founder.jobTitle,
+      url: COMPANY.founder.linkedinUrl,
+      worksFor: { '@type': 'Organization', name: COMPANY.name },
+    },
     publisher: {
       '@type': 'Organization',
       name: COMPANY.name,

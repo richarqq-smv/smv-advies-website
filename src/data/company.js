@@ -40,4 +40,14 @@ export const COMPANY = {
   // hierboven. Footer.jsx toont de Instagram-knop daarom niet-klikbaar
   // totdat hier een echte URL staat.
   instagramUrl: null,
+  // Auteursgegevens voor BlogPosting-schema (structuredData.js) —
+  // bevestigd door Richard zelf, overgenomen uit zijn eigen
+  // e-mailhandtekening (2026-10-14), niet verzonnen. linkedinUrl hierboven
+  // is het bedrijfskanaal; dit is zijn persoonlijke profiel, zelfde link
+  // als al op de Over-ons-pagina stond.
+  founder: {
+    name: 'Richard Schipper',
+    jobTitle: 'Oprichter',
+    linkedinUrl: 'https://www.linkedin.com/in/richard-schipper/',
+  },
 }
