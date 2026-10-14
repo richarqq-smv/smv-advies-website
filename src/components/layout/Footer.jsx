@@ -14,13 +14,12 @@ export function Footer() {
     <footer className="bg-primary text-white">
       <Container className="grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-4 lg:py-20">
         <div className="sm:col-span-2 lg:col-span-1">
-          {/* logo-header.png heeft een ondoorzichtige witte achtergrond
-              (geen alpha-kanaal) en is zwart — daarom hier in een eigen
-              wit kaartje i.p.v. los op de donkere footer-achtergrond,
-              zelfde echte logobestand als in de Header. */}
-          <div className="inline-block rounded-lg bg-white px-3 py-2">
-            <img src="/logo-header.png" alt="SMV Advies" width="199" height="112" className="h-9 w-auto" />
-          </div>
+          {/* logo-footer-light.png is logo-header.png zelf, puur
+              herkleurd naar wit-op-transparant (alpha afgeleid uit de
+              luminantie van het origineel, geen nieuw logo getekend) —
+              zodat het losstaand op de donkere footer-achtergrond past,
+              zonder wit kaartje eromheen. */}
+          <img src="/logo-footer-light.png" alt="SMV Advies" width="199" height="112" className="h-9 w-auto" />
           <p className="mt-4 max-w-[32ch] text-sm leading-relaxed text-white/70">
             Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in de Hoeksche Waard.{' '}
             {COMPANY.tagline}.
