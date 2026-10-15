@@ -33,8 +33,8 @@ export function EnergyScale({ currentBand }) {
         ))}
       </div>
       <div className="mt-2 flex justify-between text-xs font-medium text-foreground-muted">
-        <span>Veel energieverlies</span>
         <span>Zeer energiezuinig</span>
+        <span>Veel energieverlies</span>
       </div>
       <p className="mt-3 text-center text-xs leading-relaxed text-foreground-muted">
         Dit toont uw geschatte positie op basis van uw antwoorden — geen officiële classificatie of energielabel.
