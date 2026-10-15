@@ -15,11 +15,14 @@
  * is bewust geen bedrijventerrein genoemd — daar is er geen eigen, met
  * naam bekend bedrijventerrein gevonden, dus wordt dat ook niet beweerd.
  *
- * `hotspot` zijn percentage-posities (links/boven) op
- * werkgebied-hoeksche-waard.png (1672x941), gebruikt voor de klikbare
- * puntjes op Werkgebied.jsx — bepaald door de bestaande pin-labels op de
- * afbeelding visueel op te meten, dus altijd nog even in de browser
- * controleren/bijstellen na wijzigingen aan de afbeelding zelf.
+ * `hotspot` (x/y/width/height, alles in procenten van
+ * werkgebied-hoeksche-waard.png, 1672x941) bepaalt zowel de positie als
+ * de afmeting van de klikbare knop op Werkgebied.jsx. Niet met het oog
+ * geschat: opgemeten door de exacte pixelgrenzen van elke witte
+ * naam-pil in de afbeelding te detecteren (kleurdrempel + connected-
+ * components, met 14px/10px marge rondom) — zie de analyse in de
+ * verificatieronde 2026-10-15. Verandert de afbeelding zelf, dan moeten
+ * deze waarden opnieuw gemeten worden.
  */
 export const WERKGEBIED_PLAATSEN = [
   {
@@ -45,7 +48,7 @@ export const WERKGEBIED_PLAATSEN = [
           'Ja, naast Oud-Beijerland is SMV Advies actief in alle kernen van de Hoeksche Waard, van Numansdorp tot \'s-Gravendeel.',
       },
     ],
-    hotspot: { x: 33.2, y: 30.3 },
+    hotspot: { x: 33.3, y: 30.5, width: 9.0, height: 5.1 },
   },
   {
     slug: 'heinenoord',
@@ -65,7 +68,7 @@ export const WERKGEBIED_PLAATSEN = [
           'Ja, SMV Advies verzorgt onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Heinenoord, onder andere rond bedrijventerrein Reedijk/Boonsweg bij de A29.',
       },
     ],
-    hotspot: { x: 52.4, y: 25.7 },
+    hotspot: { x: 52.9, y: 26.1, width: 7.4, height: 4.9 },
   },
   {
     slug: 'puttershoek',
@@ -84,7 +87,7 @@ export const WERKGEBIED_PLAATSEN = [
           'Ja, SMV Advies verzorgt onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Puttershoek, waaronder bedrijventerrein SHIPP21.',
       },
     ],
-    hotspot: { x: 63.2, y: 32.6 },
+    hotspot: { x: 63.8, y: 32.9, width: 8.3, height: 5.2 },
   },
   {
     slug: 'maasdam',
@@ -101,7 +104,7 @@ export const WERKGEBIED_PLAATSEN = [
         answer: 'Ja, SMV Advies verzorgt onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Maasdam en omgeving.',
       },
     ],
-    hotspot: { x: 76.6, y: 37.4 },
+    hotspot: { x: 77.2, y: 38.0, width: 6.5, height: 5.3 },
   },
   {
     slug: 'zuid-beijerland',
@@ -118,7 +121,7 @@ export const WERKGEBIED_PLAATSEN = [
         answer: 'Ja, SMV Advies verzorgt onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Zuid-Beijerland en omgeving.',
       },
     ],
-    hotspot: { x: 20.5, y: 44.9 },
+    hotspot: { x: 20.5, y: 45.5, width: 9.2, height: 4.9 },
   },
   {
     slug: 'mijnsheerenland',
@@ -135,7 +138,7 @@ export const WERKGEBIED_PLAATSEN = [
         answer: 'Ja, SMV Advies verzorgt onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Mijnsheerenland en omgeving.',
       },
     ],
-    hotspot: { x: 42.5, y: 45.6 },
+    hotspot: { x: 43.2, y: 46.3, width: 9.5, height: 5.0 },
   },
   {
     slug: 's-gravendeel',
@@ -154,7 +157,7 @@ export const WERKGEBIED_PLAATSEN = [
           "Ja, SMV Advies verzorgt onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in 's-Gravendeel, inclusief het bedrijventerrein aan de Dordtsche Kil.",
       },
     ],
-    hotspot: { x: 85.9, y: 51.4 },
+    hotspot: { x: 86.8, y: 52.1, width: 8.1, height: 4.9 },
   },
   {
     slug: 'klaaswaal',
@@ -171,7 +174,7 @@ export const WERKGEBIED_PLAATSEN = [
         answer: 'Ja, SMV Advies verzorgt onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Klaaswaal en omgeving.',
       },
     ],
-    hotspot: { x: 34.0, y: 54.6 },
+    hotspot: { x: 34.4, y: 55.5, width: 7.0, height: 5.0 },
   },
   {
     slug: 'strijen',
@@ -189,7 +192,7 @@ export const WERKGEBIED_PLAATSEN = [
           'Ja, SMV Advies verzorgt onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Strijen, waaronder bedrijventerrein Oud-Bonaventura.',
       },
     ],
-    hotspot: { x: 68.1, y: 58.0 },
+    hotspot: { x: 68.7, y: 58.9, width: 5.3, height: 5.0 },
   },
   {
     slug: 'numansdorp',
@@ -208,7 +211,7 @@ export const WERKGEBIED_PLAATSEN = [
           'Ja, SMV Advies verzorgt onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Numansdorp, waaronder bedrijventerrein Middelsluis-Noord.',
       },
     ],
-    hotspot: { x: 60.4, y: 72.6 },
+    hotspot: { x: 60.9, y: 74.0, width: 7.8, height: 5.6 },
   },
 ]
 

@@ -63,6 +63,14 @@ test('werkgebiedPlaatsen.js: exact de 10 verwachte plaatsen, elk met verplichte 
       typeof plaats.hotspot?.y === 'number' && plaats.hotspot.y >= 0 && plaats.hotspot.y <= 100,
       `${plaats.slug}: hotspot.y moet een percentage zijn`,
     )
+    assert.ok(
+      typeof plaats.hotspot?.width === 'number' && plaats.hotspot.width > 0 && plaats.hotspot.width <= 100,
+      `${plaats.slug}: hotspot.width moet een positief percentage zijn`,
+    )
+    assert.ok(
+      typeof plaats.hotspot?.height === 'number' && plaats.hotspot.height > 0 && plaats.hotspot.height <= 100,
+      `${plaats.slug}: hotspot.height moet een positief percentage zijn`,
+    )
   }
 })
 
@@ -109,5 +117,7 @@ test('Werkgebied.jsx: toont een klikbare hotspot-link per plaats, gebaseerd op W
   assert.match(WERKGEBIED, /import \{ WERKGEBIED_PLAATSEN \} from '\.\.\/data\/werkgebiedPlaatsen'/)
   assert.match(WERKGEBIED, /WERKGEBIED_PLAATSEN\.map\(\(plaats\) => \(/)
   assert.match(WERKGEBIED, /to={ROUTES\.werkgebiedPlaats\(plaats\.slug\)}/)
-  assert.match(WERKGEBIED, /style={\{ left: `\$\{plaats\.hotspot\.x\}%`, top: `\$\{plaats\.hotspot\.y\}%` \}}/)
+  assert.match(WERKGEBIED, /left: `\$\{plaats\.hotspot\.x\}%`/)
+  assert.match(WERKGEBIED, /width: `\$\{plaats\.hotspot\.width\}%`/)
+  assert.match(WERKGEBIED, /height: `\$\{plaats\.hotspot\.height\}%`/)
 })

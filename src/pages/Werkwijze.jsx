@@ -7,6 +7,7 @@ import { Container } from '../components/ui/Container'
 import { SectionHeading } from '../components/ui/SectionHeading'
 import { HowItWorks } from '../components/home/HowItWorks'
 import { ClosingCta } from '../components/home/ClosingCta'
+import { InteractiefBedrijfspand } from '../components/werkwijze/InteractiefBedrijfspand'
 import { getBreadcrumbSchema } from '../lib/structuredData'
 import { ROUTES } from '../lib/routes'
 
@@ -79,6 +80,17 @@ export default function Werkwijze() {
       </Section>
 
       <Section tone="white">
+        <Container>
+          <SectionHeading
+            title="Waar kijken we naar in uw pand?"
+            description="Een bedrijfspand bestaat uit veel onderdelen die samen het energieverbruik en comfort bepalen. Klik op een punt in de afbeelding voor een korte toelichting."
+            className="mb-10"
+          />
+          <InteractiefBedrijfspand />
+        </Container>
+      </Section>
+
+      <Section tone="muted">
         <Container className="max-w-3xl">
           <h2 className="text-2xl text-primary sm:text-3xl">Wat SMV Advies niet doet</h2>
           <p className="mt-5 text-base leading-relaxed text-foreground-muted">

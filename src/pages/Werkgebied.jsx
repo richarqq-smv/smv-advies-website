@@ -155,22 +155,32 @@ export default function Werkgebied() {
               className="w-full rounded-xl border border-border"
             />
             {/*
-              Klikbare puntjes (SEO-ronde 2026-10-15) bovenop de bestaande
-              plaatsnaam-pillen op de illustratie, als echte <Link>'s (dus
-              crawlbaar/indexeerbaar, geen onClick-only div) naar de nieuwe
-              dorpspagina's. Posities zijn percentages t.o.v. de afbeelding
-              (werkgebiedPlaatsen.js: hotspot.x/y), zodat ze meeschalen met
-              w-full — handmatig bepaald door de bestaande pil-labels op
-              de illustratie op te meten, dus visueel geverifieerd/
-              bijgesteld in de browser i.p.v. blind vertrouwd.
+              Klikbare puntjes (SEO-ronde 2026-10-15, maat/positie
+              gecorrigeerd 2026-10-15) bovenop de bestaande plaatsnaam-
+              pillen op de illustratie, als echte <Link>'s (dus crawlbaar/
+              indexeerbaar, geen onClick-only div) naar de nieuwe
+              dorpspagina's. x/y/width/height komen uit
+              werkgebiedPlaatsen.js (hotspot) en zijn allemaal procenten
+              t.o.v. de afbeelding, dus ze schalen exact mee met w-full.
+              Niet met het oog geschat: per pil exact opgemeten (pixel-
+              kleurdrempel + connected-components op de originele PNG),
+              elke pil heeft daardoor zijn eigen breedte/hoogte i.p.v. één
+              vaste maat voor alle 10 — anders staat een korte naam als
+              "Strijen" niet gecentreerd in eenzelfde knop als een lange
+              naam als "Zuid-Beijerland".
             */}
             {WERKGEBIED_PLAATSEN.map((plaats) => (
               <Link
                 key={plaats.slug}
                 to={ROUTES.werkgebiedPlaats(plaats.slug)}
                 aria-label={`Bekijk SMV Advies in ${plaats.naam}`}
-                className="absolute flex h-8 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full ring-0 ring-accent/60 transition hover:bg-white/30 hover:ring-2 focus-visible:bg-white/30 focus-visible:ring-2 focus-visible:outline-none sm:w-28"
-                style={{ left: `${plaats.hotspot.x}%`, top: `${plaats.hotspot.y}%` }}
+                className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full ring-0 ring-accent/60 transition hover:bg-white/30 hover:ring-2 focus-visible:bg-white/30 focus-visible:ring-2 focus-visible:outline-none"
+                style={{
+                  left: `${plaats.hotspot.x}%`,
+                  top: `${plaats.hotspot.y}%`,
+                  width: `${plaats.hotspot.width}%`,
+                  height: `${plaats.hotspot.height}%`,
+                }}
               />
             ))}
           </div>
