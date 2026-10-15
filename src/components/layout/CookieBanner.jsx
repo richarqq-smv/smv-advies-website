@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
 import { ROUTES } from '../../lib/routes'
-import { loadAnalytics, revokeAnalytics } from '../../lib/analytics'
+import { loadAnalytics, loadTrustpilot, revokeAnalytics } from '../../lib/analytics'
 import { getStoredConsent, storeConsent, clearConsent, COOKIE_SETTINGS_EVENT } from '../../lib/consent'
 import { Button } from '../ui/Button'
 
 /**
  * Cookie-consent banner. Functional cookies (the site itself, the energy
  * scan) always run — no consent needed for those, per the Privacyverklaring.
- * Analytics only loads after explicit "Accepteren". Declining, or leaving
- * the choice unmade, means analytics never loads at all.
+ * Analytics and the Trustpilot widget (verificatieronde 2026-10-15; zie
+ * loadTrustpilot in analytics.js) only load after explicit "Accepteren".
+ * Declining, or leaving the choice unmade, means neither ever loads.
  */
 export function CookieBanner() {
   const [visible, setVisible] = useState(() => getStoredConsent() === null)
@@ -16,6 +17,7 @@ export function CookieBanner() {
   useEffect(() => {
     if (getStoredConsent() === 'accepted') {
       loadAnalytics()
+      loadTrustpilot()
     }
   }, [])
 
@@ -36,6 +38,7 @@ export function CookieBanner() {
   function handleAccept() {
     storeConsent('accepted')
     loadAnalytics()
+    loadTrustpilot()
     setVisible(false)
   }
 

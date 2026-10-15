@@ -3,7 +3,7 @@ import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { BlogCard } from '../components/blog/BlogCard'
-import { BLOG_POSTS } from '../data/blogPosts'
+import { PUBLISHED_BLOG_POSTS } from '../data/blogPosts'
 import { getBreadcrumbSchema } from '../lib/structuredData'
 import { ROUTES } from '../lib/routes'
 
@@ -26,7 +26,7 @@ export default function Blog() {
         <Container className="max-w-3xl">
           <h2 className="sr-only">Artikelen</h2>
           <div className="flex flex-col gap-8">
-            {BLOG_POSTS.map((post, index) => (
+            {PUBLISHED_BLOG_POSTS.map((post, index) => (
               <BlogCard key={post.slug} post={post} delay={index * 60} />
             ))}
           </div>

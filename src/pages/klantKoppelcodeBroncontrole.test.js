@@ -75,7 +75,7 @@ test('AdminDossiers.jsx: toont een "Koppelcode genereren"-knop per klant en de r
 
 test('Account.jsx: biedt in de "nog geen klant"-staat een alternatief koppelcode-formulier naast de bestaande registratie, via koppelKlantMetCode()', () => {
   assert.match(ACCOUNT, /import \{\s*\n\s*getMijnKlant,\s*\n\s*registreerKlant,\s*\n\s*koppelKlantMetCode,/)
-  assert.match(ACCOUNT, /const \[koppelModus, setKoppelModus\] = useState\(false\)/)
+  assert.match(ACCOUNT, /const \[klantKeuze, setKlantKeuze\] = useState\(null\)/)
   assert.match(ACCOUNT, /async function submitKoppelcode\(e\) \{/)
   assert.match(ACCOUNT, /await koppelKlantMetCode\(\{/)
   // Na een gelukte koppeling wordt dezelfde laadAlles() herbruikt als na registreerKlant() — geen tweede ophaalpad.
@@ -84,7 +84,34 @@ test('Account.jsx: biedt in de "nog geen klant"-staat een alternatief koppelcode
   assert.match(fnMatch[0], /await laadAlles\(\)/)
 })
 
-test('Account.jsx: de koppelcode-weg blijft een bewuste keuze — de standaard registratieformulier blijft het eerste wat getoond wordt, met een link om over te schakelen', () => {
-  assert.match(ACCOUNT, /Heeft u een koppelcode van SMV Advies ontvangen\?/)
-  assert.match(ACCOUNT, /Toch geen koppelcode — bedrijfsgegevens zelf invullen/)
+/**
+ * Vervolgronde (2026-10-15, "klantkoppeling afronden"): koppelModus (boolean,
+ * registratieformulier als stille standaard) is vervangen door klantKeuze
+ * (string|null) — een expliciet, gelijkwaardig keuzescherm vóór beide
+ * formulieren, zodat de koppelcode-route niet langer een onderaan verstopte
+ * link is maar een eigen, even prominente kaart. Geen backend-wijziging:
+ * beide paden roepen nog steeds exact dezelfde registreerKlant()/
+ * koppelKlantMetCode()-functies aan als voorheen.
+ */
+test('Account.jsx: toont eerst een neutraal, gelijkwaardig keuzescherm (klantKeuze === null) vóór zowel het koppelcode- als het registratieformulier', () => {
+  assert.match(ACCOUNT, /!klant \? klantKeuze === null \? \(/)
+  assert.match(ACCOUNT, /heeft u al eerder contact gehad met SMV Advies/)
+  assert.match(ACCOUNT, /onClick=\{\(\) => setKlantKeuze\('koppelcode'\)\}/)
+  assert.match(ACCOUNT, /onClick=\{\(\) => setKlantKeuze\('nieuw'\)\}/)
+  // Allebei de keuzekaarten moeten er even prominent uitzien — geen van
+  // beide mag de standaard-stijlklasse van de ander missen terwijl de ander
+  // die wel heeft (zelfde <button>-grootte/padding, alleen rand-/achtergrond-
+  // accent verschilt).
+  const keuzeScherm = ACCOUNT.slice(ACCOUNT.indexOf("klantKeuze === null ? ("), ACCOUNT.indexOf(") : klantKeuze === 'koppelcode'"))
+  const kaartKnoppen = keuzeScherm.match(/className="flex flex-col gap-1\.5 rounded-xl border-2[^"]*"/g) ?? []
+  assert.equal(kaartKnoppen.length, 2, 'beide keuzekaarten moeten dezelfde basisopmaak (rounded-xl border-2 flex flex-col) gebruiken')
+})
+
+test('Account.jsx: "Terug"-knoppen in beide formulieren zetten klantKeuze terug naar null (terug naar het keuzescherm, niet rechtstreeks naar het andere formulier)', () => {
+  const terugKnoppen = ACCOUNT.match(/onClick=\{\(\) => \{\s*\n\s*setKlantKeuze\(null\)/g) ?? []
+  assert.equal(terugKnoppen.length, 2, 'zowel het koppelcode- als het registratieformulier moet een eigen "Terug naar keuzescherm"-knop hebben')
+})
+
+test('Account.jsx: koppelt nooit automatisch op e-mailadres — klantKeuze/koppelKlantMetCode/registreerKlant bevatten geen e-mailvergelijking of -opzoeking', () => {
+  assert.equal(/where.*email|\.eq\('email'|\.match\(\{\s*email/i.test(ACCOUNT), false)
 })

@@ -5,7 +5,7 @@ import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
-import { getBlogPostBySlug } from '../data/blogPosts'
+import { getBlogPostBySlug, isGepubliceerd } from '../data/blogPosts'
 import { getBreadcrumbSchema, getBlogPostingSchema } from '../lib/structuredData'
 import { ROUTES } from '../lib/routes'
 import NotFound from './NotFound'
@@ -120,6 +120,7 @@ export default function BlogPost() {
       <Seo
         title={post.title}
         description={post.excerpt}
+        noindex={!isGepubliceerd(post)}
         structuredData={[
           getBreadcrumbSchema([
             { name: 'Blog', path: ROUTES.blog },

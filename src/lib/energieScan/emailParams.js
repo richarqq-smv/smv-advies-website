@@ -5,9 +5,11 @@ import { buildPubliekeMaatregelenTekst } from './publiekeWeergave'
 /**
  * Ported 1-op-1 uit de originele energie-indicatietool
  * (SMV_Advies_Energietool_index3.html — formatMaatregelRegel /
- * buildMaatregelenTekstIntern / buildEmailParams). Zelfde merge-fieldnamen,
- * zodat de bestaande EmailJS-templates (EMAILJS_TEMPLATE_LEAD / _CONFIRM)
- * ongewijzigd kunnen blijven.
+ * buildMaatregelenTekstIntern / buildEmailParams). De merge-veldnamen hier
+ * zijn de exacte contractnamen die de Resend-based Edge Function
+ * (supabase/functions/send-email/index.ts, buildEnergieLeadEmail/
+ * buildEnergieConfirmEmail) uitleest — niet meer EmailJS-templates sinds de
+ * overstap op 2026-10-14.
  */
 function formatMaatregelRegel(m, i) {
   const besparingUnitsTekst = m.isElektrisch

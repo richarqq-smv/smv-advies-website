@@ -13,20 +13,23 @@ import { euro, formatDatumNl } from '../../lib/klantOmgeving/offerte'
  * historisch correct, ook als die brondata later wijzigt (zie
  * OfferteEditor/bouwOfferteSnapshot voor waar de snapshot vandaan komt).
  *
- * Bedrijfsgegevens-bronronde: het titelblok gebruikt sinds deze ronde
- * `instellingen` (factuur_instellingen, door OffertePreview.jsx live
- * opgehaald) i.p.v. de statische data/company.js — exact hetzelfde
- * principe als FactuurDocument.jsx. data/company.js blijft uitsluitend de
- * bron voor de publieke website (zie het moduledoc van FactuurDocument.jsx
- * en data/company.js); dit was tot nu toe de ene plek die daarvan afweek,
- * waardoor een wijziging in Administratie Instellingen niet in nieuwe
- * offertes doorkwam.
+ * Bedrijfsgegevens-bronronde: het titelblok gebruikt `instellingen`
+ * (factuur_instellingen, door OffertePreview.jsx live opgehaald) i.p.v. de
+ * statische data/company.js — exact hetzelfde principe als
+ * FactuurDocument.jsx. data/company.js blijft uitsluitend de bron voor de
+ * publieke website. Verificatieronde 2026-10-15: `bedrijfsgegevens`
+ * hieronder gebruikt voortaan `offerte.bedrijfsgegevens_snapshot`
+ * (0049_bedrijfsgegevens_snapshot.sql) zodra die bestaat — zelfde
+ * val-through-redenering als FactuurDocument.jsx: alleen offertes van vóór
+ * die migratie (die nooit een snapshot kregen) vallen terug op de live
+ * `instellingen`-prop, geen regressie voor hun bestaande gedrag.
  *
  * Toont uitsluitend velden die een klant mag zien — geen id's, RLS-status,
  * MJOP-snapshots, adviespunten of overige interne metadata.
  */
 export function OfferteDocument({ offerte, instellingen }) {
   const { snapshot } = offerte
+  const bedrijfsgegevens = offerte.bedrijfsgegevens_snapshot ?? instellingen
   const heeftMeerwerk = Array.isArray(offerte.meerwerk) && offerte.meerwerk.length > 0
 
   return (
@@ -34,17 +37,17 @@ export function OfferteDocument({ offerte, instellingen }) {
       {/* 1. Titelblok */}
       <header className="offerte-blok mb-8 flex flex-wrap items-start justify-between gap-x-6 gap-y-4 border-b border-border pb-6 break-inside-avoid">
         <div className="min-w-0 break-words">
-          <img src="/logo-header.png" alt={instellingen.bedrijfsnaam} width="149" height="84" className="mb-4 h-14 w-auto" />
+          <img src="/logo-header.png" alt={bedrijfsgegevens.bedrijfsnaam} width="149" height="84" className="mb-4 h-14 w-auto" />
           <p className="text-foreground-muted">
-            {instellingen.adres}
+            {bedrijfsgegevens.adres}
             <br />
-            {instellingen.postcode} {instellingen.plaats}
+            {bedrijfsgegevens.postcode} {bedrijfsgegevens.plaats}
             <br />
-            {instellingen.telefoon} · {instellingen.email}
-            {instellingen.kvk_nummer ? (
+            {bedrijfsgegevens.telefoon} · {bedrijfsgegevens.email}
+            {bedrijfsgegevens.kvk_nummer ? (
               <>
                 <br />
-                KvK {instellingen.kvk_nummer}
+                KvK {bedrijfsgegevens.kvk_nummer}
               </>
             ) : null}
           </p>
@@ -189,10 +192,10 @@ export function OfferteDocument({ offerte, instellingen }) {
       <section className="offerte-blok mb-7 break-inside-avoid">
         <h2 className="mb-2 break-after-avoid text-xs font-semibold tracking-[0.1em] text-accent uppercase">Voorwaarden</h2>
         <p className="text-foreground-muted">
-          Op deze offerte zijn de Algemene Voorwaarden van {instellingen.bedrijfsnaam} van toepassing (versie {snapshot.voorwaarden.versie}
+          Op deze offerte zijn de Algemene Voorwaarden van {bedrijfsgegevens.bedrijfsnaam} van toepassing (versie {snapshot.voorwaarden.versie}
           ), te raadplegen op www.smv-advies.nl/voorwaarden. Deze offerte is vrijblijvend en geldig tot de hierboven genoemde datum.
         </p>
-        <p className="mt-2 text-foreground-muted">Opgesteld door {snapshot.opgesteld_door.naam}, {instellingen.bedrijfsnaam}.</p>
+        <p className="mt-2 text-foreground-muted">Opgesteld door {snapshot.opgesteld_door.naam}, {bedrijfsgegevens.bedrijfsnaam}.</p>
       </section>
 
       {/* 8. Akkoord */}

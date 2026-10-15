@@ -5,7 +5,13 @@ import { Button } from '../ui/Button'
 import { ROUTES } from '../../lib/routes'
 import { getOfferte, getOffertesVoorDossier, deleteOfferte, updateOfferteStatus, getFacturenVoorDossier, createFactuur, getFactuurInstellingen } from '../../lib/klantOmgeving/api'
 import { euro, formatDatumNl, OFFERTE_TOEGESTANE_OVERGANGEN, OFFERTE_STATUS_LABELS, magFactuurMakenVanuitOfferte } from '../../lib/klantOmgeving/offerte'
-import { berekenFactuurTotalen, bouwFactuurKlantSnapshot, bouwFactuurRegelsVanuitOfferte, standaardVervaldatum } from '../../lib/klantOmgeving/factuur'
+import {
+  berekenFactuurTotalen,
+  bouwFactuurKlantSnapshot,
+  bouwFactuurRegelsVanuitOfferte,
+  bouwBedrijfsgegevensSnapshot,
+  standaardVervaldatum,
+} from '../../lib/klantOmgeving/factuur'
 
 // Knoptekst per mogelijke volgende status — alleen de overgangen die
 // OFFERTE_TOEGESTANE_OVERGANGEN daadwerkelijk toestaat komen ooit in beeld
@@ -193,6 +199,7 @@ export function OffertesHistorie({ dossierId, refreshSignal, magBeheren = false,
         btwBedrag: totalen.btwBedrag,
         totaalInclBtw: totalen.totaalInclBtw,
         klantSnapshot,
+        bedrijfsgegevensSnapshot: bouwBedrijfsgegevensSnapshot(instellingen),
       })
       navigate(ROUTES.adminFactuurDetail(factuur.factuur_id))
     } catch {

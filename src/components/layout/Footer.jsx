@@ -26,10 +26,13 @@ export function Footer() {
           </p>
           {/* Trustpilot TrustBox "Review Collector" — officiële, gratis
               widget uit het Trustpilot-dashboard (Deel en promoot >
-              Website-widgets). De bootstrap-script (index.html) vervangt
-              de fallback-link hieronder client-side door de live widget;
-              zonder JS (of voor crawlers) blijft dit gewoon een werkende
-              link naar de reviewpagina. */}
+              Website-widgets). Het bootstrap-script wordt pas na cookie-
+              toestemming dynamisch geladen (zie loadTrustpilot in
+              src/lib/analytics.js, verificatieronde 2026-10-15) en
+              vervangt dan de fallback-link hieronder client-side door de
+              live widget; zonder toestemming, zonder JS, of voor
+              crawlers blijft dit gewoon een werkende link naar de
+              reviewpagina. */}
           <div
             className="trustpilot-widget mt-5"
             data-locale="nl-NL"

@@ -88,10 +88,13 @@ function buildPlanningTekst(insights) {
 }
 
 /**
- * Bouwt de platte set merge-velden voor de EmailJS MJOP-template (zie
- * EMAILJS_TEMPLATE_MJOP in lib/emailjs.js). Dezelfde bron (`building` +
- * `insights`) als stap 7 zelf laat zien — de e-mail is dus geen aparte
- * berekening, alleen een andere weergave van hetzelfde afgeleide overzicht.
+ * Bouwt de platte set merge-velden die de Edge Function
+ * (supabase/functions/send-email/index.ts, buildMjopEmail) uitleest.
+ * Dezelfde bron (`building` + `insights`) als stap 7 zelf laat zien — de
+ * e-mail is dus geen aparte berekening, alleen een andere weergave van
+ * hetzelfde afgeleide overzicht. `to_email`/`subject` staan hier nog in
+ * voor duidelijkheid, maar de Edge Function bepaalt ontvanger en subject
+ * altijd zelf, server-side, en negeert deze twee velden.
  */
 export function buildMjopEmailParams(building, insights) {
   const summary = buildAdviesSummary(insights)

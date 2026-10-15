@@ -6,6 +6,7 @@ import {
   bedragWijktAfVanStandaardprijs,
   berekenOfferteBedragen,
   bouwOfferteSnapshot,
+  bouwBedrijfsgegevensSnapshot,
   OPGESTELD_DOOR_NAAM,
   OFFERTE_TOEGESTANE_OVERGANGEN,
   magOvergangNaar,
@@ -698,4 +699,66 @@ test('MEERWERK_STANDAARD_OPTIES: "Extra locatiebezoek" gebruikt hetzelfde tarief
   const optie = MEERWERK_STANDAARD_OPTIES.find((o) => o.omschrijving === 'Extra locatiebezoek')
   assert.ok(optie, 'verwacht een standaardoptie "Extra locatiebezoek"')
   assert.equal(optie.eenheidsprijs, MEERWERK_UURTARIEF)
+})
+
+// --- bouwBedrijfsgegevensSnapshot (verificatieronde 2026-10-15, onderdeel B) ---
+
+function instellingenFixture(overrides = {}) {
+  return {
+    bedrijfsnaam: 'SMV Advies',
+    adres: 'Frans Halsstraat 28',
+    postcode: '3262 HG',
+    plaats: 'Oud-Beijerland',
+    kvk_nummer: '12345678',
+    btw_id: 'NL123456789B01',
+    iban: 'NL00BANK0123456789',
+    tenaamstelling: 'SMV Advies B.V.',
+    email: 'info@smv-advies.nl',
+    telefoon: '06 22 71 33 83',
+    betalingsvoorwaarden: 'Binnen 14 dagen over te maken.',
+    // Velden die WEL op factuur_instellingen staan maar bewust NIET in de
+    // snapshot horen (operationele instellingen, geen per-document-weergave).
+    standaard_betalingstermijn_dagen: 14,
+    factuurprefix: 'SMV-FAC',
+    standaard_btw_percentage: 21,
+    ...overrides,
+  }
+}
+
+test('bouwBedrijfsgegevensSnapshot: neemt exact de elf weergegeven velden over, letterlijk', () => {
+  const snapshot = bouwBedrijfsgegevensSnapshot(instellingenFixture())
+  assert.deepEqual(snapshot, {
+    bedrijfsnaam: 'SMV Advies',
+    adres: 'Frans Halsstraat 28',
+    postcode: '3262 HG',
+    plaats: 'Oud-Beijerland',
+    kvk_nummer: '12345678',
+    btw_id: 'NL123456789B01',
+    iban: 'NL00BANK0123456789',
+    tenaamstelling: 'SMV Advies B.V.',
+    email: 'info@smv-advies.nl',
+    telefoon: '06 22 71 33 83',
+    betalingsvoorwaarden: 'Binnen 14 dagen over te maken.',
+  })
+})
+
+test('bouwBedrijfsgegevensSnapshot: laat operationele instellingen (betalingstermijn/factuurprefix/standaard-btw) nooit in de snapshot lekken', () => {
+  const snapshot = bouwBedrijfsgegevensSnapshot(instellingenFixture())
+  assert.equal('standaard_betalingstermijn_dagen' in snapshot, false)
+  assert.equal('factuurprefix' in snapshot, false)
+  assert.equal('standaard_btw_percentage' in snapshot, false)
+})
+
+test('bouwBedrijfsgegevensSnapshot: nog niet ingevulde velden (KvK/btw-id/IBAN kunnen NULL zijn) worden expliciet null, nooit undefined of een verzonnen waarde', () => {
+  const snapshot = bouwBedrijfsgegevensSnapshot(instellingenFixture({ kvk_nummer: null, btw_id: null, iban: null }))
+  assert.equal(snapshot.kvk_nummer, null)
+  assert.equal(snapshot.btw_id, null)
+  assert.equal(snapshot.iban, null)
+})
+
+test('bouwBedrijfsgegevensSnapshot: een latere wijziging aan de bron-instellingen raakt een al gebouwde snapshot nooit (kopie, geen referentie)', () => {
+  const instellingen = instellingenFixture()
+  const snapshot = bouwBedrijfsgegevensSnapshot(instellingen)
+  instellingen.iban = 'NL99ANDERBANK000'
+  assert.equal(snapshot.iban, 'NL00BANK0123456789')
 })

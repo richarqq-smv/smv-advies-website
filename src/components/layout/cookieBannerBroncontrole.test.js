@@ -23,32 +23,44 @@ function lees(...relatievePad) {
 const COOKIE_BANNER = lees('CookieBanner.jsx')
 const PRIVACY = lees('..', '..', 'pages', 'Privacy.jsx')
 const CONSENT = lees('..', '..', 'lib', 'consent.js')
+const INDEX_HTML = lees('..', '..', '..', 'index.html')
 
 test('CookieBanner.jsx: start zichtbaar alleen als er nog geen opgeslagen keuze is', () => {
   assert.match(COOKIE_BANNER, /useState\(\(\) => getStoredConsent\(\) === null\)/)
 })
 
-test('CookieBanner.jsx: laadt analytics bij mount alleen als de opgeslagen keuze al "accepted" is', () => {
+test('CookieBanner.jsx: laadt analytics én Trustpilot bij mount alleen als de opgeslagen keuze al "accepted" is', () => {
   const mountEffect = COOKIE_BANNER.slice(
     COOKIE_BANNER.indexOf('useEffect(() => {\n    if (getStoredConsent()'),
     COOKIE_BANNER.indexOf('}, [])', COOKIE_BANNER.indexOf('useEffect(() => {\n    if (getStoredConsent()')),
   )
   assert.match(mountEffect, /getStoredConsent\(\) === 'accepted'/)
   assert.match(mountEffect, /loadAnalytics\(\)/)
+  assert.match(mountEffect, /loadTrustpilot\(\)/)
 })
 
-test('CookieBanner.jsx: handleAccept slaat "accepted" op, laadt analytics en verbergt de banner', () => {
+test('CookieBanner.jsx: handleAccept slaat "accepted" op, laadt analytics + Trustpilot en verbergt de banner', () => {
   const blok = COOKIE_BANNER.slice(COOKIE_BANNER.indexOf('function handleAccept'), COOKIE_BANNER.indexOf('function handleDecline'))
   assert.match(blok, /storeConsent\('accepted'\)/)
   assert.match(blok, /loadAnalytics\(\)/)
+  assert.match(blok, /loadTrustpilot\(\)/)
   assert.match(blok, /setVisible\(false\)/)
 })
 
-test('CookieBanner.jsx: handleDecline slaat "declined" op, verbergt de banner, en laadt geen analytics', () => {
+test('CookieBanner.jsx: handleDecline slaat "declined" op, verbergt de banner, en laadt geen analytics of Trustpilot', () => {
   const blok = COOKIE_BANNER.slice(COOKIE_BANNER.indexOf('function handleDecline'), COOKIE_BANNER.indexOf('if (!visible)'))
   assert.match(blok, /storeConsent\('declined'\)/)
   assert.match(blok, /setVisible\(false\)/)
   assert.doesNotMatch(blok, /loadAnalytics\(\)/)
+  assert.doesNotMatch(blok, /loadTrustpilot\(\)/)
+})
+
+test('index.html: bevat niet langer de statische, onvoorwaardelijke Trustpilot-bootstrap-tag (verificatieronde 2026-10-15)', () => {
+  assert.equal(/widget\.trustpilot\.com\/bootstrap/.test(INDEX_HTML), false)
+})
+
+test('CookieBanner.jsx: importeert loadTrustpilot uit dezelfde analytics.js als loadAnalytics/revokeAnalytics', () => {
+  assert.match(COOKIE_BANNER, /import \{ loadAnalytics, loadTrustpilot, revokeAnalytics \} from '\.\.\/\.\.\/lib\/analytics'/)
 })
 
 test('CookieBanner.jsx: luistert op COOKIE_SETTINGS_EVENT en trekt toestemming dan volledig in (revoke + clear + opnieuw tonen)', () => {

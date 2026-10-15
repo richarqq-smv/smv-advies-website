@@ -249,3 +249,31 @@ export function bouwOfferteSnapshot({ klant, contactpersoon, pand, pakket, tier,
     },
   }
 }
+
+/**
+ * Bouwt de zelfstandige momentopname van SMV's eigen bedrijfsgegevens
+ * (verificatieronde 2026-10-15, onderdeel B) — exact dezelfde elf velden
+ * die OfferteDocument.jsx/FactuurDocument.jsx tonen (zie 0049_bedrijfs
+ * gegevens_snapshot.sql). Gedeeld tussen offertes en facturen: factuur.js
+ * importeert deze functie, in plaats van een eigen kopie te bouwen — zelfde
+ * richting als de bestaande euro/rond2/formatDatumNl-re-export daar.
+ *
+ * `instellingen` komt van getFactuurInstellingen() (live, op het moment
+ * van aanmaken) — na het vastleggen hier verandert een latere wijziging
+ * aan factuur_instellingen deze al opgeslagen snapshot nooit meer.
+ */
+export function bouwBedrijfsgegevensSnapshot(instellingen) {
+  return {
+    bedrijfsnaam: instellingen.bedrijfsnaam ?? null,
+    adres: instellingen.adres ?? null,
+    postcode: instellingen.postcode ?? null,
+    plaats: instellingen.plaats ?? null,
+    kvk_nummer: instellingen.kvk_nummer ?? null,
+    btw_id: instellingen.btw_id ?? null,
+    iban: instellingen.iban ?? null,
+    tenaamstelling: instellingen.tenaamstelling ?? null,
+    email: instellingen.email ?? null,
+    telefoon: instellingen.telefoon ?? null,
+    betalingsvoorwaarden: instellingen.betalingsvoorwaarden ?? null,
+  }
+}

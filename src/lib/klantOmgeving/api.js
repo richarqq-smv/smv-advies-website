@@ -670,6 +670,7 @@ export async function createOfferte({
   totaal,
   opmerkingen,
   snapshot,
+  bedrijfsgegevensSnapshot = null,
 }) {
   return throwOnError(
     await supabase
@@ -688,6 +689,7 @@ export async function createOfferte({
         totaal,
         opmerkingen: opmerkingen?.trim() || null,
         snapshot,
+        bedrijfsgegevens_snapshot: bedrijfsgegevensSnapshot,
       })
       .select('*')
       .single(),
@@ -709,7 +711,7 @@ export async function createOfferte({
 // niet in. Deze functies zijn zichtbaar voor zowel admin als de eigen
 // klant (offertes_select_klant, 0007_offertes_klant_select.sql).
 const OFFERTE_KOLOMMEN =
-  'id, klant_id, pand_id, dossier_id, offerte_nummer, status, offerte_datum, geldig_tot, verzonden_op, pakket_id, bedrag, meerwerk, subtotaal, btw_percentage, btw_bedrag, totaal, opmerkingen, snapshot, created_at, updated_at'
+  'id, klant_id, pand_id, dossier_id, offerte_nummer, status, offerte_datum, geldig_tot, verzonden_op, pakket_id, bedrag, meerwerk, subtotaal, btw_percentage, btw_bedrag, totaal, opmerkingen, snapshot, bedrijfsgegevens_snapshot, created_at, updated_at'
 
 export async function getOfferte(offerteId) {
   return throwOnError(await supabase.from('offertes').select(OFFERTE_KOLOMMEN).eq('id', offerteId).single())
@@ -1146,7 +1148,7 @@ export async function adminListFacturen({ status, vanaf, tot } = {}) {
 // heeft die nodig); FactuurDocument.jsx verbergt hem voor een klant zelf
 // via de `toonNotitie`-prop — dit is de kolomgrens, dat is de rendergrens.
 const FACTUUR_KOLOMMEN =
-  'factuur_id, klant_id, dossier_id, offerte_id, factuurnummer, status, factuurdatum, vervaldatum, verzonden_op, betaalde_op, subtotaal_excl_btw, btw_bedrag, totaal_incl_btw, klant_snapshot, regels, notitie, created_at, updated_at'
+  'factuur_id, klant_id, dossier_id, offerte_id, factuurnummer, status, factuurdatum, vervaldatum, verzonden_op, betaalde_op, subtotaal_excl_btw, btw_bedrag, totaal_incl_btw, klant_snapshot, bedrijfsgegevens_snapshot, regels, notitie, created_at, updated_at'
 
 /** Eén factuur, voor de detail-/printweergave. RLS (facturen_select_admin/facturen_select_klant) is de enige toegangsgrens — deze functie is een kale select. */
 export async function getFactuur(factuurId) {
@@ -1310,6 +1312,7 @@ export async function createFactuur({
   btwBedrag,
   totaalInclBtw,
   klantSnapshot,
+  bedrijfsgegevensSnapshot = null,
   notitie = null,
 }) {
   return throwOnError(
@@ -1325,6 +1328,7 @@ export async function createFactuur({
         btw_bedrag: btwBedrag,
         totaal_incl_btw: totaalInclBtw,
         klant_snapshot: klantSnapshot,
+        bedrijfsgegevens_snapshot: bedrijfsgegevensSnapshot,
         notitie: notitie?.trim() || null,
       })
       .select('*')

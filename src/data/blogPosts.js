@@ -1973,3 +1973,19 @@ export const BLOG_POSTS = [
 export function getBlogPostBySlug(slug) {
   return BLOG_POSTS.find((post) => post.slug === slug)
 }
+
+/**
+ * Health-check 2026-10-15: twee artikelen stonden met een `isoDate` in de
+ * toekomst (12 en 29 november) toch al in de publieke bloglijst, de sitemap
+ * en als "index, follow" geïndexeerde pagina — ongewenst voortijdig
+ * gepubliceerd. `isGepubliceerd()` is de ene, hergebruikte bron van
+ * waarheid voor "mag dit artikel nu publiek zichtbaar/indexeerbaar zijn",
+ * gebruikt door zowel Blog.jsx (lijst) als BlogPost.jsx (noindex). Lexicale
+ * vergelijking van twee ISO-datumstrings (YYYY-MM-DD) is hier correct en
+ * tijdzone-onafhankelijk — geen Date-rekenwerk nodig.
+ */
+export function isGepubliceerd(post, vandaagIso = new Date().toISOString().slice(0, 10)) {
+  return post.isoDate <= vandaagIso
+}
+
+export const PUBLISHED_BLOG_POSTS = BLOG_POSTS.filter((post) => isGepubliceerd(post))

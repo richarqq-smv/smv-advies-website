@@ -18,7 +18,23 @@ globalThis.window = {
   gtag: (...args) => calls.push(args),
 }
 
-const { loadAnalytics, revokeAnalytics } = await import('./analytics.js')
+/**
+ * loadTrustpilot() gebruikt document.createElement/head.appendChild i.p.v.
+ * window.gtag — minimale stub die alleen registreert wat er gebeurt,
+ * zonder een echte DOM te simuleren.
+ */
+const appendedScripts = []
+globalThis.document = {
+  createElement: (tag) => {
+    const el = { tag }
+    return el
+  },
+  head: {
+    appendChild: (el) => appendedScripts.push(el),
+  },
+}
+
+const { loadAnalytics, loadTrustpilot, revokeAnalytics } = await import('./analytics.js')
 
 test('loadAnalytics: doet niets als window.gtag geen functie is (gtag.js nog niet geladen)', () => {
   const origineel = globalThis.window.gtag
@@ -61,4 +77,17 @@ test('revokeAnalytics: gooit niet als window.gtag geen functie is', () => {
   globalThis.window.gtag = undefined
   assert.doesNotThrow(() => revokeAnalytics())
   globalThis.window.gtag = origineel
+})
+
+test('loadTrustpilot: voegt het bootstrap-script dynamisch toe aan document.head', () => {
+  appendedScripts.length = 0
+  loadTrustpilot()
+  assert.equal(appendedScripts.length, 1)
+  assert.equal(appendedScripts[0].tag, 'script')
+})
+
+test('loadTrustpilot: een tweede aanroep voegt het script niet nogmaals toe', () => {
+  appendedScripts.length = 0
+  loadTrustpilot()
+  assert.equal(appendedScripts.length, 0)
 })

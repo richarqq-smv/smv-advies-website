@@ -16,14 +16,23 @@ const SMV_LICHTGRIJS = '#EFEFEF'
  *
  * Layout volgt het door SMV aangeleverde factuursjabloon (factuursjabloon-
  * ronde, 2026-09-28): titelblok, factuurgegevens-tabel, Aan/Van, Specificatie-
- * tabel, totalen, betaalvoorwaarden. De architectuur zelf is ongewijzigd
- * gebleven — dit blijft uitsluitend bevroren gegevens tonen:
- * `factuur.klant_snapshot` en `factuur.regels` (nooit een live opzoeking in
- * klanten/offertes), en de bedrijfsgegevens uit `instellingen`
- * (factuur_instellingen, zie FactuurDetail.jsx) — nooit uit data/company.js,
- * dat blijft de publieke-website-bron (zie 0013_factuur_instellingen.sql).
- * Zo blijft een eenmaal verzonden factuur historisch correct, ook als de
- * offerte waar hij uit ontstond of de bedrijfsinstellingen later wijzigen.
+ * tabel, totalen, betaalvoorwaarden. `factuur.klant_snapshot` en
+ * `factuur.regels` zijn bevroren op het moment van aanmaken (nooit een live
+ * opzoeking in klanten/offertes) — dat deel blijft historisch correct, ook
+ * als de offerte waar de factuur uit ontstond later wijzigt.
+ *
+ * `instellingen` (bedrijfsgegevens — naam, adres, KVK, IBAN, BTW-id) komt
+ * live binnen vanuit `factuur_instellingen` (zie FactuurDetail.jsx) — nooit
+ * uit data/company.js, dat blijft de publieke-website-bron (zie
+ * 0013_factuur_instellingen.sql). Verificatieronde 2026-10-15: elke factuur
+ * vanaf nu bevriest die gegevens ook zelf, in `factuur.bedrijfsgegevens_
+ * snapshot` (0049_bedrijfsgegevens_snapshot.sql, zelfde patroon als
+ * klant_snapshot) — `bedrijfsgegevens` hieronder gebruikt die snapshot zodra
+ * hij bestaat, en valt alleen terug op de live `instellingen`-prop voor
+ * facturen van vóór deze migratie (die hebben nooit een snapshot gekregen;
+ * met terugwerkende kracht één verzinnen zou feitelijk onjuiste
+ * "zo was het toen"-informatie tonen, dus voor die oude facturen blijft het
+ * bestaande, altijd al zo werkende live-gedrag intact — geen regressie).
  *
  * Het sjabloonbestand zelf bevat twee met geel/grijs gemarkeerde alinea's
  * ("BESLISPUNT RICHARD" en "Let op: Aanbetaling...") die inhoudelijk een
@@ -34,6 +43,7 @@ const SMV_LICHTGRIJS = '#EFEFEF'
  */
 export function FactuurDocument({ factuur, instellingen, toonNotitie = true }) {
   const { klant, contactpersoon } = factuur.klant_snapshot ?? {}
+  const bedrijfsgegevens = factuur.bedrijfsgegevens_snapshot ?? instellingen
   const regels = Array.isArray(factuur.regels) ? factuur.regels : []
   const betreft = afgeleidBetreft(regels)
   const btwPercentage = afgeleidBtwPercentage(regels)
@@ -42,7 +52,7 @@ export function FactuurDocument({ factuur, instellingen, toonNotitie = true }) {
     <article className="factuur-document bg-white text-[13.5px] leading-relaxed text-foreground print:text-[10.5pt]">
       {/* 1. Titelblok */}
       <header className="factuur-blok mb-6 flex items-start justify-between gap-6 break-inside-avoid">
-        <img src="/logo-header.png" alt={instellingen.bedrijfsnaam} width="149" height="84" className="h-14 w-auto" />
+        <img src="/logo-header.png" alt={bedrijfsgegevens.bedrijfsnaam} width="149" height="84" className="h-14 w-auto" />
         <h1 className="font-heading text-3xl font-medium" style={{ color: SMV_DONKERGROEN }}>
           Factuur
         </h1>
@@ -125,38 +135,38 @@ export function FactuurDocument({ factuur, instellingen, toonNotitie = true }) {
             Van
           </h2>
           <p className="text-primary">
-            {instellingen.bedrijfsnaam}
-            {instellingen.adres ? (
+            {bedrijfsgegevens.bedrijfsnaam}
+            {bedrijfsgegevens.adres ? (
               <>
                 <br />
-                {instellingen.adres}
+                {bedrijfsgegevens.adres}
               </>
             ) : null}
-            {instellingen.postcode || instellingen.plaats ? (
+            {bedrijfsgegevens.postcode || bedrijfsgegevens.plaats ? (
               <>
                 <br />
-                {instellingen.postcode} {instellingen.plaats}
+                {bedrijfsgegevens.postcode} {bedrijfsgegevens.plaats}
               </>
             ) : null}
-            {instellingen.kvk_nummer ? (
+            {bedrijfsgegevens.kvk_nummer ? (
               <>
                 <br />
-                KvK {instellingen.kvk_nummer}
+                KvK {bedrijfsgegevens.kvk_nummer}
               </>
             ) : null}
-            {instellingen.btw_id ? (
+            {bedrijfsgegevens.btw_id ? (
               <>
                 <br />
-                Btw-id {instellingen.btw_id}
+                Btw-id {bedrijfsgegevens.btw_id}
               </>
             ) : null}
-            {instellingen.email ? (
+            {bedrijfsgegevens.email ? (
               <>
                 <br />
-                {instellingen.email}
+                {bedrijfsgegevens.email}
               </>
             ) : null}
-            {instellingen.telefoon ? <> · {instellingen.telefoon}</> : null}
+            {bedrijfsgegevens.telefoon ? <> · {bedrijfsgegevens.telefoon}</> : null}
           </p>
         </section>
       </div>
@@ -237,10 +247,10 @@ export function FactuurDocument({ factuur, instellingen, toonNotitie = true }) {
         </h2>
         <p className="text-foreground-muted">
           Wij verzoeken u het totaalbedrag van {euro(factuur.totaal_incl_btw)} vóór {formatDatumNl(factuur.vervaldatum)} over te maken naar{' '}
-          <span className="text-primary">{instellingen.iban}</span>
-          {instellingen.tenaamstelling ? <> t.n.v. {instellingen.tenaamstelling}</> : null}, onder vermelding van factuurnummer {factuur.factuurnummer}.
+          <span className="text-primary">{bedrijfsgegevens.iban}</span>
+          {bedrijfsgegevens.tenaamstelling ? <> t.n.v. {bedrijfsgegevens.tenaamstelling}</> : null}, onder vermelding van factuurnummer {factuur.factuurnummer}.
         </p>
-        {instellingen.betalingsvoorwaarden ? <p className="mt-2 text-foreground-muted">{instellingen.betalingsvoorwaarden}</p> : null}
+        {bedrijfsgegevens.betalingsvoorwaarden ? <p className="mt-2 text-foreground-muted">{bedrijfsgegevens.betalingsvoorwaarden}</p> : null}
       </section>
     </article>
   )

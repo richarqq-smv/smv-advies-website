@@ -32,24 +32,57 @@ const BUSINESS_EMAIL = 'info@smv-advies.nl'
 const CONTACT_EMAIL = 'contact@smv-advies.nl'
 const MJOP_RECIPIENT_EMAIL = 'richard@smv-advies.nl'
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+// Alleen de eigen site mag deze functie vanuit een browser aanroepen — een
+// JSON POST triggert altijd een CORS-preflight (OPTIONS), dus een
+// niet-toegestane Origin wordt al vóór de preflight geblokkeerd en de
+// daadwerkelijke POST (en dus de mailverzending) wordt nooit uitgevoerd.
+// Dit is geen vervanging voor server-side validatie hieronder — alleen
+// bescherming tegen misbruik vanaf een andere website via de browser van
+// een bezoeker; een directe server-naar-server aanroep (curl, scripts)
+// gaat hier sowieso niet door CORS heen, vandaar de aanvullende checks
+// verderop (payload-grootte, type-allowlist, veldvalidatie).
+// Geen www-variant: de site draait alleen op het kale domein (zie
+// SITE_ORIGIN in scripts/prerender.mjs en elke canonical/OG/structured-
+// data-referentie in de codebase) — nergens in dit project staat een
+// www.smv-advies.nl-verwijzing of -redirect. Een ongebruikte, onbevestigde
+// origin in de allowlist zetten zou precies ingaan tegen het doel van een
+// allowlist (alleen wat daadwerkelijk legitiem is toestaan).
+const ALLOWED_ORIGINS = new Set(['https://smv-advies.nl', 'http://localhost:5173', 'http://localhost:4173'])
+
+function corsHeaders(req: Request) {
+  const origin = req.headers.get('origin') ?? ''
+  const headers: Record<string, string> = {
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    Vary: 'Origin',
+  }
+  if (ALLOWED_ORIGINS.has(origin)) headers['Access-Control-Allow-Origin'] = origin
+  return headers
 }
 
-function jsonResponse(body: unknown, status = 200) {
+function jsonResponse(req: Request, body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+    headers: { ...corsHeaders(req), 'Content-Type': 'application/json' },
   })
 }
+
+// Ruime bovengrens: de grootste legitieme payload (energie-lead, met de
+// volledige JSON-kopie van het scanresultaat als extra veld) is in de
+// praktijk een paar KB. 100 KB laat ruim marge voor lange vrije tekst
+// zonder een scriptmatige aanval met een enorme body toe te staan.
+const MAX_BODY_BYTES = 100_000
 
 // Alle dynamische waarden gaan hierdoorheen vóór ze in HTML belanden —
 // ook de waarden die in een <a href="mailto:..."> terechtkomen, zodat een
 // rare/kwaadwillige naam of vraagtekst nooit uit een attribuut kan breken.
+// Legitieme merge-velden zijn altijd string/number/undefined; dit is een
+// publiek, onbeveiligd endpoint, dus een object of array (per ongeluk of
+// moedwillig meegestuurd) wordt hier bewust leeg gemaakt in plaats van via
+// String() te verschijnen als het onbruikbare "[object Object]".
 function escapeHtml(value: unknown) {
-  return String(value ?? '')
+  const safeValue = value !== null && typeof value === 'object' ? '' : value
+  return String(safeValue ?? '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -366,7 +399,7 @@ function buildMjopEmail(p: MjopParams) {
 </html>`
   return {
     to: MJOP_RECIPIENT_EMAIL,
-    reply_to: p.contact_email && p.contact_email !== 'Niet opgegeven' ? p.contact_email : undefined,
+    reply_to: typeof p.contact_email === 'string' && p.contact_email !== 'Niet opgegeven' ? p.contact_email : undefined,
     subject: 'Nieuwe MJOP-analyse via SMV Advies',
     html,
   }
@@ -431,47 +464,85 @@ function buildContactEmail(p: ContactParams) {
 </html>`
   return {
     to: CONTACT_EMAIL,
-    reply_to: p.email,
+    reply_to: typeof p.email === 'string' ? p.email : undefined,
     subject: `Nieuw contactformulier: ${p.naam ?? 'onbekend'}`,
     html,
   }
 }
 
-const BUILDERS: Record<string, (params: Record<string, unknown>) => { to: string; reply_to?: string; subject: string; html: string }> = {
-  'energie-lead': buildEnergieLeadEmail as never,
-  'energie-confirm': buildEnergieConfirmEmail as never,
-  mjop: buildMjopEmail as never,
-  contact: buildContactEmail as never,
-}
+// Verificatieronde 2026-10-15: een plain object-literal als dispatch-map
+// is hier aantoonbaar onveilig — `BUILDERS[body.type]` met een
+// aanroeper-gestuurde `body.type` kan via JS' eigen prototypeketen
+// resolven naar een geërfd lid i.p.v. `undefined`. `type: "constructor"`
+// resolvet zo naar de ingebouwde `Object`-functie; `Object(body.params)`
+// op een plain object retourneert het object ONGEWIJZIGD, dus
+// `message = body.params` — een aanroeper kon zo `to`/`subject`/`html`/
+// `reply_to` vrij zelf instellen en dit endpoint als open mailrelay
+// gebruiken via SMV's eigen Resend-account. `type: "__proto__"` gaf een
+// onafgevangen crash. Een `Map` heeft geen prototypeketen-probleem: elke
+// sleutel (óók "constructor"/"__proto__"/"toString") is gewoon een
+// losstaande, niet-gezette entry, dus `.get()` geeft daar altijd
+// `undefined` voor terug.
+const BUILDERS = new Map<string, (params: Record<string, unknown>) => { to: string; reply_to?: string; subject: string; html: string }>([
+  ['energie-lead', buildEnergieLeadEmail as never],
+  ['energie-confirm', buildEnergieConfirmEmail as never],
+  ['mjop', buildMjopEmail as never],
+  ['contact', buildContactEmail as never],
+])
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: CORS_HEADERS })
+    return new Response(null, { headers: corsHeaders(req) })
   }
   if (req.method !== 'POST') {
-    return jsonResponse({ error: 'Method not allowed' }, 405)
+    return jsonResponse(req, { error: 'Method not allowed' }, 405)
+  }
+
+  // Grove bescherming tegen misbruik van dit publieke, niet-geauthenticeerde
+  // endpoint (verify_jwt: false): een Content-Length die de bovengrens al
+  // overschrijdt, wordt zonder body-parse geweigerd. Een ontbrekende of
+  // onjuiste header is geen garantie, dus de werkelijke bytes worden
+  // hieronder nogmaals geteld vóór het JSON.parse().
+  const contentLength = Number(req.headers.get('content-length') ?? '0')
+  if (contentLength > MAX_BODY_BYTES) {
+    return jsonResponse(req, { error: 'Aanvraag te groot' }, 413)
+  }
+
+  let rawBody: string
+  try {
+    rawBody = await req.text()
+  } catch {
+    return jsonResponse(req, { error: 'Ongeldige request-body' }, 400)
+  }
+  if (rawBody.length > MAX_BODY_BYTES) {
+    return jsonResponse(req, { error: 'Aanvraag te groot' }, 413)
   }
 
   let body: { type?: string; params?: Record<string, unknown> }
   try {
-    body = await req.json()
+    body = JSON.parse(rawBody)
   } catch {
-    return jsonResponse({ error: 'Ongeldige request-body' }, 400)
+    return jsonResponse(req, { error: 'Ongeldige request-body' }, 400)
   }
 
-  const builder = body.type ? BUILDERS[body.type] : undefined
+  // Expliciete allowlist via Map.get() (zie het commentaar bij BUILDERS
+  // hierboven): `body.type` moet letterlijk één van de 4 bekende strings
+  // zijn, inclusief tegen prototypeketen-sleutels als "constructor" of
+  // "__proto__" — de ontvanger van elk type ligt per builder hardcoded
+  // vast, nooit afkomstig van de aanroeper.
+  const builder = typeof body.type === 'string' ? BUILDERS.get(body.type) : undefined
   if (!builder) {
-    return jsonResponse({ error: 'Onbekend mailtype' }, 400)
+    return jsonResponse(req, { error: 'Onbekend mailtype' }, 400)
   }
 
   const message = builder(body.params ?? {})
   if (!message.to) {
-    return jsonResponse({ error: 'Geen geldig ontvangeradres' }, 400)
+    return jsonResponse(req, { error: 'Geen geldig ontvangeradres' }, 400)
   }
 
   const apiKey = Deno.env.get('RESEND_API_KEY')
   if (!apiKey) {
-    return jsonResponse({ error: 'E-mailservice is niet geconfigureerd' }, 500)
+    return jsonResponse(req, { error: 'E-mailservice is niet geconfigureerd' }, 500)
   }
 
   const resendResponse = await fetch(RESEND_API_URL, {
@@ -490,8 +561,10 @@ Deno.serve(async (req: Request) => {
   })
 
   if (!resendResponse.ok) {
-    return jsonResponse({ error: 'Verzenden via Resend is mislukt' }, 502)
+    // Resend's eigen foutdetails (kunnen configuratie-interna bevatten)
+    // gaan nooit naar de aanroeper terug — alleen een generieke 502.
+    return jsonResponse(req, { error: 'Verzenden via Resend is mislukt' }, 502)
   }
 
-  return jsonResponse({ ok: true })
+  return jsonResponse(req, { ok: true })
 })

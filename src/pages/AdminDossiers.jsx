@@ -48,6 +48,7 @@ function DossierStatusBadge({ status }) {
 
 export default function AdminDossiers() {
   const [laden, setLaden] = useState(true)
+  const [fout, setFout] = useState(null)
   const [klanten, setKlanten] = useState([])
   const [dossiers, setDossiers] = useState([])
   const [zoekterm, setZoekterm] = useState('')
@@ -101,10 +102,13 @@ export default function AdminDossiers() {
 
   async function laadAlles() {
     setLaden(true)
+    setFout(null)
     try {
       const [k, d] = await Promise.all([adminListKlanten(), adminListDossiers()])
       setKlanten(k)
       setDossiers(d)
+    } catch {
+      setFout('Laden is niet gelukt. Probeer het opnieuw.')
     } finally {
       setLaden(false)
     }
@@ -266,6 +270,10 @@ export default function AdminDossiers() {
           <AdminTerugKnop />
           {laden ? (
             <p className="text-sm text-foreground-muted">Bezig met laden...</p>
+          ) : fout ? (
+            <p role="alert" className="text-sm font-medium text-error">
+              {fout}
+            </p>
           ) : (
             <div className="flex flex-col gap-8">
               {lokaleKlanten.length > 0 ? (

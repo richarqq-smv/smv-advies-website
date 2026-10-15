@@ -7,7 +7,7 @@
  * applicatie worden hergebruikt (bijv. WatKanWachten.jsx,
  * DossierWerkruimte.jsx) — hier hetzelfde, geen tweede kopie.
  */
-export { euro, rond2, formatDatumNl } from './offerte.js'
+export { euro, rond2, formatDatumNl, bouwBedrijfsgegevensSnapshot } from './offerte.js'
 import { rond2, euro, formatDatumNl } from './offerte.js'
 
 export const FACTUUR_STATUSSEN = [

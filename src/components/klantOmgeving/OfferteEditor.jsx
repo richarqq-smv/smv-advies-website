@@ -3,7 +3,7 @@ import { CheckCircle, WarningCircle, SpinnerGap, Plus, X, FileText } from '@phos
 import { Button } from '../ui/Button'
 import { PACKAGES } from '../../data/packages'
 import { VOORWAARDEN_LAST_UPDATED as VOORWAARDEN_VERSIE } from '../../data/legalContent'
-import { createOfferte } from '../../lib/klantOmgeving/api'
+import { createOfferte, getFactuurInstellingen } from '../../lib/klantOmgeving/api'
 import { ROUTES } from '../../lib/routes'
 import {
   BTW_PERCENTAGE,
@@ -16,6 +16,7 @@ import {
   standaardGeldigTot,
   berekenOfferteBedragen,
   bouwOfferteSnapshot,
+  bouwBedrijfsgegevensSnapshot,
   beoordeelGoldMeerwerk,
 } from '../../lib/klantOmgeving/offerte'
 
@@ -171,6 +172,7 @@ export function OfferteEditor({ klant, contactpersoon, pand, dossier, onOpgeslag
         financieel,
         voorwaardenVersie: VOORWAARDEN_VERSIE,
       })
+      const instellingen = await getFactuurInstellingen()
       const opgeslagen = await createOfferte({
         klantId: klant.klant_id,
         pandId: pand.pand_id,
@@ -185,6 +187,7 @@ export function OfferteEditor({ klant, contactpersoon, pand, dossier, onOpgeslag
         totaal: bedragen.totaal,
         opmerkingen,
         snapshot,
+        bedrijfsgegevensSnapshot: bouwBedrijfsgegevensSnapshot(instellingen),
       })
       setResultaat(opgeslagen)
       setOpen(false)

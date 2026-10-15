@@ -94,7 +94,20 @@ export default function Account() {
   // wanneer een medewerker deze klant al heeft aangemaakt (admin_maak_klant_
   // pand_dossier) en de klant een koppelcode van SMV heeft ontvangen — zie
   // koppel_klant_met_code() in 0048_klant_koppelcode.sql.
-  const [koppelModus, setKoppelModus] = useState(false)
+  //
+  // Vervolgronde (2026-10-15, "klantkoppeling afronden"): de koppelcode-weg
+  // was tot nu toe een kleine, onderaan het registratieformulier verstopte
+  // link — makkelijk te missen voor precies de klanten voor wie hij bedoeld
+  // is (SMV heeft hen al aangemaakt, zij hoeven alleen nog te koppelen).
+  // `klantKeuze` (i.p.v. een boolean koppelModus) geeft een derde, neutrale
+  // staat (`null`) voor vóórdat de klant kiest, zodat beide paden — koppelen
+  // vs. nieuwe bedrijfsgegevens invullen — als gelijkwaardige, expliciete
+  // keuze getoond worden, in plaats van één als standaard en de ander als
+  // afterthought. Geen backend-wijziging: dit hergebruikt exact dezelfde
+  // registreerKlant()/koppelKlantMetCode()-aanroepen als voorheen, dus geen
+  // nieuwe migratie en geen e-mailmatching — uitsluitend een duidelijkere
+  // route naar het bestaande, al beveiligde koppelcode-mechanisme.
+  const [klantKeuze, setKlantKeuze] = useState(null)
   const [koppelcode, setKoppelcode] = useState({ code: '', naam: '', email: '', telefoon: '' })
   const [koppelBezig, setKoppelBezig] = useState(false)
   const [koppelFout, setKoppelFout] = useState(null)
@@ -217,7 +230,32 @@ export default function Account() {
 
           {laden ? (
             <p className="text-sm text-foreground-muted">Bezig met laden...</p>
-          ) : !klant ? koppelModus ? (
+          ) : !klant ? klantKeuze === null ? (
+            <div className="flex flex-col gap-5 rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
+              <div>
+                <h2 className="text-lg text-primary">Welkom bij SMV Advies</h2>
+                <p className="mt-1 text-sm text-foreground-muted">Om te beginnen: heeft u al eerder contact gehad met SMV Advies (bijvoorbeeld een adviesgesprek, offerte of pandopname)?</p>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => setKlantKeuze('koppelcode')}
+                  className="flex flex-col gap-1.5 rounded-xl border-2 border-accent bg-accent/5 p-5 text-left transition hover:bg-accent/10"
+                >
+                  <span className="font-medium text-primary">Ja, ik heb een koppelcode ontvangen</span>
+                  <span className="text-sm text-foreground-muted">Uw bedrijfsgegevens zijn al bij ons bekend. Koppel uw account aan dat bestaande profiel.</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setKlantKeuze('nieuw')}
+                  className="flex flex-col gap-1.5 rounded-xl border-2 border-border p-5 text-left transition hover:border-accent/50 hover:bg-muted"
+                >
+                  <span className="font-medium text-primary">Nee, ik ben een nieuwe klant</span>
+                  <span className="text-sm text-foreground-muted">Vul uw bedrijfsgegevens zelf in om te starten.</span>
+                </button>
+              </div>
+            </div>
+          ) : klantKeuze === 'koppelcode' ? (
             <form onSubmit={submitKoppelcode} className="flex flex-col gap-5 rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
               <div>
                 <h2 className="text-lg text-primary">Koppelcode invullen</h2>
@@ -236,12 +274,12 @@ export default function Account() {
               <button
                 type="button"
                 onClick={() => {
-                  setKoppelModus(false)
+                  setKlantKeuze(null)
                   setKoppelFout(null)
                 }}
                 className="text-left text-sm text-foreground-muted underline hover:text-accent"
               >
-                Toch geen koppelcode — bedrijfsgegevens zelf invullen
+                ← Terug
               </button>
             </form>
           ) : (
@@ -261,8 +299,15 @@ export default function Account() {
               <Button type="submit" disabled={registratieBezig}>
                 {registratieBezig ? 'Bezig...' : 'Bedrijfsgegevens opslaan'}
               </Button>
-              <button type="button" onClick={() => setKoppelModus(true)} className="text-left text-sm text-foreground-muted underline hover:text-accent">
-                Heeft u een koppelcode van SMV Advies ontvangen?
+              <button
+                type="button"
+                onClick={() => {
+                  setKlantKeuze(null)
+                  setRegistratieFout(null)
+                }}
+                className="text-left text-sm text-foreground-muted underline hover:text-accent"
+              >
+                ← Terug
               </button>
             </form>
           ) : (
