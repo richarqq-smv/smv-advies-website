@@ -8,7 +8,14 @@ import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
 import { AdminTerugKnop } from '../components/admin/AdminTerugKnop'
 import { ROUTES } from '../lib/routes'
-import { adminListGearchiveerdeDossiers, herstelDossier, adminListGearchiveerdeKlanten, herstelKlant } from '../lib/klantOmgeving/api'
+import {
+  adminListGearchiveerdeDossiers,
+  herstelDossier,
+  adminListGearchiveerdeKlanten,
+  herstelKlant,
+  adminListVerwijderdeDocumenten,
+  herstelDocument,
+} from '../lib/klantOmgeving/api'
 import { formatDatumNl } from '../lib/klantOmgeving/offerte'
 
 /**
@@ -30,12 +37,19 @@ import { formatDatumNl } from '../lib/klantOmgeving/offerte'
  * meegearchiveerd (gearchiveerd_via_klant) — een dossier dat los van de
  * klant was gearchiveerd staat na klant-herstel dus terecht nog gewoon in
  * de dossierlijst hieronder.
+ *
+ * Sinds verificatieronde 2026-10-15 ook door KLANTEN zélf verwijderde
+ * documenten (0050_documenten_zacht_verwijderen.sql) — een klant verwijdert
+ * een document op /account ("Mijn documenten"), maar SMV ziet dat hier
+ * óók terug en kan het net als de klant zelf herstellen. Zelfde
+ * herstel-only-patroon als de twee secties hierboven.
  */
 export default function Archief() {
   const [laden, setLaden] = useState(true)
   const [fout, setFout] = useState(null)
   const [dossiers, setDossiers] = useState([])
   const [klanten, setKlanten] = useState([])
+  const [documenten, setDocumenten] = useState([])
 
   const [herstelId, setHerstelId] = useState(null) // dossier_id in bevestigingsstap
   const [herstelBezig, setHerstelBezig] = useState(false)
@@ -45,15 +59,19 @@ export default function Archief() {
   const [herstelKlantBezig, setHerstelKlantBezig] = useState(false)
   const [herstelKlantFoutId, setHerstelKlantFoutId] = useState(null)
 
+  const [herstelDocBezigId, setHerstelDocBezigId] = useState(null)
+  const [herstelDocFoutId, setHerstelDocFoutId] = useState(null)
+
   useEffect(() => {
     let actief = true
     setLaden(true)
     setFout(null)
-    Promise.all([adminListGearchiveerdeDossiers(), adminListGearchiveerdeKlanten()])
-      .then(([d, k]) => {
+    Promise.all([adminListGearchiveerdeDossiers(), adminListGearchiveerdeKlanten(), adminListVerwijderdeDocumenten()])
+      .then(([d, k, doc]) => {
         if (!actief) return
         setDossiers(d)
         setKlanten(k)
+        setDocumenten(doc)
       })
       .catch(() => actief && setFout('Laden is niet gelukt. Probeer het opnieuw.'))
       .finally(() => actief && setLaden(false))
@@ -73,6 +91,19 @@ export default function Archief() {
       setHerstelFoutId(dossierId)
     } finally {
       setHerstelBezig(false)
+    }
+  }
+
+  async function herstelDocumentActie(documentId) {
+    setHerstelDocBezigId(documentId)
+    setHerstelDocFoutId(null)
+    try {
+      await herstelDocument(documentId)
+      setDocumenten((rows) => rows.filter((d) => d.document_id !== documentId))
+    } catch {
+      setHerstelDocFoutId(documentId)
+    } finally {
+      setHerstelDocBezigId(null)
     }
   }
 
@@ -227,6 +258,46 @@ export default function Archief() {
                         </li>
                       ),
                     )}
+                  </ul>
+                )}
+              </div>
+
+              <div>
+                <h2 className="mb-3 text-lg text-primary">Door klanten verwijderde documenten ({documenten.length})</h2>
+                {documenten.length === 0 ? (
+                  <p className="rounded-lg border border-dashed border-border px-5 py-6 text-center text-sm text-foreground-muted">
+                    Er staan geen door klanten verwijderde documenten.
+                  </p>
+                ) : (
+                  <ul className="flex flex-col gap-2">
+                    {documenten.map((d) => (
+                      <li key={d.document_id}>
+                        <div className="flex items-stretch gap-2">
+                          <div className="flex flex-1 flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-white px-4 py-3 text-sm">
+                            <span className="font-medium break-words text-primary">{d.bestandsnaam}</span>
+                            <span className="text-foreground-muted">{d.klanten?.naam || d.klanten?.bedrijfsnaam || 'Onbekende klant'}</span>
+                            <span className="text-xs text-foreground-muted">Verwijderd op {formatDatumNl(d.verwijderd_op?.slice(0, 10))}</span>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => herstelDocumentActie(d.document_id)}
+                            disabled={herstelDocBezigId === d.document_id}
+                            aria-label="Document herstellen"
+                            title="Document herstellen"
+                          >
+                            <ArrowCounterClockwise size={16} /> {herstelDocBezigId === d.document_id ? 'Bezig...' : 'Herstellen'}
+                          </Button>
+                        </div>
+                        {herstelDocFoutId === d.document_id ? (
+                          <p role="alert" className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-error">
+                            <WarningCircle size={13} weight="fill" />
+                            Herstellen is niet gelukt. Probeer het opnieuw.
+                          </p>
+                        ) : null}
+                      </li>
+                    ))}
                   </ul>
                 )}
               </div>

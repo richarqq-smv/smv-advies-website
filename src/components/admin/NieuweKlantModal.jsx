@@ -4,24 +4,11 @@ import { Button } from '../ui/Button'
 import { TextField } from '../ui/TextField'
 import { maakKlantPandDossierAlsAdmin } from '../../lib/klantOmgeving/api'
 import { valideerKlantRegistratie } from '../../lib/klantOmgeving/klantValidatie'
-import { valideerNieuwPand, ZAKELIJKE_GEBRUIKSTYPES } from '../../lib/klantOmgeving/pandValidatie'
+import { valideerNieuwPand, ZAKELIJKE_GEBRUIKSTYPES, GEBRUIKSTYPE_LABELS } from '../../lib/klantOmgeving/pandValidatie'
 import { PACKAGES } from '../../data/packages'
 
 const SELECT_CLASSNAME =
   'w-full rounded-lg border border-border bg-white px-3.5 py-2.5 text-sm text-primary focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none'
-
-const GEBRUIKSTYPE_LABELS = {
-  kantoor: 'Kantoor',
-  bedrijfshal: 'Bedrijfshal / loods',
-  winkel: 'Winkel',
-  horeca: 'Horeca',
-  praktijk: 'Praktijkruimte',
-  gemengd: 'Gemengd gebruik',
-  anders: 'Anders',
-  magazijn: 'Magazijn',
-  werkplaats: 'Werkplaats',
-  overig: 'Overig',
-}
 
 function leegFormulier() {
   return {

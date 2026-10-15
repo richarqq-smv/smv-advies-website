@@ -24,6 +24,21 @@ function buildGesprekMailto(values, result) {
 export function ResultsView({ result, values, leadStatus, onRestart, voorkeurDossierId = null }) {
   return (
     <div>
+      {/*
+        Print-only briefhoofd (verificatieronde 2026-10-15) — onzichtbaar op
+        het scherm (daar heeft de pagina al de site-header met logo), maar
+        zodra de site-chrome bij het afdrukken/downloaden verdwijnt
+        (MainLayout.jsx) zou er anders geen enkele SMV-herkenning meer op
+        de pagina staan. Zelfde logo-asset als OfferteDocument.jsx/
+        FactuurDocument.jsx, alleen hier bewust minimaal (geen volledig
+        adresblok) — dit is geen formeel document, slechts een meegenomen
+        resultaat.
+      */}
+      <div className="mb-6 hidden items-center justify-between border-b border-border pb-4 print:flex">
+        <img src="/logo-header.png" alt="SMV Advies" width="106" height="60" className="h-10 w-auto" />
+        <p className="text-xs text-foreground-muted">Gratis energie-indicatie · smv-advies.nl</p>
+      </div>
+
       <div className="mx-auto max-w-lg text-center">
         <p className="mb-3 text-xs font-semibold tracking-[0.14em] text-foreground-muted uppercase">Uw indicatie</p>
         <h2 className="text-2xl text-primary sm:text-3xl">{result.band.status}</h2>
@@ -64,7 +79,16 @@ export function ResultsView({ result, values, leadStatus, onRestart, voorkeurDos
         </ul>
       </div>
 
-      <div className="mt-6 rounded-xl bg-primary px-6 py-9 text-center text-white sm:px-10">
+      {/*
+        Verificatieronde 2026-10-15: dit hele blok is een on-screen
+        marketing-CTA (mailto-knop, pakketten-link) — zinloos op een
+        afgedrukte/gedownloade pagina, en de donkere achtergrond (bg-primary)
+        print zonder print-color-adjust sowieso niet mee (browsers printen
+        achtergrondkleuren standaard niet af), wat hier zonder deze fix
+        onleesbare grijze tekst op wit zou opleveren. Zie ook MainLayout.jsx
+        voor de bijbehorende fix van de site-chrome eromheen.
+      */}
+      <div className="mt-6 rounded-xl bg-primary px-6 py-9 text-center text-white sm:px-10 print:hidden">
         <h3 className="text-xl text-white sm:text-2xl">Bespreek uw resultaat met SMV</h3>
         <p className="mx-auto mt-2 max-w-[46ch] text-sm text-white/75">
           De Energie Indicatie geeft een eerste beeld. SMV kan vervolgens kijken wat dit betekent voor uw hele
@@ -84,13 +108,13 @@ export function ResultsView({ result, values, leadStatus, onRestart, voorkeurDos
         </p>
       </div>
 
-      <div className="mt-6 flex justify-center">
+      <div className="mt-6 flex justify-center print:hidden">
         <LeadStatusNote status={leadStatus} />
       </div>
 
       <EnergieDossierKoppeling values={values} result={result} voorkeurDossierId={voorkeurDossierId} />
 
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 print:hidden">
         <button
           type="button"
           onClick={() => window.print()}

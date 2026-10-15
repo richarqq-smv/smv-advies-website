@@ -12,6 +12,26 @@ import { ZAKELIJKE_GEBRUIKSTYPES } from './afspraakBeschikbaarheid.js'
 
 export { ZAKELIJKE_GEBRUIKSTYPES }
 
+/**
+ * Nederlandse weergavelabels voor ZAKELIJKE_GEBRUIKSTYPES — stond tot
+ * verificatieronde 2026-10-15 letterlijk gedupliceerd in zowel
+ * PandSectie.jsx als NieuweKlantModal.jsx (en zou een derde kopie hebben
+ * gekregen bij het toevoegen van dezelfde keuzelijst aan Account.jsx).
+ * Eén centrale bron i.p.v. drie exemplaren die uit elkaar kunnen lopen.
+ */
+export const GEBRUIKSTYPE_LABELS = {
+  kantoor: 'Kantoor',
+  bedrijfshal: 'Bedrijfshal / loods',
+  winkel: 'Winkel',
+  horeca: 'Horeca',
+  praktijk: 'Praktijkruimte',
+  gemengd: 'Gemengd gebruik',
+  anders: 'Anders',
+  magazijn: 'Magazijn',
+  werkplaats: 'Werkplaats',
+  overig: 'Overig',
+}
+
 export function valideerNieuwPand({ gebruikstype, bouwjaar, vloeroppervlak, bouwlagen, gebruikers }) {
   const fouten = {}
 

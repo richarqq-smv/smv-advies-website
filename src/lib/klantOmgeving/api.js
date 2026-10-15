@@ -1186,10 +1186,10 @@ export async function getFacturenVoorDossier(dossierId) {
   )
 }
 
-/** Documenten van één Dossier ("Mijn documenten" op /account laat een document optioneel aan een dossier koppelen — dit toont die koppeling terug op de dossierpagina zelf). RLS (documenten_select) is de enige toegangsgrens, zelfde tabel/kolommen als getMijnDocumenten(). */
+/** Documenten van één Dossier ("Mijn documenten" op /account laat een document optioneel aan een dossier koppelen — dit toont die koppeling terug op de dossierpagina zelf). RLS (documenten_select) is de enige toegangsgrens, zelfde tabel/kolommen als getMijnDocumenten(). Zacht-verwijderde documenten (verwijderd_op) horen hier niet meer bij — zie archiveerDocument()/0050_documenten_zacht_verwijderen.sql. */
 export async function getDocumentenVoorDossier(dossierId) {
   return throwOnError(
-    await supabase.from('documenten').select('*').eq('dossier_id', dossierId).order('created_at', { ascending: false }),
+    await supabase.from('documenten').select('*').eq('dossier_id', dossierId).is('verwijderd_op', null).order('created_at', { ascending: false }),
   )
 }
 
@@ -1286,10 +1286,10 @@ export async function setOpnameChecklistItem(opnameId, itemCode, afgevinkt) {
   )
 }
 
-/** Documenten (foto's/bijlagen) van één Opname — opname-breed, ongeacht of ze aan een specifieke waarneming hangen. */
+/** Documenten (foto's/bijlagen) van één Opname — opname-breed, ongeacht of ze aan een specifieke waarneming hangen. Zacht-verwijderde documenten horen hier niet meer bij, zie getDocumentenVoorDossier(). */
 export async function getDocumentenVoorOpname(opnameId) {
   return throwOnError(
-    await supabase.from('documenten').select('*').eq('opname_id', opnameId).order('created_at', { ascending: false }),
+    await supabase.from('documenten').select('*').eq('opname_id', opnameId).is('verwijderd_op', null).order('created_at', { ascending: false }),
   )
 }
 
@@ -1548,9 +1548,35 @@ export async function getFacturenVoorKlant(klantId) {
   )
 }
 
-/** Documenten van deze Klant ("Mijn documenten"). RLS (documenten_select) is de toegangsgrens. */
+/** Documenten van deze Klant ("Mijn documenten"). RLS (documenten_select) is de toegangsgrens. Zacht-verwijderde documenten (verwijderd_op) horen hier niet meer bij, zie listVerwijderdeDocumenten() voor die lijst. */
 export async function getMijnDocumenten(klantId) {
-  return throwOnError(await supabase.from('documenten').select('*').eq('klant_id', klantId).order('created_at', { ascending: false }))
+  return throwOnError(
+    await supabase.from('documenten').select('*').eq('klant_id', klantId).is('verwijderd_op', null).order('created_at', { ascending: false }),
+  )
+}
+
+/** Zacht-verwijderde documenten van deze Klant ("Onlangs verwijderd" op /account) — zelfde toegangsgrens als getMijnDocumenten(), alleen het spiegelbeeldfilter op verwijderd_op. */
+export async function listVerwijderdeDocumenten(klantId) {
+  return throwOnError(
+    await supabase.from('documenten').select('*').eq('klant_id', klantId).not('verwijderd_op', 'is', null).order('verwijderd_op', { ascending: false }),
+  )
+}
+
+/**
+ * Admin-only: alle zacht-verwijderde documenten van ALLE klanten (Archief.jsx,
+ * verificatieronde 2026-10-15) — zodat SMV ook kan zien/herstellen wat een
+ * klant zelf heeft verwijderd, niet alleen de klant zelf. RLS (documenten_select,
+ * is_admin()-tak) is de toegangsgrens; deze query voegt alleen de klantnaam
+ * toe zodat de admin-lijst leesbaar is zonder een tweede round-trip per rij.
+ */
+export async function adminListVerwijderdeDocumenten() {
+  return throwOnError(
+    await supabase
+      .from('documenten')
+      .select('*, klanten(klant_id, naam, bedrijfsnaam)')
+      .not('verwijderd_op', 'is', null)
+      .order('verwijderd_op', { ascending: false }),
+  )
 }
 
 const DOCUMENTEN_BUCKET = 'klant-documenten'
@@ -1608,11 +1634,22 @@ export async function getDocumentDownloadUrl(storagePath) {
   return data.signedUrl
 }
 
-/** Verwijdert eerst het Storage-object, dan de metadata-rij — in die volgorde blijft er nooit een rij zonder bestand achter dat een download-poging alsnog zou laten falen. */
-export async function verwijderDocument(documentId, storagePath) {
-  const { error: storageError } = await supabase.storage.from(DOCUMENTEN_BUCKET).remove([storagePath])
-  if (storageError) throw storageError
-  const { error } = await supabase.from('documenten').delete().eq('document_id', documentId)
+/**
+ * Zacht verwijderen (verificatieronde 2026-10-15) — vervangt de vroegere
+ * hard delete (Storage-object + rij meteen weg, geen terugweg). Zet
+ * uitsluitend `verwijderd_op`; het Storage-object blijft ongemoeid staan
+ * zodat herstelDocument() het document weer volledig terug kan zetten.
+ * Zelfde "geen hard delete, geen auto-purge"-filosofie als klant-/
+ * dossierarchief (0010_dossier_archief.sql/0031_klant_archief.sql).
+ */
+export async function archiveerDocument(documentId) {
+  const { error } = await supabase.from('documenten').update({ verwijderd_op: new Date().toISOString() }).eq('document_id', documentId)
+  if (error) throw error
+}
+
+/** Herstelt een zacht-verwijderd document (zet verwijderd_op terug naar null) — door de klant zelf of door een admin, zie documenten_update-policy in 0050_documenten_zacht_verwijderen.sql. */
+export async function herstelDocument(documentId) {
+  const { error } = await supabase.from('documenten').update({ verwijderd_op: null }).eq('document_id', documentId)
   if (error) throw error
 }
 

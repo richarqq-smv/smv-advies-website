@@ -64,17 +64,32 @@ export function MainLayout() {
         full-screen MobileNav overlay inside it collapsed the overlay to
         the header's own (small) box instead of the viewport.
       */}
-      <Header onMenuOpen={() => setMenuOpen(true)} />
-      <MobileNav items={NAV_ITEMS} open={mobileNavOpen} onClose={() => setMenuOpen(false)} />
-      <CookieBanner />
+      {/*
+        Verificatieronde 2026-10-15: elk `window.print()`-pad op de publieke
+        site (energie-indicatie-resultaat, MJOP-advies, ...) printte tot nu
+        toe gewoon de hele pagina mee — header/mobielmenu, cookiebanner,
+        footer, de sticky "Indicatie/Bellen"-balk én de zwevende
+        contactknop. Een bezoeker die op "Download als PDF" klikt, kreeg zo
+        feitelijk een rommelige schermafdruk i.p.v. een nette download. Eén
+        `print:hidden` hier dekt alle publieke pagina's tegelijk (MainLayout
+        is de enige plek die al deze chrome samenbrengt) — geen aanpassing
+        nodig in elk los `window.print()`-scherm zelf.
+      */}
+      <div className="print:hidden">
+        <Header onMenuOpen={() => setMenuOpen(true)} />
+        <MobileNav items={NAV_ITEMS} open={mobileNavOpen} onClose={() => setMenuOpen(false)} />
+        <CookieBanner />
+      </div>
 
       <main id="main-content" className="flex-1 pt-16 pb-20 min-[1440px]:pt-[72px] min-[1440px]:pb-0">
         <Outlet />
       </main>
 
-      <Footer />
-      <StickyMobileActions />
-      <ContactFab />
+      <div className="print:hidden">
+        <Footer />
+        <StickyMobileActions />
+        <ContactFab />
+      </div>
     </div>
   )
 }

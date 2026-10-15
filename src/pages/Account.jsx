@@ -25,12 +25,15 @@ import {
   getOffertesVoorKlant,
   getFacturenVoorKlant,
   getMijnDocumenten,
+  listVerwijderdeDocumenten,
   uploadDocument,
   getDocumentDownloadUrl,
-  verwijderDocument,
+  archiveerDocument,
+  herstelDocument,
 } from '../lib/klantOmgeving/api'
 import { AdviespuntKaart } from '../components/dossier/AdviesBeheer'
 import { valideerKlantRegistratie } from '../lib/klantOmgeving/klantValidatie'
+import { valideerNieuwPand, ZAKELIJKE_GEBRUIKSTYPES, GEBRUIKSTYPE_LABELS } from '../lib/klantOmgeving/pandValidatie'
 import { leesDossierContext, voegDossierContextToe } from '../lib/klantOmgeving/dossierNavigatie'
 import { bouwAccountActies } from '../lib/klantOmgeving/accountActies'
 import { euro, formatDatumNl, OFFERTE_STATUS_LABELS } from '../lib/klantOmgeving/offerte'
@@ -84,6 +87,7 @@ export default function Account() {
   const [offertes, setOffertes] = useState([])
   const [facturen, setFacturen] = useState([])
   const [documenten, setDocumenten] = useState([])
+  const [verwijderdeDocumenten, setVerwijderdeDocumenten] = useState([])
 
   const [registratie, setRegistratie] = useState({ naam: '', bedrijfsnaam: '', email: '', telefoon: '' })
   const [registratieBezig, setRegistratieBezig] = useState(false)
@@ -135,18 +139,20 @@ export default function Account() {
       setContactpersoon(mijnKlant?.contactpersoon ?? null)
       if (mijnKlant?.klant) {
         const klantId = mijnKlant.klant.klant_id
-        const [pandenLijst, dossiersLijst, offertesLijst, facturenLijst, documentenLijst] = await Promise.all([
+        const [pandenLijst, dossiersLijst, offertesLijst, facturenLijst, documentenLijst, verwijderdeDocumentenLijst] = await Promise.all([
           listPandenVoorKlant(klantId),
           listDossiersVoorKlant(klantId),
           getOffertesVoorKlant(klantId),
           getFacturenVoorKlant(klantId),
           getMijnDocumenten(klantId),
+          listVerwijderdeDocumenten(klantId),
         ])
         setPanden(pandenLijst)
         setDossiers(dossiersLijst)
         setOffertes(offertesLijst)
         setFacturen(facturenLijst)
         setDocumenten(documentenLijst)
+        setVerwijderdeDocumenten(verwijderdeDocumentenLijst)
 
         // "Mijn advies" hergebruikt exact dezelfde listAdviespunten()-call als
         // DossierDetail.jsx (geen tweede adviesquery/datamodel) — RLS
@@ -325,7 +331,14 @@ export default function Account() {
               <MijnPanden panden={panden} setPanden={setPanden} klant={klant} dossiers={dossiers} setDossiers={setDossiers} />
               <MijnDossiers dossiers={dossiers} />
               <MijnAdvies dossiers={dossiers} adviespuntenPerDossier={adviespuntenPerDossier} />
-              <MijnDocumenten klant={klant} documenten={documenten} setDocumenten={setDocumenten} dossiers={dossiers} />
+              <MijnDocumenten
+                klant={klant}
+                documenten={documenten}
+                setDocumenten={setDocumenten}
+                verwijderdeDocumenten={verwijderdeDocumenten}
+                setVerwijderdeDocumenten={setVerwijderdeDocumenten}
+                dossiers={dossiers}
+              />
               <MijnOffertes offertes={offertes} />
               <MijnFacturen facturen={facturen} />
               <ActiesVoorU acties={acties} />
@@ -403,6 +416,7 @@ function MijnGegevens({ contactpersoon, onOpgeslagen }) {
             <TextField id="gegevens-email" label="E-mailadres" type="email" value={form.email} onChange={(v) => setForm((s) => ({ ...s, email: v }))} error={fouten.email} />
             <TextField id="gegevens-telefoon" label="Telefoonnummer" type="tel" value={form.telefoon} onChange={(v) => setForm((s) => ({ ...s, telefoon: v }))} error={fouten.telefoon} />
           </div>
+          <p className="-mt-2 text-xs text-foreground-muted">Dit is uw contact-e-mailadres bij SMV Advies, niet het e-mailadres waarmee u inlogt.</p>
           {fout ? <p role="alert" className="text-sm font-medium text-error">{fout}</p> : null}
           <div className="flex flex-wrap gap-3">
             <Button type="submit" size="sm" disabled={bezig}>
@@ -446,6 +460,7 @@ function MijnBedrijf({ klant, onOpgeslagen }) {
   const [form, setForm] = useState({ naam: '', bedrijfsnaam: '', email: '', telefoon: '', adres: '', postcode: '', plaats: '' })
   const [bezig, setBezig] = useState(false)
   const [fout, setFout] = useState(null)
+  const [fouten, setFouten] = useState({})
   const [opgeslagen, setOpgeslagen] = useState(false)
 
   function startBewerken() {
@@ -459,12 +474,16 @@ function MijnBedrijf({ klant, onOpgeslagen }) {
       plaats: klant.plaats ?? '',
     })
     setFout(null)
+    setFouten({})
     setOpgeslagen(false)
     setBewerken(true)
   }
 
   async function opslaan(e) {
     e.preventDefault()
+    const veldFouten = valideerKlantRegistratie(form)
+    setFouten(veldFouten)
+    if (Object.keys(veldFouten).length > 0) return
     setBezig(true)
     setFout(null)
     try {
@@ -484,11 +503,12 @@ function MijnBedrijf({ klant, onOpgeslagen }) {
       {bewerken ? (
         <form onSubmit={opslaan} className="flex flex-col gap-4">
           <div className="grid gap-4 sm:grid-cols-2">
-            <TextField id="bedrijf-naam" label="Naam" required value={form.naam} onChange={(v) => setForm((s) => ({ ...s, naam: v }))} />
+            <TextField id="bedrijf-naam" label="Naam" required value={form.naam} onChange={(v) => setForm((s) => ({ ...s, naam: v }))} error={fouten.naam} />
             <TextField id="bedrijf-bedrijfsnaam" label="Bedrijfsnaam" value={form.bedrijfsnaam} onChange={(v) => setForm((s) => ({ ...s, bedrijfsnaam: v }))} />
-            <TextField id="bedrijf-email" label="E-mailadres" type="email" value={form.email} onChange={(v) => setForm((s) => ({ ...s, email: v }))} />
-            <TextField id="bedrijf-telefoon" label="Telefoonnummer" type="tel" value={form.telefoon} onChange={(v) => setForm((s) => ({ ...s, telefoon: v }))} />
+            <TextField id="bedrijf-email" label="E-mailadres" type="email" value={form.email} onChange={(v) => setForm((s) => ({ ...s, email: v }))} error={fouten.email} />
+            <TextField id="bedrijf-telefoon" label="Telefoonnummer" type="tel" value={form.telefoon} onChange={(v) => setForm((s) => ({ ...s, telefoon: v }))} error={fouten.telefoon} />
           </div>
+          <p className="-mt-2 text-xs text-foreground-muted">Dit is het contact-e-mailadres van uw bedrijf bij SMV Advies, niet het e-mailadres waarmee u inlogt.</p>
           <TextField id="bedrijf-adres" label="Adres" value={form.adres} onChange={(v) => setForm((s) => ({ ...s, adres: v }))} />
           <div className="grid gap-4 sm:grid-cols-2">
             <TextField id="bedrijf-postcode" label="Postcode" value={form.postcode} onChange={(v) => setForm((s) => ({ ...s, postcode: v }))} />
@@ -540,11 +560,13 @@ function MijnBedrijf({ klant, onOpgeslagen }) {
 function MijnPanden({ panden, setPanden, klant, dossiers, setDossiers }) {
   const [nieuwPandModus, setNieuwPandModus] = useState(false)
   const [nieuwPand, setNieuwPand] = useState(LEEG_PAND)
+  const [nieuwPandFouten, setNieuwPandFouten] = useState({})
   const [pandBezig, setPandBezig] = useState(false)
   const [pandFout, setPandFout] = useState(null)
 
   const [bewerkId, setBewerkId] = useState(null)
   const [bewerkForm, setBewerkForm] = useState(null)
+  const [bewerkFouten, setBewerkFouten] = useState({})
   const [bewerkBezig, setBewerkBezig] = useState(false)
   const [bewerkFout, setBewerkFout] = useState(null)
 
@@ -554,12 +576,19 @@ function MijnPanden({ panden, setPanden, klant, dossiers, setDossiers }) {
   async function submitNieuwPand(e) {
     e.preventDefault()
     setPandFout(null)
-    if (!nieuwPand.adres.trim() && !nieuwPand.omschrijving.trim()) return setPandFout('Vul minimaal een adres of omschrijving in.')
+    if (!nieuwPand.adres.trim() && !nieuwPand.omschrijving.trim()) {
+      setNieuwPandFouten({})
+      return setPandFout('Vul minimaal een adres of omschrijving in.')
+    }
+    const validatieFouten = valideerNieuwPand(nieuwPand)
+    setNieuwPandFouten(validatieFouten)
+    if (Object.keys(validatieFouten).length > 0) return
     setPandBezig(true)
     try {
       const pand = await maakPandEnKoppel(klant.klant_id, nieuwPand)
       setPanden((v) => [pand, ...v])
       setNieuwPand(LEEG_PAND)
+      setNieuwPandFouten({})
       setNieuwPandModus(false)
     } catch {
       setPandFout('Het pand kon niet worden toegevoegd. Probeer het opnieuw.')
@@ -580,11 +609,15 @@ function MijnPanden({ panden, setPanden, klant, dossiers, setDossiers }) {
       vloeroppervlak: pand.vloeroppervlak ?? '',
       opmerkingen: pand.opmerkingen ?? '',
     })
+    setBewerkFouten({})
     setBewerkFout(null)
   }
 
   async function opslaanPand(e, pandId) {
     e.preventDefault()
+    const validatieFouten = valideerNieuwPand(bewerkForm)
+    setBewerkFouten(validatieFouten)
+    if (Object.keys(validatieFouten).length > 0) return
     setBewerkBezig(true)
     setBewerkFout(null)
     try {
@@ -633,12 +666,35 @@ function MijnPanden({ panden, setPanden, klant, dossiers, setDossiers }) {
             <TextField id="pand-postcode" label="Postcode" value={nieuwPand.postcode} onChange={(v) => setNieuwPand((s) => ({ ...s, postcode: v }))} />
             <TextField id="pand-plaats" label="Plaats" value={nieuwPand.plaats} onChange={(v) => setNieuwPand((s) => ({ ...s, plaats: v }))} />
           </div>
+          <div>
+            <label htmlFor="pand-gebruikstype" className="mb-2 block text-sm font-medium text-primary">
+              Gebruikstype<span className="ml-1 text-accent">*</span>
+            </label>
+            <select
+              id="pand-gebruikstype"
+              value={nieuwPand.gebruikstype}
+              onChange={(e) => setNieuwPand((s) => ({ ...s, gebruikstype: e.target.value }))}
+              className="w-full rounded-lg border border-border bg-white px-3.5 py-2.5 text-sm text-primary focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
+            >
+              <option value="">Kies een gebruikstype...</option>
+              {ZAKELIJKE_GEBRUIKSTYPES.map((waarde) => (
+                <option key={waarde} value={waarde}>
+                  {GEBRUIKSTYPE_LABELS[waarde] ?? waarde}
+                </option>
+              ))}
+            </select>
+            {nieuwPandFouten.gebruikstype ? (
+              <p role="alert" className="mt-2 text-sm font-medium text-error">
+                {nieuwPandFouten.gebruikstype}
+              </p>
+            ) : null}
+          </div>
           {pandFout ? <p role="alert" className="text-sm font-medium text-error">{pandFout}</p> : null}
           <div className="flex flex-wrap gap-3">
             <Button type="submit" size="sm" disabled={pandBezig}>
               {pandBezig ? 'Bezig...' : 'Pand opslaan'}
             </Button>
-            <Button type="button" variant="ghost" size="sm" onClick={() => { setNieuwPandModus(false); setPandFout(null) }} disabled={pandBezig}>
+            <Button type="button" variant="ghost" size="sm" onClick={() => { setNieuwPandModus(false); setPandFout(null); setNieuwPandFouten({}) }} disabled={pandBezig}>
               Annuleren
             </Button>
           </div>
@@ -660,7 +716,29 @@ function MijnPanden({ panden, setPanden, klant, dossiers, setDossiers }) {
                     <TextField id={`pand-bewerk-plaats-${pand.pand_id}`} label="Plaats" value={bewerkForm.plaats} onChange={(v) => setBewerkForm((s) => ({ ...s, plaats: v }))} />
                   </div>
                   <div className="grid gap-4 sm:grid-cols-3">
-                    <TextField id={`pand-bewerk-gebruikstype-${pand.pand_id}`} label="Gebruikstype" value={bewerkForm.gebruikstype} onChange={(v) => setBewerkForm((s) => ({ ...s, gebruikstype: v }))} />
+                    <div>
+                      <label htmlFor={`pand-bewerk-gebruikstype-${pand.pand_id}`} className="mb-2 block text-sm font-medium text-primary">
+                        Gebruikstype<span className="ml-1 text-accent">*</span>
+                      </label>
+                      <select
+                        id={`pand-bewerk-gebruikstype-${pand.pand_id}`}
+                        value={bewerkForm.gebruikstype}
+                        onChange={(e) => setBewerkForm((s) => ({ ...s, gebruikstype: e.target.value }))}
+                        className="w-full rounded-lg border border-border bg-white px-3.5 py-2.5 text-sm text-primary focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
+                      >
+                        <option value="">Kies een gebruikstype...</option>
+                        {ZAKELIJKE_GEBRUIKSTYPES.map((waarde) => (
+                          <option key={waarde} value={waarde}>
+                            {GEBRUIKSTYPE_LABELS[waarde] ?? waarde}
+                          </option>
+                        ))}
+                      </select>
+                      {bewerkFouten.gebruikstype ? (
+                        <p role="alert" className="mt-2 text-sm font-medium text-error">
+                          {bewerkFouten.gebruikstype}
+                        </p>
+                      ) : null}
+                    </div>
                     <TextField id={`pand-bewerk-bouwjaar-${pand.pand_id}`} label="Bouwjaar" type="number" value={bewerkForm.bouwjaar} onChange={(v) => setBewerkForm((s) => ({ ...s, bouwjaar: v }))} />
                     <TextField id={`pand-bewerk-oppervlak-${pand.pand_id}`} label="Oppervlakte (m²)" type="number" value={bewerkForm.vloeroppervlak} onChange={(v) => setBewerkForm((s) => ({ ...s, vloeroppervlak: v }))} />
                   </div>
@@ -680,7 +758,7 @@ function MijnPanden({ panden, setPanden, klant, dossiers, setDossiers }) {
               <li key={pand.pand_id} className="rounded-lg border border-border p-4">
                 <p className="font-medium text-primary">{pand.omschrijving || pand.adres || 'Naamloos pand'}</p>
                 {pand.plaats ? <p className="text-sm text-foreground-muted">{pand.adres ? `${pand.adres}, ` : ''}{pand.postcode} {pand.plaats}</p> : null}
-                {pand.gebruikstype ? <p className="text-sm text-foreground-muted">{pand.gebruikstype}{pand.bouwjaar ? `, bouwjaar ${pand.bouwjaar}` : ''}{pand.vloeroppervlak ? `, ${pand.vloeroppervlak} m²` : ''}</p> : null}
+                {pand.gebruikstype ? <p className="text-sm text-foreground-muted">{GEBRUIKSTYPE_LABELS[pand.gebruikstype] ?? pand.gebruikstype}{pand.bouwjaar ? `, bouwjaar ${pand.bouwjaar}` : ''}{pand.vloeroppervlak ? `, ${pand.vloeroppervlak} m²` : ''}</p> : null}
                 <div className="mt-3 flex flex-wrap items-center gap-3">
                   <Link
                     to={voegDossierContextToe(ROUTES.mjopTool, dossiers.find((d) => d.pand_id === pand.pand_id)?.dossier_id)}
@@ -800,7 +878,7 @@ function MijnAdvies({ dossiers, adviespuntenPerDossier }) {
 
 // --- Mijn documenten --------------------------------------------------
 
-function MijnDocumenten({ klant, documenten, setDocumenten, dossiers }) {
+function MijnDocumenten({ klant, documenten, setDocumenten, verwijderdeDocumenten, setVerwijderdeDocumenten, dossiers }) {
   const [bestand, setBestand] = useState(null)
   const [omschrijving, setOmschrijving] = useState('')
   const [dossierId, setDossierId] = useState('')
@@ -810,6 +888,13 @@ function MijnDocumenten({ klant, documenten, setDocumenten, dossiers }) {
   const [verwijderId, setVerwijderId] = useState(null)
   const [verwijderBezig, setVerwijderBezig] = useState(false)
   const [downloadFoutId, setDownloadFoutId] = useState(null)
+
+  // Verificatieronde 2026-10-15: documenten worden niet meer onherstelbaar
+  // hard verwijderd (zie archiveerDocument()/0050_documenten_zacht_
+  // verwijderen.sql) — een klant die per ongeluk het verkeerde document
+  // bevestigt, kan het hieronder alsnog terugzetten.
+  const [herstelBezigId, setHerstelBezigId] = useState(null)
+  const [herstelFoutId, setHerstelFoutId] = useState(null)
 
   async function submitUpload(e) {
     e.preventDefault()
@@ -843,13 +928,28 @@ function MijnDocumenten({ klant, documenten, setDocumenten, dossiers }) {
   async function bevestigVerwijderen(document) {
     setVerwijderBezig(true)
     try {
-      await verwijderDocument(document.document_id, document.storage_path)
+      await archiveerDocument(document.document_id)
       setDocumenten((v) => v.filter((d) => d.document_id !== document.document_id))
+      setVerwijderdeDocumenten((v) => [{ ...document, verwijderd_op: new Date().toISOString() }, ...v])
       setVerwijderId(null)
     } catch {
       // Blijft in bevestigingsstap staan — opnieuw proberen kan direct.
     } finally {
       setVerwijderBezig(false)
+    }
+  }
+
+  async function herstellen(document) {
+    setHerstelBezigId(document.document_id)
+    setHerstelFoutId(null)
+    try {
+      await herstelDocument(document.document_id)
+      setVerwijderdeDocumenten((v) => v.filter((d) => d.document_id !== document.document_id))
+      setDocumenten((v) => [{ ...document, verwijderd_op: null }, ...v])
+    } catch {
+      setHerstelFoutId(document.document_id)
+    } finally {
+      setHerstelBezigId(null)
     }
   }
 
@@ -939,6 +1039,27 @@ function MijnDocumenten({ klant, documenten, setDocumenten, dossiers }) {
           ))}
         </ul>
       )}
+
+      {verwijderdeDocumenten.length > 0 ? (
+        <div className="mt-6 border-t border-border pt-4">
+          <p className="mb-2 text-xs font-semibold tracking-[0.1em] text-foreground-muted uppercase">Onlangs verwijderd</p>
+          <ul className="flex flex-col gap-2">
+            {verwijderdeDocumenten.map((d) => (
+              <li key={d.document_id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-4 py-3 text-sm">
+                <div className="min-w-0">
+                  <p className="font-medium break-words text-foreground-muted">{d.bestandsnaam}</p>
+                  {herstelFoutId === d.document_id ? (
+                    <p role="alert" className="mt-1 text-xs font-medium text-error">Herstellen is niet gelukt. Probeer het opnieuw.</p>
+                  ) : null}
+                </div>
+                <Button type="button" variant="outline" size="sm" onClick={() => herstellen(d)} disabled={herstelBezigId === d.document_id}>
+                  {herstelBezigId === d.document_id ? 'Bezig...' : 'Herstellen'}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </Kaart>
   )
 }
