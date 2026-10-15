@@ -29,6 +29,50 @@
     <loc>https://smv-advies.nl/werkgebied</loc>
     <priority>0.8</priority>
   </url>
+  <!--
+    Dorpspagina's (SEO-ronde 2026-10-15) — zie src/data/werkgebiedPlaatsen.js
+    voor de bron van deze 10 slugs.
+  -->
+  <url>
+    <loc>https://smv-advies.nl/oud-beijerland</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://smv-advies.nl/heinenoord</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://smv-advies.nl/puttershoek</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://smv-advies.nl/maasdam</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://smv-advies.nl/zuid-beijerland</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://smv-advies.nl/mijnsheerenland</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://smv-advies.nl/s-gravendeel</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://smv-advies.nl/klaaswaal</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://smv-advies.nl/strijen</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://smv-advies.nl/numansdorp</loc>
+    <priority>0.6</priority>
+  </url>
   <url>
     <loc>https://smv-advies.nl/cases</loc>
     <priority>0.7</priority>

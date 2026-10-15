@@ -16,6 +16,13 @@ export const ROUTES = {
   over: '/over',
   werkwijze: '/werkwijze',
   werkgebied: '/werkgebied',
+  // Dorpspagina's (SEO-ronde 2026-10-15) — top-level pad op verzoek van
+  // de klant (bv. smv-advies.nl/oud-beijerland), niet genest onder
+  // /werkgebied. De 10 bekende slugs staan in werkgebiedPlaatsen.js; zie
+  // App.jsx voor waarom een generiek /:plaats-pad hier veilig is (React
+  // Router rangschikt op specificiteit, dus elke bestaande statische
+  // route als /contact blijft die altijd winnen van deze dynamische).
+  werkgebiedPlaats: (slug) => `/${slug}`,
   cases: '/cases',
   blog: '/blog',
   blogPost: (slug) => `/blog/${slug}`,

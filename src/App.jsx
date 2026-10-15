@@ -15,6 +15,7 @@ const EnergieIndicatie = lazy(() => import('./pages/EnergieIndicatie'))
 const Over = lazy(() => import('./pages/Over'))
 const Werkwijze = lazy(() => import('./pages/Werkwijze'))
 const Werkgebied = lazy(() => import('./pages/Werkgebied'))
+const WerkgebiedPlaats = lazy(() => import('./pages/WerkgebiedPlaats'))
 const Cases = lazy(() => import('./pages/Cases'))
 const Blog = lazy(() => import('./pages/Blog'))
 const BlogPost = lazy(() => import('./pages/BlogPost'))
@@ -151,6 +152,17 @@ export default function App() {
           <Route path={ROUTES.over} element={<Over />} />
           <Route path={ROUTES.werkwijze} element={<Werkwijze />} />
           <Route path={ROUTES.werkgebied} element={<Werkgebied />} />
+          {/*
+            Dorpspagina's (SEO-ronde 2026-10-15) — top-level /:plaats, de
+            10 bekende slugs staan in werkgebiedPlaatsen.js. React Router
+            rangschikt op specificiteit, niet op declaratievolgorde: elke
+            statische route hierboven/hieronder (zoals /contact) blijft
+            dus altijd winnen van dit dynamische pad, en de catch-all
+            "*" (NotFound, onderaan) heeft de laagste specificiteit van
+            allemaal — dit /:plaats-pad kan dus geen van beide kapen.
+            WerkgebiedPlaats zelf rendert NotFound voor een onbekende slug.
+          */}
+          <Route path="/:plaats" element={<WerkgebiedPlaats />} />
           <Route path={ROUTES.cases} element={<Cases />} />
           <Route path={ROUTES.blog} element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />

@@ -8,6 +8,7 @@ import { SectionHeading } from '../components/ui/SectionHeading'
 import { ClosingCta } from '../components/home/ClosingCta'
 import { getBreadcrumbSchema } from '../lib/structuredData'
 import { ROUTES } from '../lib/routes'
+import { WERKGEBIED_PLAATSEN } from '../data/werkgebiedPlaatsen'
 
 const MAATREGELEN = [
   {
@@ -141,14 +142,38 @@ export default function Werkgebied() {
             een rol bij wat technisch en financieel haalbaar is — denk aan zonnepanelen die niet (volledig) kunnen
             terugleveren. Dat nemen we mee in het advies, niet achteraf als verrassing.
           </p>
-          <img
-            src="/werkgebied-hoeksche-waard.png"
-            alt="Illustratieve kaart van de Hoeksche Waard met de vestigingsplaats van SMV Advies en de kernen Oud-Beijerland, Heinenoord, Puttershoek, Maasdam, Zuid-Beijerland, Mijnsheerenland, 's-Gravendeel, Klaaswaal, Strijen en Numansdorp"
-            width="1672"
-            height="941"
-            loading="lazy"
-            className="mt-8 w-full rounded-xl border border-border"
-          />
+          <p className="mt-8 text-sm text-foreground-muted">
+            Klik op een plaatsnaam op de kaart voor wat we daar doen.
+          </p>
+          <div className="relative mt-3">
+            <img
+              src="/werkgebied-hoeksche-waard.png"
+              alt="Illustratieve kaart van de Hoeksche Waard met de vestigingsplaats van SMV Advies en de kernen Oud-Beijerland, Heinenoord, Puttershoek, Maasdam, Zuid-Beijerland, Mijnsheerenland, 's-Gravendeel, Klaaswaal, Strijen en Numansdorp"
+              width="1672"
+              height="941"
+              loading="lazy"
+              className="w-full rounded-xl border border-border"
+            />
+            {/*
+              Klikbare puntjes (SEO-ronde 2026-10-15) bovenop de bestaande
+              plaatsnaam-pillen op de illustratie, als echte <Link>'s (dus
+              crawlbaar/indexeerbaar, geen onClick-only div) naar de nieuwe
+              dorpspagina's. Posities zijn percentages t.o.v. de afbeelding
+              (werkgebiedPlaatsen.js: hotspot.x/y), zodat ze meeschalen met
+              w-full — handmatig bepaald door de bestaande pil-labels op
+              de illustratie op te meten, dus visueel geverifieerd/
+              bijgesteld in de browser i.p.v. blind vertrouwd.
+            */}
+            {WERKGEBIED_PLAATSEN.map((plaats) => (
+              <Link
+                key={plaats.slug}
+                to={ROUTES.werkgebiedPlaats(plaats.slug)}
+                aria-label={`Bekijk SMV Advies in ${plaats.naam}`}
+                className="absolute flex h-8 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full ring-0 ring-accent/60 transition hover:bg-white/30 hover:ring-2 focus-visible:bg-white/30 focus-visible:ring-2 focus-visible:outline-none sm:w-28"
+                style={{ left: `${plaats.hotspot.x}%`, top: `${plaats.hotspot.y}%` }}
+              />
+            ))}
+          </div>
         </Container>
       </Section>
 

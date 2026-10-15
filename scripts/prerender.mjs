@@ -11,6 +11,7 @@ import { createHash } from 'node:crypto'
 import path from 'node:path'
 import { ROUTES as ROUTE_PATHS } from '../src/lib/routes.js'
 import { BLOG_POSTS } from '../src/data/blogPosts.js'
+import { WERKGEBIED_PLAATSEN } from '../src/data/werkgebiedPlaatsen.js'
 
 const rootDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const distDir = path.join(rootDir, 'dist')
@@ -31,6 +32,7 @@ const ROUTES = [
   ROUTE_PATHS.over,
   ROUTE_PATHS.werkwijze,
   ROUTE_PATHS.werkgebied,
+  ...WERKGEBIED_PLAATSEN.map((plaats) => ROUTE_PATHS.werkgebiedPlaats(plaats.slug)),
   ROUTE_PATHS.cases,
   ROUTE_PATHS.blog,
   ...BLOG_POSTS.map((post) => ROUTE_PATHS.blogPost(post.slug)),
