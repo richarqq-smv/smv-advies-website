@@ -228,9 +228,9 @@ function buildEnergieConfirmEmail(p: EnergieParams) {
   </tr>
   <tr>
     <td style="padding:36px 32px 8px;" bgcolor="#ffffff">
-      <p style="margin:0 0 18px;font-size:16px;line-height:1.6;color:#1A1A1A;">Hoi ${e(p.lead_naam)},</p>
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.6;color:#1A1A1A;">Beste ${e(p.lead_naam)},</p>
       <p style="margin:0 0 24px;font-size:15px;line-height:1.65;color:#52606D;">
-        Bedankt voor het invullen van de gratis energiescan van SMV Advies. Hieronder staat een samenvatting van je resultaat.
+        Bedankt voor het invullen van de gratis energiescan van SMV Advies. Hieronder staat een samenvatting van uw resultaat.
       </p>
     </td>
   </tr>
@@ -239,7 +239,7 @@ function buildEnergieConfirmEmail(p: EnergieParams) {
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-radius:12px;" bgcolor="#F6EFE2">
         <tr>
           <td style="padding:20px 24px;text-align:center;">
-            <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#9D7720;">Jouw indicatie</p>
+            <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#9D7720;">Uw indicatie</p>
             <p style="margin:0;font-size:20px;font-weight:800;color:#16293A;">${e(p.status)}</p>
           </td>
         </tr>
@@ -271,7 +271,7 @@ function buildEnergieConfirmEmail(p: EnergieParams) {
   <tr>
     <td style="padding:20px 32px 8px;" bgcolor="#ffffff">
       <p style="margin:0;font-size:12px;line-height:1.6;color:#8E8E93;">
-        Dit is een indicatie op basis van de gegevens die je hebt ingevuld, geen officieel energielabel volgens NTA 8800 en geen garantie op werkelijke besparingen of kosten.
+        Dit is een indicatie op basis van de gegevens die u heeft ingevuld, geen officieel energielabel volgens NTA 8800 en geen garantie op werkelijke besparingen of kosten.
       </p>
     </td>
   </tr>
