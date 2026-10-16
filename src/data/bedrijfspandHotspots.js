@@ -34,7 +34,7 @@ export const BEDRIJFSPAND_HOTSPOTS = [
     title: 'Zonnepanelen',
     category: 'installaties',
     description:
-      'We beoordelen of zonnepanelen voor uw dak kansrijk zijn — dakbelasting, netaansluiting en mogelijke subsidie (zoals de ISDE) nemen we mee. SMV ontwerpt of installeert zelf geen zonnepanelen.',
+      'We beoordelen of zonnepanelen voor uw dak kansrijk zijn — dakbelasting, netaansluiting en mogelijke fiscale voordelen (zoals de EIA en de KIA) nemen we mee. SMV ontwerpt of installeert zelf geen zonnepanelen.',
     link: { to: ROUTES.blogPost('zonnepanelen-op-uw-bedrijfspand'), label: 'Lees over zonnepanelen' },
   },
   {
@@ -44,7 +44,7 @@ export const BEDRIJFSPAND_HOTSPOTS = [
     title: 'Dak en dakisolatie',
     category: 'gebouwschil',
     description:
-      'Het dak is vaak de grootste warmteverliezer van een bedrijfspand, en meestal de maatregel met de kortste terugverdientijd.',
+      'Het dak is bij veel bedrijfspanden de grootste warmteverliezer, en qua bouwkundige maatregelen vaak die met de kortste terugverdientijd — de exacte terugverdientijd hangt af van het pand, het gebruik en de energieprijzen.',
     link: { to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand'), label: 'Lees over dakisolatie' },
   },
   {

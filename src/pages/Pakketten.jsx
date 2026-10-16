@@ -117,7 +117,7 @@ export default function Pakketten() {
 
           <SectionHeading
             title="Onze verduurzamingspakketten"
-            description="Drie niveaus van advies en begeleiding — van eerste inzicht tot volledige uitvoeringsbegeleiding."
+            description="Prijzen en inhoud van de drie pakketten op een rij."
             className="mb-8"
           />
           <div className="grid gap-6 lg:grid-cols-3 lg:items-stretch">

@@ -54,7 +54,7 @@ export function PricingCard({ pkg, delay = 0 }) {
         /pakketten#pakket-{id}, nooit een lokale anchor op de huidige pagina.
       */}
       <Button to={ROUTES.pakketAnchor(pkg.id)} variant="ghost" size="sm" className="mt-2 w-full">
-        Meer informatie
+        Meer over {pkg.name}
       </Button>
     </Reveal>
   )

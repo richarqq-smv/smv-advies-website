@@ -30,11 +30,11 @@ export const WERKGEBIED_PLAATSEN = [
     naam: 'Oud-Beijerland',
     title: 'Verduurzamingsadvies in Oud-Beijerland',
     metaDescription:
-      'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Oud-Beijerland — SMV Advies is hier gevestigd en kent de regio als geen ander.',
+      'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Oud-Beijerland — SMV Advies is hier gevestigd.',
     intro:
-      'SMV Advies is gevestigd in Oud-Beijerland: de regionale kern van de Hoeksche Waard, met het grootste bedrijventerrein van het eiland. Het dorp (oorspronkelijk "Beijerland" geheten) bestaat al sinds 1559 en groeide uit tot het drukste zakelijke centrum van de regio — precies het gebied waar we dagelijks komen.',
+      'SMV Advies is gevestigd in Oud-Beijerland: de regionale kern van de Hoeksche Waard, met het grootste bedrijventerrein van het eiland. Het dorp (oorspronkelijk "Beijerland" geheten) bestaat al sinds 1559 en groeide uit tot het drukste zakelijke centrum van de regio.',
     feit:
-      'Als vestigingsplaats is dit voor ons geen "werkgebied erbij", maar de plek waar we zelf gevestigd zijn en de meeste bedrijfspanden al kennen.',
+      'Als vestigingsplaats onderscheidt Oud-Beijerland zich: hier is SMV Advies zelf gevestigd, middenin het drukste zakelijke centrum van de Hoeksche Waard.',
     bedrijventerrein: 'het grootste bedrijventerrein van de Hoeksche Waard',
     faq: [
       {
@@ -59,7 +59,7 @@ export const WERKGEBIED_PLAATSEN = [
     intro:
       'Heinenoord ligt direct bij de Heinenoordtunnel, de verbinding met Barendrecht en de A29 — voor veel bedrijfspanden hier een praktisch gegeven, geen bijzaak. Het dorp zelf wordt al in 1312 genoemd en herbergt met Museum Hoeksche Waard ook een eigen stukje streekgeschiedenis.',
     feit:
-      'Rond de A29-afslag liggen de bedrijventerreinen Reedijk en Boonsweg — veelal de bedrijfspanden waar wij hier over de vloer komen.',
+      'Rond de A29-afslag liggen de bedrijventerreinen Reedijk en Boonsweg, met een flink aantal mkb-bedrijfspanden op loop- en rijafstand van de tunnel.',
     bedrijventerrein: 'bedrijventerrein Reedijk/Boonsweg, bij de A29-afslag',
     faq: [
       {
@@ -78,7 +78,7 @@ export const WERKGEBIED_PLAATSEN = [
       'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Puttershoek, met bedrijventerrein SHIPP21.',
     intro:
       'Puttershoek heeft een stevig industrieel verleden: hier stond tot 2004 de Suiker Unie-suikerfabriek. Op en rond die locatie ligt nu bedrijventerrein SHIPP21, een van de actievere bedrijfslocaties van de Hoeksche Waard.',
-    feit: 'Van voormalige fabrieksgrond tot modern bedrijventerrein — precies het soort pand waar verduurzaming vaak het meeste oplevert.',
+    feit: 'Van voormalige fabrieksgrond tot modern bedrijventerrein: SHIPP21 bestaat uit een mix van bedrijfspanden met uiteenlopende bouwjaren en energieprestaties.',
     bedrijventerrein: 'bedrijventerrein SHIPP21',
     faq: [
       {
@@ -93,15 +93,16 @@ export const WERKGEBIED_PLAATSEN = [
     slug: 'maasdam',
     naam: 'Maasdam',
     title: 'Verduurzamingsadvies in Maasdam',
-    metaDescription: 'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Maasdam, Hoeksche Waard.',
+    metaDescription:
+      'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Maasdam, bij molen "De Hoop" en de Binnenbedijkte Maas.',
     intro:
-      'Maasdam is een oud dijkdorp langs de Binnenbedijkte Maas, met een monumentale kerk en de nog altijd zichtbare molen "De Hoop" uit 1830. Bedrijfspanden hier liggen verspreid in en direct rond de dorpskern.',
-    feit: 'Een kleiner dorp vraagt niet om een ander soort advies, maar wel om iemand die de lokale situatie kent in plaats van een landelijke sjabloonaanpak.',
+      'Maasdam is een oud dijkdorp langs de Binnenbedijkte Maas, met een monumentale kerk en de nog altijd zichtbare molen "De Hoop" uit 1822. Bedrijfspanden hier liggen verspreid in en direct rond de dorpskern.',
+    feit: 'Een dorp zonder eigen bedrijventerrein betekent bedrijfspanden die verspreid liggen — elk pand vraagt dan om een eigen beoordeling in plaats van een standaardaanpak.',
     bedrijventerrein: null,
     faq: [
       {
         question: 'Is SMV Advies ook actief in Maasdam?',
-        answer: 'Ja, SMV Advies verzorgt onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Maasdam en omgeving.',
+        answer: 'Ja, SMV Advies verzorgt onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Maasdam, ook als uw pand buiten de dorpskern ligt.',
       },
     ],
     hotspot: { x: 77.2, y: 38.0, width: 6.5, height: 5.3 },
@@ -110,15 +111,16 @@ export const WERKGEBIED_PLAATSEN = [
     slug: 'zuid-beijerland',
     naam: 'Zuid-Beijerland',
     title: 'Verduurzamingsadvies in Zuid-Beijerland',
-    metaDescription: 'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Zuid-Beijerland, Hoeksche Waard.',
+    metaDescription:
+      'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Zuid-Beijerland, het voormalige "Den Hitsert".',
     intro:
       'Zuid-Beijerland is een klassiek polderdorp, oorspronkelijk bekend als "Den Hitsert", met een kruiskerk met naaldspits uit 1933 als herkenbaar middelpunt. Het dorp ligt aan de westkant van het eiland, tussen de Spui en het Haringvliet.',
-    feit: 'Een rustig polderdorp met verspreide bedrijfspanden — juist hier scheelt het kennen van de lokale bouwperiodes in de praktijk tijd.',
+    feit: 'Verspreid liggende bedrijfspanden in een polderdorp vragen om maatwerk — elk pand heeft zijn eigen bouwperiode en staat van onderhoud.',
     bedrijventerrein: null,
     faq: [
       {
         question: 'Is SMV Advies ook actief in Zuid-Beijerland?',
-        answer: 'Ja, SMV Advies verzorgt onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Zuid-Beijerland en omgeving.',
+        answer: 'Ja, SMV Advies verzorgt onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Zuid-Beijerland, tussen de Spui en het Haringvliet.',
       },
     ],
     hotspot: { x: 20.5, y: 45.5, width: 9.2, height: 4.9 },
@@ -127,15 +129,16 @@ export const WERKGEBIED_PLAATSEN = [
     slug: 'mijnsheerenland',
     naam: 'Mijnsheerenland',
     title: 'Verduurzamingsadvies in Mijnsheerenland',
-    metaDescription: 'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Mijnsheerenland, Hoeksche Waard.',
+    metaDescription:
+      'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Mijnsheerenland, centraal tussen Oud-Beijerland en de A29.',
     intro:
       'Mijnsheerenland is een polderdorp langs de Binnenbedijkte Maas, vlakbij de A29-afslag Heinenoord. Die ligging betekent dat bedrijfspanden hier vaak goed bereikbaar zijn, ook voor leveranciers en installateurs.',
-    feit: 'Centraal gelegen tussen Oud-Beijerland en de A29 — praktisch voor ons én voor de bedrijven die hier gevestigd zijn.',
+    feit: 'Centraal gelegen tussen Oud-Beijerland en de A29 — praktisch voor bedrijven die hier gevestigd zijn, ook voor leveranciers en installateurs.',
     bedrijventerrein: null,
     faq: [
       {
         question: 'Is SMV Advies ook actief in Mijnsheerenland?',
-        answer: 'Ja, SMV Advies verzorgt onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Mijnsheerenland en omgeving.',
+        answer: 'Ja, SMV Advies verzorgt onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Mijnsheerenland, ook vlak bij de A29-afslag Heinenoord.',
       },
     ],
     hotspot: { x: 43.2, y: 46.3, width: 9.5, height: 5.0 },
@@ -163,15 +166,16 @@ export const WERKGEBIED_PLAATSEN = [
     slug: 'klaaswaal',
     naam: 'Klaaswaal',
     title: 'Verduurzamingsadvies in Klaaswaal',
-    metaDescription: 'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Klaaswaal, Hoeksche Waard.',
+    metaDescription:
+      'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Klaaswaal, in het Cromstrijen-deel van de Hoeksche Waard.',
     intro:
       'Klaaswaal was tot 1984 een zelfstandige gemeente en ligt in het Cromstrijen-deel van de Hoeksche Waard, dicht bij Numansdorp. Net als in de andere kleinere kernen liggen bedrijfspanden hier verspreid in en rond het dorp.',
-    feit: 'Geen eigen groot bedrijventerrein, maar wel dezelfde aandacht voor uw pand als in de grotere kernen.',
+    feit: 'Geen eigen groot bedrijventerrein, maar wel dezelfde zorgvuldige beoordeling van uw pand als in de grotere kernen.',
     bedrijventerrein: null,
     faq: [
       {
         question: 'Is SMV Advies ook actief in Klaaswaal?',
-        answer: 'Ja, SMV Advies verzorgt onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Klaaswaal en omgeving.',
+        answer: 'Ja, SMV Advies verzorgt onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Klaaswaal, in het Cromstrijen-deel van de Hoeksche Waard.',
       },
     ],
     hotspot: { x: 34.4, y: 55.5, width: 7.0, height: 5.0 },
@@ -180,10 +184,11 @@ export const WERKGEBIED_PLAATSEN = [
     slug: 'strijen',
     naam: 'Strijen',
     title: 'Verduurzamingsadvies in Strijen',
-    metaDescription: 'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Strijen, Hoeksche Waard.',
+    metaDescription:
+      'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Strijen, bij bedrijventerrein Oud-Bonaventura.',
     intro:
       'Strijen is een streekdorp met meerdere buurtschappen (onder meer Cillaarshoek, Mookhoek en Strijensas) en dankt zijn naam vermoedelijk aan de inmiddels verdwenen waterloop "de Striene". Het dorp heeft met bedrijventerrein Oud-Bonaventura een van de grotere bedrijfslocaties van de regio.',
-    feit: 'Een streekdorp met zowel historische kern als een eigen bedrijventerrein — precies de combinatie waar lokale kennis van bouwperiodes het verschil maakt.',
+    feit: 'Een streekdorp met zowel een historische kern als een eigen bedrijventerrein — elk met een eigen bouwperiode en dus een eigen aanpak.',
     bedrijventerrein: 'bedrijventerrein Oud-Bonaventura',
     faq: [
       {
@@ -201,7 +206,7 @@ export const WERKGEBIED_PLAATSEN = [
     metaDescription:
       'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Numansdorp, bij bedrijventerrein Middelsluis-Noord.',
     intro:
-      'Numansdorp werd in 1642 gesticht rond de haven en is vooral bekend van Fort Buitensluis: een negentiende-eeuws fort dat ooit de vaarroute tussen Volkerak en Hollands Diep bewaakte en sinds 2015 vrij toegankelijk is. Bedrijfspanden liggen hier vooral op en rond bedrijventerrein Middelsluis-Noord, vlot bereikbaar via de N487 naar de A29.',
+      'Numansdorp werd in 1642 gesticht rond de haven en is vooral bekend van Fort Buitensluis: een negentiende-eeuws fort dat ooit de vaarroute tussen Volkerak en Hollands Diep bewaakte en sinds 2015 opengesteld is voor bezoekers. Bedrijfspanden liggen hier vooral op en rond bedrijventerrein Middelsluis-Noord, vlot bereikbaar via de N487 naar de A29.',
     feit: 'Een dorp met zowel een eigen bedrijventerrein als een herkenbaar historisch landmark — en met circa een kwartier rijden een van de iets verder gelegen kernen vanaf Oud-Beijerland.',
     bedrijventerrein: 'bedrijventerrein Middelsluis-Noord',
     faq: [

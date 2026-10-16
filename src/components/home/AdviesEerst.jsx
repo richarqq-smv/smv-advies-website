@@ -21,10 +21,9 @@ export function AdviesEerst() {
           <ListChecks size={32} weight="light" className="mx-auto text-accent" />
           <h2 className="mt-5 text-3xl text-primary sm:text-4xl">Waarom we niet meteen naar offertes kijken</h2>
           <p className="mt-5 text-lg leading-relaxed text-foreground-muted">
-            Een offerte van een installateur gaat uit van wat hij verkoopt, niet van wat voor uw
-            pand verstandig is. Daarom beginnen wij met onafhankelijk advies: wat moet nu, wat kan
-            wachten, en in welke volgorde. Pas daarna heeft een offerte betekenis — u weet dan
-            precies waar u om vraagt.
+            Pas als u weet wat voor uw pand verstandig is, heeft een offerte echt betekenis.
+            Daarom beginnen wij met onafhankelijk advies: wat moet nu, wat kan wachten, en in
+            welke volgorde. Zo weet u bij een offerteaanvraag precies waar u om vraagt.
           </p>
           <p className="mt-4 text-sm text-foreground-muted">
             Wilt u dat wij ook de offertes voor u verzamelen en vergelijken? Dat kan binnen het{' '}

@@ -39,7 +39,7 @@ export const FAQ_CATEGORIES = [
       {
         question: 'Hoe lang duurt een QuickScan?',
         answer:
-          'Van opdracht tot rapport rekent u doorgaans op 1 tot 2 weken, afhankelijk van de beschikbaarheid voor een locatiebezoek. Het locatiebezoek zelf duurt 1 tot 2 uur.',
+          'Reken op 1 tot 2 weken tussen opdracht en rapport, afhankelijk van de beschikbaarheid voor een locatiebezoek. Het locatiebezoek zelf duurt 1 tot 2 uur.',
       },
       {
         question: 'Wat als ik niet tevreden ben over het rapport?',

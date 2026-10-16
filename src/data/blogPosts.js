@@ -922,7 +922,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Onder bepaalde voorwaarden kan een batterij in aanmerking komen voor de energie-investeringsaftrek (EIA). Op de Energielijst 2026 staat hiervoor een specifieke code (251118): een accu voor stationaire opslag van elektrische energie, met een vermogen van ten minste 5 kW en een opslagcapaciteit van ten minste 15 kWh. De accu moet gekoppeld zijn aan een installatie voor zelfopwekking van duurzame energie met een opgesteld piekvermogen van meer dan 15 kW, en beide moeten dezelfde aansluiting op het elektriciteitsnet hebben. Een accu met vloeibaar lood-zuur of een accu van een (intern) transportmiddel komt niet in aanmerking. Voor de volledige uitleg van de EIA en de andere fiscale en subsidieregelingen verwijzen we naar ',
+          'Onder bepaalde voorwaarden kan een batterij in aanmerking komen voor de energie-investeringsaftrek (EIA). De Energielijst stelt daarbij eisen aan onder meer het vermogen (ten minste 5 kW) en de opslagcapaciteit (ten minste 15 kWh) van de accu. De accu moet gekoppeld zijn aan een installatie voor zelfopwekking van duurzame energie met een opgesteld piekvermogen van meer dan 15 kW, en beide moeten dezelfde aansluiting op het elektriciteitsnet hebben. Een accu met vloeibaar lood-zuur of een accu van een (intern) transportmiddel komt niet in aanmerking. De exacte code en voorwaarden op de actuele Energielijst wijzigen jaarlijks — check deze bij RVO voordat u een aanvraag voorbereidt. Voor de volledige uitleg van de EIA en de andere fiscale en subsidieregelingen verwijzen we naar ',
           { text: 'ons overzicht van EIA, ISDE, SDE++ en KIA', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
           '.',
         ],
@@ -931,7 +931,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Naast de EIA bestaat er met de Subsidieregeling Private Laadinfrastructuur bij bedrijven (SPRILA) ook een route die een batterij kan ondersteunen — maar niet zomaar. SPRILA subsidieert een stationaire batterij alleen wanneer die wordt aangelegd in combinatie met nieuwe laadinfrastructuur. Een losstaande batterij, bijvoorbeeld uitsluitend voor de opslag van zonnestroom, komt niet in aanmerking. Daarnaast moet minimaal 70% van de door de batterij ontladen energie aantoonbaar naar de laadstations gaan. De subsidie voor de combinatie van een batterij met nieuwe laadinfrastructuur bedraagt minimaal € 25.000. Meer over SPRILA en de voorwaarden voor laadinfrastructuur zelf leest u in ons artikel over ',
+          'Naast de EIA bestaat er met de Subsidieregeling Private Laadinfrastructuur bij bedrijven (SPRILA) ook een route die een batterij kan ondersteunen — maar niet zomaar. SPRILA subsidieert een stationaire batterij alleen wanneer die wordt aangelegd in combinatie met nieuwe laadinfrastructuur. Een losstaande batterij, bijvoorbeeld uitsluitend voor de opslag van zonnestroom, komt niet in aanmerking. Daarnaast moet een aanzienlijk deel van de door de batterij ontladen energie aantoonbaar naar de laadstations gaan — raadpleeg de actuele RVO-voorwaarden voor het exacte minimumpercentage. De subsidie voor de combinatie van een batterij met nieuwe laadinfrastructuur bedraagt minimaal € 25.000. Meer over SPRILA en de voorwaarden voor laadinfrastructuur zelf leest u in ons artikel over ',
           { text: 'laadpalen op uw bedrijfsterrein', to: ROUTES.blogPost('laadpalen-op-uw-bedrijfsterrein') },
           '.',
         ],
@@ -1119,7 +1119,7 @@ export const BLOG_POSTS = [
     category: 'Wetgeving',
     title: 'Energielabel C verplicht voor uw bedrijfspand: wat betekent dit?',
     excerpt:
-      'Sinds 2023 moet een kantoorpand minimaal energielabel C hebben, anders geldt een gebruiksverbod. Ontdek of dit voor uw bedrijfspand geldt.',
+      'Sinds 2023 moet een kantoorpand minimaal energielabel C hebben, anders geldt een gebruiksverbod. Dit artikel legt uit voor welke panden dit geldt en welke uitzonderingen er zijn.',
     date: '30 augustus 2026',
     isoDate: '2026-08-30',
     readTime: '7 min',
@@ -1316,12 +1316,12 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Er wordt wel gewerkt aan uitbreiding. In 2025 is een nieuw, circa 13 kilometer lang middenspanningstracé tussen Klaaswaal en Puttershoek in gebruik genomen, met een capaciteit die ongeveer gelijkstaat aan het verbruik van 8.000 huishoudens. Dat tracé gaf twaalf bedrijven die op de wachtlijst stonden alsnog een aansluiting. Daarnaast bereiden Stedin en landelijk netbeheerder TenneT, samen met de gemeente, de bouw voor van een nieuw ',
+          'Er wordt wel gewerkt aan uitbreiding: in augustus 2026 ondertekenden Stedin, landelijk netbeheerder TenneT en de gemeente een intentieovereenkomst voor een nieuw ',
           {
             text: 'hoogspanningsstation in de Hoeksche Waard',
             href: 'https://www.stedin.net/over-stedin/wat-doet-stedin/projecten-in-uw-regio/hoogspanningsstation-hoeksche-waard',
           },
-          '. De gemeente nam in 2026 een principebesluit over de voorkeurslocatie; de bouw is voorzien voor 2028-2029, met oplevering rond 2030-2031. Dat station moet structureel meer transportcapaciteit voor de regio opleveren — een oplossing voor de langere termijn, niet voor morgen.',
+          ' (voorkeurslocatie bij Numansdorp). Dat traject staat nog aan het begin: een omgevingsplanprocedure volgt naar verwachting vanaf 2027, en concrete bouw- of opleverdata zijn nog niet vastgesteld. Dat station moet op de langere termijn structureel meer transportcapaciteit voor de regio opleveren.',
         ],
       },
       { type: 'h2', text: 'Wat betekent dit voor uw bedrijfspand?' },

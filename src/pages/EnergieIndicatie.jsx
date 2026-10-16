@@ -28,7 +28,7 @@ export default function EnergieIndicatie() {
     <>
       <Seo
         title="Gratis energie-indicatie"
-        description="Ontdek in enkele minuten waar uw bedrijfspand energie verliest en welke maatregelen het meeste opleveren."
+        description="Beantwoord een paar vragen over uw bedrijfspand en ontvang direct een indicatie van de grootste besparingskansen."
         structuredData={[getBreadcrumbSchema([{ name: 'Energie-indicatie', path: ROUTES.energieIndicatie }])]}
         noindex={Boolean(dossierId)}
       />

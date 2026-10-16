@@ -62,7 +62,7 @@ export function InteractiefBedrijfspand() {
         })}
       </div>
 
-      <div className="rounded-xl border border-border bg-white p-5 lg:sticky lg:top-24">
+      <div className="rounded-xl border border-border bg-white p-5 lg:sticky lg:top-24" aria-live="polite">
         {selected ? (
           <>
             <div className="flex items-start justify-between gap-3">
@@ -97,6 +97,39 @@ export function InteractiefBedrijfspand() {
           </p>
         )}
       </div>
+
+      {/*
+        Tekstuele fallback (toegankelijkheidsronde 2026-10-16): zonder dit
+        blok was de inhoud van alle 24 punten alleen beschikbaar na het
+        één voor één activeren van 24 knoppen — lastig voor wie liever
+        door content scrolt dan interactie zoekt, of de interactie niet
+        meteen doorheeft. Standaard ingeklapt, zodat het bestaande
+        ontwerp niet verandert voor wie wél met de afbeelding werkt.
+      */}
+      <details className="lg:col-span-2">
+        <summary className="cursor-pointer text-sm font-medium text-accent underline underline-offset-2 hover:text-secondary">
+          Alle onderdelen als tekst bekijken
+        </summary>
+        <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {BEDRIJFSPAND_HOTSPOTS.map((hotspot) => (
+            <li key={hotspot.id} className="rounded-lg border border-border p-4">
+              <p className="text-xs font-semibold tracking-[0.1em] text-accent uppercase">
+                {BEDRIJFSPAND_CATEGORIE_LABELS[hotspot.category]}
+              </p>
+              <h4 className="mt-1 text-sm font-semibold text-primary">{hotspot.title}</h4>
+              <p className="mt-1.5 text-sm leading-relaxed text-foreground-muted">{hotspot.description}</p>
+              {hotspot.link ? (
+                <Link
+                  to={hotspot.link.to}
+                  className="mt-2 inline-block text-sm font-medium text-accent underline underline-offset-2 hover:text-secondary"
+                >
+                  {hotspot.link.label}
+                </Link>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      </details>
     </div>
   )
 }

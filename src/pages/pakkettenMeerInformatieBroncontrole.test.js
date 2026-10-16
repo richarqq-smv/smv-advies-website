@@ -30,10 +30,10 @@ test('routes.js: pakketAnchor() is de enige plek waar het anchor-pad wordt opgeb
   assert.match(ROUTES, /pakketAnchor: \(pakketId\) => `\/pakketten#pakket-\$\{pakketId\}`/)
 })
 
-test('PricingCard.jsx: toont "Meer informatie" en linkt via ROUTES.pakketAnchor(pkg.id), niet naar een losse/hardcoded anchor', () => {
+test('PricingCard.jsx: toont "Meer over {pkg.name}" en linkt via ROUTES.pakketAnchor(pkg.id), niet naar een losse/hardcoded anchor', () => {
   assert.match(PRICING_CARD, /import \{ ROUTES \} from '\.\.\/\.\.\/lib\/routes'/)
   assert.match(PRICING_CARD, /<Button to=\{ROUTES\.pakketAnchor\(pkg\.id\)\} variant="ghost" size="sm"/)
-  assert.match(PRICING_CARD, />\s*Meer informatie\s*</)
+  assert.match(PRICING_CARD, /Meer over \{pkg\.name\}/)
   assert.equal(/#pakket-/.test(PRICING_CARD), false, 'anchor-pad hoort alleen in ROUTES.pakketAnchor() te staan, niet opnieuw hardcoded in PricingCard.jsx')
 })
 

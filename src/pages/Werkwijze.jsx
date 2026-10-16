@@ -54,7 +54,7 @@ export default function Werkwijze() {
       <PageHero
         eyebrow="Werkwijze"
         title="Van eerste kennismaking tot concreet resultaat"
-        description="Een vast, transparant traject. U weet vooraf wat u kunt verwachten — geen verrassingen, wel duidelijkheid op elk moment."
+        description="Vier stappen, van eerste kennismaking tot rapport — hieronder ziet u wat elke stap inhoudt en hoelang die duurt."
       />
 
       <HowItWorks />

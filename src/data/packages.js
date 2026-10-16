@@ -66,7 +66,7 @@ export const PACKAGES = [
   {
     id: 'gold',
     name: 'Gold',
-    mindset: 'Ontzorgd worden',
+    mindset: 'Geregeld krijgen',
     tagline: 'Kunnen jullie mij helpen het geregeld te krijgen?',
     subtitle: 'Begeleiding tot en met oplevering',
     priceTiers: [
@@ -76,7 +76,7 @@ export const PACKAGES = [
     ],
     priceDisplay: 'Vanaf € 2.495',
     priceNote: 'excl. btw · afhankelijk van oppervlakte',
-    description: 'Volledig ontzorgd, binnen een vooraf afgebakende scope: van maatregelkeuze tot en met oplevering.',
+    description: 'Advies én begeleiding bij de uitvoering, binnen een vooraf afgebakende scope: van maatregelkeuze tot en met oplevering.',
     // Vaste, expliciete grenzen (i.p.v. "volledig"/"tot en met oplevering"
     // zonder afbakening) — alles buiten deze scope is meerwerk (zie
     // MEERWERK_UURTARIEF in lib/klantOmgeving/offerte.js).

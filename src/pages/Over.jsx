@@ -35,16 +35,14 @@ export default function Over() {
             </p>
             <p>
               SMV Advies is gevestigd in Oud-Beijerland en werkt uitsluitend voor mkb-ondernemers
-              in de Hoeksche Waard. Die keuze is bewust: we kennen de bedrijfspanden in deze
-              regio, van de oudere winkelpanden in de dorpskernen tot de nieuwbouwbedrijfshallen
-              op de lokale bedrijventerreinen. Die lokale kennis scheelt in de praktijk veel tijd
-              en giswerk.
+              in de Hoeksche Waard. Die keuze is bewust: door ons tot één regio te beperken,
+              kunnen we snel ter plaatse zijn en houden we het advies persoonlijk.
             </p>
             <p>
               SMV Advies verkoopt geen installaties, panelen of isolatiemateriaal en werkt niet op
               commissiebasis. Het advies dat u krijgt, is dus nooit gekleurd door een belang bij
               een bepaalde installateur of leverancier. Ons enige belang is dat uw pand minder
-              energie kost, comfortabeler aanvoelt en klaar is voor de toekomst.
+              energie kost en comfortabeler aanvoelt.
             </p>
           </div>
         </Container>
@@ -126,7 +124,11 @@ export default function Over() {
               en met de oplevering van de laatste maatregel: er is een pakket dat aansluit op uw
               situatie.
             </p>
-            <p>SMV Advies is actief in de gehele Hoeksche Waard, met Oud-Beijerland als thuisbasis.</p>
+            <p>
+              SMV Advies is actief in de gehele Hoeksche Waard, met Oud-Beijerland als thuisbasis.
+              Ligt uw pand net buiten deze regio? Neem gerust contact op, dan bekijken we de
+              mogelijkheden.
+            </p>
             <p className="font-medium text-primary">
               We beginnen waar u staat. Elke stap, hoe klein ook, telt. Want Elke Stap Maakt
               Verschil.
