@@ -62,6 +62,17 @@ export default function Werkwijze() {
       <Section tone="muted">
         <Container>
           <SectionHeading
+            title="Waar kijken we naar in uw pand?"
+            description="Een bedrijfspand bestaat uit veel onderdelen die samen het energieverbruik en comfort bepalen. Klik op een punt in de afbeelding voor een korte toelichting."
+            className="mb-10"
+          />
+          <InteractiefBedrijfspand />
+        </Container>
+      </Section>
+
+      <Section tone="white">
+        <Container>
+          <SectionHeading
             title="Een rapport dat u écht gebruikt"
             description="Geen jargon, geen dikke map die in een la verdwijnt. U ontvangt een helder rapport met een overzicht van kansen, een indicatie van investeringen en besparingen, en een praktische prioritering. Precies genoeg om de volgende stap te zetten."
             className="mb-10"
@@ -76,17 +87,6 @@ export default function Werkwijze() {
               </li>
             ))}
           </ul>
-        </Container>
-      </Section>
-
-      <Section tone="white">
-        <Container>
-          <SectionHeading
-            title="Waar kijken we naar in uw pand?"
-            description="Een bedrijfspand bestaat uit veel onderdelen die samen het energieverbruik en comfort bepalen. Klik op een punt in de afbeelding voor een korte toelichting."
-            className="mb-10"
-          />
-          <InteractiefBedrijfspand />
         </Container>
       </Section>
 

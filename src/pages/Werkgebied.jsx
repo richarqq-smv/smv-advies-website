@@ -80,49 +80,6 @@ export default function Werkgebied() {
       </Section>
 
       <Section tone="muted">
-        <Container>
-          <SectionHeading
-            title="Welke vraagstukken we onderzoeken"
-            description="Elk pand is anders, maar dit zijn de maatregelen die het vaakst terugkomen in een QuickScan of Premium-analyse."
-            className="mb-10"
-          />
-          <ul className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-            {MAATREGELEN.map((item) => (
-              <li key={item.title}>
-                <item.icon size={26} weight="light" className="text-accent" />
-                <h3 className="mt-4 text-base font-semibold text-primary">
-                  {item.to ? (
-                    <Link to={item.to} className="hover:text-secondary">
-                      {item.title}
-                    </Link>
-                  ) : (
-                    item.title
-                  )}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{item.description}</p>
-              </li>
-            ))}
-          </ul>
-        </Container>
-      </Section>
-
-      <Section tone="white">
-        <Container className="max-w-3xl">
-          <h2 className="text-2xl text-primary sm:text-3xl">Onafhankelijk, dus zonder verborgen belang</h2>
-          <p className="mt-5 text-base leading-relaxed text-foreground-muted">
-            SMV Advies verkoopt geen installaties, panelen of isolatiemateriaal en werkt niet op commissiebasis.
-            Het advies dat u krijgt is dus nooit gekleurd door een belang bij een bepaalde installateur of
-            leverancier — ons enige belang is dat uw pand minder energie kost en klaar is voor de toekomst. Lees
-            meer over hoe dat in de praktijk werkt in onze{' '}
-            <Link to={ROUTES.werkwijze} className="font-medium text-accent underline underline-offset-2 hover:text-secondary">
-              werkwijze
-            </Link>
-            .
-          </p>
-        </Container>
-      </Section>
-
-      <Section tone="muted">
         <Container className="max-w-3xl">
           <h2 className="text-2xl text-primary sm:text-3xl">Actief in de hele Hoeksche Waard</h2>
           <p className="mt-5 text-base leading-relaxed text-foreground-muted">
@@ -184,6 +141,49 @@ export default function Werkgebied() {
               />
             ))}
           </div>
+        </Container>
+      </Section>
+
+      <Section tone="white">
+        <Container>
+          <SectionHeading
+            title="Welke vraagstukken we onderzoeken"
+            description="Elk pand is anders, maar dit zijn de maatregelen die het vaakst terugkomen in een QuickScan of Premium-analyse."
+            className="mb-10"
+          />
+          <ul className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+            {MAATREGELEN.map((item) => (
+              <li key={item.title}>
+                <item.icon size={26} weight="light" className="text-accent" />
+                <h3 className="mt-4 text-base font-semibold text-primary">
+                  {item.to ? (
+                    <Link to={item.to} className="hover:text-secondary">
+                      {item.title}
+                    </Link>
+                  ) : (
+                    item.title
+                  )}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{item.description}</p>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </Section>
+
+      <Section tone="muted">
+        <Container className="max-w-3xl">
+          <h2 className="text-2xl text-primary sm:text-3xl">Onafhankelijk, dus zonder verborgen belang</h2>
+          <p className="mt-5 text-base leading-relaxed text-foreground-muted">
+            SMV Advies verkoopt geen installaties, panelen of isolatiemateriaal en werkt niet op commissiebasis.
+            Het advies dat u krijgt is dus nooit gekleurd door een belang bij een bepaalde installateur of
+            leverancier — ons enige belang is dat uw pand minder energie kost en klaar is voor de toekomst. Lees
+            meer over hoe dat in de praktijk werkt in onze{' '}
+            <Link to={ROUTES.werkwijze} className="font-medium text-accent underline underline-offset-2 hover:text-secondary">
+              werkwijze
+            </Link>
+            .
+          </p>
         </Container>
       </Section>
 
