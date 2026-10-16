@@ -16,7 +16,7 @@ BLOG ⇄ DIENST (`/pakketten`) ⇄ CASE (`/cases`) ⇄ CTA-pad is doorlopend —
 
 ## Local SEO
 
-Bewust géén losse pagina per plaatsnaam (`/werkgebied/oud-beijerland`, etc.) — dat risico op dunne content is expliciet afgewogen in eerdere fases. `/werkgebied` bestaat al als één samenhangende pagina. Een uitbreiding naar per-kern content is alleen zinvol met concrete Search Console-signalen (specifieke plaatsnaam-zoekopdrachten die nu niet goed scoren) — niet als aanname vooraf.
+**Bijgewerkt 2026-10-16**: sinds 2026-10-15 bestaan er wél 10 losse dorpspagina's (`/oud-beijerland`, `/heinenoord`, `/puttershoek`, `/maasdam`, `/zuid-beijerland`, `/mijnsheerenland`, `/s-gravendeel`, `/klaaswaal`, `/strijen`, `/numansdorp`) — een expliciete klantwens, niet voortgekomen uit Search Console-data. Zie `docs/SEO-CONTENT-MAP.md`, sectie "Dorpspagina's", voor de volledige details (databron, techniek, hoe dunne content is vermeden). `/werkgebied` blijft daarnaast bestaan als overzichtspagina met een interactieve kaart die naar alle 10 doorlinkt.
 
 ## Structured data
 

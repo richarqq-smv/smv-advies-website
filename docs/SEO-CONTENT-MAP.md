@@ -279,13 +279,38 @@ Vastgesteld pad van content naar conversie, op basis van de daadwerkelijke `cta`
 
 ## Lokale SEO
 
+> **Bijgewerkt (2026-10-16, fase 21)**: de aanbeveling die hieronder tot fase 20 stond ("bewust géén losse pagina per plaatsnaam") is **niet meer van toepassing**. Sinds een sessie op 2026-10-15 bestaan er wél 10 losse dorpspagina's. Dit was een expliciete klantwens, niet een door deze roadmap voorgestelde SEO-fase — zie "Dorpspagina's" hieronder voor de volledige, bijgewerkte stand van zaken.
+
 **Reeds aanwezige lokale signalen** (bevestigd in de repository):
 - Volledig NAP (naam, adres, telefoon) in `src/data/company.js`: Frans Halsstraat 28, 3262 HG Oud-Beijerland, telefoon `06 22 71 33 83`.
 - `getOrganizationSchema()` in `src/lib/structuredData.js` bevat een volledige `PostalAddress` en `areaServed: { name: "Hoeksche Waard" }` — op elke pagina aanwezig via de `Seo`-component.
-- Een dedicated pagina `/werkgebied` ("Verduurzaming bedrijfspand Hoeksche Waard") die expliciet de kernen Numansdorp, Strijen, 's-Gravendeel, Mijnsheerenland, Klaaswaal en Puttershoek noemt.
+- Een overzichtspagina `/werkgebied` ("Verduurzaming bedrijfspand Hoeksche Waard") met een interactieve illustratieve kaart (klikbare hotspots per dorp) die doorlinkt naar de 10 dorpspagina's hieronder.
 - `netcongestie-hoeksche-waard` is regionaal specifiek content (Stedin, lokaal kabeltracé).
 
-**Aanbeveling** (niet uitgevoerd in deze fase): de bestaande `/werkgebied`-pagina dekt de regio al op één pagina, wat in Fase 2 destijds bewust is gekozen boven losse per-kern doorway-pagina's (risico op dunne, onderling sterk overlappende content). Een toekomstige lokale-SEO-fase zou moeten heroverwegen of dat nog steeds de juiste keuze is, maar **alleen op basis van concrete Search Console-signalen** (bijv. zoekopdrachten met een specifieke kernnaam die nu niet goed scoren) — niet als aanname vooraf. Zonder die data is er geen aantoonbare noodzaak voor nieuwe lokale pagina's.
+### Dorpspagina's (sinds 2026-10-15)
+
+10 losse, elk afzonderlijk geïndexeerde pagina's, één per kern van de Hoeksche Waard, opgebouwd via de gedeelde component `src/pages/WerkgebiedPlaats.jsx` en databron `src/data/werkgebiedPlaatsen.js`:
+
+| Dorp | URL | Slug |
+|---|---|---|
+| Oud-Beijerland | `/oud-beijerland` | `oud-beijerland` |
+| Heinenoord | `/heinenoord` | `heinenoord` |
+| Puttershoek | `/puttershoek` | `puttershoek` |
+| Maasdam | `/maasdam` | `maasdam` |
+| Zuid-Beijerland | `/zuid-beijerland` | `zuid-beijerland` |
+| Mijnsheerenland | `/mijnsheerenland` | `mijnsheerenland` |
+| 's-Gravendeel | `/s-gravendeel` | `s-gravendeel` |
+| Klaaswaal | `/klaaswaal` | `klaaswaal` |
+| Strijen | `/strijen` | `strijen` |
+| Numansdorp | `/numansdorp` | `numansdorp` |
+
+**Hoe het dunne-content-risico (de reden voor de oorspronkelijke "niet doen"-aanbeveling) is geadresseerd**: elke pagina heeft een eigen, op onderzoek gebaseerd lokaal feit (geen sjabloon met alleen de plaatsnaam verwisseld) — bijv. Numansdorp noemt Fort Buitensluis en bedrijventerrein Middelsluis-Noord, Puttershoek de voormalige Suiker Unie-fabriek en bedrijventerrein SHIPP21, 's-Gravendeel de historische vlasindustrie aan de Dordtsche Kil. Voor 4 kleinere kernen (Maasdam, Zuid-Beijerland, Mijnsheerenland, Klaaswaal) is bewust géén bedrijventerrein genoemd omdat daar geen eigen, met naam bekend bedrijventerrein bestaat — geen verzonnen specifieke lokale claims.
+
+**Techniek**: elke pagina heeft een eigen title/meta description, `BreadcrumbList`- en `FAQPage`-schema (1 Q&A per dorp, "Is SMV Advies ook actief in [dorp]?"), en wordt als echte statische HTML geprerenderd (`scripts/prerender.mjs`, zelfde patroon als blogposts — automatisch afgeleid uit `WERKGEBIED_PLAATSEN`, geen handmatige routewijziging nodig bij toekomstige toevoegingen). Alle 10 staan in `public/sitemap.xml` (prioriteit 0.6). Onderlinge interne links: elke dorpspagina linkt naar 4 andere dorpen + "Alle plaatsen" (`/werkgebied`), en `/werkgebied` zelf heeft pixel-precies gepositioneerde klikbare hotspots (één per dorp) bovenop de illustratieve kaart.
+
+**Cannibalisatierisico**: laag — elke pagina behandelt een andere plaatsnaam als primaire zoekintentie, met voldoende onderscheidende content om niet als near-duplicate te worden gezien.
+
+**Nog niet gedaan / aandachtspunt voor een volgende fase**: geen Search Console-data beschikbaar om te bevestigen of dit daadwerkelijk lokaal zoekverkeer oplevert (zelfde beperking als de rest van de site, zie "Search Console" hieronder). Dit was een klantwens, dus niet afhankelijk gemaakt van die data — maar een toekomstige fase zou de content per dorp moeten verfijnen zodra zoekdata beschikbaar komt.
 
 ## Search Console
 
