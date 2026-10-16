@@ -3,6 +3,7 @@ import { Container } from '../ui/Container'
 import { Button } from '../ui/Button'
 import { Reveal } from '../ui/Reveal'
 import { ROUTES } from '../../lib/routes'
+import { trackEvent } from '../../lib/analytics'
 
 export function DecisionCta() {
   return (
@@ -15,8 +16,13 @@ export function DecisionCta() {
             uw pand. Aan de hand daarvan adviseren we welk pakket het beste past.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <Button to={ROUTES.energieIndicatie}>Start de gratis energie-indicatie</Button>
-            <Button to={ROUTES.contact} variant="ghost">
+            <Button
+              to={ROUTES.energieIndicatie}
+              onClick={() => trackEvent('cta_click', { cta: 'energie_indicatie', location: 'decision_cta' })}
+            >
+              Start de gratis energie-indicatie
+            </Button>
+            <Button to={ROUTES.contact} variant="ghost" onClick={() => trackEvent('cta_click', { cta: 'contact', location: 'decision_cta' })}>
               Stel uw vraag
             </Button>
           </div>

@@ -1,6 +1,7 @@
 import { Container } from '../ui/Container'
 import { Button } from '../ui/Button'
 import { ROUTES } from '../../lib/routes'
+import { trackEvent } from '../../lib/analytics'
 
 /**
  * SEO/performance-ronde (2026-10-13): de hero-tekst en -foto stonden
@@ -32,8 +33,14 @@ export function Hero() {
             wachten, en wat eerst onderzocht moet worden.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button to={ROUTES.contact}>Bespreek uw bedrijfspand</Button>
-            <Button to={ROUTES.energieIndicatie} variant="outline">
+            <Button to={ROUTES.contact} onClick={() => trackEvent('cta_click', { cta: 'contact', location: 'hero' })}>
+              Bespreek uw bedrijfspand
+            </Button>
+            <Button
+              to={ROUTES.energieIndicatie}
+              variant="outline"
+              onClick={() => trackEvent('cta_click', { cta: 'energie_indicatie', location: 'hero' })}
+            >
               Start de gratis energie-indicatie
             </Button>
           </div>

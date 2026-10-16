@@ -34,7 +34,7 @@ globalThis.document = {
   },
 }
 
-const { loadAnalytics, loadTrustpilot, revokeAnalytics } = await import('./analytics.js')
+const { loadAnalytics, loadTrustpilot, revokeAnalytics, trackEvent } = await import('./analytics.js')
 
 test('loadAnalytics: doet niets als window.gtag geen functie is (gtag.js nog niet geladen)', () => {
   const origineel = globalThis.window.gtag
@@ -90,4 +90,28 @@ test('loadTrustpilot: een tweede aanroep voegt het script niet nogmaals toe', ()
   appendedScripts.length = 0
   loadTrustpilot()
   assert.equal(appendedScripts.length, 0)
+})
+
+test('trackEvent: stuurt een GA4-event met naam en params door naar gtag', () => {
+  globalThis.window.gtag = (...args) => calls.push(args)
+  calls.length = 0
+  trackEvent('cta_click', { cta: 'energie_indicatie', location: 'hero' })
+  assert.equal(calls.length, 1)
+  assert.deepEqual(calls[0], ['event', 'cta_click', { cta: 'energie_indicatie', location: 'hero' }])
+})
+
+test('trackEvent: werkt zonder params-argument', () => {
+  calls.length = 0
+  trackEvent('energiescan_gestart')
+  assert.equal(calls.length, 1)
+  assert.deepEqual(calls[0], ['event', 'energiescan_gestart', {}])
+})
+
+test('trackEvent: doet niets als window.gtag geen functie is', () => {
+  const origineel = globalThis.window.gtag
+  globalThis.window.gtag = undefined
+  calls.length = 0
+  assert.doesNotThrow(() => trackEvent('contact_form_verzonden'))
+  assert.equal(calls.length, 0)
+  globalThis.window.gtag = origineel
 })

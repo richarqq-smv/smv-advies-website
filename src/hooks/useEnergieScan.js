@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react'
+import { trackEvent } from '../lib/analytics'
 import { berekenResultaat } from '../lib/energieScan/calculations'
 import { buildEmailParams } from '../lib/energieScan/emailParams'
 import { buildInterneLeadParams, buildKlantBevestigingParams } from '../lib/energieScan/emailAudiences'
@@ -82,6 +83,11 @@ export function useEnergieScan() {
   const [state, dispatch] = useReducer(reducer, initialState)
   const toastTimer = useRef(null)
   const isSubmittingRef = useRef(false)
+  // Voorkomt een dubbel 'energiescan_gestart'-event als een bezoeker na
+  // stap 1 terugnavigeert (goToStep) en opnieuw op "Volgende" klikt — de
+  // ref blijft voor de hele levensduur van deze hook-instantie (één
+  // scansessie) op true staan, in tegenstelling tot state.step.
+  const gestartRef = useRef(false)
 
   useEffect(() => {
     if (!state.toast) return undefined
@@ -103,6 +109,10 @@ export function useEnergieScan() {
     if (!isValid) {
       dispatch({ type: 'VALIDATION_FAILED', errors, toast })
       return
+    }
+    if (state.step === 1 && !gestartRef.current) {
+      gestartRef.current = true
+      trackEvent('energiescan_gestart')
     }
     dispatch({ type: 'GO_TO_STEP', step: state.step + 1 })
   }, [state])
@@ -128,6 +138,9 @@ export function useEnergieScan() {
       const result = berekenResultaat(prepareCalculationInput(state.values))
       dispatch({ type: 'SUBMIT_SUCCESS', result })
       isSubmittingRef.current = false
+      // Geen formulierinhoud/persoonsgegevens als eventdata — alleen het
+      // feit dat de scan is afgerond.
+      trackEvent('energiescan_voltooid')
 
       // Sending the lead never blocks or hides the result — it's already
       // shown by the dispatch above. This only updates the small

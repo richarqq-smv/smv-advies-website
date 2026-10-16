@@ -4,6 +4,7 @@ import { Button } from '../ui/Button'
 import { Reveal } from '../ui/Reveal'
 import { ROUTES } from '../../lib/routes'
 import { COMPANY } from '../../data/company'
+import { trackEvent } from '../../lib/analytics'
 
 /**
  * `heading`/`description` zijn optioneel en vervangen alleen de tekst —
@@ -39,8 +40,15 @@ export function ClosingCta({ heading = 'Klaar voor de eerste stap?', description
             <p className="mt-3 max-w-[50ch] text-white/70">{tekst}</p>
           </div>
           <div className="flex shrink-0 flex-wrap gap-3">
-            <Button to={ROUTES.contact}>Bespreek uw bedrijfspand</Button>
-            <Button to={ROUTES.energieIndicatie} variant="outline" className="border-white/30 text-white hover:bg-white/10">
+            <Button to={ROUTES.contact} onClick={() => trackEvent('cta_click', { cta: 'contact', location: 'closing_cta' })}>
+              Bespreek uw bedrijfspand
+            </Button>
+            <Button
+              to={ROUTES.energieIndicatie}
+              variant="outline"
+              className="border-white/30 text-white hover:bg-white/10"
+              onClick={() => trackEvent('cta_click', { cta: 'energie_indicatie', location: 'closing_cta' })}
+            >
               Start de gratis energie-indicatie
             </Button>
           </div>

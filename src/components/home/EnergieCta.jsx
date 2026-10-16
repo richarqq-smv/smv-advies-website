@@ -4,6 +4,7 @@ import { Container } from '../ui/Container'
 import { Button } from '../ui/Button'
 import { Reveal } from '../ui/Reveal'
 import { ROUTES } from '../../lib/routes'
+import { trackEvent } from '../../lib/analytics'
 
 const TOOL_STEPS = [
   { icon: House, label: 'Uw pand' },
@@ -33,7 +34,12 @@ export function EnergieCta() {
           </ul>
 
           <div className="mt-8">
-            <Button to={ROUTES.energieIndicatie}>Start de gratis energie-indicatie</Button>
+            <Button
+              to={ROUTES.energieIndicatie}
+              onClick={() => trackEvent('cta_click', { cta: 'energie_indicatie', location: 'energie_cta' })}
+            >
+              Start de gratis energie-indicatie
+            </Button>
           </div>
         </Reveal>
       </Container>

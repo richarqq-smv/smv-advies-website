@@ -2,6 +2,7 @@ import { Lightning, Phone } from '@phosphor-icons/react'
 import { COMPANY } from '../../data/company'
 import { ROUTES } from '../../lib/routes'
 import { Button } from '../ui/Button'
+import { trackEvent } from '../../lib/analytics'
 
 /**
  * Mobile/tablet-only sticky action bar (quick access to the indicatietool
@@ -10,7 +11,12 @@ import { Button } from '../ui/Button'
 export function StickyMobileActions() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 flex gap-3 border-t border-border bg-background/95 p-3 backdrop-blur-sm min-[1440px]:hidden">
-      <Button to={ROUTES.energieIndicatie} variant="primary" className="flex-1">
+      <Button
+        to={ROUTES.energieIndicatie}
+        variant="primary"
+        className="flex-1"
+        onClick={() => trackEvent('cta_click', { cta: 'energie_indicatie', location: 'sticky_mobile' })}
+      >
         <Lightning size={18} weight="bold" />
         Indicatie
       </Button>

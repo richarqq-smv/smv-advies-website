@@ -100,9 +100,34 @@ Slechts één wijziging voldeed aan alle criteria (concreet, aantoonbaar nuttig,
 
 ## Vereist data (voor een toekomstige, data-gedreven ronde)
 
-- Search Console (zie `docs/SEO-ROADMAP.md`) — nog steeds niet gekoppeld.
-- GA4-conversiedata specifiek voor de energiescan (stap-uitval, met name uitval op stap 4) — zou bevinding 4 van een aanname naar een onderbouwd besluit kunnen brengen.
-- Eventuele click-data op de ContactFab versus de sticky mobiele balk — zou bevinding 2 kunnen onderbouwen of juist ontkrachten.
+- ~~Search Console — nog steeds niet gekoppeld.~~ **Bijgewerkt 2026-10-16 (fase 22)**: de eigenaar heeft Search Console-toegang en heeft exports gedeeld (Performance/Coverage/Breadcrumbs/HTTPS, periode t/m 2026-10-16). Zie "Fase 22" hieronder voor de bevindingen. Nog niet opgelost: deze data is nog te beperkt (3 klikken in 3 maanden — de site is pas sinds eind augustus 2026 geïndexeerd) om er inhoudelijke keuzes op te baseren; wel bruikbaar als technische nulmeting.
+- GA4-conversiedata specifiek voor de energiescan (stap-uitval, met name uitval op stap 4) — **bijgewerkt fase 22**: de meetinfrastructuur hiervoor bestaat nu (zie "Fase 22"), maar er is nog geen data verzameld. Zou bevinding 4 op termijn van een aanname naar een onderbouwd besluit kunnen brengen.
+- Eventuele click-data op de ContactFab versus de sticky mobiele balk — zou bevinding 2 kunnen onderbouwen of juist ontkrachten. Nog niet gemeten (buiten scope van fase 22 — alleen de 4 expliciet gevraagde events zijn toegevoegd, zie hieronder).
+
+## Fase 22 — conversieoptimalisatie en meetbaarheid (2026-10-16)
+
+**Aanleiding**: gerichte vervolgfase na fase 19–21, met voor het eerst Search Console-data beschikbaar (een van de 8 triggers uit `SEO-ROADMAP.md`) en een expliciete vraag om bestaande acties meetbaar te maken.
+
+**Search Console-bevindingen (periode: sinds koppeling t/m 2026-10-16, 28 dagen aan klikdata)**:
+- 3 klikken, ~450 vertoningen in 3 maanden — de site is zeer recent voor het eerst geïndexeerd (indexeringsgrafiek loopt pas sinds eind augustus 2026 op), dus dit is een nulmeting, geen basis voor contentbeslissingen.
+- Indexering: 8 van 32 toen bekende pagina's geïndexeerd, 20 "gevonden — momenteel niet geïndexeerd". Dit is normaal gedrag voor een jonge site in Google's crawl-prioritering, geen technische fout (sitemap/robots.txt zijn al eerder geverifieerd correct, zie `SEO-ROADMAP.md` fase 21).
+- 2 pagina's met een 404, 2 met een omleiding — de export bevat geen URL-detail (alleen aantallen); de homepage-performance-data toont zowel `https://smv-advies.nl/` als `http://smv-advies.nl/`-varianten, wat duidt op verwachte protocol-omleidingen. Exacte URL's zijn niet vastgesteld — zie "Openstaande punten".
+- `/over` rankt gemiddeld op positie 4,22 (sterk) maar met 0% CTR op 27 vertoningen — een mogelijk title/meta-aandachtspunt, maar met een steekproef van 27 vertoningen nog te dun om op te acteren.
+- Geen enkele wijziging is op basis van deze cijfers doorgevoerd — de dataset is te klein (consistent met de eigen regel in `SEO-ROADMAP.md`: pas reageren bij een aantoonbaar patroon, niet bij een handvol impressies).
+
+**Meetbaarheid toegevoegd**: de site had al GA4 met Consent Mode v2 (`index.html`, `public/gtag-init.js`, `public/consent-mode.js`, `src/lib/analytics.js`) — alleen automatische pageviews, geen custom events. Toegevoegd: `trackEvent(name, params)` in `src/lib/analytics.js`, en 4 events exact zoals gevraagd, zonder nieuwe provider/cookie/dependency:
+- `cta_click` (met `cta`/`location`-parameters, geen formulierdata) op de 9 primaire/tertiaire CTA-knoppen in `Hero`, `ClosingCta`, `EnergieCta`, `DecisionCta`, `StickyMobileActions` en `Header`.
+- `energiescan_gestart` — eenmalig bij het verlaten van stap 1 (`useEnergieScan.js`, met een ref-guard tegen dubbele telling bij terugnavigeren).
+- `energiescan_voltooid` — na een succesvolle berekening.
+- `contact_form_verzonden` — na succesvolle verzending van het contactformulier.
+
+Alle events respecteren de bestaande Consent Mode (geen aparte consent-check nodig, `gtag.js` regelt dit al zelf) en bevatten nooit formulierinhoud of persoonsgegevens — geverifieerd met een broncontrole-test (`src/lib/analyticsEventsBroncontrole.test.js`) die expliciet controleert dat geen enkele `trackEvent`-aanroep `values`/`email`/`telefoon`/`naam`/`vraag` doorgeeft.
+
+**CTA-pad en energie-indicatie-copy**: funnel (homepage/blogs → energie-indicatie/pakketten/contact), de energiescan-stappen, foutmeldingen en de uitleg over hoe/wanneer contact plaatsvindt zijn opnieuw doorgelopen. Geen concreet probleem gevonden — de copy is al accuraat (de "Bespreek mijn resultaat"-CTA is bewust opt-in, geen beloofde proactieve terugbelactie, en dat klopt met zowel de UI- als de e-mailtekst in `supabase/functions/send-email/index.ts`). Conform de opdracht ("als er geen concrete verbetering nodig blijkt, laat het dan ongemoeid") is hier dus niets gewijzigd.
+
+**Mobiel/toetsenbord**: steekproef met een automatisch aangestuurde browser (geen wijziging aan markup/CSS, dus laag risico) bevestigt dat de nieuwe `onClick`-handlers de bestaande toetsenbordbediening en knoppen niet breken — `Tab`/`Enter` bereikt en activeert de Header-CTA, de mobiele sticky-CTA werkt op 390px breedte, en stap 1→2 van de energiescan werkt zonder JavaScript-fouten (de enige geregistreerde foutmelding is het blokkeren van `googletagmanager.com` door het sandboxnetwerk van deze sessie zelf, niet door de website).
+
+**Niet gewijzigd**: energiescan-berekeningen, contactgegevens-gate, privacyvoorwaarden, e-mailafhandeling, prijzen/pakketten, URL's/canonicals/structured data/prerendering — geen van alle had een concrete, aantoonbare reden om aan te passen.
 
 ## Tests
 

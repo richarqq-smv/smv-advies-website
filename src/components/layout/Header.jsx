@@ -6,6 +6,7 @@ import { NAV_ITEMS } from '../../data/navigation'
 import { COMPANY } from '../../data/company'
 import { ROUTES } from '../../lib/routes'
 import { cn } from '../../lib/cn'
+import { trackEvent } from '../../lib/analytics'
 
 export function Header({ onMenuOpen }) {
   return (
@@ -60,7 +61,7 @@ export function Header({ onMenuOpen }) {
             <Phone size={16} weight="bold" />
             {COMPANY.phone}
           </a>
-          <Button to={ROUTES.contact} size="sm">
+          <Button to={ROUTES.contact} size="sm" onClick={() => trackEvent('cta_click', { cta: 'contact', location: 'header' })}>
             Contact
           </Button>
         </div>

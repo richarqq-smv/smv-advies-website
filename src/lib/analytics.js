@@ -60,3 +60,20 @@ export function revokeAnalytics() {
 
   window.gtag('consent', 'update', { analytics_storage: 'denied' })
 }
+
+/**
+ * Stuurt een GA4-event (conversiefase 2026-10-16: meetbaarheid van CTA's
+ * en de energie-indicatie/contactformulier-funnel). Bewust geen eigen
+ * consent-check hier — gtag.js's eigen Consent Mode v2 (zie de 'default'-
+ * configuratie in consent-mode.js) bepaalt al of een hit daadwerkelijk
+ * verstuurd wordt zolang analytics_storage nog 'denied' is; dat gedrag is
+ * identiek aan hoe pageviews via gtag-init.js al werken, dus events
+ * volgen dezelfde, al geteste toestemmingsregel. `params` mag nooit
+ * formulierinhoud of persoonsgegevens bevatten (naam/e-mail/telefoon/
+ * vraagtekst) — alleen niet-herleidbare categorieën zoals welke knop of
+ * welke pagina-sectie.
+ */
+export function trackEvent(name, params = {}) {
+  if (typeof window.gtag !== 'function') return
+  window.gtag('event', name, params)
+}

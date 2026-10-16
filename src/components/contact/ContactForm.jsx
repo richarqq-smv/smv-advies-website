@@ -4,6 +4,7 @@ import { TextField } from '../ui/TextField'
 import { TextArea } from '../ui/TextArea'
 import { Button } from '../ui/Button'
 import { sendMail } from '../../lib/sendMail'
+import { trackEvent } from '../../lib/analytics'
 import { validateContactForm, buildContactEmailParams } from '../../lib/contactForm'
 import { ROUTES } from '../../lib/routes'
 
@@ -48,6 +49,9 @@ export function ContactForm() {
       await sendMail('contact', buildContactEmailParams(values))
       setStatus('success')
       setValues(LEEG)
+      // Geen formulierinhoud/persoonsgegevens als eventdata — alleen het
+      // feit dat het formulier succesvol is verzonden.
+      trackEvent('contact_form_verzonden')
     } catch {
       setStatus('error')
     } finally {
