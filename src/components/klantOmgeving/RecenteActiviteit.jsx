@@ -1,4 +1,5 @@
-import { WarningCircle } from '@phosphor-icons/react'
+import { useId, useState } from 'react'
+import { CaretDown, WarningCircle } from '@phosphor-icons/react'
 import { formatTijdstipNl } from '../../lib/klantOmgeving/activiteitenFeed'
 
 /**
@@ -8,20 +9,44 @@ import { formatTijdstipNl } from '../../lib/klantOmgeving/activiteitenFeed'
  * puur presentatie, alle samenstelling/sortering zit al in
  * `activiteiten` (zie lib/klantOmgeving/activiteitenFeed.js), precies
  * zoals VandaagOverzicht.jsx dat voor zijn eigen categorieën doet.
+ *
+ * De lijst zelf is in-/uitklapbaar (standaard dicht, zodat het blokje geen
+ * grote ruimte op het dashboard inneemt zodra er veel activiteit is) —
+ * zelfde klik-/pijltje-interactie als components/ui/Accordion.jsx, maar
+ * hier losstaand toegepast omdat de "Meldingen"-kop en toelichting altijd
+ * zichtbaar moeten blijven (in tegenstelling tot Accordion, waar de title
+ * zelf de enige altijd-zichtbare tekst is).
  */
 export function RecenteActiviteit({ activiteiten }) {
+  const [open, setOpen] = useState(false)
+  const contentId = useId()
+
   return (
     <div className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
       <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Meldingen</p>
-      <h2 className="mb-1 text-xl text-primary">Recente activiteit</h2>
+      <div className="mb-1 flex items-center justify-between gap-3">
+        <h2 className="text-xl text-primary">Recente activiteit</h2>
+        {activiteiten.length > 0 ? (
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            aria-expanded={open}
+            aria-controls={contentId}
+            className="flex shrink-0 items-center gap-1 text-sm font-medium text-accent hover:underline"
+          >
+            {open ? 'Inklappen' : `Tonen (${activiteiten.length})`}
+            <CaretDown size={14} className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+          </button>
+        ) : null}
+      </div>
       <p className="mb-4 text-xs text-foreground-muted">Klantacties en mailverzending van de laatste tijd.</p>
 
       {activiteiten.length === 0 ? (
         <p className="rounded-lg border border-dashed border-border px-5 py-6 text-center text-sm text-foreground-muted">
           Nog geen activiteit om te tonen.
         </p>
-      ) : (
-        <ul className="flex flex-col gap-1.5">
+      ) : open ? (
+        <ul id={contentId} className="flex flex-col gap-1.5">
           {activiteiten.map((item) => (
             <li
               key={item.id}
@@ -37,7 +62,7 @@ export function RecenteActiviteit({ activiteiten }) {
             </li>
           ))}
         </ul>
-      )}
+      ) : null}
     </div>
   )
 }

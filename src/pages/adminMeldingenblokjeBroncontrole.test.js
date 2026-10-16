@@ -71,3 +71,22 @@ test('RecenteActiviteit.jsx: toont een lege-staat zonder activiteit, en markeert
   assert.match(RECENTE_ACTIVITEIT_JSX, /Nog geen activiteit om te tonen\./)
   assert.match(RECENTE_ACTIVITEIT_JSX, /item\.type === 'mail-mislukt'/)
 })
+
+/**
+ * Ronde 2026-10-16 (vervolg): de lijst zelf is in-/uitklapbaar gemaakt
+ * (standaard dicht) zodat het blokje geen grote ruimte inneemt zodra er
+ * veel activiteit is — de "Meldingen"-kop en toelichting blijven wel
+ * altijd zichtbaar, alleen de <ul> met items wordt getoggled.
+ */
+test('RecenteActiviteit.jsx: de activiteitenlijst is in-/uitklapbaar en staat standaard dicht', () => {
+  assert.match(RECENTE_ACTIVITEIT_JSX, /const \[open, setOpen\] = useState\(false\)/)
+  assert.match(RECENTE_ACTIVITEIT_JSX, /aria-expanded=\{open\}/)
+  // De <ul> met items mag alleen renderen als open true is EN er activiteit is.
+  const ulBlok = RECENTE_ACTIVITEIT_JSX.match(/\) : open \? \(\s*<ul[\s\S]*?<\/ul>\s*\) : null/)
+  assert.ok(ulBlok, 'de <ul> moet voorwaardelijk op `open` renderen')
+  // De kop ("Meldingen"/"Recente activiteit"/toelichting) staat buiten die
+  // voorwaardelijke render, dus blijft zichtbaar ongeacht open/dicht.
+  const koptekstIndex = RECENTE_ACTIVITEIT_JSX.indexOf('Recente activiteit</h2>')
+  const toggleIndex = RECENTE_ACTIVITEIT_JSX.indexOf('setOpen((o) => !o)')
+  assert.ok(koptekstIndex > -1 && toggleIndex > -1 && koptekstIndex < toggleIndex)
+})
