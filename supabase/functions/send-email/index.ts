@@ -19,6 +19,7 @@
 // gebruiken) escaped deze functie elke waarde wél vóór het invoegen in
 // HTML — een bewuste verbetering, geen regressie.
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
+import { createClient } from 'jsr:@supabase/supabase-js@2'
 
 const RESEND_API_URL = 'https://api.resend.com/emails'
 // Apart subdomein i.p.v. smv-advies.nl zelf: geen enkel risico op
@@ -559,6 +560,24 @@ Deno.serve(async (req: Request) => {
       html: message.html,
     }),
   })
+
+  // Mail-log voor het admin-dashboard-meldingenblokje (ronde 2026-10-16,
+  // zie 0052_mail_log.sql): elke verzendpoging wordt vastgelegd, ook een
+  // mislukte — dit is uitsluitend best-effort administratie en mag de
+  // eigenlijke mailrespons nooit beïnvloeden, vandaar een eigen try/catch
+  // die nooit naar boven gooit. Service-role-sleutel omzeilt RLS, net als
+  // rvo-subsidies-sync/index.ts al doet voor rvo_sync_log.
+  try {
+    const supabaseLog = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '')
+    await supabaseLog.from('mail_log').insert({
+      type: body.type,
+      ontvanger: message.to,
+      gelukt: resendResponse.ok,
+      foutmelding: resendResponse.ok ? null : `Resend-fout (status ${resendResponse.status})`,
+    })
+  } catch {
+    // Loggen is best-effort — nooit de hoofdflow breken.
+  }
 
   if (!resendResponse.ok) {
     // Resend's eigen foutdetails (kunnen configuratie-interna bevatten)

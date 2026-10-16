@@ -5,11 +5,28 @@ import { Section } from '../components/ui/Section'
 import { Container } from '../components/ui/Container'
 import { Button } from '../components/ui/Button'
 import { ROUTES } from '../lib/routes'
-import { adminListDossiers, adminListOffertes, adminListAdviespunten, adminListCommercieleKansen, listAfspraken } from '../lib/klantOmgeving/api'
+import {
+  adminListDossiers,
+  adminListOffertes,
+  adminListAdviespunten,
+  adminListCommercieleKansen,
+  listAfspraken,
+  adminListKlantActiviteitRuw,
+  adminListMailLog,
+} from '../lib/klantOmgeving/api'
 import { VandaagOverzicht } from '../components/klantOmgeving/VandaagOverzicht'
+import { RecenteActiviteit } from '../components/klantOmgeving/RecenteActiviteit'
 import { groepeerAdviespunten } from '../lib/dossier/adviesresultaat'
 import { AFSPRAAK_TYPE_LABELS, datumNaarIso, telAfsprakenOpDag, vindEerstvolgendeAfspraak } from '../lib/klantOmgeving/planning'
 import { formatDatumNl } from '../lib/klantOmgeving/offerte'
+import {
+  koppelcodeActiviteiten,
+  accountKoppelingActiviteiten,
+  documentActiviteiten,
+  pandActiviteiten,
+  mailActiviteiten,
+  mergeActiviteitenFeed,
+} from '../lib/klantOmgeving/activiteitenFeed'
 
 /**
  * Admin Dashboard (/admin) — sinds de Admin-ronde (2026-09-28) het
@@ -31,6 +48,7 @@ export default function Admin() {
   const [kansenAantal, setKansenAantal] = useState(null)
   const [afsprakenVandaag, setAfsprakenVandaag] = useState(null)
   const [eerstvolgendeAfspraak, setEerstvolgendeAfspraak] = useState(null)
+  const [activiteiten, setActiviteiten] = useState([])
 
   useEffect(() => {
     let actief = true
@@ -73,6 +91,22 @@ export default function Admin() {
       })
       .catch(() => {})
 
+    Promise.all([adminListKlantActiviteitRuw(), adminListMailLog()])
+      .then(([{ koppelcodes, contactpersonen, documenten, pandRelaties }, mailLog]) => {
+        if (!actief) return
+        const klantAccountIds = contactpersonen.map((c) => c.account_id)
+        setActiviteiten(
+          mergeActiviteitenFeed([
+            koppelcodeActiviteiten(koppelcodes),
+            accountKoppelingActiviteiten(contactpersonen),
+            documentActiviteiten(documenten, klantAccountIds),
+            pandActiviteiten(pandRelaties),
+            mailActiviteiten(mailLog),
+          ]),
+        )
+      })
+      .catch(() => {})
+
     return () => {
       actief = false
     }
@@ -89,6 +123,8 @@ export default function Admin() {
           ) : (
             <div className="flex flex-col gap-8">
               <VandaagOverzicht dossiers={dossiers} offertes={offertes} />
+
+              <RecenteActiviteit activiteiten={activiteiten} />
 
               <div>
                 <h2 className="mb-3 text-lg text-primary">Onderdelen</h2>

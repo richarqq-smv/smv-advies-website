@@ -1,0 +1,73 @@
+import { test } from 'node:test'
+import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
+
+/**
+ * Broncontrole (zelfde statische source-grep-patroon als de rest van dit
+ * project) voor het dashboard-meldingenblokje (ronde 2026-10-16):
+ * klantactiviteit + mailstatus op /admin. Het pure-logica-gedrag zelf
+ * (activiteitenFeed.js) heeft eigen unit-tests; dit bestand bewaakt alleen
+ * de bedrading (migratie → Edge Function → api.js → Admin.jsx) en de
+ * RLS-vorm van de nieuwe tabel.
+ */
+const MIGRATIE = readFileSync('supabase/migrations/0052_mail_log.sql', 'utf8')
+const EDGE_FUNCTIE = readFileSync('supabase/functions/send-email/index.ts', 'utf8')
+const API = readFileSync('src/lib/klantOmgeving/api.js', 'utf8')
+const ADMIN_JSX = readFileSync('src/pages/Admin.jsx', 'utf8')
+const RECENTE_ACTIVITEIT_JSX = readFileSync('src/components/klantOmgeving/RecenteActiviteit.jsx', 'utf8')
+
+test('0052: mail_log heeft RLS aan met uitsluitend een admin-only SELECT-policy — geen enkele INSERT/UPDATE/DELETE-policy voor de normale client', () => {
+  assert.match(MIGRATIE, /alter table public\.mail_log enable row level security;/)
+  assert.match(MIGRATIE, /create policy mail_log_select_admin on public\.mail_log for select\s*\n\s*using \(public\.is_admin\(\)\);/)
+  assert.equal(/for insert|for update|for delete/.test(MIGRATIE), false)
+})
+
+test('0052: type-kolom heeft een check-constraint op de 4 bekende mailtypes uit send-email/index.ts', () => {
+  assert.match(MIGRATIE, /check \(type in \('contact', 'energie-lead', 'energie-confirm', 'mjop'\)\)/)
+})
+
+test('send-email/index.ts: logt elke verzendpoging (gelukt/mislukt) naar mail_log via de service-role-sleutel, nooit de aanroeper-credentials', () => {
+  assert.match(EDGE_FUNCTIE, /import \{ createClient \} from 'jsr:@supabase\/supabase-js@2'/)
+  assert.match(EDGE_FUNCTIE, /Deno\.env\.get\('SUPABASE_SERVICE_ROLE_KEY'\)/)
+  assert.match(EDGE_FUNCTIE, /\.from\('mail_log'\)\.insert\(\{/)
+  assert.match(EDGE_FUNCTIE, /gelukt: resendResponse\.ok/)
+  // De logpoging zelf mag nooit de mailrespons laten crashen — moet in een
+  // eigen try/catch staan, los van de eigenlijke jsonResponse()-aanroepen.
+  const logBlok = EDGE_FUNCTIE.match(/try \{\s*\n\s*const supabaseLog[\s\S]*?\n {2}\} catch \{[\s\S]*?\n {2}\}/)
+  assert.ok(logBlok, 'de mail_log-insert staat niet in een eigen try/catch')
+})
+
+test('send-email/index.ts: logging gebeurt ná de Resend-aanroep (zodat gelukt het echte resultaat weerspiegelt), vóór de foutrespons naar de aanroeper', () => {
+  const resendIndex = EDGE_FUNCTIE.indexOf('const resendResponse = await fetch(RESEND_API_URL')
+  const logIndex = EDGE_FUNCTIE.indexOf("supabaseLog.from('mail_log')")
+  const foutResponseIndex = EDGE_FUNCTIE.indexOf("jsonResponse(req, { error: 'Verzenden via Resend is mislukt' }")
+  assert.ok(resendIndex > -1 && logIndex > -1 && foutResponseIndex > -1)
+  assert.ok(resendIndex < logIndex && logIndex < foutResponseIndex)
+})
+
+test('api.js: adminListKlantActiviteitRuw() haalt 4 brontabellen op, adminListMailLog() leest uitsluitend mail_log', () => {
+  assert.match(API, /export async function adminListKlantActiviteitRuw/)
+  const fn = API.match(/export async function adminListKlantActiviteitRuw[\s\S]*?\n\}/)
+  assert.ok(fn)
+  assert.match(fn[0], /\.from\('klant_koppelcodes'\)/)
+  assert.match(fn[0], /\.from\('contactpersonen'\)/)
+  assert.match(fn[0], /\.from\('documenten'\)/)
+  assert.match(fn[0], /\.from\('klant_pand_relaties'\)/)
+  assert.match(API, /export async function adminListMailLog[\s\S]*?\.from\('mail_log'\)/)
+})
+
+test('Admin.jsx: bouwt de activiteitenfeed uit alle 5 categorieën en toont die via RecenteActiviteit', () => {
+  assert.match(ADMIN_JSX, /import \{ RecenteActiviteit \} from '\.\.\/components\/klantOmgeving\/RecenteActiviteit'/)
+  assert.match(ADMIN_JSX, /adminListKlantActiviteitRuw\(\), adminListMailLog\(\)/)
+  assert.match(ADMIN_JSX, /koppelcodeActiviteiten\(koppelcodes\)/)
+  assert.match(ADMIN_JSX, /accountKoppelingActiviteiten\(contactpersonen\)/)
+  assert.match(ADMIN_JSX, /documentActiviteiten\(documenten, klantAccountIds\)/)
+  assert.match(ADMIN_JSX, /pandActiviteiten\(pandRelaties\)/)
+  assert.match(ADMIN_JSX, /mailActiviteiten\(mailLog\)/)
+  assert.match(ADMIN_JSX, /<RecenteActiviteit activiteiten=\{activiteiten\} \/>/)
+})
+
+test('RecenteActiviteit.jsx: toont een lege-staat zonder activiteit, en markeert een mislukte mail visueel anders dan de rest', () => {
+  assert.match(RECENTE_ACTIVITEIT_JSX, /Nog geen activiteit om te tonen\./)
+  assert.match(RECENTE_ACTIVITEIT_JSX, /item\.type === 'mail-mislukt'/)
+})

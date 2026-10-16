@@ -1670,3 +1670,54 @@ export async function adminGetRvoSyncStatus() {
   if (error) throw error
   return data
 }
+
+// --- Dashboard-meldingenblokje (ronde 2026-10-16) -----------------------------
+//
+// Puur leeswerk, geen nieuwe RLS/migratie nodig voor de klantactiviteit:
+// elke onderliggende tabel is via is_admin() al volledig leesbaar voor een
+// admin. lib/klantOmgeving/activiteitenFeed.js zet deze ruwe rijen om naar
+// één gesorteerde lijst (zie dat bestand voor de precieze "klant vs. admin"-
+// herkenning per categorie).
+
+/** Ruwe bouwstenen voor het klantactiviteit-deel van het meldingenblokje — 4 onafhankelijke, kleine queries. */
+export async function adminListKlantActiviteitRuw(limiet = 20) {
+  const [koppelcodes, contactpersonen, documenten, pandRelaties] = await Promise.all([
+    throwOnError(
+      await supabase
+        .from('klant_koppelcodes')
+        .select('koppelcode_id, gebruikt_op, klanten(naam, bedrijfsnaam)')
+        .not('gebruikt_op', 'is', null)
+        .order('gebruikt_op', { ascending: false })
+        .limit(limiet),
+    ),
+    throwOnError(
+      await supabase
+        .from('contactpersonen')
+        .select('contactpersoon_id, naam, account_id, created_at, klanten(naam, bedrijfsnaam)')
+        .not('account_id', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(limiet),
+    ),
+    throwOnError(
+      await supabase
+        .from('documenten')
+        .select('document_id, bestandsnaam, geupload_door, created_at, verwijderd_op, klanten(naam, bedrijfsnaam)')
+        .is('verwijderd_op', null)
+        .order('created_at', { ascending: false })
+        .limit(limiet),
+    ),
+    throwOnError(
+      await supabase
+        .from('klant_pand_relaties')
+        .select('relatie_id, aangemaakt_op, klanten(naam, bedrijfsnaam), panden(adres, ontstaan_via)')
+        .order('aangemaakt_op', { ascending: false })
+        .limit(limiet),
+    ),
+  ])
+  return { koppelcodes, contactpersonen, documenten, pandRelaties }
+}
+
+/** Recente mailverzendpogingen (gelukt/mislukt) — zie mail_log, 0052_mail_log.sql. */
+export async function adminListMailLog(limiet = 20) {
+  return throwOnError(await supabase.from('mail_log').select('*').order('created_at', { ascending: false }).limit(limiet))
+}
