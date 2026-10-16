@@ -33,6 +33,7 @@ export default function Registreren() {
   const [bezig, setBezig] = useState(false)
   const [fout, setFout] = useState(null)
   const [aangemeld, setAangemeld] = useState(false)
+  const [accountBestaatAl, setAccountBestaatAl] = useState(false)
 
   function submitKoppelGegevens(e) {
     e.preventDefault()
@@ -77,12 +78,23 @@ export default function Registreren() {
       if (koppelModus) {
         bewaarPendingKoppelcode({ code: koppelcode.trim(), naam: naam.trim(), email: email.trim() || null, telefoon: telefoon.trim() || null })
       }
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password: wachtwoord,
         options: { data: { naam, bedrijfsnaam } },
       })
       if (error) throw error
+      // Supabase stuurt om e-mail-enumeratie te voorkomen GEEN foutmelding
+      // terug als dit e-mailadres al een bevestigd account heeft — het
+      // signUp()-request slaagt "stilletjes" zonder dat er een nieuwe
+      // bevestigingsmail wordt verstuurd. Herkenbaar aan een lege
+      // identities-array (het officiële Supabase-patroon hiervoor). Zonder
+      // deze check toonde de pagina ten onrechte "controleer uw e-mail",
+      // terwijl er nooit een mail is verstuurd.
+      if (data?.user?.identities?.length === 0) {
+        setAccountBestaatAl(true)
+        return
+      }
       setAangemeld(true)
     } catch (err) {
       setFout(vertaalAuthFout(err))
@@ -115,7 +127,18 @@ export default function Registreren() {
 
       <Section tone="white" noTopPadding>
         <Container className="max-w-md">
-          {aangemeld ? (
+          {accountBestaatAl ? (
+            <div role="status" className="rounded-2xl border border-border bg-white p-6 text-sm shadow-sm sm:p-8">
+              <p className="mb-0 font-medium text-primary">Dit e-mailadres heeft al een account.</p>
+              <p className="mb-0 mt-2 text-foreground-muted">
+                Er is geen nieuwe bevestigingsmail verstuurd, want <strong className="text-primary">{email}</strong> is al geregistreerd en bevestigd.
+                Log in met uw bestaande wachtwoord{koppelModus ? ' — uw account wordt dan automatisch aan uw koppelcode gekoppeld.' : '.'}
+              </p>
+              <Link to={ROUTES.inloggen} state={location.state} className="mt-4 inline-block text-accent hover:underline">
+                Naar inloggen →
+              </Link>
+            </div>
+          ) : aangemeld ? (
             <div role="status" className="rounded-2xl border border-border bg-white p-6 text-sm shadow-sm sm:p-8">
               <p className="mb-0 font-medium text-primary">Bijna klaar — controleer uw e-mail.</p>
               <p className="mb-0 mt-2 text-foreground-muted">

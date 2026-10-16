@@ -161,6 +161,35 @@ test('Registreren.jsx: koppelModus (?koppelcode=1) vraagt eerst code/naam/telefo
   assert.ok(bewaarIndex !== -1 && signUpIndex !== -1 && bewaarIndex < signUpIndex)
 })
 
+/**
+ * Ronde 2026-10-16: een signUp() voor een e-mailadres dat al een bevestigd
+ * account heeft, geeft bij Supabase bewust GEEN foutmelding (anti-
+ * enumeratie) en verstuurt ook geen nieuwe bevestigingsmail — herkenbaar
+ * aan een lege identities-array in de respons. Zonder deze check toonde
+ * Registreren.jsx ten onrechte "controleer uw e-mail" terwijl er nooit een
+ * mail is verstuurd (live geconstateerd: auth-log toont "user_repeated_signup",
+ * geen mail-verzending).
+ */
+test('Registreren.jsx: herkent een signUp() voor een al-bevestigd e-mailadres (lege identities-array) en toont dan geen "controleer uw e-mail", maar een link naar inloggen', () => {
+  assert.match(REGISTREREN, /const \[accountBestaatAl, setAccountBestaatAl\] = useState\(false\)/)
+  const submitFn = REGISTREREN.match(/async function submit\(e\) \{[\s\S]*?\n  \}/)
+  assert.ok(submitFn)
+  assert.match(submitFn[0], /const \{ data, error \} = await supabase\.auth\.signUp\(/)
+  assert.match(submitFn[0], /if \(data\?\.user\?\.identities\?\.length === 0\) \{/)
+  assert.match(submitFn[0], /setAccountBestaatAl\(true\)/)
+  // De identities-check moet vóór setAangemeld(true) staan, anders wordt
+  // alsnog het "controleer uw e-mail"-scherm getoond.
+  const identitiesIndex = submitFn[0].indexOf('setAccountBestaatAl(true)')
+  const aangemeldIndex = submitFn[0].indexOf('setAangemeld(true)')
+  assert.ok(identitiesIndex !== -1 && aangemeldIndex !== -1 && identitiesIndex < aangemeldIndex)
+  // De UI-tak voor accountBestaatAl moet vóór de aangemeld-tak gerenderd
+  // worden (anders kan aangemeld nooit tonen, puur volgorde-onafhankelijk
+  // maar wel zo geschreven) en linkt naar inloggen.
+  assert.match(REGISTREREN, /\{accountBestaatAl \? \(/)
+  assert.match(REGISTREREN, /Dit e-mailadres heeft al een account\./)
+  assert.match(REGISTREREN, /<Link to=\{ROUTES\.inloggen\} state=\{location\.state\} className="mt-4 inline-block text-accent hover:underline">/)
+})
+
 test('Account.jsx: probeert bij het laden automatisch een bewaarde koppelcode te verzilveren, eenmalig per paginabezoek, met terugvalscherm bij mislukken', () => {
   assert.match(ACCOUNT, /import \{ leesPendingKoppelcode, wisPendingKoppelcode \} from '\.\.\/lib\/klantOmgeving\/pendingKoppelcode'/)
   assert.match(ACCOUNT, /const autoKoppelPoging = useRef\(false\)/)
