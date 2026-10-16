@@ -64,11 +64,41 @@ test('NieuweKlantModal.jsx: de "Aanmaken"-knop wordt uitgeschakeld tijdens het o
 })
 
 test('NieuweKlantModal.jsx: valideert zowel klant- als pandvelden vóór het aanroepen van de RPC', () => {
-  assert.match(nieuweKlantModalJsx, /valideerKlantRegistratie/)
+  assert.match(nieuweKlantModalJsx, /valideerAdminNieuweKlant/)
   assert.match(nieuweKlantModalJsx, /valideerNieuwPand/)
   const valideerIndex = nieuweKlantModalJsx.indexOf('setFouten(alleFouten)')
   const rpcIndex = nieuweKlantModalJsx.indexOf('maakKlantPandDossierAlsAdmin(')
   assert.ok(valideerIndex > -1 && rpcIndex > -1 && valideerIndex < rpcIndex)
+})
+
+/**
+ * Ronde 2026-10-16: admin_maak_klant_pand_dossier() eiste tot nu toe
+ * verplicht een e-mailadres OF telefoonnummer — sinds de koppelcode-zelf-
+ * koppelflow (0048_klant_koppelcode.sql + /registreren?koppelcode=1) hoeft
+ * een admin dat niet meer vooraf te weten. 0051 laat die ene eis vallen,
+ * de rest van de functie (naamcontrole, is_admin(), atomaire aanmaak)
+ * blijft ongewijzigd.
+ */
+test('0051: admin_maak_klant_pand_dossier() vereist alleen nog de naam, niet langer e-mailadres of telefoonnummer', () => {
+  const migratie0051 = readFileSync('supabase/migrations/0051_admin_klant_contact_optioneel.sql', 'utf8')
+  assert.match(migratie0051, /if not public\.is_admin\(\) then/)
+  assert.match(migratie0051, /if coalesce\(trim\(p_klant->>'naam'\), ''\) = '' then/)
+  assert.equal(/raise exception 'Vul een e-mailadres of telefoonnummer/.test(migratie0051), false)
+  assert.match(migratie0051, /revoke all on function public\.admin_maak_klant_pand_dossier\(jsonb, jsonb, text\) from public, anon;/)
+  assert.match(migratie0051, /grant execute on function public\.admin_maak_klant_pand_dossier\(jsonb, jsonb, text\) to authenticated;/)
+})
+
+test('klantValidatie.js: valideerAdminNieuweKlant() vereist alleen naam, niet e-mail/telefoon (in tegenstelling tot valideerKlantRegistratie())', () => {
+  const klantValidatieJs = readFileSync('src/lib/klantOmgeving/klantValidatie.js', 'utf8')
+  const fnMatch = klantValidatieJs.match(/export function valideerAdminNieuweKlant\([\s\S]*?\n\}/)
+  assert.ok(fnMatch, 'valideerAdminNieuweKlant() ontbreekt')
+  assert.match(fnMatch[0], /if \(!naam\?\.trim\(\)\) \{/)
+  assert.equal(/email|telefoon/.test(fnMatch[0]), false)
+})
+
+test('NieuweKlantModal.jsx: e-mailadres/telefoonnummer zijn in de UI expliciet als optioneel gelabeld', () => {
+  assert.match(nieuweKlantModalJsx, /label="E-mailadres \(optioneel\)"/)
+  assert.match(nieuweKlantModalJsx, /label="Telefoonnummer \(optioneel\)"/)
 })
 
 test('DossierDetail.jsx: PandSectie wordt uitsluitend getoond voor een admin', () => {

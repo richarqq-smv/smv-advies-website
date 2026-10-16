@@ -28,3 +28,26 @@ export function valideerKlantRegistratie({ naam, email, telefoon }) {
 
   return fouten
 }
+
+/**
+ * Admin-variant (NieuweKlantModal.jsx, ronde 2026-10-16): alleen de naam is
+ * verplicht. In tegenstelling tot valideerKlantRegistratie() hierboven
+ * (de klant registreert zichzelf, en moet dus zelf bereikbaar zijn) maakt
+ * een admin hier vaak alvast een Klant/Pand/Dossier aan vóórdat de klant
+ * zelf iets heeft ingevuld — de klant levert e-mailadres/telefoonnummer
+ * later zelf aan via de koppelcode-zelf-koppelflow (zie
+ * admin_genereer_klant_koppelcode()/koppel_klant_met_code() in
+ * 0048_klant_koppelcode.sql, en de /inloggen → /registreren?koppelcode=1-
+ * route). Spiegelt admin_maak_klant_pand_dossier() in
+ * 0051_admin_klant_contact_optioneel.sql, dat dezelfde verplichting al aan
+ * de databasekant heeft laten vallen.
+ */
+export function valideerAdminNieuweKlant({ naam }) {
+  const fouten = {}
+
+  if (!naam?.trim()) {
+    fouten.naam = 'Vul eerst de naam van de klant in.'
+  }
+
+  return fouten
+}

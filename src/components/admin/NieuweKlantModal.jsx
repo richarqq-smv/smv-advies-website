@@ -3,7 +3,7 @@ import { X, WarningCircle } from '@phosphor-icons/react'
 import { Button } from '../ui/Button'
 import { TextField } from '../ui/TextField'
 import { maakKlantPandDossierAlsAdmin } from '../../lib/klantOmgeving/api'
-import { valideerKlantRegistratie } from '../../lib/klantOmgeving/klantValidatie'
+import { valideerAdminNieuweKlant } from '../../lib/klantOmgeving/klantValidatie'
 import { valideerNieuwPand, ZAKELIJKE_GEBRUIKSTYPES, GEBRUIKSTYPE_LABELS } from '../../lib/klantOmgeving/pandValidatie'
 import { PACKAGES } from '../../data/packages'
 
@@ -42,8 +42,11 @@ function leegFormulier() {
  * gedeeltelijk aangemaakte Klant/Pand/Dossier-combinatie ontstaan.
  *
  * Validatie hergebruikt bewust bestaande, al geteste functies:
- * valideerKlantRegistratie() (klantValidatie.js, dezelfde regel als
- * Account.jsx's registreerKlant()-formulier) en valideerNieuwPand()
+ * valideerAdminNieuweKlant() (klantValidatie.js — alleen naam verplicht;
+ * bewust NIET valideerKlantRegistratie()'s e-mail-of-telefoon-eis, zie
+ * dat bestand: een admin maakt hier vaak alvast een klant aan vóórdat
+ * e-mailadres/telefoonnummer bekend zijn, de klant vult dat later zelf
+ * aan via de koppelcode-zelf-koppelflow) en valideerNieuwPand()
  * (pandValidatie.js, nieuw voor deze ronde maar zelfde "optioneel tenzij
  * functioneel cruciaal"-uitgangspunt als lib/dossier/pand.js).
  */
@@ -67,7 +70,7 @@ export function NieuweKlantModal({ onClose, onAangemaakt }) {
 
   async function aanmaken(e) {
     e.preventDefault()
-    const klantFouten = valideerKlantRegistratie({ naam: form.klantNaam, email: form.email, telefoon: form.telefoon })
+    const klantFouten = valideerAdminNieuweKlant({ naam: form.klantNaam })
     const pandFouten = valideerNieuwPand({
       gebruikstype: form.gebruikstype,
       bouwjaar: form.bouwjaar,
@@ -133,8 +136,11 @@ export function NieuweKlantModal({ onClose, onAangemaakt }) {
             <h3 className="text-xs font-semibold tracking-[0.1em] text-foreground-muted uppercase">Klant</h3>
             <TextField id="nk-naam" label="Naam" value={form.klantNaam} onChange={(v) => wijzig('klantNaam', v)} error={fouten.naam} required />
             <TextField id="nk-bedrijfsnaam" label="Bedrijfsnaam (indien van toepassing)" value={form.bedrijfsnaam} onChange={(v) => wijzig('bedrijfsnaam', v)} />
-            <TextField id="nk-email" label="E-mailadres" type="email" value={form.email} onChange={(v) => wijzig('email', v)} error={fouten.email} />
-            <TextField id="nk-telefoon" label="Telefoonnummer" value={form.telefoon} onChange={(v) => wijzig('telefoon', v)} error={fouten.telefoon} />
+            <TextField id="nk-email" label="E-mailadres (optioneel)" type="email" value={form.email} onChange={(v) => wijzig('email', v)} error={fouten.email} />
+            <TextField id="nk-telefoon" label="Telefoonnummer (optioneel)" value={form.telefoon} onChange={(v) => wijzig('telefoon', v)} error={fouten.telefoon} />
+            <p className="text-xs text-foreground-muted">
+              Nog niet bekend? Geen probleem — genereer na het aanmaken een koppelcode, dan vult de klant dit zelf aan bij het koppelen.
+            </p>
           </div>
 
           <div className="flex flex-col gap-3 border-t border-border pt-4">

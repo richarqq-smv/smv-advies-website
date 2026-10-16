@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { valideerKlantRegistratie } from './klantValidatie.js'
+import { valideerKlantRegistratie, valideerAdminNieuweKlant } from './klantValidatie.js'
 
 test('ontbrekende naam wordt geweigerd', () => {
   const fouten = valideerKlantRegistratie({ naam: '', email: 'a@b.nl', telefoon: '' })
@@ -40,4 +40,24 @@ test('ontbrekende waarden geven nooit een crash (undefined invoer)', () => {
   assert.ok(fouten.naam)
   assert.ok(fouten.email)
   assert.ok(fouten.telefoon)
+})
+
+test('valideerAdminNieuweKlant: ontbrekende naam wordt geweigerd', () => {
+  const fouten = valideerAdminNieuweKlant({ naam: '' })
+  assert.equal(fouten.naam, 'Vul eerst de naam van de klant in.')
+})
+
+test('valideerAdminNieuweKlant: alleen witruimte als naam telt als ontbrekend', () => {
+  const fouten = valideerAdminNieuweKlant({ naam: '   ' })
+  assert.equal(fouten.naam, 'Vul eerst de naam van de klant in.')
+})
+
+test('valideerAdminNieuweKlant: naam is voldoende, geen e-mail/telefoon vereist', () => {
+  const fouten = valideerAdminNieuweKlant({ naam: 'Dennis' })
+  assert.deepEqual(fouten, {})
+})
+
+test('valideerAdminNieuweKlant: ontbrekende waarde geeft nooit een crash (undefined invoer)', () => {
+  const fouten = valideerAdminNieuweKlant({ naam: undefined })
+  assert.ok(fouten.naam)
 })
