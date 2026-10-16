@@ -71,6 +71,22 @@ export default function Inloggen() {
               </Link>
             </div>
           </form>
+
+          {/*
+            Koppelcode-ronde (2026-10-16): een klant die al bij SMV bekend is
+            (admin_maak_klant_pand_dossier) en een koppelcode heeft ontvangen,
+            hoeft niet eerst blind een gewoon account aan te maken en pas
+            daarna, verstopt op /account, uit te zoeken hoe koppelen werkt —
+            deze link leidt rechtstreeks naar de koppelcode-eerst-variant van
+            /registreren (zie Registreren.jsx). Geen nieuwe route: zelfde
+            pagina, alleen een ander beginpunt via de querystring.
+          */}
+          <p className="mt-5 text-center text-sm text-foreground-muted">
+            Heeft u een koppelcode van SMV Advies ontvangen?{' '}
+            <Link to={`${ROUTES.registreren}?koppelcode=1`} state={location.state} className="font-medium text-accent hover:underline">
+              Meld u hiermee aan
+            </Link>
+          </p>
         </Container>
       </Section>
     </>

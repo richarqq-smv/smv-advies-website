@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, CheckCircle, DownloadSimple, Trash, UploadSimple, WarningCircle } from '@phosphor-icons/react'
 import { Seo } from '../components/seo/Seo'
@@ -31,6 +31,7 @@ import {
   archiveerDocument,
   herstelDocument,
 } from '../lib/klantOmgeving/api'
+import { leesPendingKoppelcode, wisPendingKoppelcode } from '../lib/klantOmgeving/pendingKoppelcode'
 import { AdviespuntKaart } from '../components/dossier/AdviesBeheer'
 import { valideerKlantRegistratie } from '../lib/klantOmgeving/klantValidatie'
 import { valideerNieuwPand, ZAKELIJKE_GEBRUIKSTYPES, GEBRUIKSTYPE_LABELS } from '../lib/klantOmgeving/pandValidatie'
@@ -116,6 +117,14 @@ export default function Account() {
   const [koppelBezig, setKoppelBezig] = useState(false)
   const [koppelFout, setKoppelFout] = useState(null)
 
+  // Koppelcode-eerst-aanmelding (2026-10-16, zie pendingKoppelcode.js en
+  // Registreren.jsx): een via /registreren?koppelcode=1 bewaarde koppelcode
+  // wordt hier, bij de eerste keer inloggen, automatisch verzilverd — zie
+  // laadAlles(). autoKoppelPoging voorkomt een herhaalde poging bij elke
+  // laadAlles()-aanroep (bv. na handmatig op "Opnieuw proberen").
+  const [autoKoppelMelding, setAutoKoppelMelding] = useState(null)
+  const autoKoppelPoging = useRef(false)
+
   useEffect(() => {
     if (!user) return
     // naam/bedrijfsnaam komen uit de auth-metadata die Registreren.jsx al
@@ -134,7 +143,30 @@ export default function Account() {
   async function laadAlles() {
     setLaden(true)
     try {
-      const mijnKlant = await getMijnKlant()
+      let mijnKlant = await getMijnKlant()
+
+      if (!mijnKlant?.klant && !autoKoppelPoging.current) {
+        autoKoppelPoging.current = true
+        const pending = leesPendingKoppelcode()
+        if (pending) {
+          try {
+            await koppelKlantMetCode(pending)
+            wisPendingKoppelcode()
+            setAutoKoppelMelding('Uw account is gekoppeld aan uw bestaande klantgegevens bij SMV Advies.')
+            mijnKlant = await getMijnKlant()
+          } catch (err) {
+            // Code was al gebruikt/verlopen, of iets anders ging mis — geen
+            // oneindige herhaling (zie autoKoppelPoging hierboven): de klant
+            // komt op het bestaande, handmatige koppelcode-formulier terecht,
+            // al voorgevuld, met de foutmelding erbij om het zelf te corrigeren.
+            wisPendingKoppelcode()
+            setKlantKeuze('koppelcode')
+            setKoppelcode({ code: pending.code, naam: pending.naam, email: pending.email ?? '', telefoon: pending.telefoon ?? '' })
+            setKoppelFout(err.message || 'Koppelen is niet gelukt. Probeer het opnieuw.')
+          }
+        }
+      }
+
       setKlant(mijnKlant?.klant ?? null)
       setContactpersoon(mijnKlant?.contactpersoon ?? null)
       if (mijnKlant?.klant) {
@@ -318,6 +350,12 @@ export default function Account() {
             </form>
           ) : (
             <div className="flex flex-col gap-6">
+              {autoKoppelMelding ? (
+                <p role="status" className="flex items-center gap-2 rounded-lg bg-accent/8 px-4 py-3 text-sm font-medium text-accent">
+                  <CheckCircle size={18} weight="fill" />
+                  {autoKoppelMelding}
+                </p>
+              ) : null}
               <nav aria-label="Onderdelen van uw account" className="flex flex-wrap gap-1.5">
                 {SECTIES.map((s) => (
                   <a key={s.id} href={`#${s.id}`} className="rounded-md bg-muted px-3 py-1.5 text-xs font-medium text-foreground-muted hover:bg-accent/10 hover:text-accent">

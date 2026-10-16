@@ -22,6 +22,9 @@ const MIGRATIE = lees('..', '..', 'supabase', 'migrations', '0048_klant_koppelco
 const API = lees('..', 'lib', 'klantOmgeving', 'api.js')
 const ADMIN_DOSSIERS = lees('AdminDossiers.jsx')
 const ACCOUNT = lees('Account.jsx')
+const INLOGGEN = lees('Inloggen.jsx')
+const REGISTREREN = lees('Registreren.jsx')
+const PENDING_KOPPELCODE = lees('..', 'lib', 'klantOmgeving', 'pendingKoppelcode.js')
 
 test('0048: klant_koppelcodes heeft RLS aan maar GEEN enkele policy — uitsluitend bereikbaar via de twee SECURITY DEFINER-functies', () => {
   assert.match(MIGRATIE, /alter table public\.klant_koppelcodes enable row level security;/)
@@ -114,4 +117,61 @@ test('Account.jsx: "Terug"-knoppen in beide formulieren zetten klantKeuze terug 
 
 test('Account.jsx: koppelt nooit automatisch op e-mailadres — klantKeuze/koppelKlantMetCode/registreerKlant bevatten geen e-mailvergelijking of -opzoeking', () => {
   assert.equal(/where.*email|\.eq\('email'|\.match\(\{\s*email/i.test(ACCOUNT), false)
+})
+
+/**
+ * Koppelcode-eerst-aanmelding (2026-10-16): een klant die al bij SMV bekend
+ * is, hoeft niet meer eerst blind te registreren en pas daarna op /account
+ * uit te zoeken hoe koppelen werkt — vanaf /inloggen kan de koppelcode nu
+ * als allereerste stap ingevuld worden, gevolgd door e-mail/wachtwoord op
+ * dezelfde /registreren-pagina (geen nieuwe route, alleen ?koppelcode=1).
+ * Omdat koppel_klant_met_code() een ingelogde sessie vereist (0048, "Niet
+ * ingelogd."), kan de code pas na de verplichte e-mailbevestiging echt
+ * verzilverd worden — pendingKoppelcode.js overbrugt dat via localStorage,
+ * Account.jsx rondt de koppeling af bij de eerste laadAlles() na inloggen.
+ */
+test('Inloggen.jsx: linkt naar de koppelcode-eerst-variant van /registreren (?koppelcode=1)', () => {
+  assert.match(INLOGGEN, /Heeft u een koppelcode van SMV Advies ontvangen\?/)
+  assert.match(INLOGGEN, /to=\{`\$\{ROUTES\.registreren\}\?koppelcode=1`\}/)
+})
+
+test('pendingKoppelcode.js: bewaart/leest/wist via één gedeelde localStorage-sleutel, met try/catch rond elke aanroep', () => {
+  assert.match(PENDING_KOPPELCODE, /const STORAGE_KEY = 'smv-pending-koppelcode'/)
+  assert.match(PENDING_KOPPELCODE, /export function bewaarPendingKoppelcode/)
+  assert.match(PENDING_KOPPELCODE, /export function leesPendingKoppelcode/)
+  assert.match(PENDING_KOPPELCODE, /export function wisPendingKoppelcode/)
+  // Zelfde defensieve patroon als lib/consent.js: nooit rechtstreeks
+  // localStorage aanroepen zonder try/catch (privénavigatie).
+  const tryCount = (PENDING_KOPPELCODE.match(/\btry\s*\{/g) ?? []).length
+  assert.equal(tryCount, 3, 'elke van de 3 functies moet zijn eigen try/catch rond localStorage hebben')
+})
+
+test('Registreren.jsx: koppelModus (?koppelcode=1) vraagt eerst code/naam/telefoon, dan pas e-mail/wachtwoord, en bewaart de code vóór signUp()', () => {
+  assert.match(REGISTREREN, /import \{ bewaarPendingKoppelcode \} from '\.\.\/lib\/klantOmgeving\/pendingKoppelcode'/)
+  assert.match(REGISTREREN, /const koppelModus = searchParams\.get\('koppelcode'\) === '1'/)
+  assert.match(REGISTREREN, /const \[koppelStap, setKoppelStap\] = useState\('gegevens'\)/)
+  assert.match(REGISTREREN, /function submitKoppelGegevens\(e\) \{/)
+  // bewaarPendingKoppelcode() moet vóór signUp() staan, niet erna (anders is
+  // de code nog niet weggeschreven als de e-mailbevestigingsredirect de
+  // pagina al heeft ververst).
+  const submitFn = REGISTREREN.match(/async function submit\(e\) \{[\s\S]*?\n  \}/)
+  assert.ok(submitFn)
+  const bewaarIndex = submitFn[0].indexOf('bewaarPendingKoppelcode(')
+  const signUpIndex = submitFn[0].indexOf('supabase.auth.signUp(')
+  assert.ok(bewaarIndex !== -1 && signUpIndex !== -1 && bewaarIndex < signUpIndex)
+})
+
+test('Account.jsx: probeert bij het laden automatisch een bewaarde koppelcode te verzilveren, eenmalig per paginabezoek, met terugvalscherm bij mislukken', () => {
+  assert.match(ACCOUNT, /import \{ leesPendingKoppelcode, wisPendingKoppelcode \} from '\.\.\/lib\/klantOmgeving\/pendingKoppelcode'/)
+  assert.match(ACCOUNT, /const autoKoppelPoging = useRef\(false\)/)
+  const laadAllesFn = ACCOUNT.match(/async function laadAlles\(\) \{[\s\S]*?\n  \}/)
+  assert.ok(laadAllesFn)
+  assert.match(laadAllesFn[0], /if \(!mijnKlant\?\.klant && !autoKoppelPoging\.current\) \{/)
+  assert.match(laadAllesFn[0], /autoKoppelPoging\.current = true/)
+  assert.match(laadAllesFn[0], /await koppelKlantMetCode\(pending\)/)
+  assert.match(laadAllesFn[0], /setKlantKeuze\('koppelcode'\)/)
+  // Bij zowel succes als mislukking wordt de bewaarde code gewist — nooit
+  // een oneindige herhaalpoging met een verlopen/al-gebruikte code.
+  const wisAanroepen = (laadAllesFn[0].match(/wisPendingKoppelcode\(\)/g) ?? []).length
+  assert.equal(wisAanroepen, 2)
 })
