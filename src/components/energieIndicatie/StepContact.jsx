@@ -1,9 +1,23 @@
+import { useState } from 'react'
 import { LockSimple, SpinnerGap } from '@phosphor-icons/react'
 import { TextField } from '../ui/TextField'
 import { StepHead } from './StepHead'
 import { Button } from '../ui/Button'
+import { TurnstileWidget } from '../ui/TurnstileWidget'
 
 export function StepContact({ values, errors, setValue, onSubmit, onBack, isSubmitting }) {
+  // Turnstile-token (ronde 2026-10-17) — zie ContactForm.jsx voor dezelfde
+  // reset-via-key-aanpak (één token is maar één keer bruikbaar).
+  const [turnstileToken, setTurnstileToken] = useState(null)
+  const [turnstileKey, setTurnstileKey] = useState(0)
+
+  function handleSubmit() {
+    if (!turnstileToken) return
+    onSubmit(turnstileToken)
+    setTurnstileToken(null)
+    setTurnstileKey((k) => k + 1)
+  }
+
   return (
     <div>
       <StepHead
@@ -65,11 +79,15 @@ export function StepContact({ values, errors, setValue, onSubmit, onBack, isSubm
         </p>
       </div>
 
+      <div className="mb-4">
+        <TurnstileWidget key={turnstileKey} onToken={setTurnstileToken} onExpire={() => setTurnstileToken(null)} />
+      </div>
+
       <div className="flex justify-between">
         <Button type="button" variant="ghost" onClick={onBack} disabled={isSubmitting}>
           Vorige
         </Button>
-        <Button type="button" onClick={onSubmit} disabled={isSubmitting}>
+        <Button type="button" onClick={handleSubmit} disabled={isSubmitting || !turnstileToken}>
           {isSubmitting ? (
             <SpinnerGap size={18} weight="bold" className="animate-spin motion-reduce:animate-none" />
           ) : null}

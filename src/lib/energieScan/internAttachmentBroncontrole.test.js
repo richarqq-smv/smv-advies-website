@@ -33,7 +33,11 @@ test('useEnergieScan.js: de JSON-tekst gaat alleen mee in de interne leadmail (l
 })
 
 test('useEnergieScan.js: verstuurt de interne leadmail via de gewone, bestaande sendMail() — geen sendForm/attachment-pad', () => {
-  assert.match(HOOK, /sendMail\('energie-lead', leadParams\)\.catch\(\(\) => \{\}\)/)
+  // Ronde 2026-10-17: lead + confirm gaan sinds de Turnstile-captcha in één
+  // aanroep (type 'energie'), omdat een captcha-token maar één keer
+  // geldig is — zie sendMailBroncontrole.test.js/adminTurnstileBroncontrole
+  // voor de Edge Function-kant van die wijziging.
+  assert.match(HOOK, /sendMail\('energie', \{ lead: leadParams, confirm: confirmParams \}, turnstileToken\)/)
   assert.equal(/sendEmailWithAttachment|sendForm/.test(HOOK), false)
 })
 

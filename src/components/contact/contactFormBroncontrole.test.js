@@ -24,8 +24,24 @@ function leesZonderComments(...relatievePad) {
 test('ContactForm.jsx: hergebruikt sendMail() uit lib/sendMail.js (Supabase Edge Function + Resend), geen eigen fetch/XHR naar een nieuw backend', () => {
   const bron = leesZonderComments('ContactForm.jsx')
   assert.match(bron, /import \{ sendMail \} from '\.\.\/\.\.\/lib\/sendMail'/)
-  assert.match(bron, /sendMail\('contact', buildContactEmailParams\(values\)\)/)
+  assert.match(bron, /sendMail\('contact', buildContactEmailParams\(values\), turnstileToken\)/)
   assert.equal(/fetch\(|XMLHttpRequest|axios/.test(bron), false)
+})
+
+/**
+ * Ronde 2026-10-17: Cloudflare Turnstile tegen het scriptmatig floden van
+ * de send-email Edge Function (zie het commentaar bij verifyTurnstile() in
+ * supabase/functions/send-email/index.ts). De verstuurknop mag pas actief
+ * worden ná een geldig token, en elke poging (geslaagd of niet) forceert
+ * een nieuwe widget-mount, want een token is maar één keer bruikbaar.
+ */
+test('ContactForm.jsx: de verstuurknop blijft uitgeschakeld zonder geldig Turnstile-token, en de widget krijgt na elke poging een nieuwe key', () => {
+  const bron = leesZonderComments('ContactForm.jsx')
+  assert.match(bron, /import \{ TurnstileWidget \} from '\.\.\/ui\/TurnstileWidget'/)
+  assert.match(bron, /<TurnstileWidget key=\{turnstileKey\} onToken=\{setTurnstileToken\} onExpire=\{\(\) => setTurnstileToken\(null\)\} \/>/)
+  assert.match(bron, /disabled=\{status === 'submitting' \|\| !turnstileToken\}/)
+  assert.match(bron, /if \(!turnstileToken\) return/)
+  assert.match(bron, /setTurnstileKey\(\(k\) => k \+ 1\)/)
 })
 
 test('ContactForm.jsx: valideert met de bestaande validateContactForm() vóór verzending, geen losse inline-validatie', () => {

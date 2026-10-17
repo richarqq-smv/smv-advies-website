@@ -471,6 +471,74 @@ function buildContactEmail(p: ContactParams) {
   }
 }
 
+// Cloudflare Turnstile (ronde 2026-10-17): vóór deze ronde kon dit publieke,
+// niet-geauthenticeerde endpoint door een simpel script buiten de browser om
+// (curl, direct POST'en — de CORS-check hierboven is alleen een
+// browserbeperking) herhaaldelijk aangeroepen worden, met als gevolg
+// onbeperkt verstuurde mail via SMV's eigen Resend-account (kosten +
+// risico op reputatieschade van mail.smv-advies.nl). Elke aanroep moet nu
+// een geldig Turnstile-token meesturen; dat token wordt hier geverifieerd
+// bij Cloudflare vóórdat er ook maar één Resend-aanroep gebeurt — bewust
+// ná de (gratis, lokale) type-/payloadchecks hieronder en vóór de
+// (kostbare) mailverzending, zelfde "goedkope check eerst"-volgorde als
+// bij elke verstandige bot-afweer.
+async function verifyTurnstile(token: string | undefined) {
+  if (!token) return false
+  const secret = Deno.env.get('TURNSTILE_SECRET_KEY')
+  if (!secret) return false // Fail closed: zonder secret kan niets geverifieerd worden.
+  try {
+    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ secret, response: token }),
+    })
+    if (!res.ok) return false
+    const data = await res.json()
+    return data?.success === true
+  } catch {
+    return false
+  }
+}
+
+type Message = { to: string; reply_to?: string; subject: string; html: string }
+
+async function sendViaResend(apiKey: string, message: Message) {
+  return fetch(RESEND_API_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: FROM_ADDRESS,
+      to: message.to,
+      reply_to: message.reply_to,
+      subject: message.subject,
+      html: message.html,
+    }),
+  })
+}
+
+/**
+ * Mail-log voor het admin-dashboard-meldingenblokje (0052_mail_log.sql).
+ * Best-effort, nooit de hoofdflow laten breken — vandaar een eigen
+ * try/catch die nooit naar boven gooit. Service-role-sleutel omzeilt RLS,
+ * net als rvo-subsidies-sync/index.ts al doet voor rvo_sync_log.
+ */
+async function logMailAttempt(type: string, ontvanger: string, resendResponse: Response) {
+  try {
+    const supabaseLog = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '')
+    await supabaseLog.from('mail_log').insert({
+      type,
+      ontvanger,
+      gelukt: resendResponse.ok,
+      foutmelding: resendResponse.ok ? null : `Resend-fout (status ${resendResponse.status})`,
+    })
+  } catch {
+    // Loggen is best-effort — nooit de hoofdflow breken.
+  }
+}
+
 // Verificatieronde 2026-10-15: een plain object-literal als dispatch-map
 // is hier aantoonbaar onveilig — `BUILDERS[body.type]` met een
 // aanroeper-gestuurde `body.type` kan via JS' eigen prototypeketen
@@ -484,9 +552,14 @@ function buildContactEmail(p: ContactParams) {
 // sleutel (óók "constructor"/"__proto__"/"toString") is gewoon een
 // losstaande, niet-gezette entry, dus `.get()` geeft daar altijd
 // `undefined` voor terug.
-const BUILDERS = new Map<string, (params: Record<string, unknown>) => { to: string; reply_to?: string; subject: string; html: string }>([
-  ['energie-lead', buildEnergieLeadEmail as never],
-  ['energie-confirm', buildEnergieConfirmEmail as never],
+//
+// 'energie-lead'/'energie-confirm' staan bewust NIET meer in deze publiek
+// bereikbare map (ronde 2026-10-17) — een Turnstile-token is maar één keer
+// geldig, dus de twee energie-indicatie-mails (intern + klantbevestiging)
+// worden voortaan samen verstuurd onder het type 'energie', met precies
+// één captcha-verificatie voor beide. Zie de 'energie'-afhandeling in
+// Deno.serve hieronder; de builder-functies zelf blijven ongewijzigd.
+const BUILDERS = new Map<string, (params: Record<string, unknown>) => Message>([
   ['mjop', buildMjopEmail as never],
   ['contact', buildContactEmail as never],
 ])
@@ -519,26 +592,46 @@ Deno.serve(async (req: Request) => {
     return jsonResponse(req, { error: 'Aanvraag te groot' }, 413)
   }
 
-  let body: { type?: string; params?: Record<string, unknown> }
+  let body: { type?: string; params?: Record<string, unknown>; turnstileToken?: string }
   try {
     body = JSON.parse(rawBody)
   } catch {
     return jsonResponse(req, { error: 'Ongeldige request-body' }, 400)
   }
 
-  // Expliciete allowlist via Map.get() (zie het commentaar bij BUILDERS
-  // hierboven): `body.type` moet letterlijk één van de 4 bekende strings
-  // zijn, inclusief tegen prototypeketen-sleutels als "constructor" of
-  // "__proto__" — de ontvanger van elk type ligt per builder hardcoded
-  // vast, nooit afkomstig van de aanroeper.
-  const builder = typeof body.type === 'string' ? BUILDERS.get(body.type) : undefined
-  if (!builder) {
+  // Stap 1: goedkope, lokale checks eerst — nog vóór de (netwerk-)aanroep
+  // naar Cloudflare's siteverify, laat staan Resend. Een onbekend type
+  // wordt meteen geweigerd, zonder dat er al een Turnstile-token nodig is.
+  const isEnergie = body.type === 'energie'
+  const builder = !isEnergie && typeof body.type === 'string' ? BUILDERS.get(body.type) : undefined
+  if (!isEnergie && !builder) {
     return jsonResponse(req, { error: 'Onbekend mailtype' }, 400)
   }
 
-  const message = builder(body.params ?? {})
-  if (!message.to) {
-    return jsonResponse(req, { error: 'Geen geldig ontvangeradres' }, 400)
+  // Bouw de bericht(en) vóór de captcha-check — ook dit is pure lokale
+  // tekstopbouw (escapeHtml, templates), geen netwerk nodig.
+  let message: Message | undefined
+  let leadMessage: Message | undefined
+  let confirmMessage: Message | undefined
+  if (isEnergie) {
+    const params = (body.params ?? {}) as { lead?: Record<string, unknown>; confirm?: Record<string, unknown> }
+    leadMessage = buildEnergieLeadEmail((params.lead ?? {}) as EnergieParams)
+    confirmMessage = buildEnergieConfirmEmail((params.confirm ?? {}) as EnergieParams)
+    if (!confirmMessage.to) {
+      return jsonResponse(req, { error: 'Geen geldig ontvangeradres' }, 400)
+    }
+  } else {
+    message = builder!(body.params ?? {})
+    if (!message.to) {
+      return jsonResponse(req, { error: 'Geen geldig ontvangeradres' }, 400)
+    }
+  }
+
+  // Stap 2: de duurdere check (netwerk-aanroep naar Cloudflare) — pas
+  // hierna wordt er ook maar iets aan Resend uitgegeven.
+  const turnstileOk = await verifyTurnstile(typeof body.turnstileToken === 'string' ? body.turnstileToken : undefined)
+  if (!turnstileOk) {
+    return jsonResponse(req, { error: 'Verificatie mislukt. Herlaad de pagina en probeer het opnieuw.' }, 403)
   }
 
   const apiKey = Deno.env.get('RESEND_API_KEY')
@@ -546,38 +639,26 @@ Deno.serve(async (req: Request) => {
     return jsonResponse(req, { error: 'E-mailservice is niet geconfigureerd' }, 500)
   }
 
-  const resendResponse = await fetch(RESEND_API_URL, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: FROM_ADDRESS,
-      to: message.to,
-      reply_to: message.reply_to,
-      subject: message.subject,
-      html: message.html,
-    }),
-  })
+  // Stap 3: de daadwerkelijke (kostbare) verzending.
+  if (isEnergie) {
+    // Onafhankelijk van elkaar verstuurd — zelfde "één mail mislukt blokkeert
+    // de andere nooit"-filosofie als voorheen (zie useEnergieScan.js), nu
+    // alleen beide binnen één request i.p.v. twee losse aanroepen, omdat één
+    // Turnstile-token maar één keer geldig is.
+    const leadResponse = await sendViaResend(apiKey, leadMessage!)
+    await logMailAttempt('energie-lead', leadMessage!.to, leadResponse)
 
-  // Mail-log voor het admin-dashboard-meldingenblokje (ronde 2026-10-16,
-  // zie 0052_mail_log.sql): elke verzendpoging wordt vastgelegd, ook een
-  // mislukte — dit is uitsluitend best-effort administratie en mag de
-  // eigenlijke mailrespons nooit beïnvloeden, vandaar een eigen try/catch
-  // die nooit naar boven gooit. Service-role-sleutel omzeilt RLS, net als
-  // rvo-subsidies-sync/index.ts al doet voor rvo_sync_log.
-  try {
-    const supabaseLog = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '')
-    await supabaseLog.from('mail_log').insert({
-      type: body.type,
-      ontvanger: message.to,
-      gelukt: resendResponse.ok,
-      foutmelding: resendResponse.ok ? null : `Resend-fout (status ${resendResponse.status})`,
-    })
-  } catch {
-    // Loggen is best-effort — nooit de hoofdflow breken.
+    const confirmResponse = await sendViaResend(apiKey, confirmMessage!)
+    await logMailAttempt('energie-confirm', confirmMessage!.to, confirmResponse)
+
+    if (!confirmResponse.ok) {
+      return jsonResponse(req, { error: 'Verzenden via Resend is mislukt' }, 502)
+    }
+    return jsonResponse(req, { ok: true })
   }
+
+  const resendResponse = await sendViaResend(apiKey, message!)
+  await logMailAttempt(body.type!, message!.to, resendResponse)
 
   if (!resendResponse.ok) {
     // Resend's eigen foutdetails (kunnen configuratie-interna bevatten)

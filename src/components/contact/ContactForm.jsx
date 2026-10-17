@@ -3,6 +3,7 @@ import { CheckCircle, LockSimple, SpinnerGap, WarningCircle } from '@phosphor-ic
 import { TextField } from '../ui/TextField'
 import { TextArea } from '../ui/TextArea'
 import { Button } from '../ui/Button'
+import { TurnstileWidget } from '../ui/TurnstileWidget'
 import { sendMail } from '../../lib/sendMail'
 import { trackEvent } from '../../lib/analytics'
 import { validateContactForm, buildContactEmailParams } from '../../lib/contactForm'
@@ -31,6 +32,12 @@ export function ContactForm() {
   // een snel dubbelklik kan dit twee keer aanroepen vóór een re-render de
   // knop echt disabled toont — zelfde patroon als useEnergieScan.js.
   const bezigRef = useRef(false)
+  // Turnstile-token (ronde 2026-10-17) — de send-email Edge Function
+  // verplicht nu een geldig token. `turnstileKey` forceert een volledig
+  // nieuwe widget-mount (dus een vers token) na elke verzendpoging, want
+  // een Turnstile-token is maar één keer bruikbaar.
+  const [turnstileToken, setTurnstileToken] = useState(null)
+  const [turnstileKey, setTurnstileKey] = useState(0)
 
   function setValue(id, v) {
     setValues((prev) => ({ ...prev, [id]: v }))
@@ -42,11 +49,12 @@ export function ContactForm() {
     const nieuweErrors = validateContactForm(values)
     setErrors(nieuweErrors)
     if (Object.keys(nieuweErrors).length > 0) return
+    if (!turnstileToken) return
 
     bezigRef.current = true
     setStatus('submitting')
     try {
-      await sendMail('contact', buildContactEmailParams(values))
+      await sendMail('contact', buildContactEmailParams(values), turnstileToken)
       setStatus('success')
       setValues(LEEG)
       // Geen formulierinhoud/persoonsgegevens als eventdata — alleen het
@@ -56,6 +64,8 @@ export function ContactForm() {
       setStatus('error')
     } finally {
       bezigRef.current = false
+      setTurnstileToken(null)
+      setTurnstileKey((k) => k + 1)
     }
   }
 
@@ -131,7 +141,9 @@ export function ContactForm() {
         </p>
       ) : null}
 
-      <Button type="submit" disabled={status === 'submitting'} className="self-start">
+      <TurnstileWidget key={turnstileKey} onToken={setTurnstileToken} onExpire={() => setTurnstileToken(null)} />
+
+      <Button type="submit" disabled={status === 'submitting' || !turnstileToken} className="self-start">
         {status === 'submitting' ? <SpinnerGap size={18} weight="bold" className="animate-spin motion-reduce:animate-none" /> : null}
         {status === 'submitting' ? 'Bezig met versturen…' : 'Verstuur uw vraag'}
       </Button>

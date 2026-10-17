@@ -37,12 +37,59 @@ test('send-email/index.ts: logt elke verzendpoging (gelukt/mislukt) naar mail_lo
   assert.ok(logBlok, 'de mail_log-insert staat niet in een eigen try/catch')
 })
 
-test('send-email/index.ts: logging gebeurt ná de Resend-aanroep (zodat gelukt het echte resultaat weerspiegelt), vóór de foutrespons naar de aanroeper', () => {
-  const resendIndex = EDGE_FUNCTIE.indexOf('const resendResponse = await fetch(RESEND_API_URL')
-  const logIndex = EDGE_FUNCTIE.indexOf("supabaseLog.from('mail_log')")
-  const foutResponseIndex = EDGE_FUNCTIE.indexOf("jsonResponse(req, { error: 'Verzenden via Resend is mislukt' }")
-  assert.ok(resendIndex > -1 && logIndex > -1 && foutResponseIndex > -1)
-  assert.ok(resendIndex < logIndex && logIndex < foutResponseIndex)
+/**
+ * Ronde 2026-10-17: de Resend-aanroep en de mail_log-logging zijn
+ * herbruikbaar gemaakt (sendViaResend()/logMailAttempt()) omdat de
+ * Turnstile-captcha-ronde ze op 3 plekken nodig had (contact/mjop, en
+ * lead+confirm binnen het samengevoegde 'energie'-type). Per tak moet
+ * gelden: eerst verzenden, dán loggen (zodat `gelukt` het echte resultaat
+ * weerspiegelt) — zie ook de 'Cloudflare Turnstile'-test hieronder voor de
+ * captcha-check die daar weer vóór staat.
+ */
+test('send-email/index.ts: logging gebeurt ná de Resend-aanroep (zodat gelukt het echte resultaat weerspiegelt) — zowel voor de energie-tak (lead + confirm) als de overige mailtypes', () => {
+  const energieTak = EDGE_FUNCTIE.match(/if \(isEnergie\) \{[\s\S]*?\n {2}\}\n\n {2}const resendResponse/)
+  assert.ok(energieTak, 'de energie-tak (lead + confirm) is niet gevonden')
+  const leadSendIndex = energieTak[0].indexOf('await sendViaResend(apiKey, leadMessage!)')
+  const leadLogIndex = energieTak[0].indexOf("logMailAttempt('energie-lead'")
+  const confirmSendIndex = energieTak[0].indexOf('await sendViaResend(apiKey, confirmMessage!)')
+  const confirmLogIndex = energieTak[0].indexOf("logMailAttempt('energie-confirm'")
+  assert.ok(leadSendIndex > -1 && leadLogIndex > -1 && confirmSendIndex > -1 && confirmLogIndex > -1)
+  assert.ok(leadSendIndex < leadLogIndex && leadLogIndex < confirmSendIndex && confirmSendIndex < confirmLogIndex)
+
+  const overigeTakIndex = EDGE_FUNCTIE.indexOf('const resendResponse = await sendViaResend(apiKey, message!)')
+  const overigeLogIndex = EDGE_FUNCTIE.indexOf('await logMailAttempt(body.type!, message!.to, resendResponse)')
+  assert.ok(overigeTakIndex > -1 && overigeLogIndex > -1 && overigeTakIndex < overigeLogIndex)
+})
+
+/**
+ * Cloudflare Turnstile (ronde 2026-10-17): elke aanroep moet een geldig
+ * token meesturen, geverifieerd vóórdat er iets aan Resend uitgegeven
+ * wordt — zie het "goedkope check eerst"-commentaar bij verifyTurnstile()
+ * in de Edge Function zelf.
+ */
+test('send-email/index.ts: Turnstile-verificatie gebeurt vóór elke Resend-aanroep, en faalt dicht (geen secret = geen geldige verificatie)', () => {
+  assert.match(EDGE_FUNCTIE, /async function verifyTurnstile\(token: string \| undefined\)/)
+  assert.match(EDGE_FUNCTIE, /if \(!secret\) return false/)
+  assert.match(EDGE_FUNCTIE, /challenges\.cloudflare\.com\/turnstile\/v0\/siteverify/)
+  const turnstileCheckIndex = EDGE_FUNCTIE.indexOf('const turnstileOk = await verifyTurnstile(')
+  const firstSendIndex = EDGE_FUNCTIE.indexOf('await sendViaResend(')
+  assert.ok(turnstileCheckIndex > -1 && firstSendIndex > -1 && turnstileCheckIndex < firstSendIndex)
+})
+
+/**
+ * Een Turnstile-token is maar één keer bruikbaar — de twee energie-
+ * indicatie-mails (intern + klantbevestiging) gaan daarom sinds deze ronde
+ * in één request onder type 'energie', met precies één captcha-check voor
+ * beide. 'energie-lead'/'energie-confirm' zijn bewust geen eigen,
+ * rechtstreeks aanroepbare typen meer in BUILDERS.
+ */
+test("send-email/index.ts: 'energie-lead'/'energie-confirm' staan niet meer los in BUILDERS — alleen 'contact'/'mjop', de energie-mails lopen via het samengevoegde 'energie'-type", () => {
+  const buildersBlok = EDGE_FUNCTIE.match(/const BUILDERS = new Map<[\s\S]*?\]\)/)
+  assert.ok(buildersBlok)
+  assert.equal(/'energie-lead'|'energie-confirm'/.test(buildersBlok[0]), false)
+  assert.match(buildersBlok[0], /'mjop'/)
+  assert.match(buildersBlok[0], /'contact'/)
+  assert.match(EDGE_FUNCTIE, /const isEnergie = body\.type === 'energie'/)
 })
 
 test('api.js: adminListKlantActiviteitRuw() haalt 4 brontabellen op, adminListMailLog() leest uitsluitend mail_log', () => {

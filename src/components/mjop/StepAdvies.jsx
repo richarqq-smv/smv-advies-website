@@ -1,7 +1,8 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Printer, Download, PaperPlaneTilt, FloppyDisk, SpinnerGap, CheckCircle, WarningCircle, Phone } from '@phosphor-icons/react'
 import { Button } from '../ui/Button'
 import { TextField } from '../ui/TextField'
+import { TurnstileWidget } from '../ui/TurnstileWidget'
 import { StatusBadge } from './StatusBadge'
 import { Timeline } from './Timeline'
 import { getComponentTypeLabel, optionLabel, BUILDING_USE_OPTIONS, STATUSES } from '../../lib/mjop/constants'
@@ -91,6 +92,17 @@ export function StepAdvies({ building, insights, onExport, onSend, sendStatus, o
   const summary = useMemo(() => buildAdviesSummary(insights), [insights])
   const isSending = sendStatus === 'sending'
   const isSavingMjop = saveMjopStatus === 'saving'
+  // Turnstile-token (ronde 2026-10-17) — zie ContactForm.jsx voor dezelfde
+  // reset-via-key-aanpak (één token is maar één keer bruikbaar).
+  const [turnstileToken, setTurnstileToken] = useState(null)
+  const [turnstileKey, setTurnstileKey] = useState(0)
+
+  function handleSend() {
+    if (!turnstileToken) return
+    onSend(turnstileToken)
+    setTurnstileToken(null)
+    setTurnstileKey((k) => k + 1)
+  }
 
   return (
     <div>
@@ -254,14 +266,15 @@ export function StepAdvies({ building, insights, onExport, onSend, sendStatus, o
           <Button type="button" variant="outline" onClick={onBack} disabled={isSending}>
             Terug
           </Button>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <Button type="button" variant="outline" onClick={() => window.print()}>
               <Printer size={17} /> Afdrukken / PDF
             </Button>
             <Button type="button" variant="outline" onClick={onExport}>
               <Download size={17} /> JSON exporteren
             </Button>
-            <Button type="button" onClick={onSend} disabled={isSending}>
+            <TurnstileWidget key={turnstileKey} onToken={setTurnstileToken} onExpire={() => setTurnstileToken(null)} />
+            <Button type="button" onClick={handleSend} disabled={isSending || !turnstileToken}>
               <PaperPlaneTilt size={17} /> Analyse naar SMV Advies sturen
             </Button>
           </div>

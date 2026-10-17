@@ -181,7 +181,7 @@ export function useMjopBuilding() {
   }, [state.building])
 
   const isSendingRef = useRef(false)
-  const sendAnalysis = useCallback(async () => {
+  const sendAnalysis = useCallback(async (turnstileToken) => {
     // Ref-guard i.p.v. alleen state, om dubbel verzenden door een snelle
     // dubbele klik te voorkomen (zelfde patroon als useEnergieScan.submit).
     if (isSendingRef.current) return
@@ -189,7 +189,7 @@ export function useMjopBuilding() {
     dispatch({ type: 'SEND_START' })
     try {
       const params = buildMjopEmailParams(state.building, insights)
-      await sendMail('mjop', params)
+      await sendMail('mjop', params, turnstileToken)
       dispatch({ type: 'SEND_SUCCESS' })
     } catch {
       dispatch({ type: 'SEND_ERROR' })

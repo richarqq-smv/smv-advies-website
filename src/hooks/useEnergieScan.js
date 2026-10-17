@@ -117,7 +117,7 @@ export function useEnergieScan() {
     dispatch({ type: 'GO_TO_STEP', step: state.step + 1 })
   }, [state])
 
-  const submit = useCallback(() => {
+  const submit = useCallback((turnstileToken) => {
     // Ref-based guard (not state-based): state updates are async, so a
     // fast double-click could fire this twice before a re-render
     // disables the button. The ref flips synchronously.
@@ -147,9 +147,11 @@ export function useEnergieScan() {
       // send-status indicator in the results view. Mirrors the original
       // tool's sendLeadEmails(): an internal lead mail to SMV Advies and
       // a separate confirmation mail to the visitor, sent independently
-      // so one failing never blocks the other. The indicator reflects
-      // the confirmation mail's outcome, matching the original's
-      // `sentNote`, which was also wired to that mail only.
+      // so one failing never blocks the other (see de 'energie'-afhandeling
+      // in supabase/functions/send-email/index.ts, die dat binnen één
+      // request bewaart). The indicator reflects the confirmation mail's
+      // outcome, matching the original's `sentNote`, which was also wired
+      // to that mail only.
       const emailParams = buildEmailParams(state.values, result)
       const leadParams = buildInterneLeadParams(emailParams, BUSINESS_EMAIL)
       const confirmParams = buildKlantBevestigingParams(emailParams, result, state.values.email)
@@ -161,8 +163,12 @@ export function useEnergieScan() {
       // internAttachment.js), geen downloadbaar bestand.
       leadParams[ENERGIE_INDICATIE_JSON_PARAM] = JSON.stringify(buildInterneJsonPayload(state.values, result), null, 2)
 
-      sendMail('energie-lead', leadParams).catch(() => {})
-      sendMail('energie-confirm', confirmParams)
+      // Ronde 2026-10-17: beide mails gaan voortaan in één aanroep onder
+      // type 'energie' — een Turnstile-token is maar één keer geldig, dus
+      // twee losse sendMail()-aanroepen (zoals voorheen) zou voor de
+      // tweede altijd falen. De Edge Function verstuurt lead/confirm
+      // daarbinnen nog steeds los van elkaar (zie index.ts).
+      sendMail('energie', { lead: leadParams, confirm: confirmParams }, turnstileToken)
         .then(() => dispatch({ type: 'LEAD_SENT' }))
         .catch(() => dispatch({ type: 'LEAD_FAILED' }))
     }, 650)
