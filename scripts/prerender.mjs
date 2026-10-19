@@ -228,6 +228,9 @@ async function injecteerContentSecurityPolicy() {
     "'self'",
     'https://www.googletagmanager.com',
     'https://widget.trustpilot.com',
+    // Cloudflare Turnstile (contactformulier/energie-indicatie/MJOP-tool,
+    // ronde 2026-10-17): laadt zijn eigen script vanaf dit domein.
+    'https://challenges.cloudflare.com',
     ...[...hashes].sort().map((h) => `'sha256-${h}'`),
   ].join(' ')
   const content = [
@@ -236,12 +239,16 @@ async function injecteerContentSecurityPolicy() {
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https://www.google-analytics.com https://*.google-analytics.com https://*.trustpilot.net https://*.trustpilot.com",
     "font-src 'self'",
-    "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://widget.trustpilot.com https://*.trustpilot.com",
-    // De TrustBox-widget rendert zijn inhoud in een iframe. Zonder deze
-    // regel valt frame-src terug op default-src 'self', waardoor die
-    // iframe stilletjes geblokkeerd wordt en alleen het lege, grijze
-    // widget-kader overblijft (ontdekt via live screenshot, 2026-10-14).
-    "frame-src 'self' https://widget.trustpilot.com https://*.trustpilot.com",
+    "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://widget.trustpilot.com https://*.trustpilot.com https://challenges.cloudflare.com",
+    // De TrustBox-widget rendert zijn inhoud in een iframe, en Turnstile
+    // doet dat ook voor de verificatie-uitdaging zelf — zonder deze regel
+    // valt frame-src terug op default-src 'self', waardoor zo'n iframe
+    // stilletjes geblokkeerd wordt (TrustBox: ontdekt via live screenshot,
+    // 2026-10-14; Turnstile: zelfde bug, ontdekt via live screenshot,
+    // 2026-10-19 — de verstuurknop bleef permanent uitgeschakeld zonder
+    // zichtbare foutmelding, want TurnstileWidget.jsx vangt een mislukte
+    // scriptload bewust stil af).
+    "frame-src 'self' https://widget.trustpilot.com https://*.trustpilot.com https://challenges.cloudflare.com",
     "base-uri 'self'",
     "form-action 'self'",
     "object-src 'none'",

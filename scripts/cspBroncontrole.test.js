@@ -45,3 +45,21 @@ test('prerender.mjs: alleen inline <script>-elementen (geen src-attribuut) worde
   const functieDeel = prerenderMjs.slice(functieStart, functieStart + 500)
   assert.match(functieDeel, /\\bsrc\\s\*=/)
 })
+
+/**
+ * Ronde 2026-10-19: live ontdekt dat de verstuurknop op het
+ * contactformulier permanent uitgeschakeld bleef zonder foutmelding — de
+ * CSP blokkeerde het Turnstile-script/de verificatie-iframe stilletjes
+ * (challenges.cloudflare.com stond niet in script-src/frame-src), en
+ * TurnstileWidget.jsx vangt een mislukte scriptload bewust stil af (geen
+ * crash, maar ook geen zichtbare foutmelding). Zelfde bugpatroon als de
+ * eerder al opgeloste Trustpilot-iframe-blokkade hierboven.
+ */
+test('prerender.mjs: script-src en frame-src staan challenges.cloudflare.com toe (Turnstile-script + verificatie-iframe)', () => {
+  const functieStart = prerenderMjs.indexOf('async function injecteerContentSecurityPolicy')
+  const functieDeel = prerenderMjs.slice(functieStart, functieStart + 2200)
+  const scriptSrcBlok = functieDeel.match(/const scriptSrcBronnen = \[[\s\S]*?\]/)
+  assert.ok(scriptSrcBlok, 'scriptSrcBronnen-array niet gevonden')
+  assert.match(scriptSrcBlok[0], /'https:\/\/challenges\.cloudflare\.com'/)
+  assert.match(functieDeel, /frame-src 'self'[^"]*https:\/\/challenges\.cloudflare\.com/)
+})
