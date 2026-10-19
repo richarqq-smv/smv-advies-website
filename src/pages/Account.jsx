@@ -38,6 +38,7 @@ import { valideerNieuwPand, ZAKELIJKE_GEBRUIKSTYPES, GEBRUIKSTYPE_LABELS } from 
 import { leesDossierContext, voegDossierContextToe } from '../lib/klantOmgeving/dossierNavigatie'
 import { bouwAccountActies } from '../lib/klantOmgeving/accountActies'
 import { bouwKlantTotalen } from '../lib/klantOmgeving/klantTotalen'
+import { genereerBadgePng } from '../lib/klantOmgeving/badgeCanvas'
 import { euro, formatDatumNl, OFFERTE_STATUS_LABELS } from '../lib/klantOmgeving/offerte'
 import { FACTUUR_STATUS_LABELS } from '../lib/klantOmgeving/factuur'
 
@@ -45,6 +46,7 @@ const LEEG_PAND = { omschrijving: '', adres: '', postcode: '', plaats: '', gebru
 
 const SECTIES = [
   { id: 'totalen', label: 'Totaal tot nu toe' },
+  { id: 'badge', label: 'Duurzaamheidsbadge' },
   { id: 'gegevens', label: 'Mijn gegevens' },
   { id: 'bedrijf', label: 'Mijn bedrijf' },
   { id: 'panden', label: 'Mijn panden' },
@@ -363,7 +365,7 @@ export default function Account() {
                 </p>
               ) : null}
               <nav aria-label="Onderdelen van uw account" className="flex flex-wrap gap-1.5">
-                {SECTIES.filter((s) => s.id !== 'totalen' || klantTotalen).map((s) => (
+                {SECTIES.filter((s) => (s.id !== 'totalen' && s.id !== 'badge') || klantTotalen).map((s) => (
                   <a key={s.id} href={`#${s.id}`} className="rounded-md bg-muted px-3 py-1.5 text-xs font-medium text-foreground-muted hover:bg-accent/10 hover:text-accent">
                     {s.label}
                   </a>
@@ -371,6 +373,7 @@ export default function Account() {
               </nav>
 
               <TotaalTotNuToe totalen={klantTotalen} />
+              <DuurzaamheidsbadgeKaart totalen={klantTotalen} bedrijfsnaam={klant?.bedrijfsnaam} />
               <MijnGegevens contactpersoon={contactpersoon} onOpgeslagen={setContactpersoon} />
               <MijnBedrijf klant={klant} onOpgeslagen={setKlant} />
               <MijnPanden panden={panden} setPanden={setPanden} klant={klant} dossiers={dossiers} setDossiers={setDossiers} />
@@ -436,6 +439,58 @@ function TotaalTotNuToe({ totalen }) {
         ) : null}
       </div>
     </div>
+  )
+}
+
+// --- Duurzaamheidsbadge --------------------------------------------------
+
+/**
+ * Downloadbare, deelbare afbeelding (projectplan "Klantwaarde-
+ * uitbreidingen", Fase 3 — #11) — zelfde cijfers en zelfde
+ * "geen data = geen kaart"-gating als TotaalTotNuToe hierboven. De
+ * verplichte disclaimer staat vast in badgeCanvas.js, niet hier.
+ */
+function DuurzaamheidsbadgeKaart({ totalen, bedrijfsnaam }) {
+  const [bezig, setBezig] = useState(false)
+  const [fout, setFout] = useState(null)
+
+  if (!totalen) return null
+
+  async function downloadBadge() {
+    setFout(null)
+    setBezig(true)
+    try {
+      const bytes = await genereerBadgePng(totalen, { bedrijfsnaam })
+      const blob = new Blob([bytes], { type: 'image/png' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'smv-duurzaamheidsbadge.png'
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      setFout('Het maken van de badge is niet gelukt. Probeer het opnieuw.')
+    } finally {
+      setBezig(false)
+    }
+  }
+
+  return (
+    <Kaart
+      id="badge"
+      titel="Duurzaamheidsbadge"
+      omschrijving="Download een afbeelding met uw eigen cijfers, bijvoorbeeld om te delen op uw website of LinkedIn."
+    >
+      <Button onClick={downloadBadge} disabled={bezig}>
+        <DownloadSimple size={18} />
+        {bezig ? 'Bezig...' : 'Badge downloaden'}
+      </Button>
+      {fout ? (
+        <p role="alert" className="mt-3 text-sm font-medium text-error">
+          {fout}
+        </p>
+      ) : null}
+    </Kaart>
   )
 }
 
