@@ -25,12 +25,16 @@ import { timingSafeEqual } from 'node:crypto'
 // echt mail laten versturen naar alle klanten, en zelfs in droogloop al
 // klant-e-mailadressen/dossiernummers uitlezen. Daarom nu een EXTRA,
 // eigen controle: een gedeeld intern geheim (X-Cron-Secret-header),
-// vergeleken met de CRON_SHARED_SECRET Edge Function-secret — hetzelfde
-// geheim staat ALLEEN in Supabase Vault (voor de cron-SQL) en als Edge
-// Function-secret (voor deze functie), nooit in git/migratiebestanden.
-// Ontbreekt de secret aan één van beide kanten, of komt hij niet overeen,
-// dan weigert de functie META met een generieke foutmelding — fail-closed,
-// geen enkele dossier-/klantgegeven wordt dan gelezen of getoond.
+// vergeleken met de waarde uit Supabase Vault — opgehaald via de smalle,
+// service-role-only RPC get_cron_shared_secret()
+// (0058_cron_shared_secret_rpc.sql). Het geheim zelf leeft UITSLUITEND in
+// Vault (willekeurig door de database zelf gegenereerd), nooit als losse
+// Edge Function-secret en nooit in git/migratiebestanden — zo hoeft
+// niemand dezelfde waarde handmatig op twee plekken identiek in te
+// voeren. Ontbreekt het vault-geheim, of komt de header niet overeen,
+// dan weigert de functie meteen met een generieke foutmelding —
+// fail-closed, geen enkele dossier-/klantgegeven wordt dan gelezen of
+// getoond.
 //
 // Deployment: zelfde opmerking als rvo-subsidies-sync/index.ts — dit
 // bestand is de bron van waarheid, gedeployed via de Supabase MCP.
@@ -214,12 +218,18 @@ async function sendViaResend(apiKey: string, to: string, subject: string, html: 
 }
 
 Deno.serve(async (req: Request) => {
-  // Stap 1 (correctieronde): fail-closed interne authenticatie. Zonder een
-  // geconfigureerde CRON_SHARED_SECRET, of zonder een overeenkomende
+  const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
+
+  // Stap 1 (correctieronde): fail-closed interne authenticatie. Het
+  // verwachte geheim staat NERGENS als Edge Function-secret of in git —
+  // het leeft uitsluitend in Supabase Vault (willekeurig door de database
+  // zelf gegenereerd) en wordt hier opgehaald via de smalle, service-role-
+  // only RPC get_cron_shared_secret() (zie 0058_cron_shared_secret_rpc.sql).
+  // Zonder een geconfigureerd vault-geheim, of zonder een overeenkomende
   // X-Cron-Secret-header, wordt NIETS gelezen, getoond of verstuurd — ook
   // geen droogloopresultaten, want die bevatten al klant-e-mailadressen.
-  const verwachteSecret = Deno.env.get('CRON_SHARED_SECRET')
   const gegevenSecret = req.headers.get(CRON_SECRET_HEADER)
+  const { data: verwachteSecret } = await supabase.rpc('get_cron_shared_secret')
   if (!verwachteSecret || !gegevenSecret || !secretsKomenOvereen(gegevenSecret, verwachteSecret)) {
     return new Response(JSON.stringify({ ok: false, error: 'Niet geautoriseerd' }), {
       status: 401,
@@ -237,8 +247,6 @@ Deno.serve(async (req: Request) => {
   } catch {
     // Geen/ongeldige JSON-body → dryRun blijft op de veilige standaard (true).
   }
-
-  const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
 
   const elfMaandenGrens = elfMaandenGeleden()
 

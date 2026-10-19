@@ -195,9 +195,15 @@ async function sendViaResend(apiKey: string, to: string, subject: string, html: 
 }
 
 Deno.serve(async (req: Request) => {
-  // Fail-closed interne authenticatie — zie jaarrapportage-sync/index.ts.
-  const verwachteSecret = Deno.env.get('CRON_SHARED_SECRET')
+  const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
+
+  // Fail-closed interne authenticatie — zelfde RPC-gebaseerde aanpak als
+  // jaarrapportage-sync/index.ts: het verwachte geheim leeft uitsluitend
+  // in Supabase Vault, opgehaald via de service-role-only RPC
+  // get_cron_shared_secret() (0058_cron_shared_secret_rpc.sql), nooit als
+  // losse Edge Function-secret en nooit in git.
   const gegevenSecret = req.headers.get(CRON_SECRET_HEADER)
+  const { data: verwachteSecret } = await supabase.rpc('get_cron_shared_secret')
   if (!verwachteSecret || !gegevenSecret || !secretsKomenOvereen(gegevenSecret, verwachteSecret)) {
     return new Response(JSON.stringify({ ok: false, error: 'Niet geautoriseerd' }), {
       status: 401,
@@ -212,8 +218,6 @@ Deno.serve(async (req: Request) => {
   } catch {
     // Geen/ongeldige JSON-body → dryRun blijft op de veilige standaard (true).
   }
-
-  const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
 
   const twaalfMaandenGrens = twaalfMaandenGeleden()
 

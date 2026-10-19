@@ -26,18 +26,23 @@ const JAARRAPPORTAGE = leesEdgeFunction('jaarrapportage-sync')
 const LOYALITEITSKORTING = leesEdgeFunction('loyaliteitskorting-sync')
 const SUBSIDIE_DEADLINE_MELDING = leesEdgeFunction('subsidie-deadline-melding')
 const CRON_SECRET_MIGRATIE = readFileSync(path.join(HIER, '..', '..', '..', 'supabase', 'migrations', '0057_cron_shared_secret.sql'), 'utf8')
+const CRON_SECRET_RPC_MIGRATIE = readFileSync(path.join(HIER, '..', '..', '..', 'supabase', 'migrations', '0058_cron_shared_secret_rpc.sql'), 'utf8')
 
 for (const [naam, bron] of [
   ['jaarrapportage-sync', JAARRAPPORTAGE],
   ['loyaliteitskorting-sync', LOYALITEITSKORTING],
 ]) {
-  test(`${naam}/index.ts: weigert fail-closed (401, generieke foutmelding) zonder geconfigureerde of overeenkomende CRON_SHARED_SECRET, vóór elke dossierlezing`, () => {
-    assert.match(bron, /const verwachteSecret = Deno\.env\.get\('CRON_SHARED_SECRET'\)/)
+  test(`${naam}/index.ts: weigert fail-closed (401, generieke foutmelding) zonder geconfigureerd of overeenkomend vault-geheim, vóór elke dossierlezing`, () => {
+    assert.match(bron, /const \{ data: verwachteSecret \} = await supabase\.rpc\('get_cron_shared_secret'\)/)
     assert.match(bron, /!verwachteSecret \|\| !gegevenSecret \|\| !secretsKomenOvereen\(gegevenSecret, verwachteSecret\)/)
     assert.match(bron, /status: 401/)
     const secretCheckIndex = bron.indexOf('verwachteSecret')
     const dossierQueryIndex = bron.indexOf(".from('dossiers')")
     assert.ok(secretCheckIndex > -1 && dossierQueryIndex > -1 && secretCheckIndex < dossierQueryIndex, 'de secret-check moet vóór de dossierquery staan')
+  })
+
+  test(`${naam}/index.ts: het geheim staat nooit als losse Edge Function-secret in de code (één bron van waarheid: Vault, via de RPC)`, () => {
+    assert.equal(/Deno\.env\.get\('CRON_SHARED_SECRET'\)/.test(bron), false)
   })
 
   test(`${naam}/index.ts: vergelijkt de secret constant-time (timingSafeEqual), nooit met ===/==`, () => {
@@ -96,6 +101,15 @@ test('0057_cron_shared_secret.sql: beide cron-jobs sturen voortaan een X-Cron-Se
   const xCronSecretRegels = CRON_SECRET_MIGRATIE.match(/'X-Cron-Secret', coalesce\(\(select decrypted_secret from vault\.decrypted_secrets where name = 'cron_shared_secret' limit 1\), ''\)/g)
   assert.equal(xCronSecretRegels?.length, 2)
   assert.equal(/CRON_SHARED_SECRET\s*=\s*'/.test(CRON_SECRET_MIGRATIE), false)
+})
+
+test('0058_cron_shared_secret_rpc.sql: get_cron_shared_secret() is security definer, leest uitsluitend uit vault, en is alleen uitvoerbaar door service_role', () => {
+  assert.match(CRON_SECRET_RPC_MIGRATIE, /create or replace function public\.get_cron_shared_secret\(\)/)
+  assert.match(CRON_SECRET_RPC_MIGRATIE, /security definer/)
+  assert.match(CRON_SECRET_RPC_MIGRATIE, /set search_path = ''/)
+  assert.match(CRON_SECRET_RPC_MIGRATIE, /select decrypted_secret from vault\.decrypted_secrets where name = 'cron_shared_secret'/)
+  assert.match(CRON_SECRET_RPC_MIGRATIE, /revoke all on function public\.get_cron_shared_secret\(\) from public, anon, authenticated/)
+  assert.match(CRON_SECRET_RPC_MIGRATIE, /grant execute on function public\.get_cron_shared_secret\(\) to service_role/)
 })
 
 test('subsidie-deadline-melding/index.ts: CORS/OPTIONS-preflight is aanwezig volgens het bestaande patroon in de repository', () => {
