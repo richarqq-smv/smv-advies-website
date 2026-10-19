@@ -1709,6 +1709,60 @@ export async function adminGetRvoSyncStatus() {
   return data
 }
 
+// --- Subsidie-deadline-signalering (Fase 7, #7 — projectplan "Klantwaarde-uitbreidingen") -------------------------
+
+/** Admin-only (RLS: subsidie_deadlines_select_admin) — alle deadlines, actief en uitgezet, nieuwste eerst. */
+export async function listSubsidieDeadlines() {
+  return throwOnError(await supabase.from('subsidie_deadlines').select('*').order('gecontroleerd_op', { ascending: false }))
+}
+
+/** Admin-only — een nieuw, bevestigd feit vastleggen (0056_subsidie_deadlines.sql: nooit inhoudelijk wijzigbaar na aanmaken, alleen uit te zetten via deactiveerSubsidieDeadline()). */
+export async function createSubsidieDeadline({ regeling, deadlineDatum = null, budgetStatus = null, bronNotitie }) {
+  return throwOnError(
+    await supabase
+      .from('subsidie_deadlines')
+      .insert({ regeling, deadline_datum: deadlineDatum, budget_status: budgetStatus, bron_notitie: bronNotitie })
+      .select('*')
+      .single(),
+  )
+}
+
+/** Admin-only — zet een verouderd/vervallen feit uit (geen delete, geen inhoudelijke wijziging toegestaan, zie bewaak_subsidie_deadline_integriteit()). */
+export async function deactiveerSubsidieDeadline(id) {
+  return throwOnError(await supabase.from('subsidie_deadlines').update({ actief: false }).eq('id', id).select('*').single())
+}
+
+/**
+ * Admin-only — alle per-dossier subsidietrajecten over ALLE dossiers heen
+ * (i.p.v. listDossierSubsidies(), die één dossier tegelijk doet), puur
+ * voor de matching in bouwGeraakteDossiers() (subsidieDeadlineMatching.js).
+ */
+export async function adminListAlleDossierSubsidies() {
+  return throwOnError(
+    await supabase
+      .from('dossier_subsidies')
+      .select('*, dossiers(dossier_id, status, klanten(naam, bedrijfsnaam, email), contactpersonen(naam, email), panden(omschrijving, adres))'),
+  )
+}
+
+/**
+ * Verstuurt de subsidie-deadline-melding naar de klant van één dossier —
+ * altijd een expliciete, per-dossier admin-actie (zie AdminSubsidies.jsx),
+ * nooit een geautomatiseerde massaverzending. Loopt via de nieuwe,
+ * geauthenticeerde Edge Function subsidie-deadline-melding (verifieert
+ * zelf opnieuw is_admin() — zie die functie), niet via sendMail()/
+ * send-email: dat endpoint is publiek en vereist een Turnstile-token,
+ * wat voor een al-ingelogde admin-actie geen zin heeft.
+ */
+export async function verstuurSubsidieDeadlineMelding({ dossierId, regeling, deadlineDatum, budgetStatus }) {
+  const { data, error } = await supabase.functions.invoke('subsidie-deadline-melding', {
+    body: { dossierId, regeling, deadlineDatum, budgetStatus },
+  })
+  if (error) throw new Error('Versturen is niet gelukt. Probeer het opnieuw.')
+  if (data?.ok === false) throw new Error(data.error || 'Versturen is niet gelukt. Probeer het opnieuw.')
+  return data
+}
+
 // --- Dashboard-meldingenblokje (ronde 2026-10-16) -----------------------------
 //
 // Puur leeswerk, geen nieuwe RLS/migratie nodig voor de klantactiviteit:

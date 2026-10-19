@@ -83,7 +83,13 @@ test('Geen nieuwe migratie toegevoegd voor DEZE traceerbaarheidsronde: dossier_s
   // toe aan dezelfde, al bestaande tabel — geen nieuwe tabel. 0047
   // (implementatieronde 2026-10-12, punt 2) voegt een klant-SELECT-policy
   // toe aan de bestaande dossier_subsidies/dossier_taken — ook hier geen
-  // nieuwe tabel, dezelfde invariant blijft overeind.
+  // nieuwe tabel, dezelfde invariant blijft overeind. 0056 (projectplan
+  // "Klantwaarde-uitbreidingen", Fase 7, 2026-10-19) voegt wél een
+  // nieuwe tabel toe (subsidie_deadlines), maar op een bewust ANDERE
+  // grain dan dossier_subsidies: regeling-breed (bv. "ISDE-budget 2026
+  // bijna op"), niet per-dossier-traject — dupliceert dossier_subsidies/
+  // rvo_subsidie_index dus niet, zie de uitgebreide toelichting in die
+  // migratie zelf.
   const migratiesDir = path.join(HIER, '..', '..', '..', 'supabase', 'migrations')
   const bestanden = readdirSync(migratiesDir)
   const subsidieMigraties = bestanden.filter((f) => /subsidie/i.test(f))
@@ -95,5 +101,6 @@ test('Geen nieuwe migratie toegevoegd voor DEZE traceerbaarheidsronde: dossier_s
     '0040_dossier_subsidie_specificaties_glas_ventilatie.sql',
     '0042_dossier_subsidie_specificaties_doelgroep_zakelijk.sql',
     '0047_subsidie_klant_gold_inzicht.sql',
+    '0056_subsidie_deadlines.sql',
   ])
 })
