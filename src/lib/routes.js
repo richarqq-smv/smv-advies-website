@@ -79,6 +79,9 @@ export const ROUTES = {
   adminSubsidieBegeleiding: (dossierId) => `/admin/dossiers/${dossierId}/subsidie`,
   adminPlanning: '/admin/planning',
   adminKansen: '/admin/kansen',
+  // Opties-paneel (Fase 6, #10 — projectplan "Klantwaarde-uitbreidingen")
+  // — feature-flag-infrastructuur, admin-only, geen klantroute.
+  adminOpties: '/admin/opties',
   // RVO-subsidie-naslag (onderzoeksronde 2026-10-07) — admin-only,
   // maandelijks gesynchroniseerde referentielijst, zie AdminSubsidies.jsx.
   adminSubsidies: '/admin/subsidies',

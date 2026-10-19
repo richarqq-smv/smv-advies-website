@@ -79,6 +79,9 @@ const ROUTES = [
   ROUTE_PATHS.adminDossiers,
   ROUTE_PATHS.adminPlanning,
   ROUTE_PATHS.adminKansen,
+  // Opties-paneel (Fase 6, #10 — projectplan "Klantwaarde-uitbreidingen"),
+  // zelfde reden als adminKansen hierboven.
+  ROUTE_PATHS.adminOpties,
   ROUTE_PATHS.adminSubsidies,
   // Administratie-uitbreiding (2026-09-28): zelfde reden als hierboven —
   // statische paden zonder parameter, achter RequireAuth/RequireAdmin.

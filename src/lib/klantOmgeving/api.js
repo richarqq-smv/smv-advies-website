@@ -1126,6 +1126,33 @@ export async function adminListCommercieleKansen() {
   )
 }
 
+// --- Opties-paneel / feature flags (Fase 6, #10 — projectplan "Klantwaarde-uitbreidingen") -------------------------
+
+/** Admin-only (RLS: feature_flags_select_admin) — volledige lijst, alfabetisch op naam zodat de volgorde op /admin/opties stabiel blijft. */
+export async function listFeatureFlags() {
+  return throwOnError(await supabase.from('feature_flags').select('*').order('naam', { ascending: true }))
+}
+
+/** Admin-only (RLS: feature_flags_update_admin) — zet uitsluitend `aan` + `laatst_gewijzigd_op`; sleutel/naam/omschrijving liggen vast per migratie (zie 0055_opties_paneel.sql). */
+export async function setFeatureFlag(sleutel, aan) {
+  return throwOnError(
+    await supabase.from('feature_flags').update({ aan, laatst_gewijzigd_op: new Date().toISOString() }).eq('sleutel', sleutel).select('*').single(),
+  )
+}
+
+/**
+ * Benchmark-vergelijking (eerste toepassing van het Opties-paneel) —
+ * uitsluitend de twee jsonb-snapshots die bouwBenchmark() (benchmark.js)
+ * nodig heeft, over ALLE dossiers heen. Admin-only (dezelfde RLS als
+ * elke andere adminListX()-query hier): een klant kan deze functie dus
+ * nooit succesvol aanroepen, en zelfs voor een admin levert dit geen
+ * klant-identificerende velden op (geen naam/adres/email) — puur de
+ * twee cijferreeksen die nodig zijn om een gemiddelde te berekenen.
+ */
+export async function adminListEnergieBenchmarkData() {
+  return throwOnError(await supabase.from('dossiers').select('dossier_id, energie_snapshot, pand_snapshot'))
+}
+
 // --- Facturen (Administratie-uitbreiding, 2026-09-28) -------------------------
 //
 // Volledig admin-only: `facturen` heeft uitsluitend admin-only

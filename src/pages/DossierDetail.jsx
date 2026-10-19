@@ -37,6 +37,8 @@ import {
   heropenDossier,
   listOpnamesVoorDossier,
   listDossierSubsidies,
+  listFeatureFlags,
+  adminListEnergieBenchmarkData,
 } from '../lib/klantOmgeving/api'
 import { magDossierArchiveren } from '../lib/klantOmgeving/dossierArchief'
 import { bouwDossierHealthCheck } from '../lib/klantOmgeving/dossierHealthCheck'
@@ -47,6 +49,7 @@ import { FACTUUR_STATUS_LABELS } from '../lib/klantOmgeving/factuur'
 import { buildInsights } from '../lib/mjop/linking'
 import { buildEnergieInsights } from '../lib/dossier/energieInsights'
 import { bouwKortingOpties, bouwKortingCode } from '../lib/klantOmgeving/loyaliteitskorting'
+import { bouwBenchmark } from '../lib/klantOmgeving/benchmark'
 
 /**
  * Detailpagina voor één Dossier — bereikbaar voor de eigen klant (RLS:
@@ -115,6 +118,11 @@ export default function DossierDetail() {
   const [heropenBezig, setHeropenBezig] = useState(false)
   const [heropenFout, setHeropenFout] = useState(false)
 
+  // Fase 6 (#10, projectplan "Klantwaarde-uitbreidingen") — alleen
+  // opgehaald/getoond als de Benchmark-vergelijking op /admin/opties
+  // daadwerkelijk aan staat, zie het effect hieronder.
+  const [benchmark, setBenchmark] = useState(null)
+
   useEffect(() => {
     let actief = true
     setLaden(true)
@@ -178,6 +186,27 @@ export default function DossierDetail() {
       actief = false
     }
   }, [dossierId, offerteRefresh])
+
+  // Fase 6 (#10): alleen de (lichte) extra aanroep doen als isAdmin al
+  // vaststaat — een klant triggert dit effect dus nooit, en een admin
+  // ziet de benchmark alleen als de vlag op /admin/opties ook echt aan
+  // staat. Faalt dit effect (bv. leesfout), dan blijft benchmark simpelweg
+  // null — nooit de rest van de pagina blokkeren.
+  useEffect(() => {
+    if (!isAdmin) return
+    let actief = true
+    Promise.all([listFeatureFlags(), adminListEnergieBenchmarkData()])
+      .then(([flags, alleDossiers]) => {
+        if (!actief) return
+        const vlag = flags.find((f) => f.sleutel === 'benchmark_vergelijking')
+        if (!vlag?.aan) return
+        setBenchmark(bouwBenchmark(dossierId, alleDossiers))
+      })
+      .catch(() => {})
+    return () => {
+      actief = false
+    }
+  }, [isAdmin, dossierId])
 
   async function downloaden(document) {
     setDownloadFoutId(null)
@@ -534,6 +563,13 @@ export default function DossierDetail() {
               */}
               {isAdmin ? <CommercieleKansSectie dossierId={dossier.dossier_id} /> : null}
               {/*
+                Fase 6 (#10, projectplan "Klantwaarde-uitbreidingen"):
+                uitsluitend zichtbaar als de Benchmark-vergelijking op
+                /admin/opties aan staat ÉN er genoeg vergelijkingsmateriaal
+                is (zie het effect hierboven / bouwBenchmark()).
+              */}
+              {isAdmin && benchmark ? <BenchmarkInfo benchmark={benchmark} /> : null}
+              {/*
                 Fase 5 (#8, projectplan "Klantwaarde-uitbreidingen"):
                 uitsluitend ter info/traceerbaarheid voor Richard — de
                 daadwerkelijke verzending gebeurt via de maandelijkse
@@ -545,6 +581,41 @@ export default function DossierDetail() {
         </Container>
       </Section>
     </>
+  )
+}
+
+/**
+ * Alleen-lezen weergave van de Benchmark-vergelijking (Fase 6, #10 —
+ * eerste toepassing van het Opties-paneel). `benchmark` is het resultaat
+ * van bouwBenchmark() — deze component rekent zelf niets uit, toont
+ * alleen de al-berekende, al-geldigheidsgecontroleerde cijfers.
+ */
+function BenchmarkInfo({ benchmark }) {
+  const verschil = benchmark.eigenWaarde - benchmark.gemiddelde
+  return (
+    <div className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
+      <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Benchmark-vergelijking</p>
+      <p className="mb-4 text-sm text-foreground-muted">
+        Energiekosten per m² per jaar, vergeleken met {benchmark.aantalVergeleken} andere {benchmark.aantalVergeleken === 1 ? 'dossier' : 'dossiers'} in het systeem.
+      </p>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="rounded-xl bg-muted px-5 py-4">
+          <p className="text-2xl font-semibold text-primary">€ {benchmark.eigenWaarde} / m²</p>
+          <p className="mt-1 text-xs text-foreground-muted">Dit pand</p>
+        </div>
+        <div className="rounded-xl bg-muted px-5 py-4">
+          <p className="text-2xl font-semibold text-primary">€ {benchmark.gemiddelde} / m²</p>
+          <p className="mt-1 text-xs text-foreground-muted">Gemiddelde van vergelijkbare dossiers</p>
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-foreground-muted">
+        {verschil === 0
+          ? 'Gelijk aan het gemiddelde.'
+          : verschil > 0
+            ? `€ ${verschil} per m² hoger dan het gemiddelde.`
+            : `€ ${Math.abs(verschil)} per m² lager dan het gemiddelde.`}
+      </p>
+    </div>
   )
 }
 

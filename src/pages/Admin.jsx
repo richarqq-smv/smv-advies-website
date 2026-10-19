@@ -181,6 +181,13 @@ export default function Admin() {
                       </p>
                     ) : null}
                   </DashboardKaart>
+
+                  {/*
+                    Fase 6 (#10, projectplan "Klantwaarde-uitbreidingen"):
+                    herbruikbare feature-flag-infrastructuur, eerste
+                    toepassing = de Benchmark-vergelijking.
+                  */}
+                  <DashboardKaart titel="Opties" omschrijving="Experimentele functionaliteit aan- of uitzetten." cta="Open opties" to={ROUTES.adminOpties} />
                 </div>
               </div>
             </div>

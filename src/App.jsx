@@ -40,6 +40,7 @@ const Admin = lazy(() => import('./pages/Admin'))
 const AdminDossiers = lazy(() => import('./pages/AdminDossiers'))
 const AdminPlanning = lazy(() => import('./pages/AdminPlanning'))
 const AdminKansen = lazy(() => import('./pages/AdminKansen'))
+const AdminOpties = lazy(() => import('./pages/AdminOpties'))
 const AdminSubsidies = lazy(() => import('./pages/AdminSubsidies'))
 const AdminOffertes = lazy(() => import('./pages/AdminOffertes'))
 const AdminFacturen = lazy(() => import('./pages/AdminFacturen'))
@@ -127,6 +128,7 @@ export default function App() {
               <Route path={ROUTES.watKanWachten} element={<WatKanWachten />} />
               <Route path={ROUTES.archief} element={<Archief />} />
               <Route path={ROUTES.adminKansen} element={<AdminKansen />} />
+              <Route path={ROUTES.adminOpties} element={<AdminOpties />} />
               <Route path={ROUTES.adminSubsidies} element={<AdminSubsidies />} />
               <Route path={ROUTES.adminOffertes} element={<AdminOffertes />} />
               <Route path={ROUTES.adminFacturen} element={<AdminFacturen />} />
