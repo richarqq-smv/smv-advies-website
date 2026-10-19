@@ -13,6 +13,7 @@
  * buildEnergieInsights().
  */
 import { STATUSES } from '../mjop/constants.js'
+import { buildInsights } from '../mjop/linking.js'
 
 export const PAKKET_RAPPORT_LABELS = {
   basis: 'Basis Pakket — QuickScan',
@@ -96,6 +97,67 @@ function bouwMaatregelRegel(advies, index) {
     besparing: advies.besparing_euro != null ? `${formatEuro(advies.besparing_euro)}/jaar` : null,
     terugverdientijd: advies.terugverdientijd_jaren != null ? `${advies.terugverdientijd_jaren} jaar` : null,
     prioriteit: advies.prioriteit ?? null,
+  }
+}
+
+/**
+ * Ronde 2026-10-19 (projectplan "Klantwaarde-uitbreidingen", #1): een kort
+ * "wat eerst"-zinnetje op basis van de reeds gesorteerde maatregelen — geen
+ * nieuwe berekening, uitsluitend de eerste maatregelen met een bekende
+ * terugverdientijd, in exact dezelfde volgorde als de maatregelentabel.
+ */
+export function bouwPrioriteitenSamenvatting(maatregelen) {
+  const top = maatregelen.filter((m) => m.terugverdientijd != null).slice(0, 3)
+  if (top.length === 0) return []
+  const items = top.map((m) => `${m.onderwerp} (${m.terugverdientijd})`)
+  return [`Op basis van de terugverdientijd adviseren wij te beginnen met: ${items.join(', ')}.`]
+}
+
+/**
+ * Ronde 2026-10-19 (#1): huidige vs. nieuwe energiekosten + CO₂-besparing
+ * voor het grafiekblok in het rapport — rechtstreeks uit de Energie-
+ * indicatie-snapshot (berekenResultaat(), zie calculations.js), geen eigen
+ * herberekening. `null` als er nog geen Energie-indicatie is uitgevoerd
+ * voor dit dossier — het grafiekblok wordt dan simpelweg overgeslagen
+ * (zie adviesrapportDocx.js), nooit met geschatte cijfers gevuld.
+ */
+export function bouwEnergieKostenOverzicht(energieSnapshot) {
+  const resultaat = energieSnapshot?.resultaat
+  if (!resultaat || resultaat.huidigeKosten == null) return null
+  const huidigeKosten = resultaat.huidigeKosten
+  const besparingPerJaar = resultaat.totaleBesparing ?? 0
+  return {
+    huidigeKosten: Math.round(huidigeKosten),
+    nieuweKosten: Math.round(Math.max(0, huidigeKosten - besparingPerJaar)),
+    besparingPerJaar: Math.round(besparingPerJaar),
+    co2PerJaar: resultaat.co2 != null ? Math.round(resultaat.co2) : null,
+  }
+}
+
+/**
+ * Ronde 2026-10-19 (#1): de "komende 5 jaar"-tijdlijn voor de Roadmap-
+ * sectie (Premium/Gold-sjabloon) — hergebruikt buildInsights() uit
+ * lib/mjop/linking.js (dezelfde functie die de MJOP-tool/Timeline.jsx al
+ * gebruikt), uitsluitend herbucket op jaartal i.p.v. de bestaande
+ * nu/kort/vervanging/later-tijdsbuckets, omdat de sjabloontekst letterlijk
+ * "korte/middellange/lange termijn" vraagt. Onderdelen zonder bekend jaar
+ * (`onvoldoende_informatie`) en onderdelen zonder actie (`geen_actie_nodig`)
+ * horen niet op een tijdlijn van aankomende momenten thuis en worden hier
+ * bewust uitgesloten — geen gok, geen onnodige ruis.
+ */
+export function bouwRoadmapRegels(mjopSnapshot) {
+  if (!mjopSnapshot?.components?.length) return null
+  const jaar = new Date().getFullYear()
+  const insights = buildInsights(mjopSnapshot).filter(
+    (i) => i.relevantYear != null && i.status !== 'geen_actie_nodig' && i.status !== 'onvoldoende_informatie',
+  )
+  const label = (i) => `${i.componentLabel} (${i.relevantYear})`
+  const tekst = (lijst) => (lijst.length > 0 ? lijst.map(label).join(', ') : null)
+
+  return {
+    kort: tekst(insights.filter((i) => i.relevantYear - jaar <= 1)),
+    middellang: tekst(insights.filter((i) => i.relevantYear - jaar > 1 && i.relevantYear - jaar <= 5)),
+    lang: tekst(insights.filter((i) => i.relevantYear - jaar > 5)),
   }
 }
 
@@ -215,6 +277,9 @@ export function bouwAdviesrapportData({ dossier, adviespunten = [], pakketId, ad
   const samenvatting = bouwSamenvatting(adviespunten)
   const bouwkundigeAnalyse = bouwBouwkundigeAnalyse(dossier?.bouwkundige_analyse)
   const subsidieStappen = bouwSubsidieStappen(subsidieTaken)
+  const prioriteitenSamenvatting = bouwPrioriteitenSamenvatting(maatregelen)
+  const energieOverzicht = bouwEnergieKostenOverzicht(dossier?.energie_snapshot)
+  const roadmap = bouwRoadmapRegels(dossier?.mjop_snapshot)
 
   const ontbrekendeVelden = []
   if (!klantnaam) ontbrekendeVelden.push('klantnaam')
@@ -248,6 +313,9 @@ export function bouwAdviesrapportData({ dossier, adviespunten = [], pakketId, ad
     },
     samenvatting,
     maatregelen,
+    prioriteitenSamenvatting,
+    energieOverzicht,
+    roadmap,
     bouwkundigeAnalyse,
     subsidieStappen,
     ontbrekendeVelden,

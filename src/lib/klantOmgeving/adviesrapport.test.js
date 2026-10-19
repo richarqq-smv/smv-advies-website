@@ -1,6 +1,13 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { bouwAdviesrapportData, bouwSamenvatting, PAKKET_RAPPORT_LABELS } from './adviesrapport.js'
+import {
+  bouwAdviesrapportData,
+  bouwSamenvatting,
+  bouwPrioriteitenSamenvatting,
+  bouwEnergieKostenOverzicht,
+  bouwRoadmapRegels,
+  PAKKET_RAPPORT_LABELS,
+} from './adviesrapport.js'
 
 function dossierFixture(overrides = {}) {
   return {
@@ -237,4 +244,113 @@ test('bouwAdviesrapportData: lege subsidiestappen worden alleen bij gold gemarke
 
   const gold = bouwAdviesrapportData({ dossier: dossierFixture(), adviespunten: [], pakketId: 'gold' })
   assert.ok(gold.ontbrekendeVelden.includes('subsidiebegeleidingsplan'))
+})
+
+/**
+ * Ronde 2026-10-19 (projectplan "Klantwaarde-uitbreidingen", Fase 1 —
+ * #1/#2/3): grafiek-/roadmap-/prioriteitendata voor het adviesrapport.
+ */
+test('bouwPrioriteitenSamenvatting: neemt de eerste 3 maatregelen mét terugverdientijd, in de bestaande volgorde', () => {
+  const maatregelen = [
+    { nummer: 1, onderwerp: 'Dakisolatie', terugverdientijd: '4 jaar' },
+    { nummer: 2, onderwerp: 'LED-verlichting', terugverdientijd: null },
+    { nummer: 3, onderwerp: 'Gevelisolatie', terugverdientijd: '5 jaar' },
+    { nummer: 4, onderwerp: 'Zonnepanelen', terugverdientijd: '7 jaar' },
+    { nummer: 5, onderwerp: 'Warmtepomp', terugverdientijd: '9 jaar' },
+  ]
+  const [zin] = bouwPrioriteitenSamenvatting(maatregelen)
+  assert.match(zin, /Dakisolatie \(4 jaar\)/)
+  assert.match(zin, /Gevelisolatie \(5 jaar\)/)
+  assert.match(zin, /Zonnepanelen \(7 jaar\)/)
+  assert.doesNotMatch(zin, /Warmtepomp/)
+  assert.doesNotMatch(zin, /LED-verlichting/)
+})
+
+test('bouwPrioriteitenSamenvatting: geeft lege array zonder enige maatregel met terugverdientijd', () => {
+  assert.deepEqual(bouwPrioriteitenSamenvatting([{ nummer: 1, onderwerp: 'X', terugverdientijd: null }]), [])
+  assert.deepEqual(bouwPrioriteitenSamenvatting([]), [])
+})
+
+test('bouwEnergieKostenOverzicht: rekent nieuwe kosten uit huidige kosten min besparing, rond af op hele euro\'s/kg', () => {
+  const snapshot = { resultaat: { huidigeKosten: 12345.6, totaleBesparing: 2345.4, co2: 987.6 } }
+  const overzicht = bouwEnergieKostenOverzicht(snapshot)
+  assert.equal(overzicht.huidigeKosten, 12346)
+  assert.equal(overzicht.nieuweKosten, 10000)
+  assert.equal(overzicht.besparingPerJaar, 2345)
+  assert.equal(overzicht.co2PerJaar, 988)
+})
+
+test('bouwEnergieKostenOverzicht: nieuwe kosten nooit negatief, ook niet bij een besparing groter dan de huidige kosten', () => {
+  const overzicht = bouwEnergieKostenOverzicht({ resultaat: { huidigeKosten: 500, totaleBesparing: 900, co2: 100 } })
+  assert.equal(overzicht.nieuweKosten, 0)
+})
+
+test('bouwEnergieKostenOverzicht: null zonder energie-indicatie-snapshot — nooit een geschat cijfer', () => {
+  assert.equal(bouwEnergieKostenOverzicht(null), null)
+  assert.equal(bouwEnergieKostenOverzicht({}), null)
+  assert.equal(bouwEnergieKostenOverzicht({ resultaat: {} }), null)
+})
+
+function mjopComponentFixture(overrides = {}) {
+  return { id: 'c1', typeId: 'dak', present: 'ja', ...overrides }
+}
+
+test('bouwRoadmapRegels: verdeelt onderdelen naar korte/middellange/lange termijn op basis van het relevante jaar', () => {
+  const jaar = new Date().getFullYear()
+  const snapshot = {
+    components: [
+      mjopComponentFixture({ id: 'c1', typeId: 'verwarming', replacementYear: jaar + 1 }),
+      mjopComponentFixture({ id: 'c2', typeId: 'dakisolatie', replacementYear: jaar + 3 }),
+      mjopComponentFixture({ id: 'c3', typeId: 'gevelisolatie', replacementYear: jaar + 8 }),
+    ],
+  }
+  const roadmap = bouwRoadmapRegels(snapshot)
+  assert.match(roadmap.kort, /Cv \/ verwarming/)
+  assert.match(roadmap.middellang, /Dakisolatie/)
+  assert.match(roadmap.lang, /Gevelisolatie/)
+})
+
+test('bouwRoadmapRegels: sluit "geen actie nodig" en "onvoldoende informatie" uit — die horen niet op een tijdlijn van aankomende momenten', () => {
+  const jaar = new Date().getFullYear()
+  const snapshot = {
+    components: [
+      // Recent geplaatst, geen vervangingsjaar opgegeven -> geen_actie_nodig (zie linking.js RECENT_INSTALL_YEARS).
+      mjopComponentFixture({ id: 'c1', typeId: 'ventilatie', installationYear: jaar - 1 }),
+      // Geen enkel jaartal bekend -> onvoldoende_informatie.
+      mjopComponentFixture({ id: 'c2', typeId: 'koeling' }),
+    ],
+  }
+  const roadmap = bouwRoadmapRegels(snapshot)
+  assert.equal(roadmap.kort, null)
+  assert.equal(roadmap.middellang, null)
+  assert.equal(roadmap.lang, null)
+})
+
+test('bouwRoadmapRegels: null zonder MJOP-snapshot of zonder componenten', () => {
+  assert.equal(bouwRoadmapRegels(null), null)
+  assert.equal(bouwRoadmapRegels({}), null)
+  assert.equal(bouwRoadmapRegels({ components: [] }), null)
+})
+
+test('bouwAdviesrapportData: energieOverzicht/roadmap/prioriteitenSamenvatting komen uit dossier.energie_snapshot/mjop_snapshot', () => {
+  const jaar = new Date().getFullYear()
+  const dossier = dossierFixture({
+    energie_snapshot: { resultaat: { huidigeKosten: 4000, totaleBesparing: 1000, co2: 500 } },
+    mjop_snapshot: { components: [mjopComponentFixture({ replacementYear: jaar + 1 })] },
+  })
+  const data = bouwAdviesrapportData({
+    dossier,
+    adviespunten: [adviespuntFixture({ onderwerp: 'Dakisolatie', terugverdientijd_jaren: 4 })],
+    pakketId: 'premium',
+  })
+  assert.deepEqual(data.energieOverzicht, { huidigeKosten: 4000, nieuweKosten: 3000, besparingPerJaar: 1000, co2PerJaar: 500 })
+  assert.match(data.roadmap.kort, /Dak/)
+  assert.match(data.prioriteitenSamenvatting[0], /Dakisolatie \(4 jaar\)/)
+})
+
+test('bouwAdviesrapportData: energieOverzicht/roadmap blijven null zonder snapshots, zonder dit als "ontbrekend" te markeren', () => {
+  const data = bouwAdviesrapportData({ dossier: dossierFixture(), adviespunten: [], pakketId: 'basis' })
+  assert.equal(data.energieOverzicht, null)
+  assert.equal(data.roadmap, null)
+  assert.ok(!data.ontbrekendeVelden.some((v) => /energie|roadmap/i.test(v)))
 })

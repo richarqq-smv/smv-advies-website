@@ -1,4 +1,4 @@
-import { MEASURES, STATUSES, getComponentTypeLabel } from './constants'
+import { MEASURES, STATUSES, getComponentTypeLabel } from './constants.js'
 
 /**
  * Centrale regellogica: bepaalt op basis van ingevoerde jaartallen wanneer
