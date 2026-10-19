@@ -50,6 +50,7 @@ import { buildInsights } from '../lib/mjop/linking'
 import { buildEnergieInsights } from '../lib/dossier/energieInsights'
 import { bouwKortingOpties, bouwKortingCode } from '../lib/klantOmgeving/loyaliteitskorting'
 import { bouwBenchmark } from '../lib/klantOmgeving/benchmark'
+import { GEBRUIKSTYPE_LABELS } from '../lib/klantOmgeving/pandValidatie'
 
 /**
  * Detailpagina voor één Dossier — bereikbaar voor de eigen klant (RLS:
@@ -592,11 +593,13 @@ export default function DossierDetail() {
  */
 function BenchmarkInfo({ benchmark }) {
   const verschil = benchmark.eigenWaarde - benchmark.gemiddelde
+  const gebruikstypeLabel = GEBRUIKSTYPE_LABELS[benchmark.gebruikstype] ?? benchmark.gebruikstype
   return (
     <div className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
       <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Benchmark-vergelijking</p>
       <p className="mb-4 text-sm text-foreground-muted">
-        Energiekosten per m² per jaar, vergeleken met {benchmark.aantalVergeleken} andere {benchmark.aantalVergeleken === 1 ? 'dossier' : 'dossiers'} in het systeem.
+        Energiekosten per m² per jaar, vergeleken met {benchmark.aantalVergeleken} andere {benchmark.aantalVergeleken === 1 ? 'dossier' : 'dossiers'} met hetzelfde
+        gebruikstype ({gebruikstypeLabel}) in het systeem.
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-xl bg-muted px-5 py-4">
@@ -605,7 +608,7 @@ function BenchmarkInfo({ benchmark }) {
         </div>
         <div className="rounded-xl bg-muted px-5 py-4">
           <p className="text-2xl font-semibold text-primary">€ {benchmark.gemiddelde} / m²</p>
-          <p className="mt-1 text-xs text-foreground-muted">Gemiddelde van vergelijkbare dossiers</p>
+          <p className="mt-1 text-xs text-foreground-muted">Gemiddelde van andere {gebruikstypeLabel.toLowerCase()}-dossiers</p>
         </div>
       </div>
       <p className="mt-3 text-xs text-foreground-muted">

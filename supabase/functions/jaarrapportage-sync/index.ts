@@ -1,5 +1,6 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
+import { timingSafeEqual } from 'node:crypto'
 
 // Fase 4 (projectplan "Klantwaarde-uitbreidingen", #6): jaarlijkse
 // automatische voortgangsrapportage. Zelfde architectuur als
@@ -10,13 +11,26 @@ import { createClient } from 'jsr:@supabase/supabase-js@2'
 // BELANGRIJKE VEILIGHEIDSRANDVOORWAARDE uit het projectplan: "Eerst een
 // niet-destructieve droogloop (tellen/loggen zonder echt te versturen)
 // voordat de functie live en gekoppeld aan de cron gaat." Deze functie
-// ondersteunt daarom een dryRun-modus (standaard AAN, zie DRY_RUN
-// hieronder): alleen bij een expliciete { "dryRun": false } in de
-// request-body wordt er ook daadwerkelijk mail verstuurd en
-// laatste_jaarrapportage_op bijgewerkt. De meegeleverde migratie
-// (0053_jaarrapportage.sql) plant de maandelijkse cron-aanroep bewust mét
-// dryRun:true in de body — het omzetten naar een echte, live verzending
-// is een losse, latere, expliciete stap.
+// ondersteunt daarom een dryRun-modus (standaard AAN, zie hieronder):
+// alleen bij een expliciete { "dryRun": false } in de request-body wordt
+// er ook daadwerkelijk mail verstuurd en laatste_jaarrapportage_op
+// bijgewerkt.
+//
+// CORRECTIERONDE (2026-10-19, na oplevering, interne security-review):
+// deze functie draaide tot nu toe met verify_jwt:true als enige poort —
+// dat bewijst alleen dat de aanroeper ÉÉN of ander geldig Supabase-JWT
+// heeft, en dat kan net zo goed de PUBLIEKE anon-key zijn (die letterlijk
+// in elke browserbundel staat). Zonder extra controle kon dus IEDEREEN
+// met die publieke sleutel deze functie met dryRun:false aanroepen en
+// echt mail laten versturen naar alle klanten, en zelfs in droogloop al
+// klant-e-mailadressen/dossiernummers uitlezen. Daarom nu een EXTRA,
+// eigen controle: een gedeeld intern geheim (X-Cron-Secret-header),
+// vergeleken met de CRON_SHARED_SECRET Edge Function-secret — hetzelfde
+// geheim staat ALLEEN in Supabase Vault (voor de cron-SQL) en als Edge
+// Function-secret (voor deze functie), nooit in git/migratiebestanden.
+// Ontbreekt de secret aan één van beide kanten, of komt hij niet overeen,
+// dan weigert de functie META met een generieke foutmelding — fail-closed,
+// geen enkele dossier-/klantgegeven wordt dan gelezen of getoond.
 //
 // Deployment: zelfde opmerking als rvo-subsidies-sync/index.ts — dit
 // bestand is de bron van waarheid, gedeployed via de Supabase MCP.
@@ -24,7 +38,7 @@ import { createClient } from 'jsr:@supabase/supabase-js@2'
 const RESEND_API_URL = 'https://api.resend.com/emails'
 const FROM_ADDRESS = 'SMV Advies <noreply@mail.smv-advies.nl>'
 const ACCOUNT_URL = 'https://smv-advies.nl/account'
-const ELF_MAANDEN_IN_MS = 11 * 30 * 24 * 60 * 60 * 1000
+const CRON_SECRET_HEADER = 'x-cron-secret'
 
 function escapeHtml(value: unknown) {
   const safeValue = value !== null && typeof value === 'object' ? '' : value
@@ -35,29 +49,57 @@ function escapeHtml(value: unknown) {
     .replace(/"/g, '&quot;')
 }
 
+/** Constant-time vergelijking — voorkomt dat een timing-verschil de secret-lengte/inhoud lekt. */
+function secretsKomenOvereen(gegeven: string, verwacht: string) {
+  const bufGegeven = new TextEncoder().encode(gegeven)
+  const bufVerwacht = new TextEncoder().encode(verwacht)
+  if (bufGegeven.length !== bufVerwacht.length) return false
+  return timingSafeEqual(bufGegeven, bufVerwacht)
+}
+
+/**
+ * 11 kalendermaanden geleden — bewust GEEN "11 * 30 dagen"-benadering
+ * (correctieronde 2026-10-19): die benadering loopt per jaar ruim een
+ * halve maand uit de pas met echte kalendermaanden, waardoor dossiers
+ * stelselmatig te vroeg of te laat als kandidaat worden gezien. setUTCMonth()
+ * normaliseert zelf een eventuele dag-overflow (bv. 31 maart - 11 maanden).
+ */
+function elfMaandenGeleden(nu = new Date()) {
+  const datum = new Date(nu)
+  datum.setUTCMonth(datum.getUTCMonth() - 11)
+  return datum.toISOString()
+}
+
 interface DossierRij {
   dossier_id: string
   dossier_nummer: string | null
   created_at: string
   laatste_jaarrapportage_op: string | null
-  energie_snapshot: { resultaat?: { huidigeKosten?: number; totaleBesparing?: number; co2?: number } } | null
+  energie_snapshot: { resultaat?: { huidigeKosten?: unknown; totaleBesparing?: unknown; co2?: unknown } } | null
   panden: { omschrijving: string | null; adres: string | null } | null
   klanten: { naam: string | null; bedrijfsnaam: string | null; email: string | null } | null
   contactpersonen: { naam: string | null; email: string | null } | null
 }
 
+function isBruikbaarGetal(waarde: unknown): waarde is number {
+  return typeof waarde === 'number' && Number.isFinite(waarde)
+}
+
 /**
- * Dezelfde berekening als bouwEnergieKostenOverzicht() in
+ * Letterlijke kopie van bouwEnergieKostenOverzicht() in
  * src/lib/klantOmgeving/adviesrapport.js — hier bewust los gehouden
  * (Edge Functions worden onafhankelijk van de frontend-bundel
- * gedeployed, geen gedeelde build-stap), maar functioneel identiek: geen
- * eigen herberekening, `null` zonder bruikbare Energie-indicatie-data.
+ * gedeployed, geen gedeelde build-stap), maar functioneel identiek,
+ * inclusief de correctieronde-fix: `null` zonder bruikbare Energie-
+ * indicatie-data (ontbrekende/ongeldige totaleBesparing is NIET € 0 —
+ * dat zou een verzonnen nulbesparing presenteren). Een echt berekende 0
+ * blijft een geldige 0.
  */
 function bouwBesparing(energieSnapshot: DossierRij['energie_snapshot']) {
   const resultaat = energieSnapshot?.resultaat
-  if (!resultaat || resultaat.huidigeKosten == null) return null
-  const besparingPerJaar = Math.round(resultaat.totaleBesparing ?? 0)
-  const co2PerJaar = resultaat.co2 != null ? Math.round(resultaat.co2) : null
+  if (!resultaat || !isBruikbaarGetal(resultaat.huidigeKosten) || !isBruikbaarGetal(resultaat.totaleBesparing)) return null
+  const besparingPerJaar = Math.round(resultaat.totaleBesparing)
+  const co2PerJaar = isBruikbaarGetal(resultaat.co2) ? Math.round(resultaat.co2) : null
   return { besparingPerJaar, co2PerJaar }
 }
 
@@ -71,6 +113,22 @@ function ontvangerEmail(klant: DossierRij['klanten'], contact: DossierRij['conta
 
 function pandLabel(pand: DossierRij['panden']) {
   return pand?.omschrijving || pand?.adres || 'uw pand'
+}
+
+/**
+ * Correctieronde (2026-10-19): "Het is alweer een jaar geleden sinds het
+ * laatste advies" was een onjuiste/ongecontroleerde claim — deze mail kan
+ * jaren achtereen naar hetzelfde dossier gaan, en "advies" is niet
+ * hetzelfde moment als "aanmaak dossier" of "vorige jaarrapportage". De
+ * tekst claimt nu alleen nog wat we daadwerkelijk weten: of dit de eerste
+ * jaarlijkse update is sinds de start van het dossier, of een periodieke
+ * update sinds de vorige.
+ */
+function openingszin(dossier: DossierRij, pand: string) {
+  if (dossier.laatste_jaarrapportage_op) {
+    return `Hierbij uw periodieke update over ${pand} sinds onze vorige jaarlijkse update.`
+  }
+  return `Het is inmiddels een tijd geleden sinds de start van uw adviesdossier voor ${pand}. Hieronder een kort overzicht van uw resultaten tot nu toe.`
 }
 
 function buildJaarrapportageEmail(dossier: DossierRij) {
@@ -114,7 +172,7 @@ function buildJaarrapportageEmail(dossier: DossierRij) {
           <td style="padding:28px 32px 8px;" bgcolor="#ffffff">
             <p style="margin:0 0 12px;font-size:15px;color:#1A1A1A;">Beste ${e(aanhef)},</p>
             <p style="margin:0 0 12px;font-size:14px;color:#333333;line-height:1.6;">
-              Het is alweer een jaar geleden sinds het laatste advies voor ${e(pand)}. Hieronder een kort overzicht van uw resultaten tot nu toe.
+              ${e(openingszin(dossier, pand))}
             </p>
             ${besparingBlok}
             <p style="margin:16px 0 0;font-size:14px;color:#333333;line-height:1.6;">
@@ -156,6 +214,19 @@ async function sendViaResend(apiKey: string, to: string, subject: string, html: 
 }
 
 Deno.serve(async (req: Request) => {
+  // Stap 1 (correctieronde): fail-closed interne authenticatie. Zonder een
+  // geconfigureerde CRON_SHARED_SECRET, of zonder een overeenkomende
+  // X-Cron-Secret-header, wordt NIETS gelezen, getoond of verstuurd — ook
+  // geen droogloopresultaten, want die bevatten al klant-e-mailadressen.
+  const verwachteSecret = Deno.env.get('CRON_SHARED_SECRET')
+  const gegevenSecret = req.headers.get(CRON_SECRET_HEADER)
+  if (!verwachteSecret || !gegevenSecret || !secretsKomenOvereen(gegevenSecret, verwachteSecret)) {
+    return new Response(JSON.stringify({ ok: false, error: 'Niet geautoriseerd' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+
   let dryRun = true
   try {
     const body = await req.json()
@@ -169,20 +240,21 @@ Deno.serve(async (req: Request) => {
 
   const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
 
-  const elfMaandenGeleden = new Date(Date.now() - ELF_MAANDEN_IN_MS).toISOString()
+  const elfMaandenGrens = elfMaandenGeleden()
 
-  // Kandidaten: open, niet-gearchiveerde dossiers, ouder dan 11 maanden
-  // (een jaarlijkse update heeft geen zin binnen het eerste jaar), waarvan
-  // de laatste jaarrapportage leeg is of ook alweer 11+ maanden geleden —
-  // dat laatste is de dubbel-verzend-bescherming uit het projectplan.
+  // Kandidaten: open, niet-gearchiveerde dossiers, ouder dan 11
+  // kalendermaanden (een jaarlijkse update heeft geen zin binnen het
+  // eerste jaar), waarvan de laatste jaarrapportage leeg is of ook alweer
+  // 11+ maanden geleden — dat laatste is de dubbel-verzend-bescherming uit
+  // het projectplan.
   const { data: dossiers, error: queryError } = await supabase
     .from('dossiers')
     .select('dossier_id, dossier_nummer, created_at, laatste_jaarrapportage_op, energie_snapshot, panden(omschrijving, adres), klanten(naam, bedrijfsnaam, email), contactpersonen(naam, email)')
     .eq('status', 'open')
     .is('gearchiveerd_op', null)
     .eq('gearchiveerd_via_klant', false)
-    .lte('created_at', elfMaandenGeleden)
-    .or(`laatste_jaarrapportage_op.is.null,laatste_jaarrapportage_op.lt.${elfMaandenGeleden}`)
+    .lte('created_at', elfMaandenGrens)
+    .or(`laatste_jaarrapportage_op.is.null,laatste_jaarrapportage_op.lt.${elfMaandenGrens}`)
 
   if (queryError) {
     return new Response(JSON.stringify({ ok: false, error: queryError.message }), {
@@ -213,6 +285,28 @@ Deno.serve(async (req: Request) => {
       continue
     }
 
+    // Dubbel-verzend-bescherming (correctieronde): het veld wordt EERST
+    // atomair "geclaimd" met een voorwaardelijke UPDATE (alleen als het nog
+    // aan de oude voorwaarde voldeed) vóórdat er een mail wordt verstuurd.
+    // Bij een gelijktijdige/herhaalde aanroep claimt maar één van de twee
+    // de rij; de ander ziet 0 bijgewerkte rijen en slaat het dossier over.
+    // Mislukt de verzending zelf, dan wordt de claim teruggedraaid — een
+    // mislukte poging mag nooit als "verzonden" blijven staan.
+    const vorigeWaarde = dossier.laatste_jaarrapportage_op
+    const nu = new Date().toISOString()
+    const { data: geclaimd, error: claimError } = await supabase
+      .from('dossiers')
+      .update({ laatste_jaarrapportage_op: nu })
+      .eq('dossier_id', dossier.dossier_id)
+      .or(`laatste_jaarrapportage_op.is.null,laatste_jaarrapportage_op.lt.${elfMaandenGrens}`)
+      .select('dossier_id')
+      .maybeSingle()
+
+    if (claimError || !geclaimd) {
+      resultaten.push({ dossier_id: dossier.dossier_id, dossier_nummer: dossier.dossier_nummer, ontvanger, actie: 'overgeslagen_al_geclaimd' })
+      continue
+    }
+
     try {
       const response = await sendViaResend(apiKey, ontvanger, subject, html)
       try {
@@ -227,17 +321,17 @@ Deno.serve(async (req: Request) => {
       }
 
       if (response.ok) {
-        // Alleen bij een geslaagde verzending bijwerken — mislukt een
-        // verzending, dan blijft het dossier kandidaat voor de
-        // eerstvolgende maandelijkse check (geen stille data-loss van een
-        // mail die nooit is aangekomen).
-        await supabase.from('dossiers').update({ laatste_jaarrapportage_op: new Date().toISOString() }).eq('dossier_id', dossier.dossier_id)
         resultaten.push({ dossier_id: dossier.dossier_id, dossier_nummer: dossier.dossier_nummer, ontvanger, actie: 'verzonden' })
       } else {
+        // Verzending mislukt → claim terugdraaien zodat dit dossier
+        // kandidaat blijft voor de eerstvolgende (of een herhaalde) poging.
+        await supabase.from('dossiers').update({ laatste_jaarrapportage_op: vorigeWaarde }).eq('dossier_id', dossier.dossier_id)
         resultaten.push({ dossier_id: dossier.dossier_id, dossier_nummer: dossier.dossier_nummer, ontvanger, actie: 'fout_resend' })
       }
     } catch (err) {
-      // Eén mislukt dossier mag de rest van de batch nooit blokkeren.
+      // Eén mislukt dossier mag de rest van de batch nooit blokkeren —
+      // ook hier de claim terugdraaien.
+      await supabase.from('dossiers').update({ laatste_jaarrapportage_op: vorigeWaarde }).eq('dossier_id', dossier.dossier_id)
       const message = err instanceof Error ? err.message : String(err)
       resultaten.push({ dossier_id: dossier.dossier_id, dossier_nummer: dossier.dossier_nummer, ontvanger, actie: `fout_onverwacht: ${message}` })
     }

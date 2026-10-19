@@ -1753,10 +1753,17 @@ export async function adminListAlleDossierSubsidies() {
  * zelf opnieuw is_admin() — zie die functie), niet via sendMail()/
  * send-email: dat endpoint is publiek en vereist een Turnstile-token,
  * wat voor een al-ingelogde admin-actie geen zin heeft.
+ *
+ * Correctieronde (2026-10-19): stuurt uitsluitend `dossierId`/`deadlineId`
+ * mee — regeling/deadlineDatum/budgetStatus worden niet langer door de
+ * client doorgegeven, de Edge Function haalt die zelf, server-side, uit
+ * de bevestigde `subsidie_deadlines`-rij (zie die functie voor de
+ * volledige toelichting). Dit voorkomt dat een aanroeper andere waarden
+ * zou kunnen aanleveren dan wat een admin daadwerkelijk heeft bevestigd.
  */
-export async function verstuurSubsidieDeadlineMelding({ dossierId, regeling, deadlineDatum, budgetStatus }) {
+export async function verstuurSubsidieDeadlineMelding({ dossierId, deadlineId }) {
   const { data, error } = await supabase.functions.invoke('subsidie-deadline-melding', {
-    body: { dossierId, regeling, deadlineDatum, budgetStatus },
+    body: { dossierId, deadlineId },
   })
   if (error) throw new Error('Versturen is niet gelukt. Probeer het opnieuw.')
   if (data?.ok === false) throw new Error(data.error || 'Versturen is niet gelukt. Probeer het opnieuw.')

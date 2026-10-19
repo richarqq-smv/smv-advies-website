@@ -113,24 +113,39 @@ export function bouwPrioriteitenSamenvatting(maatregelen) {
   return [`Op basis van de terugverdientijd adviseren wij te beginnen met: ${items.join(', ')}.`]
 }
 
+/** Een bruikbaar getal: geen null/undefined, geen NaN/Infinity (bv. door een onvolledige of beschadigde snapshot). */
+function isBruikbaarGetal(waarde) {
+  return typeof waarde === 'number' && Number.isFinite(waarde)
+}
+
 /**
  * Ronde 2026-10-19 (#1): huidige vs. nieuwe energiekosten + CO₂-besparing
  * voor het grafiekblok in het rapport — rechtstreeks uit de Energie-
  * indicatie-snapshot (berekenResultaat(), zie calculations.js), geen eigen
  * herberekening. `null` als er nog geen Energie-indicatie is uitgevoerd
- * voor dit dossier — het grafiekblok wordt dan simpelweg overgeslagen
- * (zie adviesrapportDocx.js), nooit met geschatte cijfers gevuld.
+ * voor dit dossier, of als de snapshot geen bruikbare cijfers bevat — het
+ * grafiekblok wordt dan simpelweg overgeslagen (zie adviesrapportDocx.js),
+ * nooit met geschatte cijfers gevuld.
+ *
+ * Correctieronde (2026-10-19, na oplevering): `resultaat.totaleBesparing ?? 0`
+ * behandelde een ONTBREKENDE besparing (bv. een onvolledige snapshot) als
+ * een bevestigde besparing van € 0 — dat suggereert ten onrechte dat de
+ * besparing is uitgerekend en toevallig nul is. Nu geldt: ontbreekt of is
+ * totaleBesparing ongeldig, dan is het hele overzicht onbetrouwbaar en
+ * geven we `null` terug (geen grafiek i.p.v. een verzonnen nulbesparing).
+ * Een echt berekende 0 (bv. geen maatregelen met besparing) blijft gewoon
+ * een geldige 0.
  */
 export function bouwEnergieKostenOverzicht(energieSnapshot) {
   const resultaat = energieSnapshot?.resultaat
-  if (!resultaat || resultaat.huidigeKosten == null) return null
+  if (!resultaat || !isBruikbaarGetal(resultaat.huidigeKosten) || !isBruikbaarGetal(resultaat.totaleBesparing)) return null
   const huidigeKosten = resultaat.huidigeKosten
-  const besparingPerJaar = resultaat.totaleBesparing ?? 0
+  const besparingPerJaar = resultaat.totaleBesparing
   return {
     huidigeKosten: Math.round(huidigeKosten),
     nieuweKosten: Math.round(Math.max(0, huidigeKosten - besparingPerJaar)),
     besparingPerJaar: Math.round(besparingPerJaar),
-    co2PerJaar: resultaat.co2 != null ? Math.round(resultaat.co2) : null,
+    co2PerJaar: isBruikbaarGetal(resultaat.co2) ? Math.round(resultaat.co2) : null,
   }
 }
 

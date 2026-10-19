@@ -1,5 +1,6 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
+import { timingSafeEqual } from 'node:crypto'
 
 // Fase 5 (projectplan "Klantwaarde-uitbreidingen", #8): loyaliteitskorting
 // na 1 jaar. Zelfde architectuur/veiligheidspatroon als
@@ -8,11 +9,19 @@ import { createClient } from 'jsr:@supabase/supabase-js@2'
 // (loyaliteitskorting_verzonden_op wordt nooit meer teruggezet naar null
 // door een normale flow), niet een jaarlijks terugkerende.
 //
-// BELANGRIJKE VEILIGHEIDSRANDVOORWAARDE (zelfde als Fase 4): standaard
-// dryRun — alleen bij expliciete { "dryRun": false } wordt er echt mail
-// verstuurd en de database bijgewerkt. De meegeleverde migratie
-// (0054_loyaliteitskorting.sql) plant de cron-aanroep bewust mét
-// dryRun:true; dat omzetten is een losse, latere, expliciete stap.
+// Kortingspercentages (4,5%/9,5%/15%, 3/2/1 opties per pakket-tier) zijn
+// GEEN verzonnen waarde — ze staan letterlijk, met de aantekening
+// "(bevestigd door Richard)", in het goedgekeurde projectplan
+// "Klantwaarde-uitbreidingen SMV Advies — Projectplan", sectie #8
+// (https://claude.ai/code/artifact/e1bd79c7-717c-4307-8c10-e5d38896d580).
+// Deze percentages blijven dus ongewijzigd in de correctieronde.
+//
+// CORRECTIERONDE (2026-10-19, na oplevering, interne security-review):
+// zelfde kwetsbaarheid als jaarrapportage-sync — verify_jwt:true bewijst
+// alleen een geldig Supabase-JWT, en dat kan de publieke anon-key zijn.
+// Nu dus ook hier een eigen, verplichte X-Cron-Secret-controle (zie
+// jaarrapportage-sync/index.ts voor de volledige toelichting) — fail-
+// closed zonder geconfigureerde/overeenkomende secret.
 //
 // Deployment: zelfde opmerking als de andere Edge Functions — dit bestand
 // is de bron van waarheid, gedeployed via de Supabase MCP.
@@ -20,7 +29,7 @@ import { createClient } from 'jsr:@supabase/supabase-js@2'
 const RESEND_API_URL = 'https://api.resend.com/emails'
 const FROM_ADDRESS = 'SMV Advies <noreply@mail.smv-advies.nl>'
 const CONTACT_URL = 'https://smv-advies.nl/contact'
-const TWAALF_MAANDEN_IN_MS = 12 * 30 * 24 * 60 * 60 * 1000
+const CRON_SECRET_HEADER = 'x-cron-secret'
 
 function escapeHtml(value: unknown) {
   const safeValue = value !== null && typeof value === 'object' ? '' : value
@@ -29,6 +38,25 @@ function escapeHtml(value: unknown) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
+}
+
+/** Constant-time vergelijking — voorkomt dat een timing-verschil de secret-lengte/inhoud lekt. */
+function secretsKomenOvereen(gegeven: string, verwacht: string) {
+  const bufGegeven = new TextEncoder().encode(gegeven)
+  const bufVerwacht = new TextEncoder().encode(verwacht)
+  if (bufGegeven.length !== bufVerwacht.length) return false
+  return timingSafeEqual(bufGegeven, bufVerwacht)
+}
+
+/**
+ * 12 kalendermaanden geleden — bewust GEEN "12 * 30 dagen"-benadering
+ * (correctieronde 2026-10-19), zie jaarrapportage-sync/index.ts voor de
+ * volledige toelichting op waarom dat stelselmatig uit de pas loopt.
+ */
+function twaalfMaandenGeleden(nu = new Date()) {
+  const datum = new Date(nu)
+  datum.setUTCMonth(datum.getUTCMonth() - 12)
+  return datum.toISOString()
 }
 
 interface DossierRij {
@@ -167,6 +195,16 @@ async function sendViaResend(apiKey: string, to: string, subject: string, html: 
 }
 
 Deno.serve(async (req: Request) => {
+  // Fail-closed interne authenticatie — zie jaarrapportage-sync/index.ts.
+  const verwachteSecret = Deno.env.get('CRON_SHARED_SECRET')
+  const gegevenSecret = req.headers.get(CRON_SECRET_HEADER)
+  if (!verwachteSecret || !gegevenSecret || !secretsKomenOvereen(gegevenSecret, verwachteSecret)) {
+    return new Response(JSON.stringify({ ok: false, error: 'Niet geautoriseerd' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+
   let dryRun = true
   try {
     const body = await req.json()
@@ -177,12 +215,15 @@ Deno.serve(async (req: Request) => {
 
   const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
 
-  const twaalfMaandenGeleden = new Date(Date.now() - TWAALF_MAANDEN_IN_MS).toISOString()
+  const twaalfMaandenGrens = twaalfMaandenGeleden()
 
   // Kandidaten: afgeronde, niet-gearchiveerde dossiers waarvan de
-  // afronding 12+ maanden geleden is en waarvoor nog nooit een
-  // loyaliteitskorting is verstuurd (eenmalig, dus geen "ouder dan
-  // N maanden sinds laatste keer"-herhaling zoals bij de jaarrapportage).
+  // afronding 12+ kalendermaanden geleden is EN waarvan afgerond_op
+  // daadwerkelijk bekend is (`.not(...is.null)` sluit dossiers zonder
+  // betrouwbare afrondingsdatum uit — zie 0054_loyaliteitskorting.sql,
+  // bewust geen gok-backfill) en waarvoor nog nooit een loyaliteitskorting
+  // is verstuurd (eenmalig, dus geen "ouder dan N maanden sinds laatste
+  // keer"-herhaling zoals bij de jaarrapportage).
   const { data: dossiers, error: queryError } = await supabase
     .from('dossiers')
     .select(
@@ -192,7 +233,7 @@ Deno.serve(async (req: Request) => {
     .is('gearchiveerd_op', null)
     .eq('gearchiveerd_via_klant', false)
     .not('afgerond_op', 'is', null)
-    .lte('afgerond_op', twaalfMaandenGeleden)
+    .lte('afgerond_op', twaalfMaandenGrens)
     .is('loyaliteitskorting_verzonden_op', null)
 
   if (queryError) {
@@ -231,6 +272,26 @@ Deno.serve(async (req: Request) => {
       continue
     }
 
+    // Dubbel-verzend-bescherming (correctieronde): atomair claimen vóór
+    // verzending — alleen als het veld op dit moment nog echt null is.
+    // Bij een gelijktijdige/herhaalde aanroep claimt maar één van de twee
+    // de rij. Dit veld is eenmalig (nooit teruggezet door een normale
+    // flow), dus bij een mislukte verzending wordt de claim simpelweg
+    // teruggezet naar null — de korting blijft dan eenmalig beschikbaar
+    // voor een volgende (geslaagde) poging.
+    const { data: geclaimd, error: claimError } = await supabase
+      .from('dossiers')
+      .update({ loyaliteitskorting_verzonden_op: new Date().toISOString() })
+      .eq('dossier_id', dossier.dossier_id)
+      .is('loyaliteitskorting_verzonden_op', null)
+      .select('dossier_id')
+      .maybeSingle()
+
+    if (claimError || !geclaimd) {
+      resultaten.push({ dossier_id: dossier.dossier_id, dossier_nummer: dossier.dossier_nummer, ontvanger, actie: 'overgeslagen_al_geclaimd' })
+      continue
+    }
+
     try {
       const response = await sendViaResend(apiKey, ontvanger, subject, html)
       try {
@@ -245,15 +306,13 @@ Deno.serve(async (req: Request) => {
       }
 
       if (response.ok) {
-        // Eenmalig: anders dan laatste_jaarrapportage_op wordt dit veld
-        // nooit meer teruggezet door een normale flow — de korting wordt
-        // maar één keer per dossier aangeboden.
-        await supabase.from('dossiers').update({ loyaliteitskorting_verzonden_op: new Date().toISOString() }).eq('dossier_id', dossier.dossier_id)
         resultaten.push({ dossier_id: dossier.dossier_id, dossier_nummer: dossier.dossier_nummer, ontvanger, actie: 'verzonden' })
       } else {
+        await supabase.from('dossiers').update({ loyaliteitskorting_verzonden_op: null }).eq('dossier_id', dossier.dossier_id)
         resultaten.push({ dossier_id: dossier.dossier_id, dossier_nummer: dossier.dossier_nummer, ontvanger, actie: 'fout_resend' })
       }
     } catch (err) {
+      await supabase.from('dossiers').update({ loyaliteitskorting_verzonden_op: null }).eq('dossier_id', dossier.dossier_id)
       const message = err instanceof Error ? err.message : String(err)
       resultaten.push({ dossier_id: dossier.dossier_id, dossier_nummer: dossier.dossier_nummer, ontvanger, actie: `fout_onverwacht: ${message}` })
     }

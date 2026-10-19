@@ -291,6 +291,27 @@ test('bouwEnergieKostenOverzicht: null zonder energie-indicatie-snapshot — noo
   assert.equal(bouwEnergieKostenOverzicht({ resultaat: {} }), null)
 })
 
+test('bouwEnergieKostenOverzicht: correctieronde — ontbrekende totaleBesparing wordt NIET stilzwijgend € 0, maar maakt het hele overzicht null (geen verzonnen nulbesparing)', () => {
+  assert.equal(bouwEnergieKostenOverzicht({ resultaat: { huidigeKosten: 4000 } }), null)
+  assert.equal(bouwEnergieKostenOverzicht({ resultaat: { huidigeKosten: 4000, totaleBesparing: null } }), null)
+  assert.equal(bouwEnergieKostenOverzicht({ resultaat: { huidigeKosten: 4000, totaleBesparing: undefined } }), null)
+})
+
+test('bouwEnergieKostenOverzicht: ongeldige (NaN/Infinity) cijfers geven ook null, nooit een gok', () => {
+  assert.equal(bouwEnergieKostenOverzicht({ resultaat: { huidigeKosten: 4000, totaleBesparing: NaN } }), null)
+  assert.equal(bouwEnergieKostenOverzicht({ resultaat: { huidigeKosten: NaN, totaleBesparing: 1000 } }), null)
+  assert.equal(bouwEnergieKostenOverzicht({ resultaat: { huidigeKosten: Infinity, totaleBesparing: 1000 } }), null)
+  assert.equal(bouwEnergieKostenOverzicht({ resultaat: { huidigeKosten: 4000, totaleBesparing: 'onbekend' } }), null)
+})
+
+test('bouwEnergieKostenOverzicht: een echt berekende besparing van 0 blijft een geldige, getoonde 0 (geen maatregelen met besparing is geen "onbekend")', () => {
+  const overzicht = bouwEnergieKostenOverzicht({ resultaat: { huidigeKosten: 3000, totaleBesparing: 0, co2: 0 } })
+  assert.ok(overzicht)
+  assert.equal(overzicht.besparingPerJaar, 0)
+  assert.equal(overzicht.nieuweKosten, 3000)
+  assert.equal(overzicht.co2PerJaar, 0)
+})
+
 function mjopComponentFixture(overrides = {}) {
   return { id: 'c1', typeId: 'dak', present: 'ja', ...overrides }
 }

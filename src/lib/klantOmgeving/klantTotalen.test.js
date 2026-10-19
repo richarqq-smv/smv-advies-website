@@ -44,3 +44,14 @@ test('bouwKlantTotalen: een dossier zonder Energie-indicatie telt simpelweg niet
   assert.equal(totalen.co2PerJaar, 150)
   assert.equal(totalen.aantalDossiers, 1)
 })
+
+test('correctieronde — een dossier met een onbruikbare/ontbrekende totaleBesparing telt NIET mee als € 0, maar wordt simpelweg uitgesloten van de som', () => {
+  const dossiers = [
+    dossierMet({ huidigeKosten: 1000 }), // totaleBesparing ontbreekt
+    dossierMet({ huidigeKosten: 2000, totaleBesparing: NaN, co2: 600 }),
+    dossierMet({ huidigeKosten: 3000, totaleBesparing: 500, co2: 200 }),
+  ]
+  const totalen = bouwKlantTotalen(dossiers)
+  assert.equal(totalen.besparingPerJaar, 500)
+  assert.equal(totalen.aantalDossiers, 1)
+})

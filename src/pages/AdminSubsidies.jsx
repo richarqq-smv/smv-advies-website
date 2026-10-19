@@ -133,9 +133,7 @@ export default function AdminSubsidies() {
     try {
       await verstuurSubsidieDeadlineMelding({
         dossierId: geraaktDossier.dossier_id,
-        regeling: deadline.regeling,
-        deadlineDatum: deadline.deadline_datum,
-        budgetStatus: deadline.budget_status,
+        deadlineId: deadline.id,
       })
       setVerzendStatus((v) => ({ ...v, [sleutel]: 'verzonden' }))
     } catch {
