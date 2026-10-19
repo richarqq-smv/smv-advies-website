@@ -37,12 +37,14 @@ import { valideerKlantRegistratie } from '../lib/klantOmgeving/klantValidatie'
 import { valideerNieuwPand, ZAKELIJKE_GEBRUIKSTYPES, GEBRUIKSTYPE_LABELS } from '../lib/klantOmgeving/pandValidatie'
 import { leesDossierContext, voegDossierContextToe } from '../lib/klantOmgeving/dossierNavigatie'
 import { bouwAccountActies } from '../lib/klantOmgeving/accountActies'
+import { bouwKlantTotalen } from '../lib/klantOmgeving/klantTotalen'
 import { euro, formatDatumNl, OFFERTE_STATUS_LABELS } from '../lib/klantOmgeving/offerte'
 import { FACTUUR_STATUS_LABELS } from '../lib/klantOmgeving/factuur'
 
 const LEEG_PAND = { omschrijving: '', adres: '', postcode: '', plaats: '', gebruikstype: '' }
 
 const SECTIES = [
+  { id: 'totalen', label: 'Totaal tot nu toe' },
   { id: 'gegevens', label: 'Mijn gegevens' },
   { id: 'bedrijf', label: 'Mijn bedrijf' },
   { id: 'panden', label: 'Mijn panden' },
@@ -247,6 +249,10 @@ export default function Account() {
   }
 
   const acties = klant ? bouwAccountActies({ klant, contactpersoon, panden, dossiers }) : []
+  // Fase 2 (#12, projectplan "Klantwaarde-uitbreidingen"): optelsom van
+  // dezelfde energiekosten-/CO2-cijfers die het adviesrapport al toont
+  // (Fase 1, #1) — geen nieuwe berekening, zie klantTotalen.js.
+  const klantTotalen = klant ? bouwKlantTotalen(dossiers) : null
 
   return (
     <>
@@ -357,13 +363,14 @@ export default function Account() {
                 </p>
               ) : null}
               <nav aria-label="Onderdelen van uw account" className="flex flex-wrap gap-1.5">
-                {SECTIES.map((s) => (
+                {SECTIES.filter((s) => s.id !== 'totalen' || klantTotalen).map((s) => (
                   <a key={s.id} href={`#${s.id}`} className="rounded-md bg-muted px-3 py-1.5 text-xs font-medium text-foreground-muted hover:bg-accent/10 hover:text-accent">
                     {s.label}
                   </a>
                 ))}
               </nav>
 
+              <TotaalTotNuToe totalen={klantTotalen} />
               <MijnGegevens contactpersoon={contactpersoon} onOpgeslagen={setContactpersoon} />
               <MijnBedrijf klant={klant} onOpgeslagen={setKlant} />
               <MijnPanden panden={panden} setPanden={setPanden} klant={klant} dossiers={dossiers} setDossiers={setDossiers} />
@@ -395,6 +402,39 @@ function Kaart({ id, titel, omschrijving, children }) {
       <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">{titel}</p>
       {omschrijving ? <p className="mb-4 text-sm text-foreground-muted">{omschrijving}</p> : null}
       {children}
+    </div>
+  )
+}
+
+// --- Totaal tot nu toe --------------------------------------------------
+
+/**
+ * Dashboardkaart (projectplan "Klantwaarde-uitbreidingen", Fase 2 — #12):
+ * toont alleen iets als er daadwerkelijk minstens één dossier met een
+ * Energie-indicatie is (zie klantTotalen.js) — geen lege/geschatte kaart.
+ * Hergebruikt bewust dezelfde cijfers en toon als het adviesrapport
+ * (Fase 1, #1): puur een optelsom, geen nieuwe claim.
+ */
+function TotaalTotNuToe({ totalen }) {
+  if (!totalen) return null
+  return (
+    <div id="totalen" className="scroll-mt-6 rounded-2xl border border-accent/30 bg-accent/5 p-6 shadow-sm sm:p-8">
+      <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Totaal tot nu toe</p>
+      <p className="mb-4 text-sm text-foreground-muted">
+        Opgeteld over {totalen.aantalDossiers === 1 ? 'uw dossier' : `uw ${totalen.aantalDossiers} dossiers`} met een Energie-indicatie.
+      </p>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="rounded-xl bg-white px-5 py-4">
+          <p className="text-2xl font-semibold text-primary">{euro(totalen.besparingPerJaar)} / jaar</p>
+          <p className="mt-1 text-xs text-foreground-muted">Geschatte energiekostenbesparing</p>
+        </div>
+        {totalen.co2PerJaar != null ? (
+          <div className="rounded-xl bg-white px-5 py-4">
+            <p className="text-2xl font-semibold text-primary">{totalen.co2PerJaar.toLocaleString('nl-NL')} kg</p>
+            <p className="mt-1 text-xs text-foreground-muted">CO₂-besparing per jaar</p>
+          </div>
+        ) : null}
+      </div>
     </div>
   )
 }
