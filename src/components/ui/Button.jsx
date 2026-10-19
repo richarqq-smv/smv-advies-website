@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { cn } from '../../lib/cn'
 
 const VARIANTS = {
-  primary: 'bg-accent text-white hover:bg-accent-light',
+  primary: 'bg-accent text-white hover:bg-accent-dark',
   secondary: 'bg-primary text-white hover:bg-secondary',
   outline: 'border border-primary/20 text-primary hover:bg-muted',
   ghost: 'text-primary hover:bg-muted',
@@ -27,7 +27,11 @@ export const Button = forwardRef(function Button(
     'transition-colors duration-200 ease-default',
     'active:scale-[0.98]',
     'focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2',
-    'disabled:pointer-events-none disabled:opacity-50',
+    // Expliciet neutraal grijs i.p.v. alleen opacity: een halftransparante
+    // merkkleur (het oude gedrag) oogt als een "verkeerd gekleurde,
+    // kapotte" knop i.p.v. "nog niet beschikbaar" — zie live screenshot
+    // 2026-10-19 (contactformulier-verstuurknop vóór Turnstile-verificatie).
+    'disabled:pointer-events-none disabled:cursor-not-allowed disabled:border-transparent disabled:bg-border disabled:text-foreground-muted',
     VARIANTS[variant],
     SIZES[size],
     className,
