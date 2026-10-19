@@ -258,7 +258,7 @@ export default function AdminDossiers() {
   const gefilterdeDossiers = dossiers.filter((d) => {
     const q = dossierZoekterm.trim().toLowerCase()
     if (!q) return true
-    return [d.klanten?.naam, d.klanten?.bedrijfsnaam, d.panden?.omschrijving, d.panden?.adres].some((v) => (v ?? '').toLowerCase().includes(q))
+    return [d.klanten?.naam, d.klanten?.bedrijfsnaam, d.panden?.omschrijving, d.panden?.adres, d.dossier_nummer].some((v) => (v ?? '').toLowerCase().includes(q))
   })
 
   return (

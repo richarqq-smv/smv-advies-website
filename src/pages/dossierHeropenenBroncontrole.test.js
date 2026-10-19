@@ -26,7 +26,7 @@ test('api.js: heropenDossier() zet uitsluitend status terug naar open, met een g
   const functieMatch = API.match(/export async function heropenDossier\([\s\S]*?\n\}/)
   assert.ok(functieMatch, 'heropenDossier() niet gevonden in api.js')
   const body = functieMatch[0]
-  assert.match(body, /\.update\(\{ status: 'open' \}\)/)
+  assert.match(body, /\.update\(\{ status: 'open', afgerond_op: null \}\)/)
   assert.match(body, /\.eq\('status', 'afgerond'\)/)
 })
 

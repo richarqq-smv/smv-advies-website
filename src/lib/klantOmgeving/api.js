@@ -515,9 +515,14 @@ export async function upsertDossierSubsidieSpecificatie(
   )
 }
 
-/** Uitsluitend admin: sinds de security-hardeningsronde (2026-09-28) blokkeert bewaak_dossier_integriteit() een statuswijziging door een niet-admin, ook al zou dossiers_update de rij zelf toestaan. De UI toont "Dossier afronden" alleen bij magBeheren (zie DossierWerkruimte.jsx). */
+/**
+ * Uitsluitend admin: sinds de security-hardeningsronde (2026-09-28) blokkeert bewaak_dossier_integriteit() een statuswijziging door een niet-admin, ook al zou dossiers_update de rij zelf toestaan. De UI toont "Dossier afronden" alleen bij magBeheren (zie DossierWerkruimte.jsx).
+ * `afgerond_op` (Fase 5, #8 — projectplan "Klantwaarde-uitbreidingen") legt vast wanneer dit gebeurde — betrouwbaarder dan updated_at, dat ook bij latere, ongerelateerde wijzigingen verandert, en is de basis voor de loyaliteitskorting-na-1-jaar-check.
+ */
 export async function completeDossier(dossierId) {
-  return throwOnError(await supabase.from('dossiers').update({ status: 'afgerond' }).eq('dossier_id', dossierId).select('*, panden(*)').single())
+  return throwOnError(
+    await supabase.from('dossiers').update({ status: 'afgerond', afgerond_op: new Date().toISOString() }).eq('dossier_id', dossierId).select('*, panden(*)').single(),
+  )
 }
 
 /**
@@ -533,7 +538,13 @@ export async function completeDossier(dossierId) {
 export async function heropenDossier(dossierId) {
   if (!dossierId) throw new Error('heropenDossier vereist een geldig dossier-ID.')
   return throwOnError(
-    await supabase.from('dossiers').update({ status: 'open' }).eq('dossier_id', dossierId).eq('status', 'afgerond').select('*, panden(*)').single(),
+    await supabase
+      .from('dossiers')
+      .update({ status: 'open', afgerond_op: null })
+      .eq('dossier_id', dossierId)
+      .eq('status', 'afgerond')
+      .select('*, panden(*)')
+      .single(),
   )
 }
 

@@ -46,6 +46,7 @@ import { euro, formatDatumNl } from '../lib/klantOmgeving/offerte'
 import { FACTUUR_STATUS_LABELS } from '../lib/klantOmgeving/factuur'
 import { buildInsights } from '../lib/mjop/linking'
 import { buildEnergieInsights } from '../lib/dossier/energieInsights'
+import { bouwKortingOpties, bouwKortingCode } from '../lib/klantOmgeving/loyaliteitskorting'
 
 /**
  * Detailpagina voor één Dossier — bereikbaar voor de eigen klant (RLS:
@@ -532,11 +533,51 @@ export default function DossierDetail() {
                 buiten, zie CommercieleKansSectie.jsx.
               */}
               {isAdmin ? <CommercieleKansSectie dossierId={dossier.dossier_id} /> : null}
+              {/*
+                Fase 5 (#8, projectplan "Klantwaarde-uitbreidingen"):
+                uitsluitend ter info/traceerbaarheid voor Richard — de
+                daadwerkelijke verzending gebeurt via de maandelijkse
+                loyaliteitskorting-sync Edge Function, niet hiervandaan.
+              */}
+              {isAdmin && dossier.status === 'afgerond' ? <LoyaliteitskortingInfo dossier={dossier} /> : null}
             </div>
           )}
         </Container>
       </Section>
     </>
+  )
+}
+
+/**
+ * Alleen-lezen preview (Fase 5, #8 — projectplan "Klantwaarde-
+ * uitbreidingen"): laat zien welke loyaliteitskorting-opties en -code
+ * voor dit afgeronde dossier gelden, en of de automatische mail al is
+ * verstuurd. Geen eigen verzend-/opslaglogica hier — dat gebeurt
+ * uitsluitend via de maandelijkse loyaliteitskorting-sync Edge Function;
+ * dit is puur ter info/traceerbaarheid voor Richard (zelfde
+ * bouwKortingOpties()/bouwKortingCode() als die functie gebruikt).
+ */
+function LoyaliteitskortingInfo({ dossier }) {
+  const opties = bouwKortingOpties(dossier.pakket_id)
+  const code = bouwKortingCode(dossier.dossier_nummer)
+  if (opties.length === 0 || !code) return null
+
+  return (
+    <div className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
+      <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Loyaliteitskorting</p>
+      <p className="mb-4 text-sm text-foreground-muted">
+        {dossier.loyaliteitskorting_verzonden_op
+          ? `Verstuurd op ${formatDatumNl(dossier.loyaliteitskorting_verzonden_op)} met code ${code}.`
+          : `Nog niet verstuurd (wordt automatisch verstuurd 12 maanden na afronding). Code bij verzending: ${code}.`}
+      </p>
+      <ul className="flex flex-col gap-1.5 text-sm text-primary">
+        {opties.map((o) => (
+          <li key={o.doelPakketId}>
+            {o.omschrijving}: {o.percentage}%
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }
 
