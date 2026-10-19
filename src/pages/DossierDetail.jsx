@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { ArrowLeft, DownloadSimple, FileText, Receipt, Archive, ClipboardText } from '@phosphor-icons/react'
+import { ArrowLeft, DownloadSimple, FileText, Receipt, Archive, ClipboardText, Medal } from '@phosphor-icons/react'
 import { Seo } from '../components/seo/Seo'
 import { PageHero } from '../components/ui/PageHero'
 import { Section } from '../components/ui/Section'
@@ -39,6 +39,7 @@ import {
   listDossierSubsidies,
   listFeatureFlags,
   adminListEnergieBenchmarkData,
+  listDossiersVoorKlant,
 } from '../lib/klantOmgeving/api'
 import { magDossierArchiveren } from '../lib/klantOmgeving/dossierArchief'
 import { bouwDossierHealthCheck } from '../lib/klantOmgeving/dossierHealthCheck'
@@ -50,6 +51,8 @@ import { buildInsights } from '../lib/mjop/linking'
 import { buildEnergieInsights } from '../lib/dossier/energieInsights'
 import { bouwKortingOpties, bouwKortingCode } from '../lib/klantOmgeving/loyaliteitskorting'
 import { bouwBenchmark } from '../lib/klantOmgeving/benchmark'
+import { bouwKlantTotalen } from '../lib/klantOmgeving/klantTotalen'
+import { genereerBadgePng } from '../lib/klantOmgeving/badgeCanvas'
 import { GEBRUIKSTYPE_LABELS } from '../lib/klantOmgeving/pandValidatie'
 
 /**
@@ -123,6 +126,15 @@ export default function DossierDetail() {
   // opgehaald/getoond als de Benchmark-vergelijking op /admin/opties
   // daadwerkelijk aan staat, zie het effect hieronder.
   const [benchmark, setBenchmark] = useState(null)
+
+  // Adviseursronde (2026-10-19): de Duurzaamheidsbadge (Fase 3, #11) was
+  // tot nu toe uitsluitend vanuit het klantaccount zelf te downloaden. Een
+  // adviseur die namens een klant een badge wil genereren (bv. tijdens een
+  // gesprek) had daar geen toegang toe. `badgeTotalen` hergebruikt exact
+  // dezelfde bouwKlantTotalen()-berekening als Account.jsx, nu over ALLE
+  // dossiers van DEZE klant (niet alleen dit ene dossier) — zodat de
+  // gedownloade badge identiek is aan wat de klant zelf zou krijgen.
+  const [badgeTotalen, setBadgeTotalen] = useState(null)
 
   useEffect(() => {
     let actief = true
@@ -208,6 +220,21 @@ export default function DossierDetail() {
       actief = false
     }
   }, [isAdmin, dossierId])
+
+  // Adviseursronde (2026-10-19): zelfde "alleen voor admin, nooit de rest
+  // van de pagina blokkeren bij een leesfout"-patroon als het benchmark-
+  // effect hierboven. Wacht bewust op `dossier.klant_id` (dus pas nadat
+  // het eerste effect het dossier heeft geladen).
+  useEffect(() => {
+    if (!isAdmin || !dossier?.klant_id) return
+    let actief = true
+    listDossiersVoorKlant(dossier.klant_id)
+      .then((dossiers) => actief && setBadgeTotalen(bouwKlantTotalen(dossiers)))
+      .catch(() => {})
+    return () => {
+      actief = false
+    }
+  }, [isAdmin, dossier?.klant_id])
 
   async function downloaden(document) {
     setDownloadFoutId(null)
@@ -554,7 +581,12 @@ export default function DossierDetail() {
                   />
                 ) : null}
               </div>
-              <FacturenBijDossier facturen={facturenVoorDossier} isAdmin={isAdmin} />
+              <FacturenBijDossier
+                facturen={facturenVoorDossier}
+                isAdmin={isAdmin}
+                badgeTotalen={badgeTotalen}
+                bedrijfsnaam={dossier.klanten?.bedrijfsnaam}
+              />
               {/*
                 Admin-ronde (2026-09-28): uitsluitend interne
                 admininformatie — nooit voor een klant. Zowel de UI-gate
@@ -711,7 +743,7 @@ function DocumentenBijDossier({ documenten, downloaden, downloadFoutId }) {
  * /account/facturen/:id, admin /admin/facturen/:id — dezelfde twee routes
  * die Account.jsx/AdminFacturen.jsx al gebruiken, geen nieuwe.
  */
-function FacturenBijDossier({ facturen, isAdmin }) {
+function FacturenBijDossier({ facturen, isAdmin, badgeTotalen, bedrijfsnaam }) {
   return (
     <div className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
       <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Facturen</p>
@@ -740,6 +772,54 @@ function FacturenBijDossier({ facturen, isAdmin }) {
           ))}
         </ul>
       )}
+      {isAdmin && badgeTotalen ? <AdminBadgeDownload totalen={badgeTotalen} bedrijfsnaam={bedrijfsnaam} /> : null}
+    </div>
+  )
+}
+
+/**
+ * Adviseursronde (2026-10-19): dezelfde SMV Duurzaamheidsbadge (Fase 3,
+ * #11) als DuurzaamheidsbadgeKaart in Account.jsx — zelfde genereerBadgePng(),
+ * zelfde verplichte disclaimer, zelfde "geen data = geen knop"-gating. Hier
+ * admin-only, zodat een adviseur 'm ook namens een klant kan downloaden
+ * (bv. tijdens een gesprek), zonder in te hoeven loggen als die klant.
+ */
+function AdminBadgeDownload({ totalen, bedrijfsnaam }) {
+  const [bezig, setBezig] = useState(false)
+  const [fout, setFout] = useState(null)
+
+  async function downloadBadge() {
+    setFout(null)
+    setBezig(true)
+    try {
+      const bytes = await genereerBadgePng(totalen, { bedrijfsnaam })
+      const blob = new Blob([bytes], { type: 'image/png' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'smv-duurzaamheidsbadge.png'
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      setFout('Het maken van de badge is niet gelukt. Probeer het opnieuw.')
+    } finally {
+      setBezig(false)
+    }
+  }
+
+  return (
+    <div className="mt-6 border-t border-border pt-5">
+      <p className="mb-1 text-xs font-semibold tracking-[0.14em] text-accent uppercase">Duurzaamheidsbadge</p>
+      <p className="mb-3 text-sm text-foreground-muted">Download de badge namens deze klant — zelfde afbeelding als die de klant zelf in zijn account kan downloaden.</p>
+      <Button onClick={downloadBadge} disabled={bezig} variant="ghost" size="sm">
+        <Medal size={16} />
+        {bezig ? 'Bezig...' : 'Badge downloaden'}
+      </Button>
+      {fout ? (
+        <p role="alert" className="mt-2 text-sm font-medium text-error">
+          {fout}
+        </p>
+      ) : null}
     </div>
   )
 }
