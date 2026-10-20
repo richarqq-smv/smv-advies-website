@@ -35,3 +35,12 @@ export function clearConsent() {
  * los magic string op twee plekken.
  */
 export const COOKIE_SETTINGS_EVENT = 'smv-cookie-settings-reopen'
+
+/**
+ * Naam van het window-event waarmee CookieBanner.jsx meldt of de banner
+ * zichtbaar is (detail: { visible: boolean }) — ContactFab.jsx luistert
+ * hierop om zichzelf tijdelijk te verbergen zolang de bezoeker nog geen
+ * cookiekeuze heeft gemaakt, zodat er nooit twee prominente floating
+ * elementen tegelijk om aandacht vragen.
+ */
+export const COOKIE_BANNER_VISIBILITY_EVENT = 'smv-cookie-banner-visibility'

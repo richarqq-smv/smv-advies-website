@@ -58,42 +58,17 @@ export default function Contact() {
             </Button>
           </div>
 
-          <div className="mx-auto mt-12 max-w-sm rounded-lg bg-muted p-6 text-left">
-            <h2 className="text-lg font-semibold text-primary">Contactgegevens</h2>
-            <dl className="mt-4 space-y-3 text-sm">
-              <div className="flex items-start gap-2.5">
-                <EnvelopeSimple size={18} className="mt-0.5 shrink-0 text-foreground-muted" />
-                <div>
-                  <dt className="sr-only">E-mail</dt>
-                  <dd>
-                    <a href={`mailto:${COMPANY.contactEmail}`} className="text-primary hover:text-secondary">
-                      {COMPANY.contactEmail}
-                    </a>
-                  </dd>
-                </div>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <Phone size={18} className="mt-0.5 shrink-0 text-foreground-muted" />
-                <div>
-                  <dt className="sr-only">Telefoon</dt>
-                  <dd>
-                    <a href={COMPANY.phoneHref} className="text-primary hover:text-secondary">
-                      {COMPANY.phone}
-                    </a>
-                  </dd>
-                </div>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <MapPin size={18} className="mt-0.5 shrink-0 text-foreground-muted" />
-                <div>
-                  <dt className="sr-only">Locatie</dt>
-                  <dd className="text-primary">
-                    {COMPANY.address.street}, {COMPANY.address.postalCode} {COMPANY.address.city}
-                  </dd>
-                </div>
-              </div>
-            </dl>
-          </div>
+          {/*
+            E-mail en telefoon staan al als de twee primaire knoppen hierboven —
+            dit blok herhaalt ze bewust niet nogmaals, alleen het adres staat
+            nergens anders op de pagina.
+          */}
+          <p className="mx-auto mt-10 flex max-w-sm items-start justify-center gap-2 text-sm text-foreground-muted">
+            <MapPin size={18} weight="light" className="mt-0.5 shrink-0" />
+            <span>
+              {COMPANY.address.street}, {COMPANY.address.postalCode} {COMPANY.address.city}
+            </span>
+          </p>
         </Container>
       </Section>
 

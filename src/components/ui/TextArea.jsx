@@ -21,7 +21,7 @@ export function TextArea({ id, label, placeholder, value, onChange, error, requi
         aria-required={required}
         aria-describedby={errorId}
         className={cn(
-          'w-full resize-y rounded-lg border bg-white px-3.5 py-3 text-base text-primary placeholder:text-foreground-muted/50 focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none',
+          'w-full resize-y rounded-md border bg-white px-3.5 py-3 text-base text-primary placeholder:text-foreground-muted/50 focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none',
           error ? 'border-error bg-error-bg' : 'border-border',
         )}
       />

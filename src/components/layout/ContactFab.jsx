@@ -1,10 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChatCircleText, EnvelopeSimple, Phone, X } from '@phosphor-icons/react'
 import { COMPANY } from '../../data/company'
 import { cn } from '../../lib/cn'
+import { getStoredConsent, COOKIE_BANNER_VISIBILITY_EVENT } from '../../lib/consent'
 
 const ACTIONS = [
-  { label: 'Bellen', href: COMPANY.phoneHref, icon: Phone },
+  // Onder 1440px toont StickyMobileActions al een "Bellen"-knop — deze pil
+  // blijft daar verborgen zodat er nooit twee bel-affordances tegelijk
+  // zichtbaar zijn; vanaf 1440px (waar de sticky balk verdwijnt) komt hij terug.
+  { label: 'Bellen', href: COMPANY.phoneHref, icon: Phone, mobileHidden: true },
   { label: 'E-mail', href: `mailto:${COMPANY.email}`, icon: EnvelopeSimple },
 ]
 
@@ -14,9 +18,22 @@ const ACTIONS = [
  */
 export function ContactFab() {
   const [open, setOpen] = useState(false)
+  const [cookieBannerVisible, setCookieBannerVisible] = useState(() => getStoredConsent() === null)
+
+  useEffect(() => {
+    function handleVisibility(event) {
+      setCookieBannerVisible(event.detail.visible)
+    }
+    window.addEventListener(COOKIE_BANNER_VISIBILITY_EVENT, handleVisibility)
+    return () => window.removeEventListener(COOKIE_BANNER_VISIBILITY_EVENT, handleVisibility)
+  }, [])
+
+  // Cookiebanner heeft prioriteit: zolang de bezoeker nog geen keuze heeft
+  // gemaakt, verbergt deze knop zich in plaats van ermee te concurreren.
+  if (cookieBannerVisible) return null
 
   return (
-    <div className="fixed right-4 bottom-20 z-[90] flex flex-col items-end gap-3 xl:bottom-6">
+    <div className="fixed right-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-[90] flex flex-col items-end gap-3 min-[1440px]:bottom-[calc(1.5rem+env(safe-area-inset-bottom))]">
       <div
         inert={!open}
         className={cn(
@@ -28,7 +45,10 @@ export function ContactFab() {
           <a
             key={action.label}
             href={action.href}
-            className="flex items-center gap-2 rounded-full border border-border bg-background/95 py-2 pr-4 pl-3 text-sm font-medium text-primary shadow-lg backdrop-blur-sm hover:bg-muted"
+            className={cn(
+              'flex items-center gap-2 rounded-full border border-border bg-background/95 py-2 pr-4 pl-3 text-sm font-medium text-primary shadow-lg backdrop-blur-sm hover:bg-muted',
+              action.mobileHidden && 'hidden min-[1440px]:flex',
+            )}
           >
             <action.icon size={18} weight="bold" className="text-accent" />
             {action.label}

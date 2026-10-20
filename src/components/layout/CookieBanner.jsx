@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react'
 import { ROUTES } from '../../lib/routes'
 import { loadAnalytics, loadTrustpilot, revokeAnalytics } from '../../lib/analytics'
-import { getStoredConsent, storeConsent, clearConsent, COOKIE_SETTINGS_EVENT } from '../../lib/consent'
+import {
+  getStoredConsent,
+  storeConsent,
+  clearConsent,
+  COOKIE_SETTINGS_EVENT,
+  COOKIE_BANNER_VISIBILITY_EVENT,
+} from '../../lib/consent'
 import { Button } from '../ui/Button'
 
 /**
@@ -20,6 +26,13 @@ export function CookieBanner() {
       loadTrustpilot()
     }
   }, [])
+
+  // ContactFab.jsx verbergt zichzelf zolang deze banner zichtbaar is — twee
+  // prominente floating elementen tegelijk op kleine schermen concurreren
+  // anders om dezelfde aandacht.
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent(COOKIE_BANNER_VISIBILITY_EVENT, { detail: { visible } }))
+  }, [visible])
 
   // "Cookie-instellingen wijzigen" op de privacypagina stuurt dit event
   // i.p.v. direct deze component aan te roepen (die staat los/eenmalig in

@@ -10,7 +10,10 @@ import { trackEvent } from '../../lib/analytics'
  */
 export function StickyMobileActions() {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 flex gap-3 border-t border-border bg-background/95 p-3 backdrop-blur-sm min-[1440px]:hidden">
+    <div
+      className="fixed inset-x-0 bottom-0 z-40 flex gap-3 border-t border-border bg-background/95 p-3 backdrop-blur-sm min-[1440px]:hidden"
+      style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}
+    >
       <Button
         to={ROUTES.energieIndicatie}
         variant="primary"

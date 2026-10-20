@@ -23,7 +23,13 @@
   --font-heading: "Fraunces Variable", Georgia, serif;
   --font-body: "Inter Variable", system-ui, -apple-system, sans-serif;
 
-  /* Radius scale (single system used consistently across the site) */
+  /* Radius scale (single system used consistently across the site).
+     Hiërarchie per componentfunctie — bewust niet alles gelijktrekken:
+     sm  → focus-ring offset (zie :focus-visible hieronder)
+     md  → interactieve controls: knoppen, invoervelden (Button/TextField/TextArea)
+     lg  → kleinere kaarten/losse blokken binnen een sectie
+     xl  → grotere panelen/content-cards (rounded-2xl volgt hier bewust uit de
+           Tailwind-default, niet uit een eigen token — geen tweede systeem) */
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;

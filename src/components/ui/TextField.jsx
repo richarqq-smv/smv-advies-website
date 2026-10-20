@@ -22,7 +22,7 @@ export function TextField({ id, label, type = 'text', autoComplete, placeholder,
         aria-required={required}
         aria-describedby={errorId}
         className={cn(
-          'w-full rounded-lg border bg-white px-3.5 py-3 text-base text-primary placeholder:text-foreground-muted/50 focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none',
+          'w-full rounded-md border bg-white px-3.5 py-3 text-base text-primary placeholder:text-foreground-muted/50 focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none',
           error ? 'border-error bg-error-bg' : 'border-border',
         )}
       />
