@@ -57,7 +57,7 @@ export default function Over() {
               alt="Richard, oprichter van SMV Advies"
               width="96"
               height="96"
-              className="h-24 w-24 shrink-0 rounded-full border border-border bg-muted object-cover object-top"
+              className="h-24 w-24 shrink-0 rounded-full border border-border bg-muted object-cover"
             />
             <div className="space-y-4 text-base leading-relaxed text-foreground-muted">
               <p>
