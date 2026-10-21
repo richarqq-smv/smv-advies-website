@@ -12,10 +12,15 @@ import { ROUTES } from '../../lib/routes'
  * vandaar direct erna geplaatst. Verwijst naar de daadwerkelijke Gold-scope
  * (max. 3 aanbieders per maatregel, zie data/packages.js) i.p.v. een losse
  * belofte, zodat dit consistent blijft met de pakketpagina.
+ *
+ * Toon (pro-design-ronde 2026-10-21): `muted`, en Independence `white` —
+ * voorheen stonden RegionalBand en Independence allebei op `muted` direct
+ * onder elkaar (dubbele sectiepadding, ~220px leeg grijs vlak), terwijl
+ * de rest van de homepage netjes wit/grijs afwisselt.
  */
 export function AdviesEerst() {
   return (
-    <Section tone="white">
+    <Section tone="muted">
       <Container className="max-w-3xl text-center">
         <Reveal>
           <ListChecks size={32} weight="light" className="mx-auto text-accent" />

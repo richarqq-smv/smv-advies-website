@@ -15,8 +15,8 @@ export function RegionalBand() {
         <h2 className="sr-only">Regionale expertise</h2>
         <Reveal>
           <blockquote className="font-heading text-2xl leading-snug text-primary sm:text-3xl">
-            "Steen en Mortel Verbetering: verduurzaming draait bij ons niet om trends, maar om het
-            pand zelf."
+            “Steen en Mortel Verbetering: verduurzaming draait bij ons niet om trends, maar om het
+            pand zelf.”
           </blockquote>
           <p className="mt-6 text-base leading-relaxed text-foreground-muted">
             SMV Advies is gevestigd in Oud-Beijerland en werkt uitsluitend voor mkb-ondernemers in

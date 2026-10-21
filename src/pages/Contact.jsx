@@ -72,7 +72,10 @@ export default function Contact() {
         </Container>
       </Section>
 
-      <Section tone="muted" noTopPadding>
+      {/* Geen noTopPadding: deze sectie heeft een eigen (grijze) achtergrond,
+          dus zonder bovenpadding plakte de formulierkop direct tegen de
+          rand van het grijze vlak. */}
+      <Section tone="muted">
         <Container className="max-w-xl">
           <h2 className="text-xl font-semibold text-primary">Liever uw vraag opschrijven dan bellen?</h2>
           <p className="mt-2 text-sm leading-relaxed text-foreground-muted">

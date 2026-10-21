@@ -1,4 +1,5 @@
 import { Container } from './Container'
+import { cn } from '../../lib/cn'
 
 /**
  * Compact top-of-page introduction for content pages (as opposed to the
@@ -13,11 +14,17 @@ import { Container } from './Container'
  * LCP text) was needlessly invisible for ~800ms on every single page
  * load. Reveal itself is unchanged and still used correctly for content
  * further down each page that only comes into view on scroll.
+ *
+ * `className` (pro-design-ronde 2026-10-21) gaat naar de Container, zodat
+ * een pagina de introkolom dezelfde breedte kan geven als haar content.
+ * Standaard blijft `max-w-2xl`; pagina's met een `max-w-3xl`-contentkolom
+ * geven `max-w-3xl` mee — anders sprong de linkerrand van de inhoud direct
+ * onder de H1 zichtbaar ~48px naar links op desktop.
  */
-export function PageHero({ eyebrow, title, description }) {
+export function PageHero({ eyebrow, title, description, className }) {
   return (
     <section className="pt-10 pb-12 sm:pt-14 sm:pb-16 lg:pt-20">
-      <Container className="max-w-2xl">
+      <Container className={cn('max-w-2xl', className)}>
         {eyebrow ? (
           <p className="mb-3 text-xs font-semibold tracking-[0.14em] text-accent uppercase">{eyebrow}</p>
         ) : null}
