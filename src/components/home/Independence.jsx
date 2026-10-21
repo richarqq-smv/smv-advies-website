@@ -12,7 +12,7 @@ import { Reveal } from '../ui/Reveal'
  */
 export function Independence() {
   return (
-    <Section tone="muted">
+    <Section tone="white">
       <Container className="max-w-3xl text-center">
         <Reveal>
           <Compass size={32} weight="light" className="mx-auto text-accent" />

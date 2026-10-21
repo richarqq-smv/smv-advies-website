@@ -7,11 +7,20 @@ import { ROUTES } from '../../lib/routes'
 
 const SOCIAL_ICON_CLASSNAME = 'flex h-11 w-11 items-center justify-center rounded-lg bg-white/10 transition-colors'
 
+// Kolomkoppen in dezelfde eyebrow-stijl als elders op de site (Inter,
+// xs, tracking 0.14em — zie Hero/PageHero). Zonder `font-body` erfden deze
+// h3's Fraunces uit de basisstijl voor h1–h4, wat als kleine serif-kapitalen
+// in 50% wit rommelig oogde en van de rest van de site afweek.
+const FOOTER_HEADING_CLASSNAME = 'font-body text-xs font-semibold tracking-[0.14em] text-white/60 uppercase'
+
 export function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="bg-primary text-white">
+    // border-t: op de meeste pagina's staat ClosingCta (ook bg-primary)
+    // direct boven de footer; zonder scheidingslijn liepen CTA en footer
+    // over in één ononderbroken navy vlak.
+    <footer className="border-t border-white/10 bg-primary text-white">
       <Container className="grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-4 lg:py-20">
         <div className="sm:col-span-2 lg:col-span-1">
           {/* logo-footer-light.png is logo-header.png zelf, puur
@@ -42,7 +51,12 @@ export function Footer() {
             data-style-width="100%"
             data-token="7b523343-0274-45cf-a20b-6688c4869c5e"
           >
-            <a href="https://nl.trustpilot.com/review/smv-advies.nl" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://nl.trustpilot.com/review/smv-advies.nl"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block py-1 text-sm text-white/80 underline underline-offset-4 hover:text-white"
+            >
               Trustpilot
             </a>
           </div>
@@ -78,7 +92,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold tracking-wide text-white/50 uppercase">Navigatie</h3>
+          <h3 className={FOOTER_HEADING_CLASSNAME}>Navigatie</h3>
           <ul className="mt-4 space-y-2.5">
             {NAV_ITEMS.map((item) => (
               <li key={item.path}>
@@ -91,7 +105,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold tracking-wide text-white/50 uppercase">Contact</h3>
+          <h3 className={FOOTER_HEADING_CLASSNAME}>Contact</h3>
           <ul className="mt-4 space-y-3 text-sm text-white/80">
             <li className="flex items-start gap-2.5">
               <EnvelopeSimple size={18} className="mt-0.5 shrink-0 text-accent-light" />
@@ -115,7 +129,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold tracking-wide text-white/50 uppercase">Service</h3>
+          <h3 className={FOOTER_HEADING_CLASSNAME}>Service</h3>
           <ul className="mt-4 space-y-2.5">
             {FOOTER_LEGAL_ITEMS.map((item) => (
               <li key={item.path}>

@@ -17,6 +17,7 @@ export default function Blog() {
       />
 
       <PageHero
+        className="max-w-3xl"
         eyebrow="Kennis & inzicht"
         title="Praktische kennis voor verduurzaming van uw bedrijfspand"
         description="Artikelen over isolatie, subsidies, installaties en verborgen energieverbruik. Heldere kennis, geschreven voor ondernemers."

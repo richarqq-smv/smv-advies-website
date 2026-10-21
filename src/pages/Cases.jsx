@@ -67,6 +67,7 @@ export default function Cases() {
       />
 
       <PageHero
+        className="max-w-3xl"
         eyebrow="In de praktijk"
         title="Wat u van een advies bij SMV Advies kunt verwachten"
         description="Op dit moment publiceren we geen geverifieerde praktijkcases. Cijfers, resultaten of klantverhalen die we niet met zekerheid kunnen onderbouwen, laten we daarom liever weg. Wel ziet u hieronder precies hoe een adviestraject wordt aangepakt en wat het oplevert."

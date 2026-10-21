@@ -37,6 +37,7 @@ export default function Faq() {
       />
 
       <PageHero
+        className="max-w-3xl"
         eyebrow="Veelgestelde vragen"
         title="Antwoorden op wat ondernemers willen weten"
         description="Klaarstaan met duidelijke antwoorden. Staat uw vraag er niet bij? Neem gerust contact op."

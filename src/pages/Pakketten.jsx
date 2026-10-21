@@ -64,7 +64,12 @@ export default function Pakketten() {
 
       <PageHero
         eyebrow="Drie manieren om te beginnen"
-        title="Verduurzamingsadvies voor uw bedrijfspand"
+        // \u00AD (zacht afbreekstreepje, onzichtbaar tenzij nodig): op 390px
+        // is "Verduurzamingsadvies" in de H1 breder dan de kolom, waardoor
+        // `overflow-wrap: break-word` (index.css) het woord op een willekeurige
+        // letter afbrak. Nu breekt het, alleen indien nodig, netjes als
+        // "Verduurzamings-/advies". Zelfde voor "verduurzamingspakketten".
+        title={'Verduurzamings\u00ADadvies voor uw bedrijfspand'}
         description="Weet u niet goed welke verduurzamingsmaatregelen voor uw pand interessant zijn? SMV Advies brengt de mogelijkheden, investeringen, besparingen en vervolgstappen overzichtelijk in beeld — onafhankelijk, en in drie niveaus: van een eerste indicatie tot volledige begeleiding bij de uitvoering."
       />
 
@@ -116,7 +121,7 @@ export default function Pakketten() {
           </div>
 
           <SectionHeading
-            title="Onze verduurzamingspakketten"
+            title={'Onze verduurzamings\u00ADpakketten'}
             description="Prijzen en inhoud van de drie pakketten op een rij."
             className="mb-8"
           />
@@ -151,7 +156,10 @@ export default function Pakketten() {
         </Container>
       </Section>
 
-      <Section tone="muted">
+      {/* noTopPadding: sluit direct aan op de `muted`-sectie hierboven
+          (zelfde achtergrond) — zonder stapelde de padding van beide
+          secties zich op tot een ~220px leeg grijs vlak. */}
+      <Section tone="muted" noTopPadding>
         <Container>
           <SectionHeading
             title="Het verschil in één oogopslag"
