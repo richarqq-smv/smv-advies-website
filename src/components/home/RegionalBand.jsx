@@ -18,7 +18,7 @@ export function RegionalBand() {
             “Steen en Mortel Verbetering: verduurzaming draait bij ons niet om trends, maar om het
             pand zelf.”
           </blockquote>
-          <p className="mt-6 text-base leading-relaxed text-foreground-muted">
+          <p className="mt-6 text-lg leading-relaxed text-foreground">
             SMV Advies is gevestigd in Oud-Beijerland en werkt uitsluitend voor mkb-ondernemers in
             de Hoeksche Waard, van winkelpanden in de dorpskernen tot bedrijfshallen op de lokale
             bedrijventerreinen. Die lokale kennis scheelt in de praktijk veel tijd en giswerk.
@@ -29,7 +29,7 @@ export function RegionalBand() {
           {FACTS.map((fact) => (
             <div key={fact.label}>
               <p className="text-sm font-semibold text-primary">{fact.label}</p>
-              <p className="text-xs text-foreground-muted">{fact.sublabel}</p>
+              <p className="text-sm text-foreground-muted">{fact.sublabel}</p>
             </div>
           ))}
         </Reveal>

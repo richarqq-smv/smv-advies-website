@@ -35,9 +35,8 @@ export default function EnergieIndicatie() {
 
       <PageHero
         className="max-w-3xl"
-        eyebrow="Gratis indicatie · geen officieel energielabel"
         title="Ontdek waar uw bedrijfspand energie verliest"
-        description="Beantwoord in 5-7 minuten een paar vragen over uw pand en ontvang direct een persoonlijk rapport met de grootste besparingskansen."
+        description="Beantwoord in 5-7 minuten een paar vragen over uw pand en ontvang direct een persoonlijk rapport met de grootste besparingskansen. Gratis, en geen officieel energielabel."
       />
 
       <Section tone="white" noTopPadding>

@@ -17,7 +17,6 @@ export default function Over() {
 
       <PageHero
         className="max-w-3xl"
-        eyebrow="Over SMV Advies"
         title="Steen en Mortel Verbetering — letterlijk én figuurlijk"
         description="SMV Advies helpt mkb-ondernemers in de Hoeksche Waard om hun bedrijfspand stap voor stap te verduurzamen, zonder belang bij de installatie die u uiteindelijk kiest."
       />

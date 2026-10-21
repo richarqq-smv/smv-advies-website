@@ -8,9 +8,16 @@
   /* Brand colors */
   --color-primary: #16293a;
   --color-secondary: #2c4a63;
-  --color-accent: #9d7720;
+  /* Accent (anti-slop-ronde 2026-10-21): #9d7720 → #8a681c. Het oude goud
+     haalde op wit maar 4.12:1 (WCAG AA vraagt 4.5:1 voor normale tekst) —
+     gemeten op de witte tekst in elke primaire knop, de actieve navlink en
+     elk goudkleurig tekstlabel. #8a681c: 5.15:1 op wit, 4.66:1 op muted.
+     accent-light blijft voor gebruik op navy (5.93:1); accent-dark schuift
+     mee zodat hover zichtbaar donkerder blijft. Print-/docx-documenten
+     (src/lib/**) houden bewust hun eigen #9d7720. */
+  --color-accent: #8a681c;
   --color-accent-light: #c79d55;
-  --color-accent-dark: #7c5c18;
+  --color-accent-dark: #6e5216;
   --color-background: #ffffff;
   --color-muted: #f1f4f6;
   --color-border: #e1e6ea;
@@ -81,6 +88,22 @@
 
   p {
     text-wrap: pretty;
+  }
+
+  /* Browseroppervlakken in de huisstijl i.p.v. browserdefaults (selectie,
+     cursor, onderstreping) — zie impeccable craft-floor "Browser surfaces". */
+  ::selection {
+    background-color: var(--color-primary);
+    color: #fff;
+  }
+
+  input,
+  textarea {
+    caret-color: var(--color-accent);
+  }
+
+  a {
+    text-underline-offset: 0.2em;
   }
 
   :focus-visible {

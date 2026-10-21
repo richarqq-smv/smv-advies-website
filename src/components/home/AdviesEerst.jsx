@@ -1,4 +1,3 @@
-import { ListChecks } from '@phosphor-icons/react'
 import { Section } from '../ui/Section'
 import { Container } from '../ui/Container'
 import { Reveal } from '../ui/Reveal'
@@ -17,20 +16,23 @@ import { ROUTES } from '../../lib/routes'
  * voorheen stonden RegionalBand en Independence allebei op `muted` direct
  * onder elkaar (dubbele sectiepadding, ~220px leeg grijs vlak), terwijl
  * de rest van de homepage netjes wit/grijs afwisselt.
+ *
+ * Anti-slop-ronde (2026-10-21): links uitgelijnd op de gedeelde linkerrand
+ * van de pagina, zonder decoratief icoon erboven, lopende tekst in volle
+ * inktkleur.
  */
 export function AdviesEerst() {
   return (
     <Section tone="muted">
-      <Container className="max-w-3xl text-center">
-        <Reveal>
-          <ListChecks size={32} weight="light" className="mx-auto text-accent" />
-          <h2 className="mt-5 text-3xl text-primary sm:text-4xl">Waarom we niet meteen naar offertes kijken</h2>
-          <p className="mt-5 text-lg leading-relaxed text-foreground-muted">
+      <Container>
+        <Reveal className="max-w-3xl">
+          <h2 className="text-3xl text-primary sm:text-4xl">Waarom we niet meteen naar offertes kijken</h2>
+          <p className="mt-5 text-lg leading-relaxed text-foreground">
             Pas als u weet wat voor uw pand verstandig is, heeft een offerte echt betekenis.
             Daarom beginnen wij met onafhankelijk advies: wat moet nu, wat kan wachten, en in
             welke volgorde. Zo weet u bij een offerteaanvraag precies waar u om vraagt.
           </p>
-          <p className="mt-4 text-sm text-foreground-muted">
+          <p className="mt-4 text-base text-foreground-muted">
             Wilt u dat wij ook de offertes voor u verzamelen en vergelijken? Dat kan binnen het{' '}
             <Link to={ROUTES.pakketten} className="font-medium text-accent underline underline-offset-2 hover:text-secondary">
               Gold Pakket

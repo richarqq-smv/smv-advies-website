@@ -20,17 +20,23 @@ import { cn } from '../../lib/cn'
  * Standaard blijft `max-w-2xl`; pagina's met een `max-w-3xl`-contentkolom
  * geven `max-w-3xl` mee — anders sprong de linkerrand van de inhoud direct
  * onder de H1 zichtbaar ~48px naar links op desktop.
+ *
+ * Anti-slop-ronde (2026-10-21): `eyebrow` staat niet meer als klein, goud,
+ * hoofdletter-label bóven de H1 (taste-skill/impeccable: eyebrow + micro-
+ * label), maar als gewone regel direct ónder de H1 (vóór de beschrijving),
+ * zodat hij nooit als label boven de kop van de volgende sectie leest. Op
+ * publieke pagina's waar het label alleen de menunaam herhaalde, is de prop
+ * weggehaald; elders (bv. "Adviesdossier · <nummer>") blijft de informatie
+ * gewoon zichtbaar. De H1 krijgt een strakkere displayzetting.
  */
 export function PageHero({ eyebrow, title, description, className }) {
   return (
     <section className="pt-10 pb-12 sm:pt-14 sm:pb-16 lg:pt-20">
       <Container className={cn('max-w-2xl', className)}>
-        {eyebrow ? (
-          <p className="mb-3 text-xs font-semibold tracking-[0.14em] text-accent uppercase">{eyebrow}</p>
-        ) : null}
-        <h1 className="text-4xl text-primary sm:text-5xl">{title}</h1>
+        <h1 className="text-4xl leading-[1.08] tracking-[-0.02em] text-primary sm:text-5xl">{title}</h1>
+        {eyebrow ? <p className="mt-3 text-lg text-foreground-muted">{eyebrow}</p> : null}
         {description ? (
-          <p className="mt-4 text-lg leading-relaxed text-foreground-muted">{description}</p>
+          <p className="mt-5 text-lg leading-relaxed text-foreground">{description}</p>
         ) : null}
       </Container>
     </section>

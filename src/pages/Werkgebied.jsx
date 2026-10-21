@@ -60,7 +60,6 @@ export default function Werkgebied() {
 
       <PageHero
         className="max-w-3xl"
-        eyebrow="Werkgebied"
         // \u00AD: zacht afbreekpunt — zie Pakketten.jsx (PageHero-titel).
         title={'Verduurzamings\u00ADadvies voor bedrijfspanden in de Hoeksche Waard'}
         description="SMV Advies helpt ondernemers en eigenaren van bedrijfspanden in de hele Hoeksche Waard om hun pand slim en onafhankelijk te verduurzamen — van een eerste QuickScan tot volledige begeleiding."

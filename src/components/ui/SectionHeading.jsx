@@ -18,7 +18,7 @@ export function SectionHeading({ eyebrow, title, description, align = 'left', cl
       ) : null}
       <h2 className="text-3xl text-primary sm:text-4xl">{title}</h2>
       {description ? (
-        <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-foreground-muted">
+        <p className="mt-4 max-w-[60ch] text-lg leading-relaxed text-foreground">
           {description}
         </p>
       ) : null}
