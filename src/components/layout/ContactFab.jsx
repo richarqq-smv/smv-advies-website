@@ -37,7 +37,7 @@ export function ContactFab() {
       <div
         inert={!open}
         className={cn(
-          'flex flex-col items-end gap-2 transition-all duration-300 ease-default',
+          'flex flex-col items-end gap-2 transition-[opacity,transform] duration-200 ease-default',
           open ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0',
         )}
       >
@@ -46,7 +46,7 @@ export function ContactFab() {
             key={action.label}
             href={action.href}
             className={cn(
-              'flex items-center gap-2 rounded-full border border-border bg-background/95 py-2 pr-4 pl-3 text-sm font-medium text-primary shadow-lg backdrop-blur-sm hover:bg-muted',
+              'flex items-center gap-2 rounded-full bg-background py-2 pr-4 pl-3 text-sm font-medium text-primary shadow-lg hover:bg-muted',
               action.mobileHidden && 'hidden min-[1440px]:flex',
             )}
           >
@@ -61,7 +61,7 @@ export function ContactFab() {
         onClick={() => setOpen((value) => !value)}
         aria-label={open ? 'Contactopties sluiten' : 'Contactopties openen'}
         aria-expanded={open}
-        className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-background/95 text-primary shadow-lg backdrop-blur-sm transition-transform duration-200 ease-default hover:scale-105"
+        className="flex h-12 w-12 items-center justify-center rounded-full bg-background text-primary shadow-lg transition-transform duration-200 ease-default hover:scale-105"
       >
         {open ? <X size={20} /> : <ChatCircleText size={20} weight="bold" />}
       </button>

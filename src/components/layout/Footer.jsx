@@ -7,20 +7,19 @@ import { ROUTES } from '../../lib/routes'
 
 const SOCIAL_ICON_CLASSNAME = 'flex h-11 w-11 items-center justify-center rounded-lg bg-white/10 transition-colors'
 
-// Kolomkoppen in dezelfde eyebrow-stijl als elders op de site (Inter,
-// xs, tracking 0.14em — zie Hero/PageHero). Zonder `font-body` erfden deze
-// h3's Fraunces uit de basisstijl voor h1–h4, wat als kleine serif-kapitalen
-// in 50% wit rommelig oogde en van de rest van de site afweek.
-const FOOTER_HEADING_CLASSNAME = 'font-body text-xs font-semibold tracking-[0.14em] text-white/60 uppercase'
+// Kolomkoppen: Inter, zinsopbouw, leesbare grootte (anti-slop-ronde
+// 2026-10-21 — eerder kleine letter-gespatieerde hoofdletters, door de
+// taste-skill-inspector gemarkeerd als micro-label). `font-body` blijft
+// nodig: zonder erven deze h3's Fraunces uit de basisstijl voor h1–h4.
+const FOOTER_HEADING_CLASSNAME = 'font-body text-base font-semibold text-white'
 
 export function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    // border-t: op de meeste pagina's staat ClosingCta (ook bg-primary)
-    // direct boven de footer; zonder scheidingslijn liepen CTA en footer
-    // over in één ononderbroken navy vlak.
-    <footer className="border-t border-white/10 bg-primary text-white">
+    // ClosingCta (direct boven de footer op de meeste pagina's) staat op
+    // bg-secondary: een toonstap scheidt CTA en footer, geen haarlijn.
+    <footer className="bg-primary text-white">
       <Container className="grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-4 lg:py-20">
         <div className="sm:col-span-2 lg:col-span-1">
           {/* logo-footer-light.png is logo-header.png zelf, puur
@@ -29,7 +28,7 @@ export function Footer() {
               zodat het losstaand op de donkere footer-achtergrond past,
               zonder wit kaartje eromheen. */}
           <img src="/logo-footer-light.png" alt="SMV Advies" width="199" height="112" className="h-9 w-auto" />
-          <p className="mt-4 max-w-[32ch] text-sm leading-relaxed text-white/70">
+          <p className="mt-4 max-w-[32ch] text-base leading-relaxed text-white/80">
             Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in de Hoeksche Waard.{' '}
             {COMPANY.tagline}.
           </p>
@@ -142,8 +141,8 @@ export function Footer() {
         </div>
       </Container>
 
-      <div className="border-t border-white/10">
-        <Container className="flex flex-col gap-2 py-6 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <Container className="flex flex-col gap-2 pt-4 pb-8 text-sm text-white/70 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {year} {COMPANY.legalName}. {COMPANY.address.city}
             {COMPANY.kvk ? ` — KvK ${COMPANY.kvk}` : ''}.

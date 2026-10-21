@@ -44,7 +44,10 @@ test('PricingCard.jsx: de bestaande primaire aanvraagknop (pkg.ctaTo/pkg.cta) bl
 
 test('Pakketten.jsx: heeft per pakket een sectie met een op pkg.id gebaseerd anchor-id en een scroll-margin tegen de vaste header', () => {
   assert.match(PAKKETTEN, /id=\{`pakket-\$\{pkg\.id\}`\}/)
-  assert.match(PAKKETTEN, /className="scroll-mt-24 rounded-2xl border border-border bg-white/)
+  // Bewaakt de scroll-margin tegen de vaste header; de vlakopmaak zelf
+  // (rand/achtergrond) is een designkeuze en bewust geen onderdeel van deze
+  // regressietest (anti-slop-ronde 2026-10-21: rand → toonvlak).
+  assert.match(PAKKETTEN, /className="scroll-mt-24 /)
 })
 
 test('Pakketten.jsx: rendert de uitgebreide secties vanuit PACKAGES + PACKAGE_DETAILS, geen tweede PACKAGES-array of hardcoded naam/prijs/features/cta', () => {

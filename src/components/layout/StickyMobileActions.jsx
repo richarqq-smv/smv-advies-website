@@ -11,7 +11,7 @@ import { trackEvent } from '../../lib/analytics'
 export function StickyMobileActions() {
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-40 flex gap-3 border-t border-border bg-background/95 p-3 backdrop-blur-sm min-[1440px]:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 flex gap-3 bg-background p-3 shadow-[0_-8px_24px_-12px_rgb(22_41_58/0.25)] min-[1440px]:hidden"
       style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}
     >
       <Button

@@ -24,7 +24,8 @@ export function ClosingCta({ heading = 'Klaar voor de eerste stap?', description
     </>
   )
   return (
-    <Section tone="primary">
+    // bg-secondary (toonstap t.o.v. de navy footer eronder) — zie Footer.jsx.
+    <Section tone="primary" className="bg-secondary">
       <Container>
         {/*
           lg: in plaats van sm: (was tot 2026-10-02 sm:) — bij een lange
@@ -37,7 +38,7 @@ export function ClosingCta({ heading = 'Klaar voor de eerste stap?', description
         <Reveal className="flex flex-col items-start gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="text-3xl text-white sm:text-4xl">{heading}</h2>
-            <p className="mt-3 max-w-[50ch] text-white/70">{tekst}</p>
+            <p className="mt-3 max-w-[50ch] text-lg text-white/85">{tekst}</p>
           </div>
           <div className="flex shrink-0 flex-wrap gap-3">
             <Button to={ROUTES.contact} onClick={() => trackEvent('cta_click', { cta: 'contact', location: 'closing_cta' })}>

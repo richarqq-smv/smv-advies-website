@@ -63,7 +63,6 @@ export default function Pakketten() {
       />
 
       <PageHero
-        eyebrow="Drie manieren om te beginnen"
         // \u00AD (zacht afbreekstreepje, onzichtbaar tenzij nodig): op 390px
         // is "Verduurzamingsadvies" in de H1 breder dan de kolom, waardoor
         // `overflow-wrap: break-word` (index.css) het woord op een willekeurige
@@ -105,11 +104,11 @@ export default function Pakketten() {
             className="mb-8"
           />
 
-          <div className="mb-10 flex flex-col items-start justify-between gap-4 rounded-xl border border-dashed border-border bg-muted/40 p-6 sm:flex-row sm:items-center">
+          <div className="mb-10 flex flex-col items-start justify-between gap-4 rounded-xl bg-muted p-6 sm:p-8 sm:flex-row sm:items-center">
             <div>
-              <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Stap 0 · gratis</p>
+              <p className="text-sm font-semibold text-accent">Stap 0 · gratis</p>
               <p className="mt-1 text-base font-semibold text-primary">Energie Indicatie — Hoe staat mijn pand er globaal voor?</p>
-              <p className="mt-1 text-sm text-foreground-muted">
+              <p className="mt-2 max-w-[70ch] text-base leading-relaxed text-foreground">
                 Nog geen idee waar u staat? Begin hier, geheel vrijblijvend — een geautomatiseerde
                 indicatie, zonder bedragen per maatregel. Voor een rapport mét investering,
                 besparing en terugverdientijd per maatregel is het Basis Pakket de eerste stap.
@@ -142,11 +141,11 @@ export default function Pakketten() {
               { pkg: PACKAGES[1], zin: 'u een uitgebreider, op locatie onderbouwd advies nodig heeft om een beslissing te kunnen nemen.' },
               { pkg: PACKAGES[2], zin: 'u niet alleen advies wilt, maar ook begeleiding wilt bij de uitvoering, binnen een vooraf afgesproken scope.' },
             ].map(({ pkg, zin }) => (
-              <div key={pkg.id} className="rounded-xl border border-border bg-white p-6">
+              <div key={pkg.id} className="rounded-xl bg-white p-6 sm:p-8">
                 <p className="text-base font-semibold text-primary">
                   Kies {pkg.name} als…
                 </p>
-                <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{zin}</p>
+                <p className="mt-2 text-base leading-relaxed text-foreground">{zin}</p>
                 <Link to={ROUTES.pakketAnchor(pkg.id)} className={`mt-3 inline-block text-sm ${LINK_CLASSNAME}`}>
                   Meer over {pkg.name}
                 </Link>
@@ -196,27 +195,27 @@ export default function Pakketten() {
                 <div
                   key={pkg.id}
                   id={`pakket-${pkg.id}`}
-                  className="scroll-mt-24 rounded-2xl border border-border bg-white p-7 sm:p-8"
+                  className="scroll-mt-24 rounded-2xl bg-muted p-7 sm:p-10"
                 >
                   <h3 className="text-2xl text-primary">{pkg.name}</h3>
-                  <p className="mt-1 text-sm text-foreground-muted">{pkg.subtitle}</p>
+                  <p className="mt-1 text-base text-foreground-muted">{pkg.subtitle}</p>
 
                   <div className="mt-6 grid gap-6 lg:grid-cols-3">
                     <div>
-                      <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Voor wie</p>
-                      <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{details.voorWie}</p>
+                      <h4 className="font-body text-base font-semibold text-primary">Voor wie</h4>
+                      <p className="mt-2 text-base leading-relaxed text-foreground">{details.voorWie}</p>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Wat u ontvangt</p>
-                      <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-foreground-muted">
+                      <h4 className="font-body text-base font-semibold text-primary">Wat u ontvangt</h4>
+                      <ul className="mt-2 space-y-1.5 text-base leading-relaxed text-foreground">
                         {details.watJeOntvangt.map((item) => (
                           <li key={item}>{item}</li>
                         ))}
                       </ul>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Hoe het proces verloopt</p>
-                      <ol className="mt-2 list-inside list-decimal space-y-1.5 text-sm leading-relaxed text-foreground-muted">
+                      <h4 className="font-body text-base font-semibold text-primary">Hoe het proces verloopt</h4>
+                      <ol className="mt-2 list-inside list-decimal space-y-1.5 text-base leading-relaxed text-foreground">
                         {details.hoeHetProcesVerloopt.map((stap) => (
                           <li key={stap}>{stap}</li>
                         ))}

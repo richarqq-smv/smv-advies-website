@@ -10,7 +10,7 @@ import { trackEvent } from '../../lib/analytics'
 
 export function Header({ onMenuOpen }) {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
+    <header className="fixed inset-x-0 top-0 z-50 bg-background/95 shadow-[0_8px_24px_-16px_rgb(22_41_58/0.25)] backdrop-blur-sm">
       {/*
         Breakpoint is een eigen 1440px-grens, niet xl (1280px): logo + 9
         nav-items + telefoonnummer + Contact-knop hebben op één regel
