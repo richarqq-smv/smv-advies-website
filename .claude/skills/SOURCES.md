@@ -16,3 +16,14 @@ https://github.com/VoltAgent/awesome-design-md (MIT, commit `3b60532`).
 Bijwerken: opnieuw kopiëren uit de bronrepo en de commit hierboven aanpassen. `impeccable`'s
 launcher (`scripts/impeccable`) downloadt bij eerste gebruik een eigen binary; zonder netwerk valt
 de skill terug op het direct lezen van `DESIGN.md`.
+
+## Plugin (via `.claude/settings.json`)
+
+| Plugin | Bron | Commit | Licentie |
+| --- | --- | --- | --- |
+| `claude-seo` (26 SEO-skills, 19 agents, `/seo …`) | https://github.com/AgriciDaniel/claude-seo — marketplace `agricidaniel-claude-seo` | `4b99de2` (vastgepind via `ref`) | MIT |
+
+Niet gekopieerd maar als plugin ingeschakeld (zo blijven de scripts op hun eigen plek en kan de
+versie met één `ref` bijgewerkt worden). Google Search Console/GA4 vereisen een eigen Google Cloud-
+serviceaccount, zie `/seo google setup`. Richtlijnen uit `pro-design` (geen verzonnen claims,
+prijzen of bedrijfsinformatie; geen commit zonder akkoord) gelden ook voor SEO-wijzigingen.
