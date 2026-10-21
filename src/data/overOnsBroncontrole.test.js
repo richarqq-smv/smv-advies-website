@@ -8,12 +8,16 @@ import path from 'node:path'
  * Over.jsx (2026-10-02, vervolg op de websiteoptimalisatieronde) — de
  * audit signaleerde geen enkel menselijk gezicht achter het bedrijf. De
  * klant bevestigde: Richard is de oprichter en momenteel de enige die
- * voor SMV Advies werkt, nog geen foto beschikbaar. Deze test bewaakt dat
- * (a) de naam er staat, (b) er geen verzonnen details bij staan (geen
- * jarental "X jaar ervaring", geen opleidingsclaim, geen certificering —
- * niets dat niet expliciet is aangeleverd), en (c) er geen `<img>` wordt
- * geclaimd als foto terwijl die er nog niet is (placeholder-avatar i.p.v.
- * een kapotte of nep-afbeelding).
+ * voor SMV Advies werkt. Aanvankelijk nog geen foto beschikbaar (toen
+ * bewaakte deze test juist de áfwezigheid van een `<img>`, om een nep-
+ * afbeelding te voorkomen); op 2026-10-21 heeft de klant de echte
+ * headshot aangeleverd (public/richard-headshot.png, zonder achtergrond).
+ * Deze test bewaakt nu dat (a) de naam er staat, (b) er geen verzonnen
+ * details bij staan (geen jarental "X jaar ervaring", geen opleidingsclaim,
+ * geen certificering — niets dat niet expliciet is aangeleverd), (c) de
+ * echte foto daadwerkelijk gebruikt wordt met zinvolle alt-tekst (geen
+ * decoratieve/lege alt, want dit is nu betekenisvolle content), en (d) de
+ * LinkedIn-link intact is.
  */
 const HIER = path.dirname(fileURLToPath(import.meta.url))
 
@@ -28,9 +32,15 @@ test('Over.jsx: noemt Richard als de persoon achter SMV Advies', () => {
   assert.match(bron, /Richard/)
 })
 
-test('Over.jsx: geen <img> voor een nog niet-bestaande foto — placeholder-avatar i.p.v. gefingeerde afbeelding', () => {
+test('Over.jsx: gebruikt de echte, aangeleverde headshot van Richard met zinvolle alt-tekst', () => {
   const bron = leesZonderComments('..', 'pages', 'Over.jsx')
-  assert.equal(/<img/i.test(bron), false)
+  assert.match(bron, /<img\s[\s\S]*?src="\/richard-headshot\.png"/)
+  assert.match(bron, /alt="Richard, oprichter van SMV Advies"/)
+})
+
+test('Over.jsx: de headshot-afbeelding bestaat daadwerkelijk in public/', () => {
+  const bestandPad = path.join(HIER, '..', '..', 'public', 'richard-headshot.png')
+  assert.doesNotThrow(() => readFileSync(bestandPad))
 })
 
 test('Over.jsx: geen verzonnen ervaring/opleiding/certificering rond Richard', () => {

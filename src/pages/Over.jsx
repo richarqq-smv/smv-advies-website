@@ -52,12 +52,13 @@ export default function Over() {
         <Container className="max-w-3xl">
           <h2 className="text-2xl text-primary sm:text-3xl">Wie er langskomt</h2>
           <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:gap-6">
-            <div
-              aria-hidden="true"
-              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary font-heading text-2xl text-white"
-            >
-              R
-            </div>
+            <img
+              src="/richard-headshot.png"
+              alt="Richard, oprichter van SMV Advies"
+              width="96"
+              height="96"
+              className="h-24 w-24 shrink-0 rounded-full border border-border bg-muted object-cover object-top"
+            />
             <div className="space-y-4 text-base leading-relaxed text-foreground-muted">
               <p>
                 Mijn naam is Richard. Ik ben de oprichter van SMV Advies en op dit moment ook degene die het
