@@ -9,6 +9,20 @@ The brief wins. If the user pins a specific style, font, palette, page or scope,
 
 **Scope discipline first:** a request to *review* or *check* the design is not a request to *implement* changes. State clearly which mode you're in (review / proposal / implementation) before doing anything, and stay in that mode unless the user asks otherwise. Never widen a single-page or single-section request into a site-wide redesign. Never commit or push without the user's explicit go-ahead after this round — that approval never carries over to a later round.
 
+## 0. Toolchain (project skills in `.claude/skills/`)
+
+`pro-design` is the orchestrator and its guardrails win. It delegates to:
+
+- **`taste-skill`** (Leonxlnx/taste-skill, MIT) — anti-slop house rules, `references/tells.md`, `references/critique.md` (the scoring rubric), and the measuring tools. Always run on any changed public page:
+  - `node .claude/skills/taste-skill/scripts/lint.mjs <changed files>`
+  - `node .claude/skills/taste-skill/scripts/inspect.mjs <url> --out <scratchpad>/taste/<name>` against a production preview (`npm run build` + `npx vite preview`). In this cloud container Chrome runs as root, so point `CHROME_PATH` at a small wrapper that execs `/opt/pw-browsers/chromium-*/chrome-linux/chrome --no-sandbox "$@"`.
+  - Use `--keep palette,type` semantics: SMV's brand is fixed; only composition and the house rules come from taste-skill. Do **not** run `draw.mjs` to deal a new palette/type system, and do not use `assets.mjs` pictures as if they were SMV's own work.
+- **`impeccable`** (pbakaus/impeccable, Apache-2.0) — `reference/craft-floor.md` before any UI edit; `audit`, `critique`, `polish`, `typeset`, `layout`, `clarify` references for focused passes. Mode: marketing pages = Persuade, blog/FAQ/legal = Read, tools/admin = Operate.
+- **`web-interface-guidelines`** (vercel-labs, MIT) — technical checklist (a11y, focus, forms, motion, typography). Exception: SMV copy is Dutch, so sentence case, not Title Case.
+- **`playwright-cli`** (microsoft, Apache-2.0) — interactive browser driving when needed (requires `npm i -g @playwright/cli`; the plain Playwright scripts in the verification loop work without it).
+
+Known, defended inspector findings (don't chase them without new material): the three pricing cards (a real price comparison), hairlines inside the cookie banner and mobile menu overlays (user asked to leave the cookie banner alone), sticky bars covering text mid-scroll, mobile headlines of three lines (copy length — shorten only with the owner's approval), and "few pictures" (needs real photos from the owner, never stock or generated).
+
 ## 1. Brand first — but it already exists here, don't re-derive it
 
 This project already has a settled brand. Do **not** write a new brand sheet or run a confirmation round — read the existing sources instead:
@@ -16,10 +30,11 @@ This project already has a settled brand. Do **not** write a new brand sheet or 
 - `CLAUDE.md` (repo root) — project conventions, domain/email setup, prior decisions.
 - `src/index.css` — the actual `@theme` tokens: colors (`--color-*`), fonts (`--font-heading`/`--font-body`), radius scale (`--radius-*`, with a documented hierarchy comment above the scale — read it, don't reinvent it), `--ease-default`.
 - `src/data/company.js` — company name, contact details, copy constants.
+- `DESIGN.md` (repo root) — how the tokens are used: hierarchy, surfaces, components, do's and don'ts.
 - Already-rendered pages (dev server or `dist/`) for how tokens are actually used.
 
 Current pillars, confirmed in those sources — keep unless there is a concrete, demonstrated problem (not just taste):
-- Colors: navy (`--color-primary` `#16293a`) + goud/accent (`--color-accent` `#9d7720`, with `-light`/`-dark` variants), white background, muted neutrals. No gradients, no new accent hues.
+- Colors: navy (`--color-primary` `#16293a`) + goud/accent (`--color-accent` `#8a681c` — darkened from `#9d7720` on 2026-10-21 for WCAG AA, see the comment in `src/index.css`; `-light` is for use on navy only), white background, muted neutrals. No gradients, no new accent hues.
 - Typography: Fraunces Variable (serif, headings) + Inter Variable (sans, body) — both self-hosted via `@fontsource-variable`, no external font requests.
 - Voice: bouwkundig/energieadvies, vertrouwen, deskundigheid, rust — not hypey, not AI-template language.
 
@@ -30,13 +45,14 @@ Every color, font, radius and spacing value used in a change must trace back to 
 - For each section you touch, name the pattern and why (hero, feature rows, comparison, pricing, FAQ, testimonials, process steps) — and check whether SMV already has an established version of it (`src/components/home/`, `src/components/pakketten/`, `src/components/ui/`) before inventing a new one. Reuse existing components over writing new ones.
 - Use numbered steps only when the content is a real sequence.
 - If browser/web access is available and the user's request benefits from external reference, study at most two or three strong sites in a comparable industry (bouwkundig advies, energieadvies, B2B professional services) — but SMV's own identity wins over any reference; note explicitly which observations come from reference sites vs. SMV's own pages, and never copy a competitor's distinctive pattern wholesale.
-- Reject these defaults unless the brief asks for them: cream background with a serif and a terracotta accent; near-black with one acid-green or orange accent; purple gradients; identical rounded cards with the same shadow on everything; a small ALL CAPS label above every heading; one word of every headline in a different color. (SMV already has navy/goud + Fraunces/Inter — don't drift toward a generic alternative.)
+- Reject these defaults unless the brief asks for them: cream background with a serif and a terracotta accent; near-black with one acid-green or orange accent; purple gradients; identical rounded cards with the same shadow on everything; one word of every headline in a different color.
+- Banned outright (since the anti-slop round of 2026-10-21, see `taste-skill/references/tells.md`): eyebrow/kicker labels above headings, tiny uppercase letter-spaced labels, decorative 01/02/03 numbering, rows of icon-topped cards, gradients, glass panels, shadows on elements at rest, hairline section dividers, running text in muted grey, body text under 16px. (SMV already has navy/goud + Fraunces/Inter — don't drift toward a generic alternative.)
 - Prioritize proposed changes by impact, consistency and accessibility/conversion relevance — not by "make it look different." Every change needs a stated concrete reason (a real inconsistency, a measured UX problem, a verified accessibility gap), never "to look more designed."
 - Reuse existing design tokens and components first; add a new token or variant only when the existing scale genuinely can't express what's needed, and say why in one line.
 
 ## 3. Motion
 
-- One orchestrated moment at most per page (hero load sequence or one scroll scene) — check `src/components/ui/Reveal.jsx` and existing usage before adding new motion primitives.
+- One orchestrated moment at most per page (hero load sequence or one scroll scene) — check `src/components/ui/Reveal.jsx` and existing usage before adding new motion primitives. `Reveal` is opacity-only (500ms) and leaves content visible by default (SSR, no JS, already in view); never reintroduce an `opacity-0` start state in server-rendered HTML.
 - Add motion that answers an action: hover, focus, open, close, confirm.
 - UI transitions run 150–250ms. Hero sequences run 600–900ms. Use `var(--ease-default)` (already defined) rather than inventing a new easing curve.
 - Respect `prefers-reduced-motion` (already handled site-wide in `src/index.css`'s `@layer base` — verify new motion respects it too). Never leave content hidden waiting for an animation.
@@ -50,6 +66,7 @@ Every color, font, radius and spacing value used in a change must trace back to 
 - Check: horizontal overflow, clipped text, contrast (WCAG AA), broken images, console errors, visible keyboard focus states, hero visible in the first screen, no overlap between fixed/floating elements (cookie banner, `ContactFab`, `StickyMobileActions` — see their existing coordination via `COOKIE_BANNER_VISIBILITY_EVENT` in `src/lib/consent.js`), existing routes/links/contact functionality still intact.
 - Fix everything found in one batch. Run one confirming round. **Maximum two verification rounds total** — after the second, stop and report, don't keep polishing.
 - Run `npm test`, `npm run lint`, `npm run build` after any code change (not just on request) and resolve regressions before reporting done.
+- Run the taste-skill `lint.mjs` + `inspect.mjs` before and after (see section 0) and report the FAIL/WARN counts side by side; write the critique round in the shape of `taste-skill/references/critique.md` §4.
 
 ## Quality floor
 
