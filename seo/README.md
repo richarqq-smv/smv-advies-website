@@ -11,7 +11,7 @@ Claude Code). Elke run schrijft een rapport in `rapporten/` en de ruwe Search Co
 | Site | https://smv-advies.nl (Search Console: `sc-domain:smv-advies.nl`) |
 | Wat we verkopen | Onafhankelijk verduurzamings- en bouwkundig advies voor mkb-bedrijfspanden in de Hoeksche Waard (Basis / Premium / Gold, zie `src/data/packages.js`) |
 | Doel | Aanvragen via `/contact` en starts van de gratis energie-indicatie (`/energie-indicatie`) uit organisch zoekverkeer in de Hoeksche Waard |
-| Concurrenten | _nog invullen door Richard_ — namen/sites van andere adviseurs in de regio |
+| Concurrenten | Zie *Concurrenten* hieronder |
 | Wijzigingen | Altijd als pull request. **Nooit zelf mergen.** |
 
 ## Toegang
@@ -37,16 +37,43 @@ curl -s -X POST 'https://searchconsole.googleapis.com/webmasters/v3/sites/sc-dom
 - Indexeringsverzoeken en het opnieuw indienen van de sitemap doet Richard in de Search Console-
   interface (het serviceaccount is bewust alleen-lezen).
 
+## Concurrenten
+
+Verzameld via webzoekopdrachten op 22-10-2026. Niet elke site is zelf gecontroleerd: gebruik dit om
+te zien wie op dezelfde zoekwoorden mikt, niet als feitenbron voor sitetekst. Geen enkele partij
+gevonden die zelf in de Hoeksche Waard zit en zakelijk verduurzamingsadvies geeft.
+
+**Klein en regionaal — de echte concurrenten**
+
+| Partij | Plaats | Aanbod | Verschil met SMV |
+| --- | --- | --- | --- |
+| Van Wendel Energie Advies | Zwijndrecht | Erkend energielabel utiliteitsgebouwen | Label, geen breed verduurzamingsadvies |
+| SENS Consult (sensconsult.nl) | Barendrecht | Verduurzamingsadvies en energielabels, advies en uitvoering onder één dak | Verdient ook aan uitvoering: niet onafhankelijk |
+| Energizi Advies | Barendrecht | Energielabels en verduurzaming bedrijfspanden | — |
+| Adviesbureau Pors (milieu, energie, omgevingskwaliteit) | Ridderkerk | Mkb-energieadviseur (DEB-lijst) | — |
+| De Duurzame Specialisten (deduurzamespecialisten.nl) | Onbekend | Maatwerkadvies bedrijfspand met investering en terugverdientijd per maatregel | Lijkt het meest op het Basis Pakket |
+| Energiespecialist MKB (energiespecialistmkb.nl) | Onbekend | Energiecontracten en verduurzaming (zon, laadpalen, batterijen), zegt geen commissie te krijgen | Meer contract- en installatiegericht |
+| FW Energy, Duvepa | Werkgebied o.a. Dordrecht/Strijen | Energielabels, ook bedrijfspanden | Label, geen breed advies |
+
+**Groot, landelijk of gratis — ter vergelijking**
+
+- Landelijk mkb-energieadvies: Hezelaer, Vattenfall mkb (beide energieleveranciers), MKB Energie Adviseur, Energie voor MKB, MKB Energie Expert (krijgt vergoeding per energiecontract), Zakelijk Centraal.
+- Energielabels/vastgoed: 1energielabel Zakelijk (Zuid-Holland), Opstal Adviseurs, Renewable Partners (Amsterdam/Breda).
+- Gratis gemeentelijk: Zakelijk loket Hoeksche Waard / Energieke Regio, Zakelijk Energieloket Barendrecht en Ridderkerk.
+
+Sterke punten van SMV tegenover deze lijst: lokaal in de Hoeksche Waard, en onafhankelijk (geen
+uitvoering, geen energiecontracten).
+
 ## Openstaande acties voor Richard
 
-Stand volgens de weekcheck van 22 oktober 2026 (`rapporten/2026-10-22.md`). De wekelijkse check
-werkt deze lijst bij en haalt een punt pas weg als Search Console laat zien dat het gelukt is.
+Stand 22 oktober 2026. De wekelijkse check werkt deze lijst bij en haalt een punt pas weg als
+Search Console laat zien dat het gelukt is.
 
 | Actie | Waar | Stand 22-10-2026 |
 | --- | --- | --- |
-| `sitemap.xml` opnieuw indienen | Search Console → Sitemaps | Nog niet gedaan: laatst ingediend 28-08-2026, laatst opgehaald 15-10-2026, 30 URL's gemeld (de build heeft er 40) |
-| Indexering aanvragen voor `/pakketten` | URL-inspectie | Niet geïndexeerd (onbekend bij Google) |
-| Indexering aanvragen voor `/contact` | URL-inspectie | Niet geïndexeerd (onbekend bij Google) |
-| Indexering aanvragen voor `/werkwijze` | URL-inspectie | Niet geïndexeerd (ontdekt, niet geïndexeerd) |
-| Indexering aanvragen voor `/energie-indicatie` | URL-inspectie | Niet geïndexeerd (ontdekt, niet geïndexeerd) |
-| Concurrenten invullen | Tabel *Instellingen* hierboven | Nog leeg |
+| `sitemap.xml` opnieuw indienen | Search Console → Sitemaps | Gedaan: ingediend 22-10 06:15 UTC, door Google opgehaald 06:15:59 UTC, 40 URL's gemeld |
+| Indexering aanvragen voor `/pakketten` | URL-inspectie | Aangevraagd 22-10 (in prioriteitswachtrij); nog niet geïndexeerd |
+| Indexering aanvragen voor `/contact` | URL-inspectie | Aangevraagd 22-10 (in prioriteitswachtrij); nog niet geïndexeerd |
+| Indexering aanvragen voor `/werkwijze` | URL-inspectie | Aangevraagd 22-10 (in prioriteitswachtrij); nog niet geïndexeerd |
+| Indexering aanvragen voor `/energie-indicatie` | URL-inspectie | Aangevraagd 22-10 (in prioriteitswachtrij); nog niet geïndexeerd |
+| Google Bedrijfsprofiel aanmaken | business.google.com | Nog niet gedaan (Richard wil eerst nadenken) |
