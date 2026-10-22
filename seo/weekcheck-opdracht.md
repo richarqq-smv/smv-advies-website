@@ -6,7 +6,7 @@ met deze instellingen:
 - **Repository:** `richarqq-smv/smv-advies-website` (moet gekoppeld zijn, anders kan de taak niet pushen)
 - **Omgeving:** Default (daar staat het Search Console-geheim)
 - **Schema:** wekelijks, maandag 07:38 (Europe/Amsterdam)
-- **Voorwaarde:** de map `seo/` moet op `main` staan (pull request #3 gemerged), want de taak begint vanaf `main`.
+- **Voorwaarde:** de map `seo/` staat op `main` (sinds pull request #3), want de taak begint vanaf `main`.
 
 ---
 
@@ -20,7 +20,7 @@ Search Console: deze omgeving voegt zelf een Google-token toe aan verzoeken naar
 - `GET https://searchconsole.googleapis.com/webmasters/v3/sites` (controle)
 - `POST https://searchconsole.googleapis.com/webmasters/v3/sites/sc-domain%3Asmv-advies.nl/searchAnalytics/query`. Periode: de laatste 28 dagen die eindigen 3 dagen voor vandaag. Haal totalen op, per query, per page en per query+page.
 - `GET …/sites/sc-domain%3Asmv-advies.nl/sitemaps`
-- `POST https://searchconsole.googleapis.com/v1/urlInspection/index:inspect` voor elke URL uit de sitemap die `npm ci && npm run build` oplevert in `dist/sitemap.xml`. Gebruik voor de build de env-variabelen `VITE_SUPABASE_URL=http://127.0.0.1:59999 VITE_SUPABASE_ANON_KEY=dummy-local`; die zijn alleen nodig om lokaal te bouwen.
+- `POST https://searchconsole.googleapis.com/v1/urlInspection/index:inspect` voor elke URL uit de sitemap die `npm ci && npm run build` oplevert in `dist/sitemap.xml`. Neem alleen de `<loc>` binnen een `<url>`-blok; bovenin het bestand staat een commentaar dat ook het woord `<loc>` bevat. Gebruik voor de build de env-variabelen `VITE_SUPABASE_URL=http://127.0.0.1:59999 VITE_SUPABASE_ANON_KEY=dummy-local`; die zijn alleen nodig om lokaal te bouwen.
 Werkt de API niet (401/403)? Meld dat in het rapport en ga verder met de technische check. Verzin nooit cijfers.
 
 Doe daarna:
@@ -30,3 +30,5 @@ Doe daarna:
 4. Schrijf `seo/rapporten/JJJJ-MM-DD.md` (zelfde opzet als het vorige rapport, met de verschillen ten opzichte van vorige week) en `seo/data/JJJJ-MM-DD.json` met de ruwe cijfers.
 
 Controleer na codewijzigingen: `npm test`, `npm run lint` en `npm run build` moeten groen zijn. Commit, push de branch en open een pull request naar `main` met een korte samenvatting in gewoon Nederlands. Bovenaan staan de drie belangrijkste cijfers en wat Richard zelf moet doen. **Merge nooit zelf.** Wijzig niets aan Supabase, de database, de admin-/klantomgeving, routes of businesslogica. Is er niets te verbeteren? Commit dan alleen het rapport en de data en zeg dat in de pull request. Lukt pushen of het openen van de pull request niet, meld dan precies welke stap faalde en met welke foutmelding.
+
+**Eén run, geen lus.** Voer elke stap één keer uit. Faalt een stap met een concrete fout, stel dan de oorzaak vast en doe hooguit één gerichte herstelpoging. Faalt die ook, stop dan met die stap, zet de exacte foutmelding en de kleinste vervolgstap in het rapport (of, als zelfs dat niet lukt, in je eindantwoord) en ga door met de rest. Herhaal nooit dezelfde controle zonder nieuwe informatie, plan geen nieuwe runs en maak geen geplande taken aan.

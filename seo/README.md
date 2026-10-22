@@ -39,14 +39,14 @@ curl -s -X POST 'https://searchconsole.googleapis.com/webmasters/v3/sites/sc-dom
 
 ## Openstaande acties voor Richard
 
-Stand volgens Search Console op 22 oktober 2026. De wekelijkse check werkt deze lijst bij en haalt
-een punt pas weg als Search Console laat zien dat het gelukt is.
+Stand volgens de weekcheck van 22 oktober 2026 (`rapporten/2026-10-22.md`). De wekelijkse check
+werkt deze lijst bij en haalt een punt pas weg als Search Console laat zien dat het gelukt is.
 
 | Actie | Waar | Stand 22-10-2026 |
 | --- | --- | --- |
-| `sitemap.xml` opnieuw indienen | Search Console → Sitemaps | Laatst ingediend 28-08-2026, laatst opgehaald 15-10-2026, 30 URL's gemeld (de build heeft er 40) |
-| Indexering aanvragen voor `/pakketten` | URL-inspectie | Ontdekt, momenteel niet geïndexeerd |
-| Indexering aanvragen voor `/contact` | URL-inspectie | Ontdekt, momenteel niet geïndexeerd |
-| Indexering aanvragen voor `/werkwijze` | URL-inspectie | Ontdekt, momenteel niet geïndexeerd |
-| Indexering aanvragen voor `/energie-indicatie` | URL-inspectie | URL is onbekend bij Google |
+| `sitemap.xml` opnieuw indienen | Search Console → Sitemaps | Nog niet gedaan: laatst ingediend 28-08-2026, laatst opgehaald 15-10-2026, 30 URL's gemeld (de build heeft er 40) |
+| Indexering aanvragen voor `/pakketten` | URL-inspectie | Niet geïndexeerd (onbekend bij Google) |
+| Indexering aanvragen voor `/contact` | URL-inspectie | Niet geïndexeerd (onbekend bij Google) |
+| Indexering aanvragen voor `/werkwijze` | URL-inspectie | Niet geïndexeerd (ontdekt, niet geïndexeerd) |
+| Indexering aanvragen voor `/energie-indicatie` | URL-inspectie | Niet geïndexeerd (ontdekt, niet geïndexeerd) |
 | Concurrenten invullen | Tabel *Instellingen* hierboven | Nog leeg |
