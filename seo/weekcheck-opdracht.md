@@ -6,6 +6,7 @@ met deze instellingen:
 - **Repository:** `richarqq-smv/smv-advies-website` (moet gekoppeld zijn, anders kan de taak niet pushen)
 - **Omgeving:** Default (daar staat het Search Console-geheim)
 - **Schema:** wekelijks, maandag 07:38 (Europe/Amsterdam)
+- **Voorwaarde:** de map `seo/` moet op `main` staan (pull request #3 gemerged), want de taak begint vanaf `main`.
 
 ---
 
@@ -25,7 +26,7 @@ Werkt de API niet (401/403)? Meld dat in het rapport en ga verder met de technis
 Doe daarna:
 1. **Technisch:** controleer in de prerendered HTML in `dist/` per pagina: `robots`, canonical, title (uniek, ≤ 60 tekens), meta description (uniek, 70–160 tekens), één H1, interne links die naar een bestaande route wijzen, en of alle routes in de sitemap staan. Repareer echte fouten.
 2. **Pagina 2:** zoekopdrachten met positie 8–25 en minstens 3 vertoningen. Lees per zoekopdracht de bijbehorende pagina en stel concrete verbeteringen voor: titel, beschrijving, een kopje, een alinea die de vraag beantwoordt, interne links. Voer maximaal 3 tekstverbeteringen per week door. Gebruik alleen feiten die al op de site of in `src/data/` staan. Geen nieuwe claims, cijfers, klanten, reviews of prijzen. Blijf binnen `DESIGN.md`; verander geen opmaak.
-3. **Indexering:** vergelijk het aantal geïndexeerde URL's met vorige week. Noem welke pagina's Richard via URL-inspectie in de Search Console-interface moet laten indexeren.
+3. **Indexering:** vergelijk het aantal geïndexeerde URL's met vorige week. Noem welke pagina's Richard via URL-inspectie in de Search Console-interface moet laten indexeren, en werk de tabel *Openstaande acties voor Richard* in `seo/README.md` bij.
 4. Schrijf `seo/rapporten/JJJJ-MM-DD.md` (zelfde opzet als het vorige rapport, met de verschillen ten opzichte van vorige week) en `seo/data/JJJJ-MM-DD.json` met de ruwe cijfers.
 
 Controleer na codewijzigingen: `npm test`, `npm run lint` en `npm run build` moeten groen zijn. Commit, push de branch en open een pull request naar `main` met een korte samenvatting in gewoon Nederlands. Bovenaan staan de drie belangrijkste cijfers en wat Richard zelf moet doen. **Merge nooit zelf.** Wijzig niets aan Supabase, de database, de admin-/klantomgeving, routes of businesslogica. Is er niets te verbeteren? Commit dan alleen het rapport en de data en zeg dat in de pull request. Lukt pushen of het openen van de pull request niet, meld dan precies welke stap faalde en met welke foutmelding.
