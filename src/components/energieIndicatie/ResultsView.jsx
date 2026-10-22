@@ -14,7 +14,7 @@ import { ROUTES } from '../../lib/routes'
 // publiek al hebben verborgen (Fase 6). Alleen de band/status (die al wél
 // zichtbaar is) wordt hier herhaald, geen totale besparing meer.
 function buildGesprekMailto(values, result) {
-  const subject = `Aanvraag gratis gesprek — ${values.bedrijfsnaam || ''} (${values.naam || ''})`
+  const subject = `Aanvraag gratis gesprek: ${values.bedrijfsnaam || ''} (${values.naam || ''})`
   const body =
     `Naam: ${values.naam}\nBedrijf: ${values.bedrijfsnaam}\nTelefoon: ${values.telefoon}\n\n` +
     `Ontving de indicatie "${result.band.status}". Graag een vrijblijvend gesprek inplannen.`
@@ -55,7 +55,7 @@ export function ResultsView({ result, values, leadStatus, onRestart, voorkeurDos
 
       <div className="mt-12">
         <h3 className="text-lg font-semibold text-primary">Uw belangrijkste aandachtspunten</h3>
-        <p className="mt-1 text-sm text-foreground-muted">Op basis van uw gegevens — geen investeringsbedragen of terugverdientijden, dat vraagt een preciezere opname.</p>
+        <p className="mt-1 text-sm text-foreground-muted">Op basis van uw gegevens. Investeringsbedragen en terugverdientijden staan er bewust niet bij, want die vragen een preciezere opname.</p>
 
         <div className="mt-5 flex flex-col gap-3">
           {buildPubliekeAandachtspunten(result.maatregelen).map((punt, i) => (
@@ -92,7 +92,7 @@ export function ResultsView({ result, values, leadStatus, onRestart, voorkeurDos
         <h3 className="text-xl text-white sm:text-2xl">Bespreek uw resultaat met SMV</h3>
         <p className="mx-auto mt-2 max-w-[46ch] text-sm text-white/75">
           De Energie Indicatie geeft een eerste beeld. SMV kan vervolgens kijken wat dit betekent voor uw hele
-          bedrijfspand — inclusief onderhoud en het juiste investeringsmoment.
+          bedrijfspand, inclusief onderhoud en het juiste investeringsmoment.
         </p>
         <div className="mt-6">
           <Button href={buildGesprekMailto(values, result)} variant="primary" className="border border-transparent bg-white text-primary hover:bg-white/90">
@@ -137,7 +137,7 @@ export function ResultsView({ result, values, leadStatus, onRestart, voorkeurDos
         <strong className="font-semibold text-primary">
           Let op: dit is een indicatie, geen officieel energielabel en geen garantie.
         </strong>{' '}
-        Deze inschatting is gebaseerd op de door u ingevulde gegevens en realistische vuistregels — niet op een
+        Deze inschatting is gebaseerd op de door u ingevulde gegevens en realistische vuistregels, niet op een
         officiële meting volgens NTA 8800. Voor betrouwbare cijfers en een onderbouwd plan is een fysieke inmeting
         door SMV Advies nodig.
       </div>
@@ -168,7 +168,7 @@ function LeadStatusNote({ status }) {
     return (
       <p role="alert" className="flex max-w-md items-start gap-1.5 text-xs leading-relaxed text-error">
         <WarningCircle size={14} weight="fill" className="mt-0.5 shrink-0" />
-        Uw aanvraag kon niet automatisch worden verstuurd. Bel of mail ons gerust rechtstreeks — uw resultaat hierboven
+        Uw aanvraag kon niet automatisch worden verstuurd. Bel of mail ons gerust rechtstreeks. Uw resultaat hierboven
         blijft gewoon zichtbaar.
       </p>
     )

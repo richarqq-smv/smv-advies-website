@@ -70,7 +70,7 @@ export default function WatKanWachten() {
   return (
     <>
       <Seo title="Wat kan wachten?" description="Overzicht van adviespunten per status, over alle open dossiers." noindex />
-      <PageHero eyebrow="SMV Assistent" title="Wat kan wachten?" description="Niet alles hoeft vandaag — maar het moet wel duidelijk zijn waarom iets kan wachten." />
+      <PageHero eyebrow="SMV Assistent" title="Wat kan wachten?" description="Niet alles hoeft vandaag. Het moet wel duidelijk zijn waarom iets kan wachten." />
       <Section tone="white" noTopPadding>
         <Container className="max-w-3xl">
           {laden ? (

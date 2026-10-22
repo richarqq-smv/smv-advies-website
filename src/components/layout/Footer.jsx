@@ -145,7 +145,7 @@ export function Footer() {
         <Container className="flex flex-col gap-2 pt-4 pb-8 text-sm text-white/70 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {year} {COMPANY.legalName}. {COMPANY.address.city}
-            {COMPANY.kvk ? ` — KvK ${COMPANY.kvk}` : ''}.
+            {COMPANY.kvk ? ` · KvK ${COMPANY.kvk}` : ''}.
           </p>
           <p>{COMPANY.tagline}</p>
         </Container>

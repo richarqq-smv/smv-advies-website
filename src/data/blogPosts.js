@@ -36,20 +36,20 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'De technische basis van een MJOP is meestal een conditiemeting: een manier om de staat van bouw- en installatiedelen objectief vast te leggen, vaak volgens de NEN 2767-methodiek. Daarbij wordt per bouwdeel een conditiescore bepaald, die vervolgens de basis vormt voor de onderhoudsplanning. Dit is sectorbrede achtergrondinformatie over hoe een MJOP doorgaans wordt opgebouwd, geen beschrijving van hoe SMV Advies zelf werkt — SMV Advies stelt namelijk geen MJOP op (zie hieronder).',
+          'De technische basis van een MJOP is meestal een conditiemeting: een manier om de staat van bouw- en installatiedelen objectief vast te leggen, vaak volgens de NEN 2767-methodiek. Daarbij wordt per bouwdeel een conditiescore bepaald, die vervolgens de basis vormt voor de onderhoudsplanning. Dit is sectorbrede achtergrondinformatie over hoe een MJOP doorgaans wordt opgebouwd, geen beschrijving van hoe SMV Advies zelf werkt. SMV Advies stelt namelijk geen MJOP op (zie hieronder).',
         ],
       },
       { type: 'h2', text: 'Waarin een verduurzamingsadvies verschilt' },
       {
         type: 'p',
         parts: [
-          'Een MJOP gaat over onderhoud en vervanging: wat moet er gebeuren om het pand in stand te houden? Een verduurzamingsadvies stelt een andere vraag: welke maatregelen verlagen het energiegebruik, verbeteren het comfort of verlagen de energiekosten, en in welke volgorde is dat voor úw pand het meest logisch? Dat kan gaan om isolatie, installaties, opwek of gedrag — onderwerpen die in een MJOP meestal niet of maar zijdelings aan de orde komen, omdat een MJOP primair kijkt naar de staat van wat er al is, niet naar wat er anders of beter zou kunnen.',
+          'Een MJOP gaat over onderhoud en vervanging: wat moet er gebeuren om het pand in stand te houden? Een verduurzamingsadvies stelt een andere vraag: welke maatregelen verlagen het energiegebruik, verbeteren het comfort of verlagen de energiekosten, en in welke volgorde is dat voor úw pand het meest logisch? Dat kan gaan om isolatie, installaties, opwek of gedrag: onderwerpen die in een MJOP meestal niet of maar zijdelings aan de orde komen, omdat een MJOP primair kijkt naar de staat van wat er al is, niet naar wat er anders of beter zou kunnen.',
         ],
       },
       {
         type: 'p',
         parts: [
-          'Dat onderscheid is ook precies waarom de twee documenten elkaar aanvullen in plaats van vervangen. Een MJOP zegt bijvoorbeeld dat het dak van uw bedrijfshal binnen enkele jaren aan vervanging toe is. Een verduurzamingsadvies voegt daar de vraag aan toe of dat vervangingsmoment ook het logische moment is om de dakisolatie te verbeteren — zie ook ons artikel over ',
+          'Dat onderscheid is ook precies waarom de twee documenten elkaar aanvullen in plaats van vervangen. Een MJOP zegt bijvoorbeeld dat het dak van uw bedrijfshal binnen enkele jaren aan vervanging toe is. Een verduurzamingsadvies voegt daar de vraag aan toe of dat vervangingsmoment ook het logische moment is om de dakisolatie te verbeteren. Zie ook ons artikel over ',
           { text: 'dakisolatie voor uw bedrijfspand', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
           '. Zonder die koppeling loopt u het risico dat onderhoud en verduurzaming los van elkaar worden gepland, terwijl ze vaak juist in elkaars verlengde liggen.',
         ],
@@ -67,7 +67,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Andersom geldt ook: het ontbreken van een MJOP is geen reden om verduurzaming uit te stellen. Een verduurzamingsadvies begint bij het pand en het energiegebruik zoals dat nu is, en geeft op basis daarvan een prioritering van maatregelen — zie ook ons artikel over ',
+          'Andersom geldt ook: het ontbreken van een MJOP is geen reden om verduurzaming uit te stellen. Een verduurzamingsadvies begint bij het pand en het energiegebruik zoals dat nu is, en geeft op basis daarvan een prioritering van maatregelen. Zie ook ons artikel over ',
           { text: 'waar u als ondernemer het beste kunt beginnen', to: ROUTES.blogPost('verduurzamen-bedrijfspand-waar-begin-je') },
           '. Een MJOP is dus geen voorwaarde voor een zinvol verduurzamingsadvies, al kan het de onderhoudskant van het verhaal wel completer maken op het moment dat u die alsnog laat opstellen.',
         ],
@@ -127,7 +127,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Eerst een nieuwe installatie kiezen en pas daarna naar de isolatie kijken — of andersom, zonder te kijken of dat voor uw pand wel de logische volgorde is — kan ervoor zorgen dat een investering niet optimaal aansluit op de rest van het pand. Een warmtepomp die wordt gedimensioneerd vóór een isolatieverbetering, kan achteraf te groot of te klein blijken. Welke volgorde voor uw situatie logisch is, leest u in ons artikel over ',
+          'Eerst een nieuwe installatie kiezen en pas daarna naar de isolatie kijken (of andersom), zonder te kijken of dat voor uw pand wel de logische volgorde is, kan ervoor zorgen dat een investering niet optimaal aansluit op de rest van het pand. Een warmtepomp die wordt gedimensioneerd vóór een isolatieverbetering, kan achteraf te groot of te klein blijken. Welke volgorde voor uw situatie logisch is, leest u in ons artikel over ',
           { text: 'isoleren of eerst de installatie aanpakken', to: ROUTES.blogPost('bedrijfspand-isoleren-of-installatie-eerst') },
           '.',
         ],
@@ -136,7 +136,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Bij veel regelingen moet u een subsidie of fiscaal voordeel aanvragen vóórdat u een verplichting aangaat bij een leverancier of installateur — achteraf is bij meerdere regelingen simpelweg niet meer mogelijk. Wie eerst tekent en pas daarna gaat uitzoeken welke regelingen van toepassing zijn, loopt dat voordeel dan ook mis. Meer hierover leest u in ons overzicht van ',
+          'Bij veel regelingen moet u een subsidie of fiscaal voordeel aanvragen vóórdat u een verplichting aangaat bij een leverancier of installateur. Achteraf is dat bij meerdere regelingen simpelweg niet meer mogelijk. Wie eerst tekent en pas daarna gaat uitzoeken welke regelingen van toepassing zijn, loopt dat voordeel dan ook mis. Meer hierover leest u in ons overzicht van ',
           { text: 'EIA, ISDE en SDE++', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
           '.',
         ],
@@ -145,7 +145,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Een warmtepomp, laadpalen of een groter zonnepanelenveld vragen meer capaciteit van uw elektriciteitsaansluiting. Pas bij de uitvoering ontdekken dat een zwaardere aansluiting nodig is — en dat die aanvraag in een congestiegebied op een wachtlijst kan belanden — kost onnodig tijd. Voor de situatie in onze eigen regio leest u meer in ons artikel over ',
+          'Een warmtepomp, laadpalen of een groter zonnepanelenveld vragen meer capaciteit van uw elektriciteitsaansluiting. Pas bij de uitvoering ontdekken dat een zwaardere aansluiting nodig is, en dat die aanvraag in een congestiegebied op een wachtlijst kan belanden, kost onnodig tijd. Voor de situatie in onze eigen regio leest u meer in ons artikel over ',
           { text: 'netcongestie in de Hoeksche Waard', to: ROUTES.blogPost('netcongestie-hoeksche-waard') },
           '.',
         ],
@@ -163,7 +163,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Een bestaande installatie vervangen voelt als vooruitgang, maar is niet altijd de beste investering. Functioneert de huidige installatie nog goed en sluit die aan op het gebruik van het pand, dan kan vervangen juist een onnodige kostenpost zijn. Of een alternatief zoals een warmtepomp voor uw situatie verstandig is, hangt af van het gebouw, de warmtevraag en de bestaande installatie — zie ',
+          'Een bestaande installatie vervangen voelt als vooruitgang, maar is niet altijd de beste investering. Functioneert de huidige installatie nog goed en sluit die aan op het gebruik van het pand, dan kan vervangen juist een onnodige kostenpost zijn. Of een alternatief zoals een warmtepomp voor uw situatie verstandig is, hangt af van het gebouw, de warmtevraag en de bestaande installatie. Zie ',
           { text: 'wanneer een warmtepomp een verstandige keuze is', to: ROUTES.blogPost('warmtepomp-bedrijfspand-verstandige-keuze') },
           '.',
         ],
@@ -217,14 +217,14 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Een bouwkundige beoordeling brengt de staat van de belangrijkste onderdelen van het pand in kaart: gevel, dak, vloer en beglazing, en de manier waarop deze onderdelen samen bijdragen aan warmteverlies of -behoud. Daarbij wordt gekeken naar wat er daadwerkelijk aanwezig is en in welke staat dat verkeert — geen aannames op basis van bouwjaar alleen, want twee panden uit dezelfde periode kunnen door eerdere verbouwingen of onderhoud bouwkundig behoorlijk verschillen.',
+          'Een bouwkundige beoordeling brengt de staat van de belangrijkste onderdelen van het pand in kaart: gevel, dak, vloer en beglazing, en de manier waarop deze onderdelen samen bijdragen aan warmteverlies of -behoud. Daarbij wordt gekeken naar wat er daadwerkelijk aanwezig is en in welke staat dat verkeert. Dat gebeurt niet op basis van bouwjaar alleen, want twee panden uit dezelfde periode kunnen door eerdere verbouwingen of onderhoud bouwkundig behoorlijk verschillen.',
         ],
       },
       { type: 'h2', text: 'Waarom dit vóór een installatiekeuze relevant is' },
       {
         type: 'p',
         parts: [
-          'Een installatie wordt gedimensioneerd op de warmtevraag van het pand. Is die warmtevraag hoog door een slecht geïsoleerde gebouwschil, dan vraagt dat een andere — vaak grotere en duurdere — installatie dan bij een goed geïsoleerd pand. Daarom is de volgorde waarin u isolatie en installatie beoordeelt niet willekeurig: zie ook ons artikel over ',
+          'Een installatie wordt gedimensioneerd op de warmtevraag van het pand. Is die warmtevraag hoog door een slecht geïsoleerde gebouwschil, dan vraagt dat een andere, vaak grotere en duurdere installatie dan bij een goed geïsoleerd pand. Daarom is de volgorde waarin u isolatie en installatie beoordeelt niet willekeurig: zie ook ons artikel over ',
           { text: 'isoleren of eerst de installatie aanpakken', to: ROUTES.blogPost('bedrijfspand-isoleren-of-installatie-eerst') },
           '. Een bouwkundige beoordeling geeft u het inzicht om die afweging te maken vóórdat u een installatie vastlegt, niet pas daarna.',
         ],
@@ -237,16 +237,16 @@ export const BLOG_POSTS = [
       {
         type: 'ul',
         items: [
-          'Gevel (spouwmuur) — vaak een van de grootste warmteverliezers bij een onvoldoende geïsoleerde spouw.',
-          'Dak — zie ook ons artikel over dakisolatie voor de details hierover.',
-          'Vloer of bodem — vooral relevant bij onverwarmde kruipruimtes of een pand zonder vloerisolatie.',
-          'Beglazing — enkel glas of verouderd dubbel glas laat aanzienlijk meer warmte door dan moderne beglazing.',
+          'Gevel (spouwmuur): vaak een van de grootste warmteverliezers bij een onvoldoende geïsoleerde spouw.',
+          'Dak: zie ook ons artikel over dakisolatie voor de details hierover.',
+          'Vloer of bodem: vooral relevant bij onverwarmde kruipruimtes of een pand zonder vloerisolatie.',
+          'Beglazing: enkel glas of verouderd dubbel glas laat aanzienlijk meer warmte door dan moderne beglazing.',
         ],
       },
       {
         type: 'p',
         parts: [
-          'Voor de gevel en het dak geldt bovendien dat de maatregel vaak het meest logisch is op een moment dat er toch al onderhoud of vervanging gepland staat — zie ons artikel over ',
+          'Voor de gevel en het dak geldt bovendien dat de maatregel vaak het meest logisch is op een moment dat er toch al onderhoud of vervanging gepland staat. Zie ons artikel over ',
           { text: 'dakisolatie voor uw bedrijfspand', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
           '.',
         ],
@@ -562,7 +562,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Dit is een belangrijk verschil: een maatregel kan technisch uitvoerbaar zijn zonder dat het voor uw bedrijfspand direct een logische investering is. Daarom is het nuttig om maatregelen naast elkaar te zetten — zie ook ons artikel over ',
+          'Dit is een belangrijk verschil: een maatregel kan technisch uitvoerbaar zijn zonder dat het voor uw bedrijfspand direct een logische investering is. Daarom is het nuttig om maatregelen naast elkaar te zetten. Zie ook ons artikel over ',
           { text: 'welke verduurzamingsmaatregelen echt iets opleveren', to: ROUTES.blogPost('verduurzamingsmaatregelen-bedrijfspand') },
           ', bijvoorbeeld op:',
         ],
@@ -655,7 +655,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Een bedrijfspand kan op papier veel mogelijkheden hebben, terwijl een deel daarvan in de praktijk weinig oplevert. Kijk daarom eerst naar de basis: hoe wordt het pand gebruikt, welke ruimtes worden verwarmd, op welke momenten is er activiteit, hoe oud zijn de installaties, en waar gaat op dit moment de meeste energie naartoe? Ook de bouwkundige staat van het pand speelt een rol. Denk bijvoorbeeld aan dak, gevel, vloer, ramen en deuren — zie ook ons artikel over een ',
+          'Een bedrijfspand kan op papier veel mogelijkheden hebben, terwijl een deel daarvan in de praktijk weinig oplevert. Kijk daarom eerst naar de basis: hoe wordt het pand gebruikt, welke ruimtes worden verwarmd, op welke momenten is er activiteit, hoe oud zijn de installaties, en waar gaat op dit moment de meeste energie naartoe? Ook de bouwkundige staat van het pand speelt een rol. Denk bijvoorbeeld aan dak, gevel, vloer, ramen en deuren. Zie ook ons artikel over een ',
           { text: 'bouwkundige beoordeling vóór verduurzaming', to: ROUTES.blogPost('bouwkundige-beoordeling-voor-verduurzaming') },
           ' en over ',
           { text: 'dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
@@ -759,7 +759,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Verouderde of slecht afgestelde ventilatie is een van de minder zichtbare energieverspillers in een bedrijfspand: systemen die onnodig doordraaien buiten werktijd, ventilatoren die niet zijn afgestemd op de werkelijke bezetting, of luchtbehandeling die geen rekening houdt met de opgewekte warmte in het pand. Dit raakt ook aan de bouwkundige schil — zie ons artikel over ',
+          'Verouderde of slecht afgestelde ventilatie is een van de minder zichtbare energieverspillers in een bedrijfspand: systemen die onnodig doordraaien buiten werktijd, ventilatoren die niet zijn afgestemd op de werkelijke bezetting, of luchtbehandeling die geen rekening houdt met de opgewekte warmte in het pand. Dit raakt ook aan de bouwkundige schil. Zie ons artikel over ',
           { text: 'dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
           ' voor de grotere, structurele kant daarvan.',
         ],
@@ -777,7 +777,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Ventilatiemaatregelen met een terugverdientijd van vijf jaar of minder kunnen ook onderdeel zijn van de energiebesparingsplicht die voor veel bedrijfspanden geldt. Meer over deze bredere verplichting — voor wie die geldt en wat er van u wordt verwacht — leest u in ons artikel over ',
+          'Ventilatiemaatregelen met een terugverdientijd van vijf jaar of minder kunnen ook onderdeel zijn van de energiebesparingsplicht die voor veel bedrijfspanden geldt. Voor wie deze bredere verplichting geldt en wat er van u wordt verwacht, leest u in ons artikel over ',
           { text: 'de energiebesparingsplicht', to: ROUTES.blogPost('energiebesparingsplicht-voor-uw-bedrijfspand') },
           '.',
         ],
@@ -810,7 +810,7 @@ export const BLOG_POSTS = [
     category: 'Wetgeving',
     title: 'Energiebesparingsplicht voor uw bedrijfspand: wat moet u weten?',
     excerpt:
-      'Vanaf een bepaald energieverbruik moet uw bedrijfspand energiebesparende maatregelen nemen — een verplichting die voor veel meer bedrijfspanden geldt dan alleen kantoren. Wat de energiebesparingsplicht inhoudt en wat dit voor uw pand kan betekenen.',
+      'Vanaf een bepaald energieverbruik moet uw bedrijfspand energiebesparende maatregelen nemen. Die verplichting geldt voor veel meer bedrijfspanden dan alleen kantoren. Wat de energiebesparingsplicht inhoudt en wat dit voor uw pand kan betekenen.',
     date: '3 september 2026',
     isoDate: '2026-09-03',
     readTime: '6 min',
@@ -819,7 +819,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Niet alleen kantoorpanden hebben te maken met een wettelijke verduurzamingsverplichting. Veel meer bedrijfspanden — van winkels tot bedrijfshallen — vallen onder de energiebesparingsplicht: een verplichting om energiebesparende maatregelen te nemen zodra het energieverbruik boven een bepaalde grens komt. Dit artikel legt uit wat deze plicht inhoudt, voor wie die geldt en wat er van u wordt verwacht.',
+          'Niet alleen kantoorpanden hebben te maken met een wettelijke verduurzamingsverplichting. Veel meer bedrijfspanden, van winkels tot bedrijfshallen, vallen onder de energiebesparingsplicht: een verplichting om energiebesparende maatregelen te nemen zodra het energieverbruik boven een bepaalde grens komt. Dit artikel legt uit wat deze plicht inhoudt, voor wie die geldt en wat er van u wordt verwacht.',
         ],
       },
       { type: 'h2', text: 'Wat is de energiebesparingsplicht?' },
@@ -833,20 +833,20 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'De energiebesparingsplicht geldt zodra een locatie jaarlijks meer dan 50.000 kWh elektriciteit of 25.000 m³ aardgas(-equivalent) verbruikt. Gebruikt uw bedrijfspand minder, dan valt u buiten deze verplichting. Voor de grootste verbruikers — vanaf 10 miljoen kWh elektriciteit of 170.000 m³ aardgas(-equivalent) per jaar — geldt in een aantal sectoren bovendien een onderzoeksplicht: een verplicht, uitgebreider onderzoek naar energiebesparingsmogelijkheden in het eigen proces.',
+          'De energiebesparingsplicht geldt zodra een locatie jaarlijks meer dan 50.000 kWh elektriciteit of 25.000 m³ aardgas(-equivalent) verbruikt. Gebruikt uw bedrijfspand minder, dan valt u buiten deze verplichting. Voor de grootste verbruikers (vanaf 10 miljoen kWh elektriciteit of 170.000 m³ aardgas(-equivalent) per jaar) geldt in een aantal sectoren bovendien een onderzoeksplicht: een verplicht, uitgebreider onderzoek naar energiebesparingsmogelijkheden in het eigen proces.',
         ],
       },
       { type: 'h2', text: 'Welke maatregelen worden verwacht?' },
       {
         type: 'p',
         parts: [
-          'Welke maatregelen precies worden verwacht, hangt af van de Erkende Maatregelenlijst van uw sector. In de praktijk bestaan deze lijsten uit maatregelen die zich doorgaans binnen enkele jaren terugverdienen, zoals verlichting, isolatie of verwarmingsinstallaties — zie voor voorbeelden hiervan ook onze artikelen over ',
+          'Welke maatregelen precies worden verwacht, hangt af van de Erkende Maatregelenlijst van uw sector. In de praktijk bestaan deze lijsten uit maatregelen die zich doorgaans binnen enkele jaren terugverdienen, zoals verlichting, isolatie of verwarmingsinstallaties. Voorbeelden hiervan vindt u ook in onze artikelen over ',
           { text: 'LED-verlichting', to: ROUTES.blogPost('led-verlichting-snelste-stap') },
           ', ',
           { text: 'dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
           ' en ',
           { text: 'de warmtepomp', to: ROUTES.blogPost('warmtepomp-in-het-mkb') },
-          '. Welke maatregelen voor uw sector en pand concreet gelden, verschilt per situatie en vraagt om de sectorspecifieke lijst te raadplegen. Neemt u een maatregel, dan is het ook de moeite waard te checken of deze in aanmerking komt voor een fiscaal voordeel — zie ons overzicht van ',
+          '. Welke maatregelen voor uw sector en pand concreet gelden, verschilt per situatie en vraagt om de sectorspecifieke lijst te raadplegen. Neemt u een maatregel, dan is het ook de moeite waard te checken of deze in aanmerking komt voor een fiscaal voordeel. Zie daarvoor ons overzicht van ',
           { text: 'EIA, ISDE, SDE++ en KIA', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
           '.',
         ],
@@ -880,7 +880,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'De energiebesparingsplicht geldt voor veel meer bedrijfspanden dan alleen kantoren, en wordt in de praktijk niet altijd nageleefd — vaak simpelweg omdat ondernemers niet weten dat de plicht voor hun pand geldt. Controleer of uw jaarlijkse verbruik boven de drempel van 50.000 kWh elektriciteit of 25.000 m³ aardgas ligt, en breng in kaart welke maatregelen voor uw sector gelden.',
+          'De energiebesparingsplicht geldt voor veel meer bedrijfspanden dan alleen kantoren, en wordt in de praktijk niet altijd nageleefd, vaak simpelweg omdat ondernemers niet weten dat de plicht voor hun pand geldt. Controleer of uw jaarlijkse verbruik boven de drempel van 50.000 kWh elektriciteit of 25.000 m³ aardgas ligt, en breng in kaart welke maatregelen voor uw sector gelden.',
         ],
       },
     ],
@@ -911,7 +911,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Een batterij wordt vooral interessant wanneer u zelf elektriciteit opwekt, bijvoorbeeld met zonnepanelen, en die stroom niet altijd op het moment van opwekken kunt gebruiken. Met het vervallen van de salderingsregeling per 1 januari 2027 kan het aantrekkelijker worden om meer van uw eigen opgewekte stroom zelf te benutten in plaats van terug te leveren — meer hierover leest u in ons artikel over ',
+          'Een batterij wordt vooral interessant wanneer u zelf elektriciteit opwekt, bijvoorbeeld met zonnepanelen, en die stroom niet altijd op het moment van opwekken kunt gebruiken. Met het vervallen van de salderingsregeling per 1 januari 2027 kan het aantrekkelijker worden om meer van uw eigen opgewekte stroom zelf te benutten in plaats van terug te leveren. Meer hierover leest u in ons artikel over ',
           { text: 'zonnepanelen op uw bedrijfspand', to: ROUTES.blogPost('zonnepanelen-op-uw-bedrijfspand') },
           '. Ook in combinatie met laadinfrastructuur kan een batterij een rol spelen, bijvoorbeeld om pieken in het laadvermogen op te vangen. De algemene werking van een batterij en de rol daarvan bij netcapaciteit hebben we al toegelicht in ons artikel over ',
           { text: 'netcongestie in de Hoeksche Waard', to: ROUTES.blogPost('netcongestie-hoeksche-waard') },
@@ -922,7 +922,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Onder bepaalde voorwaarden kan een batterij in aanmerking komen voor de energie-investeringsaftrek (EIA). De Energielijst stelt daarbij eisen aan onder meer het vermogen (ten minste 5 kW) en de opslagcapaciteit (ten minste 15 kWh) van de accu. De accu moet gekoppeld zijn aan een installatie voor zelfopwekking van duurzame energie met een opgesteld piekvermogen van meer dan 15 kW, en beide moeten dezelfde aansluiting op het elektriciteitsnet hebben. Een accu met vloeibaar lood-zuur of een accu van een (intern) transportmiddel komt niet in aanmerking. De exacte code en voorwaarden op de actuele Energielijst wijzigen jaarlijks — check deze bij RVO voordat u een aanvraag voorbereidt. Voor de volledige uitleg van de EIA en de andere fiscale en subsidieregelingen verwijzen we naar ',
+          'Onder bepaalde voorwaarden kan een batterij in aanmerking komen voor de energie-investeringsaftrek (EIA). De Energielijst stelt daarbij eisen aan onder meer het vermogen (ten minste 5 kW) en de opslagcapaciteit (ten minste 15 kWh) van de accu. De accu moet gekoppeld zijn aan een installatie voor zelfopwekking van duurzame energie met een opgesteld piekvermogen van meer dan 15 kW, en beide moeten dezelfde aansluiting op het elektriciteitsnet hebben. Een accu met vloeibaar lood-zuur of een accu van een (intern) transportmiddel komt niet in aanmerking. De exacte code en voorwaarden op de actuele Energielijst wijzigen jaarlijks. Check deze bij RVO voordat u een aanvraag voorbereidt. Voor de volledige uitleg van de EIA en de andere fiscale en subsidieregelingen verwijzen we naar ',
           { text: 'ons overzicht van EIA, ISDE, SDE++ en KIA', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
           '.',
         ],
@@ -931,7 +931,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Naast de EIA bestaat er met de Subsidieregeling Private Laadinfrastructuur bij bedrijven (SPRILA) ook een route die een batterij kan ondersteunen — maar niet zomaar. SPRILA subsidieert een stationaire batterij alleen wanneer die wordt aangelegd in combinatie met nieuwe laadinfrastructuur. Een losstaande batterij, bijvoorbeeld uitsluitend voor de opslag van zonnestroom, komt niet in aanmerking. Daarnaast moet een aanzienlijk deel van de door de batterij ontladen energie aantoonbaar naar de laadstations gaan — raadpleeg de actuele RVO-voorwaarden voor het exacte minimumpercentage. De subsidie voor de combinatie van een batterij met nieuwe laadinfrastructuur bedraagt minimaal € 25.000. Meer over SPRILA en de voorwaarden voor laadinfrastructuur zelf leest u in ons artikel over ',
+          'Naast de EIA bestaat er met de Subsidieregeling Private Laadinfrastructuur bij bedrijven (SPRILA) ook een route die een batterij kan ondersteunen, maar niet zomaar. SPRILA subsidieert een stationaire batterij alleen wanneer die wordt aangelegd in combinatie met nieuwe laadinfrastructuur. Een losstaande batterij, bijvoorbeeld uitsluitend voor de opslag van zonnestroom, komt niet in aanmerking. Daarnaast moet een aanzienlijk deel van de door de batterij ontladen energie aantoonbaar naar de laadstations gaan. Raadpleeg de actuele RVO-voorwaarden voor het exacte minimumpercentage. De subsidie voor de combinatie van een batterij met nieuwe laadinfrastructuur bedraagt minimaal € 25.000. Meer over SPRILA en de voorwaarden voor laadinfrastructuur zelf leest u in ons artikel over ',
           { text: 'laadpalen op uw bedrijfsterrein', to: ROUTES.blogPost('laadpalen-op-uw-bedrijfsterrein') },
           '.',
         ],
@@ -940,7 +940,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Batterijopslag is niet alleen een financiële en technische afweging. Ook de locatie, de veiligheid en de concrete uitvoering moeten worden beoordeeld — denk aan de richtlijn PGS 37-1, die relevant is voor de brandveiligheid van batterijopslagsystemen. Omdat dit sterk afhangt van de omvang en opstelling van de installatie, is het verstandig dit vooraf te bespreken met uw gemeente en, waar nodig, de brandweer of een bevoegde adviseur.',
+          'Batterijopslag is niet alleen een financiële en technische afweging. Ook de locatie, de veiligheid en de concrete uitvoering moeten worden beoordeeld. Denk aan de richtlijn PGS 37-1, die relevant is voor de brandveiligheid van batterijopslagsystemen. Omdat dit sterk afhangt van de omvang en opstelling van de installatie, is het verstandig dit vooraf te bespreken met uw gemeente en, waar nodig, de brandweer of een bevoegde adviseur.',
         ],
       },
       { type: 'h2', text: 'Wat SMV Advies voor u kan betekenen' },
@@ -994,7 +994,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Het subsidielandschap voor laadinfrastructuur is de afgelopen jaren veranderd. De Subsidieregeling Emissieloze Bedrijfsauto’s (SEBA) is definitief gesloten sinds 31 december 2024, 12.00 uur — en die regeling ging bovendien over de aanschaf van de bedrijfsauto zelf, niet over de laadinfrastructuur. Ook via de Milieu-investeringsaftrek en Willekeurige afschrijving milieu-investeringen (MIA/Vamil) is een laadpunt in 2026 niet meer aftrekbaar; laadpunten staan niet meer op de Milieulijst. Wat resteert, is de Subsidieregeling Private Laadinfrastructuur bij bedrijven (SPRILA): een directe subsidie voor ondernemers met een KVK-inschrijving die laadinfrastructuur plaatsen op eigen of gehuurd, niet-openbaar toegankelijk terrein. SPRILA kan zowel de aanschaf als de installatie van AC- of DC-laadstations en stationaire batterijsystemen ondersteunen, en geldt voor zowel lichte als zware voertuigen. Het bevestigde minimumbedrag is € 2.500 subsidie per locatie; de aanvraagperiode voor 2026 loopt van 20 januari 09.00 uur tot 18 december 12.00 uur. Daarnaast blijft de kleinschaligheidsinvesteringsaftrek (KIA) een generieke fiscale route die voor bedrijfsinvesteringen kan gelden — dat is een fiscale aftrek, geen directe subsidie-uitkering. Voor de volledige uitleg van KIA en de andere fiscale en subsidieregelingen verwijzen we naar ',
+          'Het subsidielandschap voor laadinfrastructuur is de afgelopen jaren veranderd. De Subsidieregeling Emissieloze Bedrijfsauto’s (SEBA) is definitief gesloten sinds 31 december 2024, 12.00 uur. Die regeling ging bovendien over de aanschaf van de bedrijfsauto zelf, niet over de laadinfrastructuur. Ook via de Milieu-investeringsaftrek en Willekeurige afschrijving milieu-investeringen (MIA/Vamil) is een laadpunt in 2026 niet meer aftrekbaar; laadpunten staan niet meer op de Milieulijst. Wat resteert, is de Subsidieregeling Private Laadinfrastructuur bij bedrijven (SPRILA): een directe subsidie voor ondernemers met een KVK-inschrijving die laadinfrastructuur plaatsen op eigen of gehuurd, niet-openbaar toegankelijk terrein. SPRILA kan zowel de aanschaf als de installatie van AC- of DC-laadstations en stationaire batterijsystemen ondersteunen, en geldt voor zowel lichte als zware voertuigen. Het bevestigde minimumbedrag is € 2.500 subsidie per locatie; de aanvraagperiode voor 2026 loopt van 20 januari 09.00 uur tot 18 december 12.00 uur. Daarnaast blijft de kleinschaligheidsinvesteringsaftrek (KIA) een generieke fiscale route die voor bedrijfsinvesteringen kan gelden. Let op: dat is een fiscale aftrek, geen directe subsidie-uitkering. Voor de volledige uitleg van KIA en de andere fiscale en subsidieregelingen verwijzen we naar ',
           { text: 'ons overzicht van EIA, ISDE, SDE++ en KIA', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
           '.',
         ],
@@ -1003,7 +1003,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Eén laadpaal vraagt doorgaans weinig extra capaciteit, maar meerdere laadpunten tegelijk kunnen gezamenlijk een aanzienlijk deel van uw aansluiting vragen. Daardoor kan laadinfrastructuur relevant zijn voor de beschikbare capaciteit op het elektriciteitsnet. Netbewust laden — het verdelen van laadvermogen binnen de grenzen van de beschikbare netcapaciteit — kan hierbij helpen. Dit speelt des te meer als u laadinfrastructuur combineert met andere capaciteit-vragende maatregelen, zoals ',
+          'Eén laadpaal vraagt doorgaans weinig extra capaciteit, maar meerdere laadpunten tegelijk kunnen gezamenlijk een aanzienlijk deel van uw aansluiting vragen. Daardoor kan laadinfrastructuur relevant zijn voor de beschikbare capaciteit op het elektriciteitsnet. Netbewust laden kan hierbij helpen: het verdelen van laadvermogen binnen de grenzen van de beschikbare netcapaciteit. Dit speelt des te meer als u laadinfrastructuur combineert met andere capaciteit-vragende maatregelen, zoals ',
           { text: 'zonnepanelen', to: ROUTES.blogPost('zonnepanelen-op-uw-bedrijfspand') },
           '. Voor de volledige achtergrond bij netcongestie leest u ',
           { text: 'ons artikel over netcongestie in de Hoeksche Waard', to: ROUTES.blogPost('netcongestie-hoeksche-waard') },
@@ -1023,7 +1023,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Laadpalen op een bedrijfsterrein vragen om meer voorbereiding dan alleen de keuze voor een leverancier. Vergunning, de actuele subsidie- en fiscale mogelijkheden, en de beschikbare netcapaciteit — inclusief de manier waarop meerdere laadpunten worden aangestuurd — zijn drie zaken die u vroeg in het traject in kaart moet brengen.',
+          'Laadpalen op een bedrijfsterrein vragen om meer voorbereiding dan alleen de keuze voor een leverancier. Vergunning, de actuele subsidie- en fiscale mogelijkheden, en de beschikbare netcapaciteit (inclusief de manier waarop meerdere laadpunten worden aangestuurd) zijn drie zaken die u vroeg in het traject in kaart moet brengen.',
         ],
       },
     ],
@@ -1054,21 +1054,21 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'In de meeste gevallen mag u zonnepanelen op het dak van uw bedrijfspand vergunningsvrij plaatsen, ongeacht wat het omgevingsplan voor de rest van het gebouw voorschrijft. Er gelden wel voorwaarden. Op een monument — gemeentelijk, provinciaal of rijksmonument — is vergunningsvrij plaatsen niet mogelijk. Ligt uw pand in een rijksbeschermd stads- of dorpsgezicht, dan mag u panelen alleen vergunningsvrij plaatsen op een achterdakvlak dat niet naar een openbaar toegankelijk gebied is gekeerd. Bij een plat dak geldt bovendien dat het paneel minimaal even ver van de dakrand moet blijven als het paneel hoog is. Kan uw situatie niet aan deze voorwaarden voldoen, dan is alsnog een omgevingsvergunning nodig. Omdat de precieze situatie van uw pand bepalend is, is dit iets om vooraf te laten beoordelen — bijvoorbeeld via het Omgevingsloket of uw gemeente.',
+          'In de meeste gevallen mag u zonnepanelen op het dak van uw bedrijfspand vergunningsvrij plaatsen, ongeacht wat het omgevingsplan voor de rest van het gebouw voorschrijft. Er gelden wel voorwaarden. Op een monument, of het nu een gemeentelijk, provinciaal of rijksmonument is, is vergunningsvrij plaatsen niet mogelijk. Ligt uw pand in een rijksbeschermd stads- of dorpsgezicht, dan mag u panelen alleen vergunningsvrij plaatsen op een achterdakvlak dat niet naar een openbaar toegankelijk gebied is gekeerd. Bij een plat dak geldt bovendien dat het paneel minimaal even ver van de dakrand moet blijven als het paneel hoog is. Kan uw situatie niet aan deze voorwaarden voldoen, dan is alsnog een omgevingsvergunning nodig. Omdat de precieze situatie van uw pand bepalend is, is dit iets om vooraf te laten beoordelen, bijvoorbeeld via het Omgevingsloket of uw gemeente.',
         ],
       },
       { type: 'h2', text: 'Saldering stopt per 2027: wat betekent dit voor teruglevering?' },
       {
         type: 'p',
         parts: [
-          'De salderingsregeling — het wegstrepen van teruggeleverde stroom tegen uw eigen verbruik — geldt voor huishoudens en kleine bedrijven en stopt per 1 januari 2027. Tot en met 31 december 2026 kunt u nog gebruikmaken van de huidige regeling. Daarna krijgt u voor alle teruggeleverde stroom een vergoeding van uw energieleverancier; deze vergoeding moet tot 2030 minimaal 50% van het kale leveringstarief bedragen. Deze wijziging is door de Rijksoverheid bevestigd voor kleinverbruikers. Heeft u een bedrijfspand met een grootverbruikersaansluiting, dan is de situatie mogelijk anders geregeld — vraag dit na bij uw energieleverancier.',
+          'De salderingsregeling, het wegstrepen van teruggeleverde stroom tegen uw eigen verbruik, geldt voor huishoudens en kleine bedrijven en stopt per 1 januari 2027. Tot en met 31 december 2026 kunt u nog gebruikmaken van de huidige regeling. Daarna krijgt u voor alle teruggeleverde stroom een vergoeding van uw energieleverancier; deze vergoeding moet tot 2030 minimaal 50% van het kale leveringstarief bedragen. Deze wijziging is door de Rijksoverheid bevestigd voor kleinverbruikers. Heeft u een bedrijfspand met een grootverbruikersaansluiting, dan is de situatie mogelijk anders geregeld. Vraag dit na bij uw energieleverancier.',
         ],
       },
       { type: 'h2', text: 'Netcongestie en teruglevering: wanneer speelt dit voor u?' },
       {
         type: 'p',
         parts: [
-          'Teruglevering van stroom — bijvoorbeeld via zonnepanelen — vraagt net als afname transportcapaciteit op het elektriciteitsnet. Is die capaciteit op uw locatie beperkt, dan kan een aanvraag voor een nieuwe of zwaardere aansluiting te maken krijgen met een wachtlijst. Of en hoe dit voor uw pand speelt, hangt sterk af van uw locatie en de omvang van uw teruglevering. Voor de actuele situatie in de Hoeksche Waard leest u meer in ',
+          'Teruglevering van stroom, bijvoorbeeld via zonnepanelen, vraagt net als afname transportcapaciteit op het elektriciteitsnet. Is die capaciteit op uw locatie beperkt, dan kan een aanvraag voor een nieuwe of zwaardere aansluiting te maken krijgen met een wachtlijst. Of en hoe dit voor uw pand speelt, hangt sterk af van uw locatie en de omvang van uw teruglevering. Voor de actuele situatie in de Hoeksche Waard leest u meer in ',
           { text: 'ons artikel over netcongestie in de Hoeksche Waard', to: ROUTES.blogPost('netcongestie-hoeksche-waard') },
           '.',
         ],
@@ -1077,7 +1077,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Voor zakelijke zonnepanelen is de investeringssubsidie (ISDE) niet meer beschikbaar; deze is afgeschaft. Wat resteert, is met name een fiscaal voordeel via de energie-investeringsaftrek (EIA), mits uw installatie voldoet aan de voorwaarden op de jaarlijkse Energielijst. Dat is een fiscale aftrek, geen directe subsidie-uitkering — een onderscheid dat in de praktijk nogal eens door elkaar loopt. Voor de volledige uitleg van EIA, ISDE, SDE++ en de kleinschaligheidsinvesteringsaftrek (KIA), en hoe deze regelingen zich tot elkaar verhouden, verwijzen we naar ',
+          'Voor zakelijke zonnepanelen is de investeringssubsidie (ISDE) niet meer beschikbaar; deze is afgeschaft. Wat resteert, is met name een fiscaal voordeel via de energie-investeringsaftrek (EIA), mits uw installatie voldoet aan de voorwaarden op de jaarlijkse Energielijst. Dat is een fiscale aftrek, geen directe subsidie-uitkering. Dat onderscheid loopt in de praktijk nogal eens door elkaar. Voor de volledige uitleg van EIA, ISDE, SDE++ en de kleinschaligheidsinvesteringsaftrek (KIA), en hoe deze regelingen zich tot elkaar verhouden, verwijzen we naar ',
           { text: 'ons overzicht van EIA, ISDE, SDE++ en KIA', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
           '.',
         ],
@@ -1086,7 +1086,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Een bedrijfsdak moet het gewicht van zonnepanelen, bevestigingsmateriaal en eventuele ballast kunnen dragen. Of dat het geval is, is een vraag voor een constructeur of uw installateur — dat is maatwerk per dak. Ook de staat van de dakbedekking zelf is relevant: panelen op een dak dat binnen afzienbare tijd toch vervangen of geïsoleerd moet worden, betekent in de praktijk vaak dubbel werk. Overweegt u naast zonnepanelen ook dakisolatie, dan is het de moeite waard om beide in samenhang te plannen. Meer over de bouwkundige kant van dakwerkzaamheden leest u in ',
+          'Een bedrijfsdak moet het gewicht van zonnepanelen, bevestigingsmateriaal en eventuele ballast kunnen dragen. Of dat het geval is, is een vraag voor een constructeur of uw installateur, want dat is maatwerk per dak. Ook de staat van de dakbedekking zelf is relevant: panelen op een dak dat binnen afzienbare tijd toch vervangen of geïsoleerd moet worden, betekent in de praktijk vaak dubbel werk. Overweegt u naast zonnepanelen ook dakisolatie, dan is het de moeite waard om beide in samenhang te plannen. Meer over de bouwkundige kant van dakwerkzaamheden leest u in ',
           { text: 'ons artikel over dakisolatie voor uw bedrijfspand', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
           '.',
         ],
@@ -1137,7 +1137,7 @@ export const BLOG_POSTS = [
         parts: [
           'Een energielabel geeft aan hoe energiezuinig een gebouw is. Voor kantoorgebouwen geldt sinds 1 januari 2023 een minimum: energielabel C, wat neerkomt op een maximaal primair fossiel energiegebruik van 225 kWh per vierkante meter per jaar. Deze eis staat in het ',
           { text: 'Besluit bouwwerken leefomgeving', href: 'https://wetten.overheid.nl/BWBR0041297/' },
-          '. Kantoorgebouwen met een lager label — D tot en met G — voldoen niet aan de eis.',
+          '. Kantoorgebouwen met een lager label (D tot en met G) voldoen niet aan de eis.',
         ],
       },
       { type: 'h2', text: 'Voor welke bedrijfspanden geldt energielabel C?' },
@@ -1150,7 +1150,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Heeft u meerdere kleinere kantoorunits in hetzelfde gebouw? Voor de grens van 100 vierkante meter worden die units bij elkaar opgeteld — de verplichting kan dus niet worden omzeild door een kantoor in meerdere kleine ruimtes te verdelen.',
+          'Heeft u meerdere kleinere kantoorunits in hetzelfde gebouw? Voor de grens van 100 vierkante meter worden die units bij elkaar opgeteld. De verplichting kan dus niet worden omzeild door een kantoor in meerdere kleine ruimtes te verdelen.',
         ],
       },
       { type: 'h2', text: 'Welke uitzonderingen zijn er?' },
@@ -1184,7 +1184,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Voldoet uw kantoorpand niet aan de eis, dan mag het volgens de regelgeving niet langer als kantoor worden gebruikt of in gebruik worden genomen — een gebruiksverbod. Toezicht en handhaving liggen doorgaans bij de gemeente, eventueel via een omgevingsdienst. Zij bepalen per situatie welke vervolgstappen worden gezet wanneer een pand na controle nog steeds niet voldoet.',
+          'Voldoet uw kantoorpand niet aan de eis, dan mag het volgens de regelgeving niet langer als kantoor worden gebruikt of in gebruik worden genomen: een gebruiksverbod. Toezicht en handhaving liggen doorgaans bij de gemeente, eventueel via een omgevingsdienst. Zij bepalen per situatie welke vervolgstappen worden gezet wanneer een pand na controle nog steeds niet voldoet.',
         ],
       },
       {
@@ -1205,7 +1205,7 @@ export const BLOG_POSTS = [
       {
         type: 'ul',
         items: [
-          'Energielabel: het officiële, geregistreerde label van uw gebouw. Dit wordt vastgesteld door een erkend energieadviseur en geregistreerd bij RVO — SMV Advies stelt zelf geen officieel energielabel vast.',
+          'Energielabel: het officiële, geregistreerde label van uw gebouw. Dit wordt vastgesteld door een erkend energieadviseur en geregistreerd bij RVO. SMV Advies stelt zelf geen officieel energielabel vast.',
           'Verduurzamingsadvies: in kaart brengen welke maatregelen voor úw pand haalbaar en zinvol zijn, en in welke volgorde. Dit is wél waar SMV Advies in adviseert.',
           'Uitvoering: de maatregelen daadwerkelijk laten aanbrengen door een installateur of aannemer.',
         ],
@@ -1238,14 +1238,14 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Geen van deze maatregelen garandeert op zichzelf een label C — of dat het geval is, hangt af van de huidige staat van uw pand, de combinatie van maatregelen en hoe deze door een erkend energieadviseur worden doorgerekend.',
+          'Geen van deze maatregelen garandeert op zichzelf een label C. Of dat het geval is, hangt af van de huidige staat van uw pand, de combinatie van maatregelen en hoe deze door een erkend energieadviseur worden doorgerekend.',
         ],
       },
       { type: 'h2', text: 'Wat kan SMV Advies voor u betekenen?' },
       {
         type: 'p',
         parts: [
-          'SMV Advies adviseert onafhankelijk over verduurzaming van bedrijfspanden in de Hoeksche Waard, zonder zelf maatregelen te verkopen of uit te voeren. Concreet betekent dat voor de energielabel C-verplichting: wij brengen in kaart welke maatregelen voor uw pand kansrijk zijn en in welke volgorde die het meeste opleveren. Wij stellen zelf geen officieel energielabel vast en regelen de verplichting niet namens u — dat blijft aan een erkend energieadviseur en, waar nodig, uw gemeente.',
+          'SMV Advies adviseert onafhankelijk over verduurzaming van bedrijfspanden in de Hoeksche Waard, zonder zelf maatregelen te verkopen of uit te voeren. Concreet betekent dat voor de energielabel C-verplichting: wij brengen in kaart welke maatregelen voor uw pand kansrijk zijn en in welke volgorde die het meeste opleveren. Wij stellen zelf geen officieel energielabel vast en regelen de verplichting niet namens u. Dat blijft aan een erkend energieadviseur en, waar nodig, uw gemeente.',
         ],
       },
       {
@@ -1264,7 +1264,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'De energielabel C-verplichting is voor veel kantoorpanden al een aantal jaren van kracht, maar niet ieder bedrijfspand valt eronder — en wie er wel onder valt, heeft vaak meerdere routes om te voldoen. De eerste stap is simpel: weten waar uw pand nu staat, en wat daarna het meest voor de hand ligt.',
+          'De energielabel C-verplichting is voor veel kantoorpanden al een aantal jaren van kracht, maar niet ieder bedrijfspand valt eronder. Wie er wel onder valt, heeft vaak meerdere routes om te voldoen. De eerste stap is simpel: weten waar uw pand nu staat, en wat daarna het meest voor de hand ligt.',
         ],
       },
     ],
@@ -1295,13 +1295,13 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Netcongestie ontstaat wanneer de vraag naar transport van elektriciteit op een bepaald moment groter is dan het elektriciteitsnet aankan. Dat kan spelen bij afname (het verbruiken van stroom) én bij teruglevering (bijvoorbeeld het invoeden van stroom uit zonnepanelen). Zodra een deel van het net vol zit, moet de netbeheerder — in de Hoeksche Waard is dat Stedin — nieuwe of zwaardere aanvragen voor transportcapaciteit tijdelijk op een wachtlijst zetten.',
+          'Netcongestie ontstaat wanneer de vraag naar transport van elektriciteit op een bepaald moment groter is dan het elektriciteitsnet aankan. Dat kan spelen bij afname (het verbruiken van stroom) én bij teruglevering (bijvoorbeeld het invoeden van stroom uit zonnepanelen). Zodra een deel van het net vol zit, moet de netbeheerder (in de Hoeksche Waard is dat Stedin) nieuwe of zwaardere aanvragen voor transportcapaciteit tijdelijk op een wachtlijst zetten.',
         ],
       },
       {
         type: 'p',
         parts: [
-          'Belangrijk om te weten: netcongestie raakt in de eerste plaats nieuwe of zwaardere aansluitingen. Een bestaande aansluiting die al werkt, blijft gewoon werken — congestie betekent niet dat de stroom bij u wordt afgesloten.',
+          'Belangrijk om te weten: netcongestie raakt in de eerste plaats nieuwe of zwaardere aansluitingen. Een bestaande aansluiting die al werkt, blijft gewoon werken. Congestie betekent niet dat de stroom bij u wordt afgesloten.',
         ],
       },
       { type: 'h2', text: 'De situatie in de Hoeksche Waard' },
@@ -1334,20 +1334,20 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Tot voor kort raakte de wachtlijst voor nieuwe of zwaardere aansluitingen vooral grootverbruikers. Vanaf 1 juli 2026 geldt deze wachtlijst in de Hoeksche Waard ook voor kleinverbruikers — dus ook voor kleinere bedrijfspanden die een nieuwe aansluiting willen of hun bestaande aansluiting willen verzwaren.',
+          'Tot voor kort raakte de wachtlijst voor nieuwe of zwaardere aansluitingen vooral grootverbruikers. Vanaf 1 juli 2026 geldt deze wachtlijst in de Hoeksche Waard ook voor kleinverbruikers. Dat geldt dus ook voor kleinere bedrijfspanden die een nieuwe aansluiting willen of hun bestaande aansluiting willen verzwaren.',
         ],
       },
       {
         type: 'p',
         parts: [
-          'Heeft u nu al een werkende aansluiting en wilt u die niet uitbreiden? Dan verandert er in de praktijk weinig. Wilt u wél een nieuwe aansluiting, een zwaardere aansluiting, of extra teruglevercapaciteit — bijvoorbeeld voor een groter zonnepanelenveld — dan is een langere wachttijd op dit moment reëel. Hoe dit precies voor uw pand uitpakt, is altijd afhankelijk van uw specifieke aansluiting en de actuele netcapaciteit op dat moment.',
+          'Heeft u nu al een werkende aansluiting en wilt u die niet uitbreiden? Dan verandert er in de praktijk weinig. Wilt u wél een nieuwe aansluiting, een zwaardere aansluiting, of extra teruglevercapaciteit, bijvoorbeeld voor een groter zonnepanelenveld? Dan is een langere wachttijd op dit moment reëel. Hoe dit precies voor uw pand uitpakt, is altijd afhankelijk van uw specifieke aansluiting en de actuele netcapaciteit op dat moment.',
         ],
       },
       { type: 'h2', text: 'Kunt u nog verduurzamen ondanks netcongestie?' },
       {
         type: 'p',
         parts: [
-          'Ja, voor de meeste maatregelen wel — maar niet elke maatregel wordt op dezelfde manier geraakt.',
+          'Ja, voor de meeste maatregelen wel. Maar niet elke maatregel wordt op dezelfde manier geraakt.',
         ],
       },
       {
@@ -1358,7 +1358,7 @@ export const BLOG_POSTS = [
             { text: 'dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
             ' en ',
             { text: 'LED-verlichting', to: ROUTES.blogPost('led-verlichting-snelste-stap') },
-            ', raken de netcapaciteit niet negatief — integendeel, ze verkleinen juist de kans dat u tegen een grens aanloopt.',
+            ', raken de netcapaciteit niet negatief. Integendeel, ze verkleinen juist de kans dat u tegen een grens aanloopt.',
           ],
           [
             'Een ',
@@ -1371,21 +1371,21 @@ export const BLOG_POSTS = [
           ],
           [
             { text: 'Laadpalen', to: ROUTES.blogPost('laadpalen-op-uw-bedrijfsterrein') },
-            ' voor elektrische voertuigen vragen, net als een warmtepomp, extra capaciteit — vooral bij meerdere laadpunten tegelijk.',
+            ' voor elektrische voertuigen vragen, net als een warmtepomp, extra capaciteit, vooral bij meerdere laadpunten tegelijk.',
           ],
         ],
       },
       {
         type: 'p',
         parts: [
-          'De enige manier om dit voor uw eigen pand zeker te weten, is uw huidige aansluiting en verbruiksprofiel laten doorrekenen — en zo nodig bij Stedin navragen wat er nog mogelijk is voordat u investeert.',
+          'De enige manier om dit voor uw eigen pand zeker te weten, is uw huidige aansluiting en verbruiksprofiel laten doorrekenen, en zo nodig bij Stedin navragen wat er nog mogelijk is voordat u investeert.',
         ],
       },
       { type: 'h2', text: 'Wat u zelf kunt doen' },
       {
         type: 'p',
         parts: [
-          'RVO onderscheidt voor bedrijven in een congestiegebied meerdere oplossingsrichtingen. Geen ervan is een garantie op extra capaciteit — het zijn manieren om de ruimte die er wél is, beter te benutten.',
+          'RVO onderscheidt voor bedrijven in een congestiegebied meerdere oplossingsrichtingen. Geen ervan is een garantie op extra capaciteit. Het zijn manieren om de ruimte die er wél is, beter te benutten.',
         ],
       },
       { type: 'h3', text: 'Energiebesparing' },
@@ -1406,7 +1406,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Een batterij slaat overtollige elektriciteit — bijvoorbeeld van eigen zonnepanelen — op voor later gebruik, en kan tijdelijk extra vermogen leveren bovenop uw aansluiting. Dat helpt in specifieke situaties, maar is geen automatische oplossing voor iedereen: het vraagt ruimte, brandveiligheidseisen en een investering die per situatie fors kan verschillen. Wanneer dit voor uw pand relevant kan worden, en welke fiscale en subsidiemogelijkheden daarbij spelen, leest u in ons artikel over ',
+          'Een batterij slaat overtollige elektriciteit, bijvoorbeeld van eigen zonnepanelen, op voor later gebruik en kan tijdelijk extra vermogen leveren bovenop uw aansluiting. Dat helpt in specifieke situaties, maar is geen automatische oplossing voor iedereen: het vraagt ruimte, brandveiligheidseisen en een investering die per situatie fors kan verschillen. Wanneer dit voor uw pand relevant kan worden, en welke fiscale en subsidiemogelijkheden daarbij spelen, leest u in ons artikel over ',
           { text: 'batterijopslag voor uw bedrijfspand', to: ROUTES.blogPost('batterijopslag-voor-uw-bedrijfspand') },
           '.',
         ],
@@ -1422,7 +1422,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Op een bedrijventerrein kan het lonen om samen met buurbedrijven capaciteit te delen — bijvoorbeeld via cable pooling (één aansluiting voor meerdere opwekbronnen) of een gezamenlijk contract, ook wel een energiehub genoemd. Dit soort collectieve oplossingen staat nog volop in ontwikkeling en vraagt afstemming met meerdere partijen, maar kan juist op een bedrijventerrein in de Hoeksche Waard kansrijk zijn. RVO beschrijft deze en andere opties, met praktijkvoorbeelden en indicatieve kosten, in het ',
+          'Op een bedrijventerrein kan het lonen om samen met buurbedrijven capaciteit te delen, bijvoorbeeld via cable pooling (één aansluiting voor meerdere opwekbronnen) of een gezamenlijk contract, ook wel een energiehub genoemd. Dit soort collectieve oplossingen staat nog volop in ontwikkeling en vraagt afstemming met meerdere partijen, maar kan juist op een bedrijventerrein in de Hoeksche Waard kansrijk zijn. RVO beschrijft deze en andere opties, met praktijkvoorbeelden en indicatieve kosten, in het ',
           {
             text: 'factsheet over oplossingen bij netcongestie',
             href: 'https://www.rvo.nl/sites/default/files/2024-07/Factsheets-oplossingen-netcongestie-bedrijven-versie-2.pdf',
@@ -1447,14 +1447,14 @@ export const BLOG_POSTS = [
             text: 'congestiechecker',
             href: 'https://www.stedin.net/zakelijk/energietransitie/beschikbare-netcapaciteit/congestie',
           },
-          ' waarmee u dat kunt nagaan. Neem in ieder geval vroeg contact op met Stedin zodra u concrete plannen heeft voor een nieuwe aansluiting, een zwaardere aansluiting, of een grotere teruglevercapaciteit — hoe eerder u dit weet, hoe beter u uw planning daarop kunt afstemmen.',
+          ' waarmee u dat kunt nagaan. Neem in ieder geval vroeg contact op met Stedin zodra u concrete plannen heeft voor een nieuwe aansluiting, een zwaardere aansluiting, of een grotere teruglevercapaciteit. Hoe eerder u dit weet, hoe beter u uw planning daarop kunt afstemmen.',
         ],
       },
       { type: 'h2', text: 'Wat SMV Advies wel en niet voor u kan betekenen' },
       {
         type: 'p',
         parts: [
-          'SMV Advies kan helpen om het energiegebruik en de verduurzamingsmogelijkheden van uw bedrijfspand in kaart te brengen en maatregelen te beoordelen. SMV kan echter geen netcapaciteit toewijzen of een aansluiting bij Stedin regelen — dat is en blijft aan de netbeheerder.',
+          'SMV Advies kan helpen om het energiegebruik en de verduurzamingsmogelijkheden van uw bedrijfspand in kaart te brengen en maatregelen te beoordelen. SMV kan echter geen netcapaciteit toewijzen of een aansluiting bij Stedin regelen. Dat is en blijft aan de netbeheerder.',
         ],
       },
       {
@@ -1495,7 +1495,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Bij de meeste bedrijfspanden ontstaat het grootste warmteverlies niet via de gevel of de ramen, maar via het dak. Warme lucht stijgt, en bij een bedrijfshal, kantoor of winkelpand met een groot, plat dakoppervlak telt dat extra hard door. Toch is dakisolatie precies de maatregel die ondernemers het langst laten liggen — vaak simpelweg omdat het dak niet zichtbaar is vanaf de vloer.',
+          'Bij de meeste bedrijfspanden ontstaat het grootste warmteverlies niet via de gevel of de ramen, maar via het dak. Warme lucht stijgt, en bij een bedrijfshal, kantoor of winkelpand met een groot, plat dakoppervlak telt dat extra hard door. Toch is dakisolatie precies de maatregel die ondernemers het langst laten liggen, vaak simpelweg omdat het dak niet zichtbaar is vanaf de vloer.',
         ],
       },
       { type: 'h2', text: 'Hoeveel warmte verliest u eigenlijk via het dak?' },
@@ -1509,26 +1509,26 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'De beste timing voor dakisolatie is vaak geen los project, maar het moment waarop de dakbedekking toch al aan vervanging toe is. Bij een plat dak met bitumen of EPDM staat die vervanging na verloop van tijd sowieso op de planning — en dat is het natuurlijke moment om isolatie mee te nemen. De meerkosten ten opzichte van alleen een nieuwe dakbedekking zijn dan relatief beperkt, terwijl het isolatie-effect voor jaren vaststaat.',
+          'De beste timing voor dakisolatie is vaak geen los project, maar het moment waarop de dakbedekking toch al aan vervanging toe is. Bij een plat dak met bitumen of EPDM staat die vervanging na verloop van tijd sowieso op de planning, en dat is het natuurlijke moment om isolatie mee te nemen. De meerkosten ten opzichte van alleen een nieuwe dakbedekking zijn dan relatief beperkt, terwijl het isolatie-effect voor jaren vaststaat.',
         ],
       },
       {
         type: 'p',
         parts: [
-          'Welke isolatiewaarde daarbij verplicht is, hangt af van de omvang van de werkzaamheden. Vervangt u alleen de isolatielaag van het dak, dan geldt een minimale Rc-waarde van 2,1 m²K/W (Bbl artikel 5.20 lid 2). Wordt de renovatie ingrijpender — meer dan een kwart van de gebouwschil wordt vernieuwd — dan gelden de eisen die ook voor nieuwbouw gelden (Bbl artikel 5.20 lid 4); voor het dak van een utiliteitsgebouw is dat een Rc-waarde van minimaal 6,3 m²K/W (Bbl artikel 4.152). Welke situatie op uw pand van toepassing is, hangt af van de precieze omvang en aard van de werkzaamheden — uw uitvoerende partij kan dit voor uw project beoordelen.',
+          'Welke isolatiewaarde daarbij verplicht is, hangt af van de omvang van de werkzaamheden. Vervangt u alleen de isolatielaag van het dak, dan geldt een minimale Rc-waarde van 2,1 m²K/W (Bbl artikel 5.20 lid 2). Wordt de renovatie ingrijpender en wordt meer dan een kwart van de gebouwschil vernieuwd, dan gelden de eisen die ook voor nieuwbouw gelden (Bbl artikel 5.20 lid 4); voor het dak van een utiliteitsgebouw is dat een Rc-waarde van minimaal 6,3 m²K/W (Bbl artikel 4.152). Welke situatie op uw pand van toepassing is, hangt af van de precieze omvang en aard van de werkzaamheden. Uw uitvoerende partij kan dit voor uw project beoordelen.',
         ],
       },
       {
         type: 'p',
         parts: [
-          'Vanuit verduurzamingsoogpunt kan het interessant zijn om bij een toch al geplande dakvervanging verder te kijken dan het wettelijke minimum, en de isolatiekeuze in samenhang met de rest van de dakopbouw te bekijken. Of dat voor uw pand financieel aantrekkelijk is, hangt af van de concrete situatie — dat is geen vaste regel, maar een afweging per project.',
+          'Vanuit verduurzamingsoogpunt kan het interessant zijn om bij een toch al geplande dakvervanging verder te kijken dan het wettelijke minimum, en de isolatiekeuze in samenhang met de rest van de dakopbouw te bekijken. Of dat voor uw pand financieel aantrekkelijk is, hangt af van de concrete situatie. Dat is geen vaste regel, maar een afweging per project.',
         ],
       },
       { type: 'h2', text: 'Wat het oplevert, naast een lagere energierekening' },
       {
         type: 'p',
         parts: [
-          'Een beter geïsoleerd dak merkt u het hele jaar: minder warmteverlies in de winter, maar ook minder hitteopbouw in de zomer — vooral in kantoren en winkels vaak het verschil tussen een prettig en een onwerkbaar binnenklimaat. Voor personeel en klanten is dat comfortverschil net zo waardevol als de besparing op de energierekening. Benieuwd hoe we dit soort afwegingen maken? Bekijk hoe een advies ',
+          'Een beter geïsoleerd dak merkt u het hele jaar: minder warmteverlies in de winter, maar ook minder hitteopbouw in de zomer. Vooral in kantoren en winkels is dat vaak het verschil tussen een prettig en een onwerkbaar binnenklimaat. Voor personeel en klanten is dat comfortverschil net zo waardevol als de besparing op de energierekening. Benieuwd hoe we dit soort afwegingen maken? Bekijk hoe een advies ',
           { text: 'in de praktijk', to: ROUTES.cases },
           ' tot stand komt.',
         ],
@@ -1538,7 +1538,7 @@ export const BLOG_POSTS = [
         type: 'ul',
         items: [
           'Thermische bruggen: aansluitingen bij dakranden, lichtkoepels en doorvoeren blijven vaak de zwakke plekken, ook ná isolatie.',
-          'Dampopen of dampdicht: de juiste opbouw voorkomt vochtproblemen in de dakconstructie — een detail voor een gespecialiseerde dakdekker.',
+          'Dampopen of dampdicht: de juiste opbouw voorkomt vochtproblemen in de dakconstructie. Dat is een detail voor een gespecialiseerde dakdekker.',
           'Draagvermogen van de bestaande constructie: extra isolatie en eventuele ballast wegen mee, met name bij oudere hallen.',
           'Bouwregelgeving: bij gedeeltelijke vervanging van de dakisolatie geldt een minimale Rc-waarde van 2,1 m²K/W; bij een ingrijpende renovatie (meer dan een kwart van de gebouwschil) gelden de nieuwbouweisen, voor een utiliteitsgebouw Rc ≥ 6,3 m²K/W (Bbl art. 5.20 en 4.152). Uw uitvoerende partij kan beoordelen welke eis voor uw specifieke project geldt.',
           'Toekomstplannen voor zonnepanelen: overweegt u op termijn zonnepanelen op het dak? Dan is het de moeite waard om de dakopbouw en de isolatiewerkzaamheden in samenhang te bekijken, zodat werkzaamheden niet onnodig dubbel worden uitgevoerd.',
@@ -1556,7 +1556,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Qua terugverdientijd hoort dakisolatie vaak bij de maatregelen met de kortste terugverdientijd van alle bouwkundige ingrepen, juist omdat de meerkosten bij een toch al geplande dakvervanging beperkt zijn. De exacte terugverdientijd hangt af van uw huidige situatie, het type dak en de energieprijzen — iets wat we in een ',
+          'Qua terugverdientijd hoort dakisolatie vaak bij de maatregelen met de kortste terugverdientijd van alle bouwkundige ingrepen, juist omdat de meerkosten bij een toch al geplande dakvervanging beperkt zijn. De exacte terugverdientijd hangt af van uw huidige situatie, het type dak en de energieprijzen. Dat kunnen we in een ',
           { text: 'QuickScan', to: ROUTES.pakketten },
           ' concreet voor uw pand berekenen.',
         ],
@@ -1574,7 +1574,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Het dak is voor veel bedrijfspanden de plek waar de grootste en snelst terugverdiende winst te behalen valt, zeker wanneer er toch al onderhoud aan de dakbedekking op de planning staat. De enige manier om te weten of dat ook voor uw pand geldt, is het daadwerkelijk laten doorrekenen — bekijk hoe zo’n traject er bij ons uitziet in onze ',
+          'Het dak is voor veel bedrijfspanden de plek waar de grootste en snelst terugverdiende winst te behalen valt, zeker wanneer er toch al onderhoud aan de dakbedekking op de planning staat. De enige manier om te weten of dat ook voor uw pand geldt, is het daadwerkelijk laten doorrekenen. Bekijk hoe zo’n traject er bij ons uitziet in onze ',
           { text: 'werkwijze', to: ROUTES.werkwijze },
           '.',
         ],
@@ -1603,32 +1603,32 @@ export const BLOG_POSTS = [
           'Subsidies en fiscale regelingen kunnen de terugverdientijd van een verduurzamingsmaatregel flink verkorten, maar het landschap van EIA, ISDE, SDE++ en KIA is voor de meeste ondernemers verwarrend. Dit artikel legt de belangrijkste regelingen op hoofdlijnen uit, inclusief de vraag of u ze kunt combineren. Percentages, drempelbedragen en voorwaarden wijzigen jaarlijks, dus controleer de actuele voorwaarden altijd bij RVO.nl of vraag het ons na.',
         ],
       },
-      { type: 'h2', text: 'EIA — Energie-investeringsaftrek' },
+      { type: 'h2', text: 'EIA: Energie-investeringsaftrek' },
       {
         type: 'p',
         parts: [
-          'De EIA is geen subsidie in de vorm van een uitkering, maar een fiscaal voordeel: u mag een percentage van het investeringsbedrag extra aftrekken van de winst, bovenop de normale afschrijving. In 2026 bedraagt dit percentage 40%, met een minimum van € 2.500 per bedrijfsmiddel. Dat levert alleen voordeel op als de investering ook daadwerkelijk op de jaarlijkse Energielijst van RVO staat — een lijst met technische maatregelen die per jaar wordt vastgesteld. De melding bij RVO moet binnen 3 maanden na het aangaan van de investeringsverplichting worden gedaan, dus vóórdat u definitief tekent bij een leverancier of installateur. Ook ',
+          'De EIA is geen subsidie in de vorm van een uitkering, maar een fiscaal voordeel: u mag een percentage van het investeringsbedrag extra aftrekken van de winst, bovenop de normale afschrijving. In 2026 bedraagt dit percentage 40%, met een minimum van € 2.500 per bedrijfsmiddel. Dat levert alleen voordeel op als de investering ook daadwerkelijk op de jaarlijkse Energielijst van RVO staat, een lijst met technische maatregelen die per jaar wordt vastgesteld. De melding bij RVO moet binnen 3 maanden na het aangaan van de investeringsverplichting worden gedaan, dus vóórdat u definitief tekent bij een leverancier of installateur. Ook ',
           { text: 'LED-verlichting', to: ROUTES.blogPost('led-verlichting-snelste-stap') },
           ' kan, afhankelijk van het type en de toepassing, op deze lijst staan. De EIA is bovendien te combineren met de kleinschaligheidsinvesteringsaftrek (KIA, zie verderop).',
         ],
       },
-      { type: 'h2', text: 'ISDE — Investeringssubsidie duurzame energie en energiebesparing' },
+      { type: 'h2', text: 'ISDE: Investeringssubsidie duurzame energie en energiebesparing' },
       {
         type: 'p',
         parts: [
           'De ISDE is wél een directe subsidie-uitkering, geen belastingaftrek. Voor mkb-bedrijfspanden is deze regeling met name relevant voor ',
           { text: 'warmtepompen', to: ROUTES.blogPost('warmtepomp-in-het-mkb') },
-          ', en daarnaast voor zonneboilers en kleinschalige windturbines. Isolatiemaatregelen komen voor zakelijke gebruikers niet in aanmerking voor de ISDE. Voor zakelijke zonnepanelen is de ISDE inmiddels afgeschaft — daar resteren voor zonnepanelen vooral fiscale voordelen zoals de EIA en de kleinschaligheidsinvesteringsaftrek (KIA). Voor warmtepompen geldt de ISDE nog wel, met een subsidiebedrag dat afhangt van het vermogen en type installatie; voor warmtepompen tot 70 kW geldt sinds 2024 een minimaal energielabel A++. Belangrijk: u vraagt de subsidie aan vóórdat u akkoord geeft op de offerte van de installateur, niet achteraf.',
+          ', en daarnaast voor zonneboilers en kleinschalige windturbines. Isolatiemaatregelen komen voor zakelijke gebruikers niet in aanmerking voor de ISDE. Voor zakelijke zonnepanelen is de ISDE inmiddels afgeschaft. Voor zonnepanelen resteren vooral fiscale voordelen zoals de EIA en de kleinschaligheidsinvesteringsaftrek (KIA). Voor warmtepompen geldt de ISDE nog wel, met een subsidiebedrag dat afhangt van het vermogen en type installatie; voor warmtepompen tot 70 kW geldt sinds 2024 een minimaal energielabel A++. Belangrijk: u vraagt de subsidie aan vóórdat u akkoord geeft op de offerte van de installateur, niet achteraf.',
         ],
       },
-      { type: 'h2', text: 'SDE++ — Stimulering Duurzame Energieproductie en Klimaattransitie' },
+      { type: 'h2', text: 'SDE++: Stimulering Duurzame Energieproductie en Klimaattransitie' },
       {
         type: 'p',
         parts: [
           'De SDE++ is primair bedoeld voor grootschalige of energie-intensieve investeringen die een aanzienlijke CO₂-reductie opleveren, en kent een aanvraagproces dat is toegesneden op dat soort projecten. Voor een individueel mkb-bedrijfspand van bescheiden omvang is deze regeling meestal minder relevant. Zodra het gaat om een grotere installatie, bijvoorbeeld een omvangrijk warmtepompsysteem of een groot zonnepanelenveld, kan het de moeite waard zijn om te laten checken of de SDE++ alsnog in beeld komt.',
         ],
       },
-      { type: 'h2', text: 'KIA — kleinschaligheidsinvesteringsaftrek naast EIA' },
+      { type: 'h2', text: 'KIA: kleinschaligheidsinvesteringsaftrek naast EIA' },
       {
         type: 'p',
         parts: [
@@ -1639,7 +1639,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'EIA en KIA zijn volgens de Belastingdienst te combineren. Voor de combinatie van EIA met ISDE of met SDE++ op dezelfde investering geeft de officiële informatie geen eenduidig antwoord — controleer daarom vóór aanvraag altijd de actuele voorwaarden voor samenloop bij RVO, of laat dit voor uw specifieke situatie nagaan.',
+          'EIA en KIA zijn volgens de Belastingdienst te combineren. Voor de combinatie van EIA met ISDE of met SDE++ op dezelfde investering geeft de officiële informatie geen eenduidig antwoord. Controleer daarom vóór aanvraag altijd de actuele voorwaarden voor samenloop bij RVO, of laat dit voor uw specifieke situatie nagaan.',
         ],
       },
       {
@@ -1657,7 +1657,7 @@ export const BLOG_POSTS = [
             'ISDE (zakelijk)',
             'Directe subsidie',
             'Zakelijke gebruikers',
-            'Warmtepomp, zonneboiler, kleinschalige windturbine — geen isolatie',
+            'Warmtepomp, zonneboiler, kleinschalige windturbine (geen isolatie)',
             'Vraag aan vóórdat u akkoord geeft op de offerte',
           ],
           [
@@ -1684,7 +1684,7 @@ export const BLOG_POSTS = [
           { text: 'Dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
           ' komt voor zakelijke gebruikers niet in aanmerking voor de ISDE, maar kan onder voorwaarden in aanmerking komen voor de EIA als de precieze uitvoering op de Energielijst staat. Datzelfde geldt voor maatregelen die u neemt om te voldoen aan de ',
           { text: 'energielabel C-verplichting', to: ROUTES.blogPost('energielabel-c-verplicht-bedrijfspand') },
-          ': die kunnen soms óók op de Energielijst staan, maar dat is geen automatisme — de exacte technische omschrijving is bepalend. Voor een warmtepomp is doorgaans de ISDE het eerste aanknopingspunt; of de EIA daarnaast van toepassing kan zijn op dezelfde investering, hangt af van de actuele samenloopvoorwaarden (zie hierboven).',
+          ': die kunnen soms óók op de Energielijst staan, maar dat is geen automatisme. De exacte technische omschrijving is bepalend. Voor een warmtepomp is doorgaans de ISDE het eerste aanknopingspunt; of de EIA daarnaast van toepassing kan zijn op dezelfde investering, hangt af van de actuele samenloopvoorwaarden (zie hierboven).',
         ],
       },
       { type: 'h2', text: 'Subsidie voor het advies zelf: de SVM-regeling' },
@@ -1698,8 +1698,8 @@ export const BLOG_POSTS = [
       {
         type: 'ul',
         items: [
-          'Vraag subsidies aan vóórdat u een verplichting aangaat bij een leverancier of installateur — achteraf aanvragen is bij veel regelingen niet meer mogelijk.',
-          'Budgetten zijn vaak jaarlijks vastgesteld en kunnen op zijn voordat het jaar om is — vroeg beginnen loont.',
+          'Vraag subsidies aan vóórdat u een verplichting aangaat bij een leverancier of installateur. Achteraf aanvragen is bij veel regelingen niet meer mogelijk.',
+          'Budgetten zijn vaak jaarlijks vastgesteld en kunnen op zijn voordat het jaar om is. Vroeg beginnen loont.',
           'Regelingen zijn deels te combineren, maar niet altijd: de exacte samenloop verschilt per maatregel en per jaar.',
           'Bewaar alle offertes en technische specificaties; die zijn nodig bij zowel de aanvraag als een eventuele controle achteraf.',
         ],
@@ -1717,7 +1717,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'EIA, ISDE, SDE++ en KIA zijn geen keuzemenu waar u zomaar één regeling uit pikt: welke van toepassing zijn, hangt af van het type maatregel, de schaal van de investering en het moment waarop u aanvraagt — en soms is meer dan één regeling tegelijk relevant. De grootste winst zit vaak niet in het kennen van de regelingen zelf, maar in het op tijd checken vóórdat u een investering vastlegt.',
+          'EIA, ISDE, SDE++ en KIA zijn geen keuzemenu waar u zomaar één regeling uit pikt: welke van toepassing zijn, hangt af van het type maatregel, de schaal van de investering en het moment waarop u aanvraagt. Soms is meer dan één regeling tegelijk relevant. De grootste winst zit vaak niet in het kennen van de regelingen zelf, maar in het op tijd checken vóórdat u een investering vastlegt.',
         ],
       },
     ],
@@ -1764,11 +1764,11 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Naast het pand zelf speelt ook het elektriciteitsnet een rol. Een warmtepomp — en al helemaal in combinatie met ',
+          'Naast het pand zelf speelt ook het elektriciteitsnet een rol. Een warmtepomp, en al helemaal in combinatie met ',
           { text: 'zonnepanelen', to: ROUTES.blogPost('zonnepanelen-op-uw-bedrijfspand') },
           ' of ',
           { text: 'laadpalen', to: ROUTES.blogPost('laadpalen-op-uw-bedrijfsterrein') },
-          ' — vraagt meer capaciteit van uw aansluiting. Is een zwaardere aansluiting nodig, dan kan die aanvraag terechtkomen op een wachtlijst als er in uw gebied netcongestie speelt — in de Hoeksche Waard is dat sinds kort ook voor kleinere aansluitingen het geval. Wat dit precies betekent en wat u eraan kunt doen, leest u in ons artikel over ',
+          ', vraagt meer capaciteit van uw aansluiting. Is een zwaardere aansluiting nodig, dan kan die aanvraag terechtkomen op een wachtlijst als er in uw gebied netcongestie speelt. In de Hoeksche Waard is dat sinds kort ook voor kleinere aansluitingen het geval. Wat dit precies betekent en wat u eraan kunt doen, leest u in ons artikel over ',
           { text: 'netcongestie in de Hoeksche Waard', to: ROUTES.blogPost('netcongestie-hoeksche-waard') },
           '. Neem dit vroeg in het traject mee, zodat het niet pas bij de uitvoering als verrassing naar voren komt.',
         ],
@@ -1786,8 +1786,8 @@ export const BLOG_POSTS = [
       {
         type: 'ul',
         items: [
-          'Geluid: de buitenunit maakt geluid — bij een pand dicht op de buren of in een woonomgeving is de plaatsing een aandachtspunt.',
-          'Onderhoud: SMV Advies adviseert en begeleidt, maar voert zelf geen installatie of onderhoud uit — daarvoor verwijzen we u naar uw installateur.',
+          'Geluid: de buitenunit maakt geluid. Bij een pand dicht op de buren of in een woonomgeving is de plaatsing een aandachtspunt.',
+          'Onderhoud: SMV Advies adviseert en begeleidt, maar voert zelf geen installatie of onderhoud uit. Daarvoor verwijzen we u naar uw installateur.',
           'Fasering: een hybride tussenstap kan verstandiger zijn dan in één keer volledig overstappen, zeker als de bestaande ketel nog niet aan vervanging toe is.',
         ],
       },
@@ -1845,9 +1845,9 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'De terugverdientijd van LED hangt sterk af van het aantal branduren: een bedrijfshal die lange dagen draait, verdient de investering doorgaans sneller terug dan een kantoor met beperkte openingstijden. Afhankelijk van het type armatuur en de toepassing kan LED-verlichting daarnaast in aanmerking komen voor de EIA — zie ons overzicht van ',
+          'De terugverdientijd van LED hangt sterk af van het aantal branduren: een bedrijfshal die lange dagen draait, verdient de investering doorgaans sneller terug dan een kantoor met beperkte openingstijden. Afhankelijk van het type armatuur en de toepassing kan LED-verlichting daarnaast in aanmerking komen voor de EIA. Zie ons overzicht van ',
           { text: 'EIA, ISDE en SDE++', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
-          '. Dit soort maatregelen met een korte terugverdientijd staat bovendien vaak op de Erkende Maatregelenlijst binnen de energiebesparingsplicht die voor veel bedrijfspanden geldt — meer hierover leest u in ons artikel over ',
+          '. Dit soort maatregelen met een korte terugverdientijd staat bovendien vaak op de Erkende Maatregelenlijst binnen de energiebesparingsplicht die voor veel bedrijfspanden geldt. Meer hierover leest u in ons artikel over ',
           { text: 'de energiebesparingsplicht', to: ROUTES.blogPost('energiebesparingsplicht-voor-uw-bedrijfspand') },
           '. Bekijk hoe we dat ',
           { text: 'in de praktijk', to: ROUTES.cases },
@@ -1859,7 +1859,7 @@ export const BLOG_POSTS = [
         type: 'ul',
         items: [
           'Kies niet automatisch de goedkoopste armaturen: kleurweergave en flikkervrij licht maken op de werkvloer echt verschil.',
-          'Check de bestaande bedrading en dimbaarheid vooraf — niet elk systeem is zonder meer geschikt voor sturing.',
+          'Check de bestaande bedrading en dimbaarheid vooraf, want niet elk systeem is zonder meer geschikt voor sturing.',
           'Denk verder dan alleen vervanging: aanwezigheidsdetectie en daglichtsturing leveren vaak de grootste aanvullende winst.',
         ],
       },
@@ -1867,7 +1867,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'LED-verlichting is zelden de maatregel met de grootste absolute besparing, maar wel vrijwel altijd de snelste. Voor wie wil beginnen zonder meteen een grote investering te doen, is dit doorgaans de logische eerste stap — ook als aanvulling op grotere maatregelen zoals isolatie, zoals we bespreken in ons artikel over ',
+          'LED-verlichting is zelden de maatregel met de grootste absolute besparing, maar wel vrijwel altijd de snelste. Voor wie wil beginnen zonder meteen een grote investering te doen, is dit doorgaans de logische eerste stap, ook als aanvulling op grotere maatregelen zoals isolatie, zoals we bespreken in ons artikel over ',
           { text: 'verborgen energieverspillers', to: ROUTES.blogPost('verborgen-energieverspillers') },
           '.',
         ],
@@ -1899,14 +1899,14 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Bedrijven met een compressor voor persluchtgereedschap of productieapparatuur verliezen vaak een aanzienlijk deel van de geproduceerde perslucht via lekkende slangen, koppelingen en afsluiters. Perslucht opwekken is relatief energie-intensief, dus elke lekkage kost structureel geld — vaak zonder dat iemand het merkt, omdat de compressor gewoon blijft draaien.',
+          'Bedrijven met een compressor voor persluchtgereedschap of productieapparatuur verliezen vaak een aanzienlijk deel van de geproduceerde perslucht via lekkende slangen, koppelingen en afsluiters. Perslucht opwekken is relatief energie-intensief, dus elke lekkage kost structureel geld, vaak zonder dat iemand het merkt, omdat de compressor gewoon blijft draaien.',
         ],
       },
       { type: 'h2', text: '2. Verlichting die onnodig blijft branden' },
       {
         type: 'p',
         parts: [
-          'Verlichting in magazijnen, gangen en opslagruimtes blijft regelmatig de hele dag branden, ook als er niemand aanwezig is. Aanwezigheidsdetectie is vaak een kleine ingreep met direct effect — zie ook ons artikel over ',
+          'Verlichting in magazijnen, gangen en opslagruimtes blijft regelmatig de hele dag branden, ook als er niemand aanwezig is. Aanwezigheidsdetectie is vaak een kleine ingreep met direct effect. Zie ook ons artikel over ',
           { text: 'LED-verlichting', to: ROUTES.blogPost('led-verlichting-snelste-stap') },
           '.',
         ],
@@ -1922,7 +1922,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Een te hoog ingestelde thermostaat, verwarming en ventilatie die niet op elkaar zijn afgestemd, of deuren die bij laden en lossen structureel openstaan: dit soort dagelijkse gewoontes kost meer dan de meeste ondernemers verwachten. Het raakt ook aan de bouwkundige schil van het pand — zie ons artikel over ',
+          'Een te hoog ingestelde thermostaat, verwarming en ventilatie die niet op elkaar zijn afgestemd, of deuren die bij laden en lossen structureel openstaan: dit soort dagelijkse gewoontes kost meer dan de meeste ondernemers verwachten. Het raakt ook aan de bouwkundige schil van het pand. Zie ons artikel over ',
           { text: 'dakisolatie', to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand') },
           ' voor de grotere, structurele kant hiervan, en ons artikel over ',
           { text: 'ventilatie in uw bedrijfspand', to: ROUTES.blogPost('ventilatie-in-uw-bedrijfspand') },
@@ -1940,7 +1940,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'De meeste bedrijfspanden hebben één energiemeter voor het hele pand. Zonder uitsplitsing per functie — verlichting, verwarming, productieapparatuur — ziet u alleen de totale rekening, niet waar het verbruik precies vandaan komt. Dat maakt het lastig om zelf te bepalen waar de winst zit. Bekijk hoe we dit soort verborgen kosten ',
+          'De meeste bedrijfspanden hebben één energiemeter voor het hele pand. Zonder uitsplitsing per functie (verlichting, verwarming, productieapparatuur) ziet u alleen de totale rekening, niet waar het verbruik precies vandaan komt. Dat maakt het lastig om zelf te bepalen waar de winst zit. Bekijk hoe we dit soort verborgen kosten ',
           { text: 'in de praktijk', to: ROUTES.cases },
           ' in kaart brengen.',
         ],

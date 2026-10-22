@@ -14,19 +14,19 @@ const MAATREGELEN = [
   {
     icon: HouseLine,
     title: 'Dakisolatie',
-    description: 'Vaak de grootste warmteverliezer — en meestal de maatregel met de kortste terugverdientijd.',
+    description: 'Vaak de grootste warmteverliezer, en meestal de maatregel met de kortste terugverdientijd.',
     to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand'),
   },
   {
     icon: Lightbulb,
     title: 'LED-verlichting',
-    description: 'Lage investering, snel zichtbaar resultaat — vaak de logische eerste stap.',
+    description: 'Lage investering, snel zichtbaar resultaat. Vaak de logische eerste stap.',
     to: ROUTES.blogPost('led-verlichting-snelste-stap'),
   },
   {
     icon: Thermometer,
     title: 'Warmtepomp',
-    description: 'Alleen rendabel als het pand er klaar voor is — daar rekenen we vooraf op door.',
+    description: 'Alleen rendabel als het pand er klaar voor is. Daar rekenen we vooraf op door.',
     to: ROUTES.blogPost('warmtepomp-in-het-mkb'),
   },
   {
@@ -62,7 +62,7 @@ export default function Werkgebied() {
         className="max-w-3xl"
         // \u00AD: zacht afbreekpunt — zie Pakketten.jsx (PageHero-titel).
         title={'Verduurzamings\u00ADadvies voor bedrijfspanden in de Hoeksche Waard'}
-        description="SMV Advies helpt ondernemers en eigenaren van bedrijfspanden in de hele Hoeksche Waard om hun pand slim en onafhankelijk te verduurzamen — van een eerste QuickScan tot volledige begeleiding."
+        description="SMV Advies helpt ondernemers en eigenaren van bedrijfspanden in de hele Hoeksche Waard om hun pand slim en onafhankelijk te verduurzamen, van een eerste QuickScan tot volledige begeleiding."
       />
 
       <Section tone="white" noTopPadding>
@@ -86,8 +86,8 @@ export default function Werkgebied() {
           <p className="mt-5 text-base leading-relaxed text-foreground-muted">
             SMV Advies is gevestigd in Oud-Beijerland en actief in de hele Hoeksche Waard: van Numansdorp, Strijen
             en 's-Gravendeel tot Mijnsheerenland, Klaaswaal en Puttershoek. Die spreiding, van dorpskernen tot
-            bedrijventerreinen, betekent dat we de bouwperiodes en het type bedrijfspand in de regio goed kennen
-            — dat scheelt in de praktijk tijd en giswerk.
+            bedrijventerreinen, betekent dat we de bouwperiodes en het type bedrijfspand in de regio goed kennen.
+            Dat scheelt in de praktijk tijd en giswerk.
           </p>
           <p className="mt-4 text-base leading-relaxed text-foreground-muted">
             In delen van de Hoeksche Waard speelt daarnaast{' '}
@@ -97,7 +97,7 @@ export default function Werkgebied() {
             >
               netcongestie
             </Link>{' '}
-            een rol bij wat technisch en financieel haalbaar is — denk aan zonnepanelen die niet (volledig) kunnen
+            een rol bij wat technisch en financieel haalbaar is. Denk aan zonnepanelen die niet (volledig) kunnen
             terugleveren. Dat nemen we mee in het advies, niet achteraf als verrassing.
           </p>
           <p className="mt-8 text-sm text-foreground-muted">
@@ -178,7 +178,7 @@ export default function Werkgebied() {
           <p className="mt-5 text-base leading-relaxed text-foreground-muted">
             SMV Advies verkoopt geen installaties, panelen of isolatiemateriaal en werkt niet op commissiebasis.
             Het advies dat u krijgt is dus nooit gekleurd door een belang bij een bepaalde installateur of
-            leverancier — ons enige belang is dat uw pand minder energie kost en klaar is voor de toekomst. Lees
+            leverancier. Ons enige belang is dat uw pand minder energie kost en klaar is voor de toekomst. Lees
             meer over hoe dat in de praktijk werkt in onze{' '}
             <Link to={ROUTES.werkwijze} className="font-medium text-accent underline underline-offset-2 hover:text-secondary">
               werkwijze

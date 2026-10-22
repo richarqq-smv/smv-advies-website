@@ -10,7 +10,7 @@ export function StepStaatVanHetPand({ values, errors, setValue, onNext, onBack }
       <StepHead
         eyebrow="Stap 2 van 4"
         title="Huidige staat van het pand"
-        description='Geen idee? Kies gerust "Weet ik niet" — we rekenen dan conservatief, zodat de indicatie betrouwbaar blijft.'
+        description='Geen idee? Kies gerust "Weet ik niet". We rekenen dan conservatief, zodat de indicatie betrouwbaar blijft.'
       />
 
       <OptionGrid

@@ -68,8 +68,8 @@ export default function EnergieIndicatie() {
 
           <p className="mx-auto mt-4 max-w-[70ch] text-center text-xs leading-relaxed text-foreground-muted">
             <strong className="font-semibold text-foreground">Indicatie, geen officieel energielabel.</strong> Deze
-            scan gebruikt vuistregels (prijspeil 2026) om een schatting te geven — geen garantie op besparing of
-            kosten, en geen vervanging van een officiële NTA 8800-meting.
+            scan gebruikt vuistregels (prijspeil 2026) om een schatting te geven. Het is geen garantie op besparing of
+            kosten en geen vervanging van een officiële NTA 8800-meting.
           </p>
         </Container>
       </Section>

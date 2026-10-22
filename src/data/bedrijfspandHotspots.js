@@ -34,7 +34,7 @@ export const BEDRIJFSPAND_HOTSPOTS = [
     title: 'Zonnepanelen',
     category: 'installaties',
     description:
-      'We beoordelen of zonnepanelen voor uw dak kansrijk zijn — dakbelasting, netaansluiting en mogelijke fiscale voordelen (zoals de EIA en de KIA) nemen we mee. SMV ontwerpt of installeert zelf geen zonnepanelen.',
+      'We beoordelen of zonnepanelen voor uw dak kansrijk zijn. Dakbelasting, netaansluiting en mogelijke fiscale voordelen (zoals de EIA en de KIA) nemen we daarin mee. SMV ontwerpt of installeert zelf geen zonnepanelen.',
     link: { to: ROUTES.blogPost('zonnepanelen-op-uw-bedrijfspand'), label: 'Lees over zonnepanelen' },
   },
   {
@@ -44,7 +44,7 @@ export const BEDRIJFSPAND_HOTSPOTS = [
     title: 'Dak en dakisolatie',
     category: 'gebouwschil',
     description:
-      'Het dak is bij veel bedrijfspanden de grootste warmteverliezer, en qua bouwkundige maatregelen vaak die met de kortste terugverdientijd — de exacte terugverdientijd hangt af van het pand, het gebruik en de energieprijzen.',
+      'Het dak is bij veel bedrijfspanden de grootste warmteverliezer, en qua bouwkundige maatregelen vaak die met de kortste terugverdientijd. De exacte terugverdientijd hangt af van het pand, het gebruik en de energieprijzen.',
     link: { to: ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand'), label: 'Lees over dakisolatie' },
   },
   {
@@ -83,7 +83,7 @@ export const BEDRIJFSPAND_HOTSPOTS = [
     title: 'Laadpunt en parkeren',
     category: 'elektriciteit',
     description:
-      'Laadpalen op het terrein raken aan de elektrische aansluitcapaciteit van het pand — in delen van de Hoeksche Waard speelt daarbij ook netcongestie een rol.',
+      'Laadpalen op het terrein raken aan de elektrische aansluitcapaciteit van het pand. In delen van de Hoeksche Waard speelt daarbij ook netcongestie een rol.',
     link: { to: ROUTES.blogPost('laadpalen-op-uw-bedrijfsterrein'), label: 'Lees over laadpalen' },
   },
   {
@@ -102,7 +102,7 @@ export const BEDRIJFSPAND_HOTSPOTS = [
     title: 'Kantoorruimte (verdieping)',
     category: 'gebruik',
     description:
-      'Het gebruik en de indeling van een ruimte spelen mee in de beoordeling — een kantoorverdieping heeft andere eisen dan een opslagruimte.',
+      'Het gebruik en de indeling van een ruimte spelen mee in de beoordeling: een kantoorverdieping heeft andere eisen dan een opslagruimte.',
     link: null,
   },
   {
@@ -121,7 +121,7 @@ export const BEDRIJFSPAND_HOTSPOTS = [
     title: 'Magazijn en opslag',
     category: 'gebruik',
     description:
-      'Een magazijn heeft doorgaans een andere verwarmings- en verlichtingsbehoefte dan kantoorruimte — relevant voor advies op maat.',
+      'Een magazijn heeft doorgaans een andere verwarmings- en verlichtingsbehoefte dan kantoorruimte. Dat is relevant voor advies op maat.',
     link: { to: ROUTES.blogPost('led-verlichting-snelste-stap'), label: 'Lees over LED-verlichting' },
   },
   {
@@ -158,7 +158,7 @@ export const BEDRIJFSPAND_HOTSPOTS = [
     title: 'Elektrische installatie en meterkast',
     category: 'elektriciteit',
     description:
-      'De meterkast en elektrische installatie bepalen de aansluitcapaciteit van het pand — relevant bij bijvoorbeeld zonnepanelen of laadpalen, zeker met netcongestie in delen van de Hoeksche Waard.',
+      'De meterkast en elektrische installatie bepalen de aansluitcapaciteit van het pand. Dat is relevant bij bijvoorbeeld zonnepanelen of laadpalen, zeker met netcongestie in delen van de Hoeksche Waard.',
     link: { to: ROUTES.blogPost('netcongestie-hoeksche-waard'), label: 'Lees over netcongestie' },
   },
   {
@@ -177,7 +177,7 @@ export const BEDRIJFSPAND_HOTSPOTS = [
     title: 'Technische ruimte',
     category: 'installaties',
     description:
-      'Technische ruimtes met installaties bepalen mede het energieverbruik van het pand — we brengen in kaart wat er staat, zonder zelf te installeren.',
+      'Technische ruimtes met installaties bepalen mede het energieverbruik van het pand. We brengen in kaart wat er staat, zonder zelf te installeren.',
     link: { to: ROUTES.blogPost('verduurzamingsmaatregelen-bedrijfspand'), label: 'Overzicht verduurzamingsmaatregelen' },
   },
   {
@@ -224,7 +224,7 @@ export const BEDRIJFSPAND_HOTSPOTS = [
     title: 'Ondergrondse warmtewisselaar',
     category: 'installaties',
     description:
-      'Bodemlussen horen bij een (hybride) warmtepompsysteem. We beoordelen of dat voor uw pand kansrijk is, inclusief mogelijke ISDE-subsidie — ontwerp en installatie laten we aan specialisten over.',
+      'Bodemlussen horen bij een (hybride) warmtepompsysteem. We beoordelen of dat voor uw pand kansrijk is, inclusief mogelijke ISDE-subsidie. Ontwerp en installatie laten we aan specialisten over.',
     link: { to: ROUTES.blogPost('warmtepomp-bedrijfspand-verstandige-keuze'), label: 'Is een warmtepomp verstandig?' },
   },
   {

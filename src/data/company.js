@@ -16,7 +16,7 @@
  */
 export const COMPANY = {
   name: 'SMV Advies',
-  legalName: 'SMV Advies — Steen en Mortel Verbetering',
+  legalName: 'SMV Advies (Steen en Mortel Verbetering)',
   tagline: 'Elke Stap Maakt Verschil',
   phone: '06 22 71 33 83',
   phoneHref: 'tel:+31622713383',

@@ -132,7 +132,7 @@ export default function Registreren() {
               <p className="mb-0 font-medium text-primary">Dit e-mailadres heeft al een account.</p>
               <p className="mb-0 mt-2 text-foreground-muted">
                 Er is geen nieuwe bevestigingsmail verstuurd, want <strong className="text-primary">{email}</strong> is al geregistreerd en bevestigd.
-                Log in met uw bestaande wachtwoord{koppelModus ? ' — uw account wordt dan automatisch aan uw koppelcode gekoppeld.' : '.'}
+                Log in met uw bestaande wachtwoord{koppelModus ? '. Uw account wordt dan automatisch aan uw koppelcode gekoppeld.' : '.'}
               </p>
               <Link to={ROUTES.inloggen} state={location.state} className="mt-4 inline-block text-accent hover:underline">
                 Naar inloggen →
@@ -140,10 +140,10 @@ export default function Registreren() {
             </div>
           ) : aangemeld ? (
             <div role="status" className="rounded-2xl border border-border bg-white p-6 text-sm shadow-sm sm:p-8">
-              <p className="mb-0 font-medium text-primary">Bijna klaar — controleer uw e-mail.</p>
+              <p className="mb-0 font-medium text-primary">Bijna klaar. Controleer uw e-mail.</p>
               <p className="mb-0 mt-2 text-foreground-muted">
                 We hebben een bevestigingslink gestuurd naar <strong className="text-primary">{email}</strong>. Klik op de link in die e-mail om uw
-                account te activeren{koppelModus ? ', en log daarna in — uw account wordt dan automatisch aan uw koppelcode gekoppeld.' : ', en log daarna in.'}
+                account te activeren{koppelModus ? ' en log daarna in. Uw account wordt dan automatisch aan uw koppelcode gekoppeld.' : ', en log daarna in.'}
               </p>
             </div>
           ) : koppelModus && koppelStap === 'gegevens' ? (

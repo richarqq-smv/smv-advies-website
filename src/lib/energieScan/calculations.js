@@ -108,7 +108,7 @@ export function berekenMaatregelen(values, huidig) {
   maatregelen.push({
     naam: 'Dakisolatie',
     toelichting:
-      'Isoleer het dak — de plek waar bedrijfspanden doorgaans de meeste warmte verliezen. Relatief snel te realiseren met directe impact.',
+      'Isoleer het dak: de plek waar bedrijfspanden doorgaans de meeste warmte verliezen. Relatief snel te realiseren met directe impact.',
     besparingM3: dakM3,
     investeringLaag: geo.dak * 35,
     investeringHoog: geo.dak * 55,
@@ -141,7 +141,7 @@ export function berekenMaatregelen(values, huidig) {
   maatregelen.push({
     naam: 'Vloerisolatie',
     toelichting:
-      'Isoleer de begane grondvloer tegen koudeverlies naar kruipruimte of grond — met name in oudere panden vaak nog een gemiste kans.',
+      'Isoleer de begane grondvloer tegen koudeverlies naar kruipruimte of grond. Met name in oudere panden is dit vaak nog een gemiste kans.',
     besparingM3: vloerM3,
     investeringLaag: geo.vloer * 28,
     investeringHoog: geo.vloer * 42,
@@ -180,7 +180,7 @@ export function berekenMaatregelen(values, huidig) {
   maatregelen.push({
     naam: 'LED-verlichting + sensoren',
     toelichting:
-      'Vervang bestaande verlichting door LED met aanwezigheids- en daglichtsensoren. Lage investering, snelle terugverdientijd — een prima quick win.',
+      'Vervang bestaande verlichting door LED met aanwezigheids- en daglichtsensoren. Lage investering, snelle terugverdientijd: een prima quick win.',
     besparingKwh: ledBesparingKwh,
     investeringLaag: values.oppervlakte * 7,
     investeringHoog: values.oppervlakte * 12,

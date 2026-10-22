@@ -37,7 +37,7 @@ export function EnergyScale({ currentBand }) {
         <span>Veel energieverlies</span>
       </div>
       <p className="mt-3 text-center text-xs leading-relaxed text-foreground-muted">
-        Dit toont uw geschatte positie op basis van uw antwoorden — geen officiële classificatie of energielabel.
+        Dit toont uw geschatte positie op basis van uw antwoorden. Het is geen officiële classificatie of energielabel.
       </p>
     </div>
   )

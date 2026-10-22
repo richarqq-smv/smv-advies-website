@@ -74,7 +74,7 @@ export function StepContact({ values, errors, setValue, onSubmit, onBack, isSubm
         <LockSimple size={18} weight="fill" className="mt-0.5 shrink-0 text-primary/60" />
         <p>
           <strong className="font-semibold text-primary">Uw gegevens zijn veilig.</strong> We gebruiken ze uitsluitend om
-          uw rapport te versturen en u — desgewenst — te woord te staan over verduurzaming van uw pand. Geen spam, geen
+          uw rapport te versturen en u, als u dat wilt, te woord te staan over verduurzaming van uw pand. Geen spam, geen
           doorverkoop aan derden.
         </p>
       </div>

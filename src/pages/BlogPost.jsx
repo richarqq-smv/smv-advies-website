@@ -170,7 +170,7 @@ export default function BlogPost() {
             <div className="mt-8 flex items-start gap-3 rounded-lg bg-muted px-5 py-4 text-sm leading-relaxed text-foreground-muted">
               <Info size={18} weight="fill" className="mt-0.5 shrink-0 text-accent" />
               <p>
-                De volledige tekst van dit artikel is nog niet beschikbaar in dit project — alleen
+                De volledige tekst van dit artikel is nog niet beschikbaar in dit project. Alleen
                 titel, samenvatting en publicatiedatum konden worden geverifieerd. De originele
                 artikeltekst moet nog worden aangeleverd voordat deze pagina compleet is.
               </p>

@@ -125,8 +125,7 @@ export function ContactForm() {
       <div className="flex items-start gap-2.5 rounded-lg bg-muted px-4 py-3.5 text-sm text-foreground-muted">
         <LockSimple size={18} weight="fill" className="mt-0.5 shrink-0 text-primary/60" />
         <p>
-          We gebruiken uw gegevens uitsluitend om op deze vraag te reageren. Geen spam, geen doorverkoop aan derden —
-          zie onze{' '}
+          We gebruiken uw gegevens uitsluitend om op deze vraag te reageren. Geen spam, geen doorverkoop aan derden. Zie onze{' '}
           <a href={ROUTES.privacy} className="font-medium text-accent underline underline-offset-2 hover:text-secondary">
             privacyverklaring
           </a>

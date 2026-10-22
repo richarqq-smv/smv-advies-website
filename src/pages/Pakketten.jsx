@@ -69,7 +69,7 @@ export default function Pakketten() {
         // letter afbrak. Nu breekt het, alleen indien nodig, netjes als
         // "Verduurzamings-/advies". Zelfde voor "verduurzamingspakketten".
         title={'Verduurzamings\u00ADadvies voor uw bedrijfspand'}
-        description="Weet u niet goed welke verduurzamingsmaatregelen voor uw pand interessant zijn? SMV Advies brengt de mogelijkheden, investeringen, besparingen en vervolgstappen overzichtelijk in beeld — onafhankelijk, en in drie niveaus: van een eerste indicatie tot volledige begeleiding bij de uitvoering."
+        description="Weet u niet goed welke verduurzamingsmaatregelen voor uw pand interessant zijn? SMV Advies brengt de mogelijkheden, investeringen, besparingen en vervolgstappen overzichtelijk in beeld. Onafhankelijk, en in drie niveaus: van een eerste indicatie tot volledige begeleiding bij de uitvoering."
       />
 
       <Section tone="white" noTopPadding>
@@ -107,10 +107,10 @@ export default function Pakketten() {
           <div className="mb-10 flex flex-col items-start justify-between gap-4 rounded-xl bg-muted p-6 sm:p-8 sm:flex-row sm:items-center">
             <div>
               <p className="text-sm font-semibold text-accent">Stap 0 · gratis</p>
-              <p className="mt-1 text-base font-semibold text-primary">Energie Indicatie — Hoe staat mijn pand er globaal voor?</p>
+              <p className="mt-1 text-base font-semibold text-primary">Energie Indicatie: hoe staat mijn pand er globaal voor?</p>
               <p className="mt-2 max-w-[70ch] text-base leading-relaxed text-foreground">
-                Nog geen idee waar u staat? Begin hier, geheel vrijblijvend — een geautomatiseerde
-                indicatie, zonder bedragen per maatregel. Voor een rapport mét investering,
+                Nog geen idee waar u staat? Begin hier, geheel vrijblijvend, met een geautomatiseerde
+                indicatie zonder bedragen per maatregel. Voor een rapport mét investering,
                 besparing en terugverdientijd per maatregel is het Basis Pakket de eerste stap.
               </p>
             </div>
@@ -184,7 +184,7 @@ export default function Pakketten() {
         <Container>
           <SectionHeading
             title="Wat elk pakket u oplevert"
-            description="Voor wie het bedoeld is, wat u concreet ontvangt en hoe het traject verloopt — per pakket op een rij."
+            description="Voor wie het bedoeld is, wat u concreet ontvangt en hoe het traject verloopt, per pakket op een rij."
             className="mb-10"
           />
           <div className="flex flex-col gap-8">

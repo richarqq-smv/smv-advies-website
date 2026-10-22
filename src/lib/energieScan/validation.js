@@ -87,7 +87,7 @@ export function validateStep2(values) {
     toast: buildMissingToast(
       missing,
       "Kies een optie bij '%s'.",
-      'Vul de gemarkeerde velden in — kies "Weet ik niet" als u het niet zeker weet.',
+      'Vul de gemarkeerde velden in. Kies "Weet ik niet" als u het niet zeker weet.',
     ),
   }
 }

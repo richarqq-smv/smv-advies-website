@@ -29,7 +29,7 @@ const ONDERZOCHT = [
   {
     icon: Gauge,
     title: 'Bouwkundige schil',
-    description: 'Isolatie van dak, gevel, vloer en beglazing — waar zit het grootste warmteverlies.',
+    description: 'Isolatie van dak, gevel, vloer en beglazing: waar zit het grootste warmteverlies?',
   },
   {
     icon: MagnifyingGlass,
@@ -52,7 +52,7 @@ const ONDERZOCHT = [
 
 const AFWEGING = [
   'Per kansrijke maatregel brengen we investering, verwachte besparing en indicatieve terugverdientijd in kaart.',
-  'We wegen maatregelen tegen elkaar af: wat levert het meeste op voor de laagste investering, en wat is technisch afhankelijk van iets anders — bijvoorbeeld eerst isoleren voordat een warmtepomp zin heeft?',
+  'We wegen maatregelen tegen elkaar af: wat levert het meeste op voor de laagste investering, en wat is technisch afhankelijk van iets anders? Zo heeft een warmtepomp vaak pas zin als het pand eerst geïsoleerd is.',
   'We geven aan welke subsidies, zoals EIA of ISDE, mogelijk van toepassing zijn.',
   'Zo komen we tot een realistische prioritering: wat eerst, en wat kan wachten.',
 ]
@@ -62,7 +62,7 @@ export default function Cases() {
     <>
       <Seo
         title="Hoe een advies tot stand komt"
-        description="Hoe een verduurzamingsadvies van SMV Advies tot stand komt: wat we onderzoeken, hoe we prioriteren en wat u ontvangt — zonder verzonnen praktijkcijfers."
+        description="Hoe een verduurzamingsadvies van SMV Advies tot stand komt: wat we onderzoeken, hoe we prioriteren en wat u ontvangt. Zonder verzonnen praktijkcijfers."
         structuredData={[getBreadcrumbSchema([{ name: 'Hoe een advies tot stand komt', path: ROUTES.cases }])]}
       />
 
@@ -92,7 +92,7 @@ export default function Cases() {
         <Container className="max-w-3xl">
           <SectionHeading
             title="Hoe we tot een advies komen"
-            description="Onderzoeken is één stap — de maatregelen die daaruit volgen moeten ook tegen elkaar worden afgewogen, financieel en technisch."
+            description="Onderzoeken is één stap. De maatregelen die daaruit volgen moeten ook tegen elkaar worden afgewogen, financieel en technisch."
             className="mb-10"
           />
 
@@ -116,7 +116,7 @@ export default function Cases() {
               <p className="mt-2 text-sm leading-relaxed text-foreground-muted">
                 Een helder rapport: de belangrijkste kansen in uw pand, per maatregel een indicatie
                 van investering, besparing en terugverdientijd, en een praktische volgorde om in
-                uit te voeren. Geen dikke map vol jargon — een document waarmee u direct de
+                uit te voeren. Geen dikke map vol jargon, maar een document waarmee u direct de
                 volgende stap kunt zetten.
               </p>
             </div>
@@ -136,7 +136,7 @@ export default function Cases() {
       <Section tone="muted">
         <Container className="max-w-3xl">
           <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">
-            Illustratief voorbeeld — geen echte case
+            Illustratief voorbeeld, geen echte case
           </p>
           <h2 className="mt-3 text-2xl text-primary sm:text-3xl">Voorbeeld van een adviesuitkomst</h2>
           <p className="mt-4 text-base leading-relaxed text-foreground-muted">
@@ -158,8 +158,8 @@ export default function Cases() {
             ))}
           </ul>
           <p className="mt-6 text-sm leading-relaxed text-foreground-muted">
-            Dit voorbeeld is illustratief en bevat bewust geen specifieke bedragen of percentages —
-            een daadwerkelijk advies is altijd gebaseerd op de specifieke situatie van uw pand.
+            Dit voorbeeld is illustratief en bevat bewust geen specifieke bedragen of percentages.
+            Een daadwerkelijk advies is altijd gebaseerd op de specifieke situatie van uw pand.
           </p>
         </Container>
       </Section>
@@ -168,7 +168,7 @@ export default function Cases() {
         <Container className="max-w-3xl text-center">
           <p className="text-base leading-relaxed text-foreground-muted">
             Zodra we een adviestraject hebben afgerond en de klant instemt met publicatie, delen
-            we dat traject hier als een geverifieerde praktijkcase — met de daadwerkelijke
+            we dat traject hier als een geverifieerde praktijkcase, met de daadwerkelijke
             situatie, cijfers en resultaten van dat specifieke pand.
           </p>
         </Container>
@@ -176,7 +176,7 @@ export default function Cases() {
 
       <ClosingCta
         heading="Zodra we cases kunnen delen, vindt u ze hier"
-        description="Tot die tijd horen we graag hoe we voor uw pand van nut kunnen zijn — bespreek het vrijblijvend, of doe eerst de gratis energie-indicatie."
+        description="Tot die tijd horen we graag hoe we voor uw pand van nut kunnen zijn. Bespreek het vrijblijvend, of doe eerst de gratis energie-indicatie."
       />
     </>
   )
