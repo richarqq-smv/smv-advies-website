@@ -20,7 +20,7 @@ Search Console: deze omgeving voegt zelf een Google-token toe aan verzoeken naar
 - `GET https://searchconsole.googleapis.com/webmasters/v3/sites` (controle)
 - `POST https://searchconsole.googleapis.com/webmasters/v3/sites/sc-domain%3Asmv-advies.nl/searchAnalytics/query`. Periode: de laatste 28 dagen die eindigen 3 dagen voor vandaag. Haal totalen op, per query, per page en per query+page.
 - `GET …/sites/sc-domain%3Asmv-advies.nl/sitemaps`
-- `POST https://searchconsole.googleapis.com/v1/urlInspection/index:inspect` voor elke URL uit de sitemap die `npm ci && npm run build` oplevert in `dist/sitemap.xml`. Gebruik voor de build de env-variabelen `VITE_SUPABASE_URL=http://127.0.0.1:59999 VITE_SUPABASE_ANON_KEY=dummy-local`; die zijn alleen nodig om lokaal te bouwen.
+- `POST https://searchconsole.googleapis.com/v1/urlInspection/index:inspect` voor elke URL uit de sitemap die `npm ci && npm run build` oplevert in `dist/sitemap.xml`. Neem alleen de `<loc>` binnen een `<url>`-blok; bovenin het bestand staat een commentaar dat ook het woord `<loc>` bevat. Gebruik voor de build de env-variabelen `VITE_SUPABASE_URL=http://127.0.0.1:59999 VITE_SUPABASE_ANON_KEY=dummy-local`; die zijn alleen nodig om lokaal te bouwen.
 Werkt de API niet (401/403)? Meld dat in het rapport en ga verder met de technische check. Verzin nooit cijfers.
 
 Doe daarna:
