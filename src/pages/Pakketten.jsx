@@ -7,13 +7,19 @@ import { SectionHeading } from '../components/ui/SectionHeading'
 import { Button } from '../components/ui/Button'
 import { PricingCard } from '../components/home/PricingCard'
 import { ComparisonTable } from '../components/pakketten/ComparisonTable'
+import { PrijsPerOppervlakte } from '../components/pakketten/PrijsPerOppervlakte'
 import { DecisionCta } from '../components/pakketten/DecisionCta'
 import { UspStrip } from '../components/home/UspStrip'
 import { PACKAGES } from '../data/packages'
 import { PACKAGE_DETAILS } from '../data/packageDetails'
 import { FAQ_CATEGORIES } from '../data/faqs'
+import { COMPARISON_NOTE } from '../data/packageComparison'
+import { COMPANY } from '../data/company'
 import { getBreadcrumbSchema, getFaqSchema, getServiceSchema } from '../lib/structuredData'
 import { ROUTES } from '../lib/routes'
+import { trackEvent } from '../lib/analytics'
+
+const OVERZICHT_ID = 'pakketten-overzicht'
 
 const LINK_CLASSNAME = 'font-medium text-accent underline underline-offset-2 hover:text-secondary'
 
@@ -28,13 +34,15 @@ const PAKKETTEN_FAQ_VRAGEN = [
   'Helpen jullie met subsidies zoals EIA en ISDE?',
   'Ik heb al een meerjarenonderhoudsplan (MJOP), heeft een advies van SMV dan nog zin?',
   'Is SMV Advies onafhankelijk?',
+  'Ik werk al met een vaste installateur, kan ik dan nog bij SMV Advies terecht?',
+  'In welke regio zijn jullie actief?',
 ]
 const ALLE_FAQ_ITEMS = FAQ_CATEGORIES.flatMap((groep) => groep.items)
 const PAKKETTEN_FAQ_ITEMS = PAKKETTEN_FAQ_VRAGEN.map((vraag) => ALLE_FAQ_ITEMS.find((item) => item.question === vraag)).filter(Boolean)
 
 // Zelfde renderlogica als Faq.jsx (niet geëxporteerd vanuit die pagina —
 // dit project kent geen precedent van page-naar-page imports tussen lazy-
-// loaded routes), hier lokaal omdat maar één van de zes hergebruikte items
+// loaded routes), hier lokaal omdat maar één van de hergebruikte items
 // `answerParts` heeft.
 function renderFaqAntwoord(item) {
   if (!item.answerParts) return item.answer
@@ -53,8 +61,8 @@ export default function Pakketten() {
   return (
     <>
       <Seo
-        title="Verduurzamingsadvies bedrijfspand"
-        description="Onafhankelijk verduurzamingsadvies voor uw bedrijfspand: van eerste inzicht tot volledige begeleiding. Pakketten voor mkb-bedrijfspanden, vanaf €495."
+        title="Verduurzamingsadvies bedrijfspand: prijzen"
+        description={`Drie pakketten voor onafhankelijk verduurzamingsadvies voor uw bedrijfspand, met vaste prijzen per oppervlakte. ${PACKAGES[0].priceDisplay} excl. btw.`}
         structuredData={[
           getBreadcrumbSchema([{ name: 'Pakketten', path: ROUTES.pakketten }]),
           getFaqSchema([{ items: PAKKETTEN_FAQ_ITEMS }]),
@@ -69,65 +77,129 @@ export default function Pakketten() {
         // letter afbrak. Nu breekt het, alleen indien nodig, netjes als
         // "Verduurzamings-/advies". Zelfde voor "verduurzamingspakketten".
         title={'Verduurzamings\u00ADadvies voor uw bedrijfspand'}
-        description="Weet u niet goed welke verduurzamingsmaatregelen voor uw pand interessant zijn? SMV Advies brengt de mogelijkheden, investeringen, besparingen en vervolgstappen overzichtelijk in beeld. Onafhankelijk, en in drie niveaus: van een eerste indicatie tot volledige begeleiding bij de uitvoering."
-      />
+        eyebrow={`Drie pakketten met vaste prijzen, ${PACKAGES[0].priceDisplay.toLowerCase().replace('€ ', '€\u00A0')} excl. btw`}
+        description="Voor ondernemers en eigenaren van mkb-bedrijfspanden in de Hoeksche Waard. U krijgt onafhankelijk advies over welke maatregelen voor uw pand zinvol zijn, wat ze kosten en opleveren, en in welke volgorde u ze het beste uitvoert. U kiest zelf hoe ver u gaat: van een QuickScan op afstand tot begeleiding bij de uitvoering."
+      >
+        <div className="mt-8 flex flex-wrap items-center gap-3">
+          <Button
+            to={`${ROUTES.pakketten}#${OVERZICHT_ID}`}
+            onClick={() => trackEvent('cta_click', { cta: 'pakketten_overzicht', location: 'pakketten_hero' })}
+          >
+            Bekijk pakketten en prijzen
+          </Button>
+          <Button
+            to={ROUTES.contact}
+            variant="ghost"
+            onClick={() => trackEvent('cta_click', { cta: 'contact', location: 'pakketten_hero' })}
+          >
+            Stel eerst een vraag
+          </Button>
+        </div>
+        <p className="mt-4 text-sm text-foreground-muted">
+          Liever eerst even overleggen? Bel{' '}
+          <a href={COMPANY.phoneHref} className={LINK_CLASSNAME}>
+            {COMPANY.phone}
+          </a>
+          .
+        </p>
+      </PageHero>
 
       <Section tone="white" noTopPadding>
         <Container>
-          <SectionHeading
-            title="Welk advies heeft uw bedrijfspand nodig?"
-            description={
-              <>
-                Eerst bepalen wat uw pand nodig heeft. Daarna bepalen wat u ermee wilt doen. Denk aan{' '}
-                <Link to={ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand')} className={LINK_CLASSNAME}>
-                  dakisolatie
-                </Link>
-                ,{' '}
-                <Link to={ROUTES.blogPost('warmtepomp-in-het-mkb')} className={LINK_CLASSNAME}>
-                  een warmtepomp
-                </Link>
-                ,{' '}
-                <Link to={ROUTES.blogPost('zonnepanelen-op-uw-bedrijfspand')} className={LINK_CLASSNAME}>
-                  zonnepanelen
-                </Link>{' '}
-                of{' '}
-                <Link to={ROUTES.blogPost('led-verlichting-snelste-stap')} className={LINK_CLASSNAME}>
-                  LED-verlichting
-                </Link>
-                , inclusief een check op subsidies zoals{' '}
-                <Link to={ROUTES.blogPost('eia-isde-sde-subsidies')} className={LINK_CLASSNAME}>
-                  EIA en ISDE
-                </Link>
-                .
-              </>
-            }
-            className="mb-8"
-          />
-
-          <div className="mb-10 flex flex-col items-start justify-between gap-4 rounded-xl bg-muted p-6 sm:p-8 sm:flex-row sm:items-center">
-            <div>
-              <p className="text-sm font-semibold text-accent">Stap 0 · gratis</p>
-              <p className="mt-1 text-base font-semibold text-primary">Energie Indicatie: hoe staat mijn pand er globaal voor?</p>
-              <p className="mt-2 max-w-[70ch] text-base leading-relaxed text-foreground">
-                Nog geen idee waar u staat? Begin hier, geheel vrijblijvend, met een geautomatiseerde
-                indicatie zonder bedragen per maatregel. Voor een rapport mét investering,
-                besparing en terugverdientijd per maatregel is het Basis Pakket de eerste stap.
-              </p>
-            </div>
-            <Button to={ROUTES.energieIndicatie} variant="outline" className="shrink-0">
-              Start de gratis energie-indicatie
-            </Button>
+          <div id={OVERZICHT_ID} className="scroll-mt-24">
+            <SectionHeading
+              title="Kies het pakket dat bij uw vraag past"
+              description={
+                <>
+                  Elk pakket begint bij uw pand: wat heeft het nodig en wat levert een maatregel op? Denk aan{' '}
+                  <Link to={ROUTES.blogPost('dakisolatie-voor-uw-bedrijfspand')} className={LINK_CLASSNAME}>
+                    dakisolatie
+                  </Link>
+                  ,{' '}
+                  <Link to={ROUTES.blogPost('warmtepomp-in-het-mkb')} className={LINK_CLASSNAME}>
+                    een warmtepomp
+                  </Link>
+                  ,{' '}
+                  <Link to={ROUTES.blogPost('zonnepanelen-op-uw-bedrijfspand')} className={LINK_CLASSNAME}>
+                    zonnepanelen
+                  </Link>{' '}
+                  of{' '}
+                  <Link to={ROUTES.blogPost('led-verlichting-snelste-stap')} className={LINK_CLASSNAME}>
+                    LED-verlichting
+                  </Link>
+                  , inclusief een check op subsidies zoals{' '}
+                  <Link to={ROUTES.blogPost('eia-isde-sde-subsidies')} className={LINK_CLASSNAME}>
+                    EIA en ISDE
+                  </Link>
+                  .
+                </>
+              }
+              className="mb-8"
+            />
           </div>
-
-          <SectionHeading
-            title={'Onze verduurzamings\u00ADpakketten'}
-            description="Prijzen en inhoud van de drie pakketten op een rij."
-            className="mb-8"
-          />
           <div className="grid gap-6 lg:grid-cols-3 lg:items-stretch">
             {PACKAGES.map((pkg, index) => (
               <PricingCard key={pkg.id} pkg={pkg} delay={index * 80} />
             ))}
+          </div>
+
+          <div className="mt-16 grid gap-12 lg:grid-cols-12">
+            <div className="lg:col-span-7">
+              <h2 className="text-2xl text-primary sm:text-3xl">Wat kost het voor uw pand?</h2>
+              <p className="mt-3 max-w-[60ch] text-base leading-relaxed text-foreground">
+                De prijs hangt af van het pakket en de oppervlakte van uw bedrijfspand.
+              </p>
+              <div className="mt-6">
+                <PrijsPerOppervlakte />
+              </div>
+              <p className="mt-4 text-sm text-foreground-muted">{COMPARISON_NOTE}</p>
+            </div>
+            <div className="lg:col-span-5">
+              <h2 className="text-2xl text-primary sm:text-3xl">Wat gebeurt er na uw aanvraag?</h2>
+              <ol className="mt-6 list-decimal space-y-4 pl-5 text-base leading-relaxed text-foreground marker:font-semibold marker:text-primary">
+                <li>
+                  U kiest een pakket en stuurt uw aanvraag via de contactpagina; het gekozen pakket staat daar al
+                  vermeld. {COMPANY.responseTime}.
+                </li>
+                <li>U ontvangt een vrijblijvende offerte met de prijs voor uw pand.</li>
+                <li>
+                  De opdracht komt tot stand zodra u de offerte schriftelijk of per e-mail accepteert. U ontvangt dan
+                  een opdrachtbevestiging met de omvang, de prijs en de planning.
+                </li>
+              </ol>
+              <p className="mt-4 text-sm text-foreground-muted">
+                Zie ook onze{' '}
+                <Link to={ROUTES.voorwaarden} className={LINK_CLASSNAME}>
+                  algemene voorwaarden
+                </Link>{' '}
+                en{' '}
+                <Link to={ROUTES.werkwijze} className={LINK_CLASSNAME}>
+                  werkwijze
+                </Link>
+                .
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-16 flex flex-col items-start justify-between gap-4 rounded-xl bg-muted p-6 sm:flex-row sm:items-center sm:p-8">
+            <div>
+              <h2 className="font-body text-lg font-semibold text-primary">
+                Nog niet zeker waar u staat? Begin met de gratis energie-indicatie
+              </h2>
+              <p className="mt-2 max-w-[70ch] text-base leading-relaxed text-foreground">
+                Een geautomatiseerde, vrijblijvende indicatie van hoe uw pand er globaal voor staat, zonder bedragen
+                per maatregel. Voor een rapport mét investering, besparing en terugverdientijd per maatregel is het
+                Basis Pakket de eerste stap.
+              </p>
+            </div>
+            <Button
+              to={ROUTES.energieIndicatie}
+              variant="outline"
+              className="shrink-0"
+              onClick={() => trackEvent('cta_click', { cta: 'energie_indicatie', location: 'pakketten_overzicht' })}
+            >
+              Start de gratis energie-indicatie
+            </Button>
           </div>
         </Container>
       </Section>

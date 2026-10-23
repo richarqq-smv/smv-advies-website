@@ -3,6 +3,7 @@ import { Button } from '../ui/Button'
 import { Reveal } from '../ui/Reveal'
 import { cn } from '../../lib/cn'
 import { ROUTES } from '../../lib/routes'
+import { trackEvent } from '../../lib/analytics'
 
 /**
  * Anti-slop-ronde (2026-10-21, taste-skill inspect): geen 1px-omlijnde
@@ -63,7 +64,12 @@ export function PricingCard({ pkg, delay = 0 }) {
         <p className={cn('mt-5 text-sm', featured ? 'text-white/80' : 'text-foreground-muted')}>{pkg.scopeNote}</p>
       ) : null}
 
-      <Button to={pkg.ctaTo} variant={pkg.featured ? 'primary' : 'outline'} className="mt-8 w-full">
+      <Button
+        to={pkg.ctaTo}
+        variant={pkg.featured ? 'primary' : 'outline'}
+        className="mt-8 w-full"
+        onClick={() => trackEvent('cta_click', { cta: `pakket_${pkg.id}`, location: 'pricing_card' })}
+      >
         {pkg.cta}
       </Button>
       {/*

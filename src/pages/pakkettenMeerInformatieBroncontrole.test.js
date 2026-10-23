@@ -38,7 +38,7 @@ test('PricingCard.jsx: toont "Meer over {pkg.name}" en linkt via ROUTES.pakketAn
 })
 
 test('PricingCard.jsx: de bestaande primaire aanvraagknop (pkg.ctaTo/pkg.cta) blijft ongewijzigd naast de nieuwe knop staan', () => {
-  assert.match(PRICING_CARD, /<Button to=\{pkg\.ctaTo\} variant=\{pkg\.featured \? 'primary' : 'outline'\} className="mt-8 w-full">/)
+  assert.match(PRICING_CARD, /<Button\s+to=\{pkg\.ctaTo\}\s+variant=\{pkg\.featured \? 'primary' : 'outline'\}\s+className="mt-8 w-full"/)
   assert.match(PRICING_CARD, /\{pkg\.cta\}/)
 })
 

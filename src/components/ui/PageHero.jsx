@@ -28,8 +28,11 @@ import { cn } from '../../lib/cn'
  * publieke pagina's waar het label alleen de menunaam herhaalde, is de prop
  * weggehaald; elders (bv. "Adviesdossier · <nummer>") blijft de informatie
  * gewoon zichtbaar. De H1 krijgt een strakkere displayzetting.
+ *
+ * `children` (pakketten-CRO-ronde 2026-10-23): optionele inhoud direct onder
+ * de beschrijving, bijvoorbeeld knoppen voor de eerste vervolgstap.
  */
-export function PageHero({ eyebrow, title, description, className }) {
+export function PageHero({ eyebrow, title, description, className, children }) {
   return (
     <section className="pt-10 pb-12 sm:pt-14 sm:pb-16 lg:pt-20">
       <Container className={cn('max-w-2xl', className)}>
@@ -38,6 +41,7 @@ export function PageHero({ eyebrow, title, description, className }) {
         {description ? (
           <p className="mt-5 text-lg leading-relaxed text-foreground">{description}</p>
         ) : null}
+        {children}
       </Container>
     </section>
   )
