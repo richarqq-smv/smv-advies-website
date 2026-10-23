@@ -39,7 +39,7 @@ export const FAQ_CATEGORIES = [
       {
         question: 'Hoe lang duurt een QuickScan?',
         answer:
-          'De QuickScan (Basis Pakket) gebeurt op afstand, zonder locatiebezoek, op basis van de gegevens en foto’s die u aanlevert. Reken op 1 tot 2 weken tussen opdracht en rapport, afhankelijk van hoe snel die gegevens compleet zijn. Een locatiebezoek hoort bij het Premium en Gold Pakket; dat bezoek duurt 1 tot 2 uur.',
+          'De QuickScan (Basis Pakket) gebeurt op afstand, zonder locatiebezoek, op basis van de gegevens en foto’s die u aanlevert. Reken op 1 tot 2 weken voor het rapport, gerekend vanaf het moment dat de benodigde gegevens compleet zijn. Een locatiebezoek hoort bij het Premium en Gold Pakket; dat bezoek duurt ongeveer 1 tot 2 uur.',
       },
       {
         question: 'Wat als ik niet tevreden ben over het rapport?',
