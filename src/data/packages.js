@@ -82,7 +82,7 @@ export const PACKAGES = [
     // MEERWERK_UURTARIEF in lib/klantOmgeving/offerte.js).
     features: [
       'Alles uit het Premium Pakket',
-      'Maximaal 3 geselecteerde maatregelen',
+      'Begeleiding bij maximaal 3 geselecteerde maatregelen',
       'Offertes bij maximaal 3 aanbieders per maatregel, in 1 offerteronde',
       '3 klantcontactmomenten en 1 startoverleg met de uitvoerder',
       'Ondersteuning bij de EIA/ISDE-aanvraag',

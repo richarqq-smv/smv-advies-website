@@ -1,7 +1,7 @@
 /**
  * Pakketgrenzen die uit packages.js volgen, hier als pure, testbare logica
- * — geen React, geen database. Gold's "Maximaal 3 geselecteerde
- * maatregelen" (src/data/packages.js) is de enige harde grens die
+ * — geen React, geen database. Gold's "Begeleiding bij maximaal 3
+ * geselecteerde maatregelen" (src/data/packages.js) is de enige harde grens die
  * vandaag bestaat; deze module is bewust klein en breidt zich pas uit als
  * een volgend pakket-specifiek limiet nodig blijkt.
  *

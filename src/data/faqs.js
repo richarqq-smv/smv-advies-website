@@ -19,7 +19,7 @@ export const FAQ_CATEGORIES = [
       {
         question: 'Wat is het verschil tussen de drie pakketten?',
         answer:
-          'Het Basis Pakket (QuickScan) geeft u op afstand een eerste, betrouwbare indicatie inclusief een indicatie van EIA/ISDE-subsidiemogelijkheden. Het Premium Pakket voegt een fysieke opname, een gedetailleerde bouwkundige en installatietechnische analyse en een financieel overzicht met scenario\'s toe. Het Gold Pakket ontzorgt binnen een vooraf afgebakende scope: maximaal 3 geselecteerde maatregelen, offertes bij maximaal 3 aanbieders per maatregel en één visuele opleveringscheck bij afronding.',
+          'Het Basis Pakket (QuickScan) geeft u op afstand een eerste, betrouwbare indicatie inclusief een indicatie van EIA/ISDE-subsidiemogelijkheden. Het Premium Pakket voegt een fysieke opname, een gedetailleerde bouwkundige en installatietechnische analyse en een financieel overzicht met scenario\'s toe. Het Gold Pakket ontzorgt binnen een vooraf afgebakende scope: begeleiding bij maximaal 3 geselecteerde maatregelen, offertes bij maximaal 3 aanbieders per maatregel en één visuele opleveringscheck bij afronding.',
       },
       {
         question: 'Wat kost een verduurzamingsadvies?',
@@ -39,7 +39,7 @@ export const FAQ_CATEGORIES = [
       {
         question: 'Hoe lang duurt een QuickScan?',
         answer:
-          'Reken op 1 tot 2 weken tussen opdracht en rapport, afhankelijk van de beschikbaarheid voor een locatiebezoek. Het locatiebezoek zelf duurt 1 tot 2 uur.',
+          'De QuickScan (Basis Pakket) gebeurt op afstand, zonder locatiebezoek, op basis van de gegevens en foto’s die u aanlevert. Reken op 1 tot 2 weken voor het rapport, gerekend vanaf het moment dat de benodigde gegevens compleet zijn. Een locatiebezoek hoort bij het Premium en Gold Pakket; dat bezoek duurt ongeveer 1 tot 2 uur.',
       },
       {
         question: 'Wat als ik niet tevreden ben over het rapport?',
@@ -49,7 +49,7 @@ export const FAQ_CATEGORIES = [
       {
         question: 'Bieden jullie ook onderhoud of monitoring na de uitvoering?',
         answer:
-          'SMV Advies richt zich op advies en begeleiding. Voor onderhoud en monitoring van installaties verwijzen we u naar uw installateur. In het Gold Pakket verzorgen we wel de eindafname en eindrapportage na uitvoering.',
+          'SMV Advies richt zich op advies en begeleiding. Voor onderhoud en monitoring van installaties verwijzen we u naar uw installateur. In het Gold Pakket sluiten we het traject af met één visuele opleveringscheck op basis van beschikbare documenten. Dat is geen technische keuring en geen bouwkundige inspectie.',
       },
       {
         question: 'Ik werk al met een vaste installateur, kan ik dan nog bij SMV Advies terecht?',
