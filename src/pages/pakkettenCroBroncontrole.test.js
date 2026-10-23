@@ -48,3 +48,19 @@ test('Pakketten.jsx en PrijsPerOppervlakte.jsx: geen em dash in publieke tekst',
   assert.equal(zonderRegelcommentaar(PAKKETTEN).includes('—'), false)
   assert.equal(zonderRegelcommentaar(PRIJSTABEL).includes('—'), false)
 })
+
+test('Inhoudelijke correcties (2026-10-23): FAQ, vergelijking en pakketkaart sluiten aan op de pakketdefinities', async () => {
+  // faqs.js importeert zonder extensie (Vite), dus hier als brontekst gelezen.
+  const FAQS = lees('..', 'data', 'faqs.js')
+  const { COMPARISON_ROWS } = await import('../data/packageComparison.js')
+
+  // QuickScan (Basis) is volgens packages.js op afstand, zonder locatiebezoek.
+  assert.match(FAQS, /De QuickScan \(Basis Pakket\) gebeurt op afstand, zonder locatiebezoek/)
+  // Gold kent één visuele opleveringscheck, geen eindafname/eindrapportage.
+  assert.equal(/eindafname|eindrapportage/.test(FAQS), false)
+  // Het maximum van 3 geldt voor de begeleiding, niet voor het maatregelenoverzicht.
+  const gold = (label) => COMPARISON_ROWS.find((r) => r.label === label).values[2]
+  assert.equal(gold('Maatregelenoverzicht'), 'Volledig (10), waarvan max. 3 met begeleiding')
+  assert.equal(/financiering/i.test(gold('Financieel overzicht')), false)
+  assert.ok(PACKAGES.find((p) => p.id === 'gold').features.includes('Begeleiding bij maximaal 3 geselecteerde maatregelen'))
+})
