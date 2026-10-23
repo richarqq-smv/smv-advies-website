@@ -83,11 +83,11 @@ export const PRIVACY_CONTENT = {
     {
       title: 'Met welk doel en op welke rechtsgrondslag gegevens worden verwerkt',
       content: [
-        'Om een offerte op te stellen en een opdracht uit te voeren. Grondslag: uitvoering van de overeenkomst (of de te sluiten overeenkomst).',
-        'Om de gratis energie-indicatie te berekenen en aan u toe te sturen. Grondslag: uitvoering van de overeenkomst / uw uitdrukkelijke verzoek.',
-        'Om een concrete aanvraag, offerteaanvraag of lopende klantrelatie rechtstreeks op te volgen, bijvoorbeeld door te reageren op uw vraag of een passend vervolg op uw aanvraag te bespreken. Grondslag: uitvoering van de overeenkomst (of de daaraan voorafgaande precontractuele maatregelen), of, waar passend, gerechtvaardigd belang. Dit is een directe opvolging van uw eigen aanvraag en geen algemene direct marketing.',
+        'Om een offerte op te stellen en een opdracht uit te voeren; grondslag: uitvoering van de overeenkomst (of de te sluiten overeenkomst).',
+        'Om de gratis energie-indicatie te berekenen en aan u toe te sturen; grondslag: uitvoering van de overeenkomst / uw uitdrukkelijke verzoek.',
+        'Om een concrete aanvraag, offerteaanvraag of lopende klantrelatie rechtstreeks op te volgen, bijvoorbeeld door te reageren op uw vraag of een passend vervolg op uw aanvraag te bespreken; grondslag: uitvoering van de overeenkomst (of de daaraan voorafgaande precontractuele maatregelen), of, waar passend, gerechtvaardigd belang. Dit is een directe opvolging van uw eigen aanvraag en geen algemene direct marketing.',
         'Gaat opvolgend contact verder dan de directe opvolging van uw concrete aanvraag en kwalificeert dit als een elektronisch commercieel bericht, dan verstuurt SMV Advies dit alleen wanneer u daarvoor voorafgaand toestemming heeft gegeven, voor zover de toepasselijke wetgeving die toestemming vereist. U kunt deze toestemming te allen tijde intrekken; intrekking laat de rechtmatigheid van de verwerking vóór de intrekking onverlet. Ongeacht de gebruikte grondslag heeft u altijd het recht bezwaar te maken tegen verwerking van uw gegevens voor direct marketing (zie het hoofdstuk De rechten van betrokkenen en hoe die uit te oefenen).',
-        'Om te voldoen aan wettelijke verplichtingen, zoals onze fiscale bewaarplicht. Grondslag: wettelijke verplichting.',
+        'Om te voldoen aan wettelijke verplichtingen, zoals onze fiscale bewaarplicht; grondslag: wettelijke verplichting.',
         'Wij gebruiken uw gegevens niet voor geautomatiseerde besluitvorming met rechtsgevolgen en verkopen uw gegevens niet aan derden.',
       ],
     },

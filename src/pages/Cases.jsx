@@ -52,7 +52,7 @@ const ONDERZOCHT = [
 
 const AFWEGING = [
   'Per kansrijke maatregel brengen we investering, verwachte besparing en indicatieve terugverdientijd in kaart.',
-  'We wegen maatregelen tegen elkaar af: wat levert het meeste op voor de laagste investering, en wat is technisch afhankelijk van iets anders? Zo heeft een warmtepomp vaak pas zin als het pand eerst geïsoleerd is.',
+  'We wegen maatregelen tegen elkaar af: wat levert het meeste op voor de laagste investering, en wat is technisch afhankelijk van iets anders, zoals eerst isoleren voordat een warmtepomp zin heeft?',
   'We geven aan welke subsidies, zoals EIA of ISDE, mogelijk van toepassing zijn.',
   'Zo komen we tot een realistische prioritering: wat eerst, en wat kan wachten.',
 ]
@@ -62,7 +62,7 @@ export default function Cases() {
     <>
       <Seo
         title="Hoe een advies tot stand komt"
-        description="Hoe een verduurzamingsadvies van SMV Advies tot stand komt: wat we onderzoeken, hoe we prioriteren en wat u ontvangt. Zonder verzonnen praktijkcijfers."
+        description="Hoe een verduurzamingsadvies van SMV Advies tot stand komt: wat we onderzoeken, hoe we prioriteren en wat u ontvangt, zonder verzonnen praktijkcijfers."
         structuredData={[getBreadcrumbSchema([{ name: 'Hoe een advies tot stand komt', path: ROUTES.cases }])]}
       />
 

@@ -217,7 +217,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Een bouwkundige beoordeling brengt de staat van de belangrijkste onderdelen van het pand in kaart: gevel, dak, vloer en beglazing, en de manier waarop deze onderdelen samen bijdragen aan warmteverlies of -behoud. Daarbij wordt gekeken naar wat er daadwerkelijk aanwezig is en in welke staat dat verkeert. Dat gebeurt niet op basis van bouwjaar alleen, want twee panden uit dezelfde periode kunnen door eerdere verbouwingen of onderhoud bouwkundig behoorlijk verschillen.',
+          'Een bouwkundige beoordeling brengt de staat van de belangrijkste onderdelen van het pand in kaart: gevel, dak, vloer en beglazing, en de manier waarop deze onderdelen samen bijdragen aan warmteverlies of -behoud. Daarbij wordt gekeken naar wat er daadwerkelijk aanwezig is en in welke staat dat verkeert. Aannames op basis van alleen het bouwjaar zijn niet genoeg, want twee panden uit dezelfde periode kunnen door eerdere verbouwingen of onderhoud bouwkundig behoorlijk verschillen.',
         ],
       },
       { type: 'h2', text: 'Waarom dit vóór een installatiekeuze relevant is' },
@@ -994,7 +994,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Het subsidielandschap voor laadinfrastructuur is de afgelopen jaren veranderd. De Subsidieregeling Emissieloze Bedrijfsauto’s (SEBA) is definitief gesloten sinds 31 december 2024, 12.00 uur. Die regeling ging bovendien over de aanschaf van de bedrijfsauto zelf, niet over de laadinfrastructuur. Ook via de Milieu-investeringsaftrek en Willekeurige afschrijving milieu-investeringen (MIA/Vamil) is een laadpunt in 2026 niet meer aftrekbaar; laadpunten staan niet meer op de Milieulijst. Wat resteert, is de Subsidieregeling Private Laadinfrastructuur bij bedrijven (SPRILA): een directe subsidie voor ondernemers met een KVK-inschrijving die laadinfrastructuur plaatsen op eigen of gehuurd, niet-openbaar toegankelijk terrein. SPRILA kan zowel de aanschaf als de installatie van AC- of DC-laadstations en stationaire batterijsystemen ondersteunen, en geldt voor zowel lichte als zware voertuigen. Het bevestigde minimumbedrag is € 2.500 subsidie per locatie; de aanvraagperiode voor 2026 loopt van 20 januari 09.00 uur tot 18 december 12.00 uur. Daarnaast blijft de kleinschaligheidsinvesteringsaftrek (KIA) een generieke fiscale route die voor bedrijfsinvesteringen kan gelden. Let op: dat is een fiscale aftrek, geen directe subsidie-uitkering. Voor de volledige uitleg van KIA en de andere fiscale en subsidieregelingen verwijzen we naar ',
+          'Het subsidielandschap voor laadinfrastructuur is de afgelopen jaren veranderd. De Subsidieregeling Emissieloze Bedrijfsauto’s (SEBA) is definitief gesloten sinds 31 december 2024, 12.00 uur. Die regeling ging bovendien over de aanschaf van de bedrijfsauto zelf, niet over de laadinfrastructuur. Ook via de Milieu-investeringsaftrek en Willekeurige afschrijving milieu-investeringen (MIA/Vamil) is een laadpunt in 2026 niet meer aftrekbaar; laadpunten staan niet meer op de Milieulijst. Wat resteert, is de Subsidieregeling Private Laadinfrastructuur bij bedrijven (SPRILA): een directe subsidie voor ondernemers met een KVK-inschrijving die laadinfrastructuur plaatsen op eigen of gehuurd, niet-openbaar toegankelijk terrein. SPRILA kan zowel de aanschaf als de installatie van AC- of DC-laadstations en stationaire batterijsystemen ondersteunen, en geldt voor zowel lichte als zware voertuigen. Het bevestigde minimumbedrag is € 2.500 subsidie per locatie; de aanvraagperiode voor 2026 loopt van 20 januari 09.00 uur tot 18 december 12.00 uur. Daarnaast blijft de kleinschaligheidsinvesteringsaftrek (KIA) een generieke fiscale route die voor bedrijfsinvesteringen kan gelden. Dat is wel een fiscale aftrek, geen directe subsidie-uitkering. Voor de volledige uitleg van KIA en de andere fiscale en subsidieregelingen verwijzen we naar ',
           { text: 'ons overzicht van EIA, ISDE, SDE++ en KIA', to: ROUTES.blogPost('eia-isde-sde-subsidies') },
           '.',
         ],
@@ -1054,7 +1054,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'In de meeste gevallen mag u zonnepanelen op het dak van uw bedrijfspand vergunningsvrij plaatsen, ongeacht wat het omgevingsplan voor de rest van het gebouw voorschrijft. Er gelden wel voorwaarden. Op een monument, of het nu een gemeentelijk, provinciaal of rijksmonument is, is vergunningsvrij plaatsen niet mogelijk. Ligt uw pand in een rijksbeschermd stads- of dorpsgezicht, dan mag u panelen alleen vergunningsvrij plaatsen op een achterdakvlak dat niet naar een openbaar toegankelijk gebied is gekeerd. Bij een plat dak geldt bovendien dat het paneel minimaal even ver van de dakrand moet blijven als het paneel hoog is. Kan uw situatie niet aan deze voorwaarden voldoen, dan is alsnog een omgevingsvergunning nodig. Omdat de precieze situatie van uw pand bepalend is, is dit iets om vooraf te laten beoordelen, bijvoorbeeld via het Omgevingsloket of uw gemeente.',
+          'In de meeste gevallen mag u zonnepanelen op het dak van uw bedrijfspand vergunningsvrij plaatsen, ongeacht wat het omgevingsplan voor de rest van het gebouw voorschrijft. Er gelden wel voorwaarden. Op een monument (gemeentelijk, provinciaal of rijksmonument) is vergunningsvrij plaatsen niet mogelijk. Ligt uw pand in een rijksbeschermd stads- of dorpsgezicht, dan mag u panelen alleen vergunningsvrij plaatsen op een achterdakvlak dat niet naar een openbaar toegankelijk gebied is gekeerd. Bij een plat dak geldt bovendien dat het paneel minimaal even ver van de dakrand moet blijven als het paneel hoog is. Kan uw situatie niet aan deze voorwaarden voldoen, dan is alsnog een omgevingsvergunning nodig. Omdat de precieze situatie van uw pand bepalend is, is dit iets om vooraf te laten beoordelen, bijvoorbeeld via het Omgevingsloket of uw gemeente.',
         ],
       },
       { type: 'h2', text: 'Saldering stopt per 2027: wat betekent dit voor teruglevering?' },
@@ -1334,7 +1334,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Tot voor kort raakte de wachtlijst voor nieuwe of zwaardere aansluitingen vooral grootverbruikers. Vanaf 1 juli 2026 geldt deze wachtlijst in de Hoeksche Waard ook voor kleinverbruikers. Dat geldt dus ook voor kleinere bedrijfspanden die een nieuwe aansluiting willen of hun bestaande aansluiting willen verzwaren.',
+          'Tot voor kort raakte de wachtlijst voor nieuwe of zwaardere aansluitingen vooral grootverbruikers. Vanaf 1 juli 2026 geldt deze wachtlijst in de Hoeksche Waard ook voor kleinverbruikers, en dus ook voor kleinere bedrijfspanden die een nieuwe aansluiting willen of hun bestaande aansluiting willen verzwaren.',
         ],
       },
       {
@@ -1515,7 +1515,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'Welke isolatiewaarde daarbij verplicht is, hangt af van de omvang van de werkzaamheden. Vervangt u alleen de isolatielaag van het dak, dan geldt een minimale Rc-waarde van 2,1 m²K/W (Bbl artikel 5.20 lid 2). Wordt de renovatie ingrijpender en wordt meer dan een kwart van de gebouwschil vernieuwd, dan gelden de eisen die ook voor nieuwbouw gelden (Bbl artikel 5.20 lid 4); voor het dak van een utiliteitsgebouw is dat een Rc-waarde van minimaal 6,3 m²K/W (Bbl artikel 4.152). Welke situatie op uw pand van toepassing is, hangt af van de precieze omvang en aard van de werkzaamheden. Uw uitvoerende partij kan dit voor uw project beoordelen.',
+          'Welke isolatiewaarde daarbij verplicht is, hangt af van de omvang van de werkzaamheden. Vervangt u alleen de isolatielaag van het dak, dan geldt een minimale Rc-waarde van 2,1 m²K/W (Bbl artikel 5.20 lid 2). Wordt de renovatie ingrijpender (meer dan een kwart van de gebouwschil wordt vernieuwd), dan gelden de eisen die ook voor nieuwbouw gelden (Bbl artikel 5.20 lid 4); voor het dak van een utiliteitsgebouw is dat een Rc-waarde van minimaal 6,3 m²K/W (Bbl artikel 4.152). Welke situatie op uw pand van toepassing is, hangt af van de precieze omvang en aard van de werkzaamheden. Uw uitvoerende partij kan dit voor uw project beoordelen.',
         ],
       },
       {
@@ -1607,7 +1607,7 @@ export const BLOG_POSTS = [
       {
         type: 'p',
         parts: [
-          'De EIA is geen subsidie in de vorm van een uitkering, maar een fiscaal voordeel: u mag een percentage van het investeringsbedrag extra aftrekken van de winst, bovenop de normale afschrijving. In 2026 bedraagt dit percentage 40%, met een minimum van € 2.500 per bedrijfsmiddel. Dat levert alleen voordeel op als de investering ook daadwerkelijk op de jaarlijkse Energielijst van RVO staat, een lijst met technische maatregelen die per jaar wordt vastgesteld. De melding bij RVO moet binnen 3 maanden na het aangaan van de investeringsverplichting worden gedaan, dus vóórdat u definitief tekent bij een leverancier of installateur. Ook ',
+          'De EIA is geen subsidie in de vorm van een uitkering, maar een fiscaal voordeel: u mag een percentage van het investeringsbedrag extra aftrekken van de winst, bovenop de normale afschrijving. In 2026 bedraagt dit percentage 40%, met een minimum van € 2.500 per bedrijfsmiddel. Dat levert alleen voordeel op als de investering ook daadwerkelijk op de jaarlijkse Energielijst van RVO staat. Dat is een lijst met technische maatregelen die per jaar wordt vastgesteld. De melding bij RVO moet binnen 3 maanden na het aangaan van de investeringsverplichting worden gedaan, dus vóórdat u definitief tekent bij een leverancier of installateur. Ook ',
           { text: 'LED-verlichting', to: ROUTES.blogPost('led-verlichting-snelste-stap') },
           ' kan, afhankelijk van het type en de toepassing, op deze lijst staan. De EIA is bovendien te combineren met de kleinschaligheidsinvesteringsaftrek (KIA, zie verderop).',
         ],

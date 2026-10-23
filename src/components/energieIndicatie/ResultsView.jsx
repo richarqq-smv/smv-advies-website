@@ -55,7 +55,7 @@ export function ResultsView({ result, values, leadStatus, onRestart, voorkeurDos
 
       <div className="mt-12">
         <h3 className="text-lg font-semibold text-primary">Uw belangrijkste aandachtspunten</h3>
-        <p className="mt-1 text-sm text-foreground-muted">Op basis van uw gegevens. Investeringsbedragen en terugverdientijden staan er bewust niet bij, want die vragen een preciezere opname.</p>
+        <p className="mt-1 text-sm text-foreground-muted">Op basis van uw gegevens. Investeringsbedragen en terugverdientijden staan hier niet bij; daarvoor is een preciezere opname nodig.</p>
 
         <div className="mt-5 flex flex-col gap-3">
           {buildPubliekeAandachtspunten(result.maatregelen).map((punt, i) => (
