@@ -35,7 +35,7 @@ import { COMPANY } from './company'
  */
 
 const KVK_CLAUSE = COMPANY.kvk ? `, ingeschreven bij de Kamer van Koophandel onder nummer ${COMPANY.kvk}` : ''
-const KVK_BYLINE = COMPANY.kvk ? ` — KvK ${COMPANY.kvk}` : ''
+const KVK_BYLINE = COMPANY.kvk ? ` · KvK ${COMPANY.kvk}` : ''
 const ADDRESS_LINE = `${COMPANY.address.street}, ${COMPANY.address.postalCode} ${COMPANY.address.city}`
 
 export const PRIVACY_LAST_UPDATED = '7 oktober 2026'
@@ -52,14 +52,14 @@ export const VOORWAARDEN_LAST_UPDATED = '6 oktober 2026'
 
 export const PRIVACY_CONTENT = {
   intro:
-    'SMV Advies (Steen en Mortel Verbetering) respecteert de privacy van iedereen die contact met ons heeft — via onze website, onze gratis energie-indicatietool, of als klant. In deze verklaring leest u welke persoonsgegevens wij verwerken, waarom, en welke rechten u heeft. ' +
+    'SMV Advies (Steen en Mortel Verbetering) respecteert de privacy van iedereen die contact met ons heeft, via onze website, onze gratis energie-indicatietool of als klant. In deze verklaring leest u welke persoonsgegevens wij verwerken, waarom, en welke rechten u heeft. ' +
     `Laatst bijgewerkt: ${PRIVACY_LAST_UPDATED}. Deze verklaring is van toepassing op www.smv-advies.nl en alle diensten van SMV Advies.`,
   sections: [
     {
       title: 'Wie is de verwerkingsverantwoordelijke',
       content: [
         `SMV Advies, gevestigd te ${ADDRESS_LINE}${KVK_CLAUSE}, is de verwerkingsverantwoordelijke voor de persoonsgegevens die in deze verklaring worden beschreven.`,
-        `Contactgegevens: ${ADDRESS_LINE} — ${COMPANY.phone} — ${COMPANY.email}.`,
+        `Contactgegevens: ${ADDRESS_LINE} · ${COMPANY.phone} · ${COMPANY.email}.`,
       ],
     },
     {
@@ -73,7 +73,7 @@ export const PRIVACY_CONTENT = {
         // zijn alle vier verplicht voordat het resultaat wordt getoond —
         // zie src/lib/energieScan/validation.js (validateStep4). Tekst
         // hieronder aangepast aan die daadwerkelijke werking.
-        'Gegevens uit de gratis energie-indicatietool: de door u ingevoerde pandkenmerken (oppervlakte, bouwjaar, isolatieniveau, verwarmingssysteem e.d.), en uw naam, bedrijfsnaam, e-mailadres en telefoonnummer — deze contactgegevens zijn verplicht om de indicatie te kunnen berekenen en aan u toe te sturen.',
+        'Gegevens uit de gratis energie-indicatietool: de door u ingevoerde pandkenmerken (oppervlakte, bouwjaar, isolatieniveau, verwarmingssysteem e.d.), en uw naam, bedrijfsnaam, e-mailadres en telefoonnummer. Deze contactgegevens zijn verplicht om de indicatie te kunnen berekenen en aan u toe te sturen.',
         "Energie- en pandgegevens: jaarafrekeningen gas/elektra, energielabel, bouwkundige en installatietechnische gegevens die u aanlevert of die tijdens een locatiebezoek worden vastgelegd (inclusief foto's van het pand).",
         'Gegevens uit offertes en opdrachten: gekozen pakket, prijsafspraken, facturatiegegevens.',
         'Technische gegevens over uw websitebezoek: zie het hoofdstuk Cookies hieronder.',
@@ -83,11 +83,11 @@ export const PRIVACY_CONTENT = {
     {
       title: 'Met welk doel en op welke rechtsgrondslag gegevens worden verwerkt',
       content: [
-        'Om een offerte op te stellen en een opdracht uit te voeren — grondslag: uitvoering van de overeenkomst (of de te sluiten overeenkomst).',
-        'Om de gratis energie-indicatie te berekenen en aan u toe te sturen — grondslag: uitvoering van de overeenkomst / uw uitdrukkelijke verzoek.',
-        'Om een concrete aanvraag, offerteaanvraag of lopende klantrelatie rechtstreeks op te volgen — bijvoorbeeld door te reageren op uw vraag of een passend vervolg op uw aanvraag te bespreken — grondslag: uitvoering van de overeenkomst (of de daaraan voorafgaande precontractuele maatregelen), of, waar passend, gerechtvaardigd belang. Dit is een directe opvolging van uw eigen aanvraag en geen algemene direct marketing.',
+        'Om een offerte op te stellen en een opdracht uit te voeren; grondslag: uitvoering van de overeenkomst (of de te sluiten overeenkomst).',
+        'Om de gratis energie-indicatie te berekenen en aan u toe te sturen; grondslag: uitvoering van de overeenkomst / uw uitdrukkelijke verzoek.',
+        'Om een concrete aanvraag, offerteaanvraag of lopende klantrelatie rechtstreeks op te volgen, bijvoorbeeld door te reageren op uw vraag of een passend vervolg op uw aanvraag te bespreken; grondslag: uitvoering van de overeenkomst (of de daaraan voorafgaande precontractuele maatregelen), of, waar passend, gerechtvaardigd belang. Dit is een directe opvolging van uw eigen aanvraag en geen algemene direct marketing.',
         'Gaat opvolgend contact verder dan de directe opvolging van uw concrete aanvraag en kwalificeert dit als een elektronisch commercieel bericht, dan verstuurt SMV Advies dit alleen wanneer u daarvoor voorafgaand toestemming heeft gegeven, voor zover de toepasselijke wetgeving die toestemming vereist. U kunt deze toestemming te allen tijde intrekken; intrekking laat de rechtmatigheid van de verwerking vóór de intrekking onverlet. Ongeacht de gebruikte grondslag heeft u altijd het recht bezwaar te maken tegen verwerking van uw gegevens voor direct marketing (zie het hoofdstuk De rechten van betrokkenen en hoe die uit te oefenen).',
-        'Om te voldoen aan wettelijke verplichtingen, zoals onze fiscale bewaarplicht — grondslag: wettelijke verplichting.',
+        'Om te voldoen aan wettelijke verplichtingen, zoals onze fiscale bewaarplicht; grondslag: wettelijke verplichting.',
         'Wij gebruiken uw gegevens niet voor geautomatiseerde besluitvorming met rechtsgevolgen en verkopen uw gegevens niet aan derden.',
       ],
     },
@@ -122,7 +122,7 @@ export const PRIVACY_CONTENT = {
         'Recht op beperking van de verwerking.',
         'Recht op overdraagbaarheid (dataportabiliteit) van de gegevens die u zelf aan ons heeft verstrekt.',
         'Recht van bezwaar tegen verwerking op basis van gerechtvaardigd belang, en in het bijzonder het recht om te allen tijde bezwaar te maken tegen verwerking van uw gegevens voor direct marketing.',
-        'Recht om een gegeven toestemming — bijvoorbeeld voor elektronische commerciële berichten — te allen tijde in te trekken. Intrekking laat de rechtmatigheid van de verwerking vóór de intrekking onverlet.',
+        'Recht om een gegeven toestemming (bijvoorbeeld voor elektronische commerciële berichten) te allen tijde in te trekken. Intrekking laat de rechtmatigheid van de verwerking vóór de intrekking onverlet.',
         `U kunt een verzoek indienen via ${COMPANY.email}. Wij reageren binnen 4 weken. Daarnaast heeft u het recht een klacht in te dienen bij de Autoriteit Persoonsgegevens (autoriteitpersoonsgegevens.nl).`,
       ],
     },
@@ -146,9 +146,9 @@ export const PRIVACY_CONTENT = {
     {
       title: 'Contact bij privacyvragen',
       content: [
-        `Voor vragen, verzoeken of klachten over deze privacyverklaring of de verwerking van uw persoonsgegevens kunt u contact opnemen met: SMV Advies — ${ADDRESS_LINE} — ${COMPANY.email} — ${COMPANY.phone}.`,
+        `Voor vragen, verzoeken of klachten over deze privacyverklaring of de verwerking van uw persoonsgegevens kunt u contact opnemen met: SMV Advies, ${ADDRESS_LINE} · ${COMPANY.email} · ${COMPANY.phone}.`,
         'Deze privacyverklaring kan worden gewijzigd, bijvoorbeeld bij wijzigingen in onze dienstverlening of wet- en regelgeving. De meest actuele versie is altijd te vinden op www.smv-advies.nl/privacy.',
-        `SMV Advies — ${COMPANY.address.city}${KVK_BYLINE}`,
+        `SMV Advies · ${COMPANY.address.city}${KVK_BYLINE}`,
       ],
     },
   ],
@@ -183,7 +183,7 @@ export const VOORWAARDEN_CONTENT = {
       content: [
         'SMV Advies is een advies- en begeleidingsbureau op het gebied van verduurzaming van bedrijfspanden. SMV Advies is geen aannemer, installateur of uitvoerend bouwbedrijf en treedt ook niet als zodanig op.',
         'SMV Advies is niet verantwoordelijk voor: de daadwerkelijke uitvoering van maatregelen; de bouwkundige of installatietechnische kwaliteit van werkzaamheden van derden; de constructieve veiligheid van uitgevoerd werk; de naleving van bouw-, installatie-, veiligheids- of andere wettelijke voorschriften door uitvoerende partijen; de planning, levertijd of beschikbaarheid van derden; garanties van leveranciers, installateurs of aannemers; en gebreken in producten of werkzaamheden van derden.',
-        'Heeft SMV Advies namens of samen met de klant contact met een derde partij — bijvoorbeeld bij het opvragen van offertes of bij een kickoffgesprek — dan maakt dit SMV Advies niet tot uitvoerende partij en neemt SMV Advies daarmee niet de aansprakelijkheid van die derde partij over.',
+        'Heeft SMV Advies namens of samen met de klant contact met een derde partij, bijvoorbeeld bij het opvragen van offertes of bij een kickoffgesprek, dan maakt dit SMV Advies niet tot uitvoerende partij en neemt SMV Advies daarmee niet de aansprakelijkheid van die derde partij over.',
       ],
     },
     {
@@ -202,14 +202,14 @@ export const VOORWAARDEN_CONTENT = {
         'Betaling vindt plaats binnen 14 dagen na factuurdatum, tenzij schriftelijk anders overeengekomen in de opdrachtbevestiging.',
         'Bij overschrijding van de betalingstermijn is de klant van rechtswege in verzuim en is de wettelijke handelsrente verschuldigd over het openstaande bedrag, onverminderd het recht van SMV Advies op vergoeding van buitengerechtelijke incassokosten.',
         'SMV Advies is gerechtigd werkzaamheden op te schorten indien de klant met betaling in gebreke blijft.',
-        'Meerwerk wordt alleen uitgevoerd na voorafgaand schriftelijk akkoord van de klant en afzonderlijk in rekening gebracht — zie het artikel Scope en meerwerk hieronder.',
+        'Meerwerk wordt alleen uitgevoerd na voorafgaand schriftelijk akkoord van de klant en afzonderlijk in rekening gebracht. Zie het artikel Scope en meerwerk hieronder.',
       ],
     },
     {
       title: 'Scope en meerwerk',
       content: [
         'Alleen de werkzaamheden die partijen in de offerte of opdrachtbevestiging zijn overeengekomen maken onderdeel uit van de opdracht.',
-        'Voor pakketten met een vooraf afgebakende scope — in het bijzonder het Gold Pakket — geldt de scope zoals beschreven op www.smv-advies.nl/pakketten en in de offerte, waaronder het aantal maatregelen, offerterondes, klantcontactmomenten en de duur van de begeleiding.',
+        'Voor pakketten met een vooraf afgebakende scope, in het bijzonder het Gold Pakket, geldt de scope zoals beschreven op www.smv-advies.nl/pakketten en in de offerte, waaronder het aantal maatregelen, offerterondes, klantcontactmomenten en de duur van de begeleiding.',
         'Werkzaamheden, maatregelen, contactmomenten of offertes die buiten deze overeengekomen scope vallen, zijn meerwerk. Meerwerk wordt altijd vooraf met de klant afgestemd en pas uitgevoerd na schriftelijk akkoord van de klant, tegen het daarvoor geldende tarief zoals vermeld in de offerte of opdrachtbevestiging.',
       ],
     },
@@ -321,7 +321,7 @@ export const VOORWAARDEN_CONTENT = {
       content: [
         'Op alle overeenkomsten tussen SMV Advies en de klant is uitsluitend Nederlands recht van toepassing.',
         'Geschillen die niet in onderling overleg kunnen worden opgelost, worden voorgelegd aan de bevoegde rechter in het arrondissement waar SMV Advies is gevestigd, tenzij dwingend recht anders voorschrijft.',
-        `SMV Advies — ${COMPANY.address.city}${KVK_BYLINE}`,
+        `SMV Advies · ${COMPANY.address.city}${KVK_BYLINE}`,
       ],
     },
   ],

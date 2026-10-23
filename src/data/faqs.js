@@ -101,7 +101,7 @@ export const FAQ_CATEGORIES = [
         // rewritten to match it, not the other way around.
         question: 'Kan ik de gratis energie-indicatie anoniem doen?',
         answer:
-          'Nee. Naast pandkenmerken zoals oppervlakte en bouwjaar vraagt de tool ook uw naam, bedrijfsnaam, e-mailadres en telefoonnummer — dit is nodig om uw persoonlijke rapport te kunnen berekenen en toesturen. U kunt wel altijd bezwaar maken tegen opvolgend contact naar aanleiding van uw aanvraag.',
+          'Nee. Naast pandkenmerken zoals oppervlakte en bouwjaar vraagt de tool ook uw naam, bedrijfsnaam, e-mailadres en telefoonnummer. Die zijn nodig om uw persoonlijke rapport te kunnen berekenen en toesturen. U kunt wel altijd bezwaar maken tegen opvolgend contact naar aanleiding van uw aanvraag.',
       },
     ],
   },

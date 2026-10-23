@@ -30,7 +30,7 @@ export const WERKGEBIED_PLAATSEN = [
     naam: 'Oud-Beijerland',
     title: 'Verduurzamingsadvies in Oud-Beijerland',
     metaDescription:
-      'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Oud-Beijerland — SMV Advies is hier gevestigd.',
+      'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Oud-Beijerland, waar SMV Advies zelf gevestigd is.',
     intro:
       'SMV Advies is gevestigd in Oud-Beijerland: de regionale kern van de Hoeksche Waard, met het grootste bedrijventerrein van het eiland. Het dorp (oorspronkelijk "Beijerland" geheten) bestaat al sinds 1559 en groeide uit tot het drukste zakelijke centrum van de regio.',
     feit:
@@ -57,7 +57,7 @@ export const WERKGEBIED_PLAATSEN = [
     metaDescription:
       'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Heinenoord, vlak bij de Heinenoordtunnel en de A29.',
     intro:
-      'Heinenoord ligt direct bij de Heinenoordtunnel, de verbinding met Barendrecht en de A29 — voor veel bedrijfspanden hier een praktisch gegeven, geen bijzaak. Het dorp zelf wordt al in 1312 genoemd en herbergt met Museum Hoeksche Waard ook een eigen stukje streekgeschiedenis.',
+      'Heinenoord ligt direct bij de Heinenoordtunnel, de verbinding met Barendrecht en de A29. Voor veel bedrijfspanden hier is dat een praktisch gegeven, geen bijzaak. Het dorp zelf wordt al in 1312 genoemd en herbergt met Museum Hoeksche Waard ook een eigen stukje streekgeschiedenis.',
     feit:
       'Rond de A29-afslag liggen de bedrijventerreinen Reedijk en Boonsweg, met een flink aantal mkb-bedrijfspanden op loop- en rijafstand van de tunnel.',
     bedrijventerrein: 'bedrijventerrein Reedijk/Boonsweg, bij de A29-afslag',
@@ -97,7 +97,7 @@ export const WERKGEBIED_PLAATSEN = [
       'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Maasdam, bij molen "De Hoop" en de Binnenbedijkte Maas.',
     intro:
       'Maasdam is een oud dijkdorp langs de Binnenbedijkte Maas, met een monumentale kerk en de nog altijd zichtbare molen "De Hoop" uit 1822. Bedrijfspanden hier liggen verspreid in en direct rond de dorpskern.',
-    feit: 'Een dorp zonder eigen bedrijventerrein betekent bedrijfspanden die verspreid liggen — elk pand vraagt dan om een eigen beoordeling in plaats van een standaardaanpak.',
+    feit: 'Een dorp zonder eigen bedrijventerrein betekent bedrijfspanden die verspreid liggen. Elk pand vraagt dan om een eigen beoordeling in plaats van een standaardaanpak.',
     bedrijventerrein: null,
     faq: [
       {
@@ -115,7 +115,7 @@ export const WERKGEBIED_PLAATSEN = [
       'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Zuid-Beijerland, het voormalige "Den Hitsert".',
     intro:
       'Zuid-Beijerland is een klassiek polderdorp, oorspronkelijk bekend als "Den Hitsert", met een kruiskerk met naaldspits uit 1933 als herkenbaar middelpunt. Het dorp ligt aan de westkant van het eiland, tussen de Spui en het Haringvliet.',
-    feit: 'Verspreid liggende bedrijfspanden in een polderdorp vragen om maatwerk — elk pand heeft zijn eigen bouwperiode en staat van onderhoud.',
+    feit: 'Verspreid liggende bedrijfspanden in een polderdorp vragen om maatwerk, want elk pand heeft zijn eigen bouwperiode en staat van onderhoud.',
     bedrijventerrein: null,
     faq: [
       {
@@ -133,7 +133,7 @@ export const WERKGEBIED_PLAATSEN = [
       'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Mijnsheerenland, centraal tussen Oud-Beijerland en de A29.',
     intro:
       'Mijnsheerenland is een polderdorp langs de Binnenbedijkte Maas, vlakbij de A29-afslag Heinenoord. Die ligging betekent dat bedrijfspanden hier vaak goed bereikbaar zijn, ook voor leveranciers en installateurs.',
-    feit: 'Centraal gelegen tussen Oud-Beijerland en de A29 — praktisch voor bedrijven die hier gevestigd zijn, ook voor leveranciers en installateurs.',
+    feit: 'Centraal gelegen tussen Oud-Beijerland en de A29. Dat is praktisch voor bedrijven die hier gevestigd zijn, ook voor leveranciers en installateurs.',
     bedrijventerrein: null,
     faq: [
       {
@@ -150,7 +150,7 @@ export const WERKGEBIED_PLAATSEN = [
     metaDescription:
       "Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in 's-Gravendeel, aan de Dordtsche Kil.",
     intro:
-      '\'s-Gravendeel ontstond na het droogleggen van de Nieuw-Bonaventura-polder in 1593 en groeide uit tot een centrum van de vlasindustrie. Het dorp ligt direct aan de Dordtsche Kil, een drukke vaarroute — een heel ander karakter dan de meer landinwaarts gelegen polderdorpen.',
+      '\'s-Gravendeel ontstond na het droogleggen van de Nieuw-Bonaventura-polder in 1593 en groeide uit tot een centrum van de vlasindustrie. Het dorp ligt direct aan de Dordtsche Kil, een drukke vaarroute. Dat geeft het een heel ander karakter dan de meer landinwaarts gelegen polderdorpen.',
     feit: 'Die rivierligging brengt ook een eigen, relatief groot bedrijventerrein met zich mee, een van de grotere van de Hoeksche Waard.',
     bedrijventerrein: 'een van de relatief grote bedrijventerreinen van de Hoeksche Waard',
     faq: [
@@ -188,7 +188,7 @@ export const WERKGEBIED_PLAATSEN = [
       'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Strijen, bij bedrijventerrein Oud-Bonaventura.',
     intro:
       'Strijen is een streekdorp met meerdere buurtschappen (onder meer Cillaarshoek, Mookhoek en Strijensas) en dankt zijn naam vermoedelijk aan de inmiddels verdwenen waterloop "de Striene". Het dorp heeft met bedrijventerrein Oud-Bonaventura een van de grotere bedrijfslocaties van de regio.',
-    feit: 'Een streekdorp met zowel een historische kern als een eigen bedrijventerrein — elk met een eigen bouwperiode en dus een eigen aanpak.',
+    feit: 'Een streekdorp met zowel een historische kern als een eigen bedrijventerrein, elk met een eigen bouwperiode en dus een eigen aanpak.',
     bedrijventerrein: 'bedrijventerrein Oud-Bonaventura',
     faq: [
       {
@@ -207,7 +207,7 @@ export const WERKGEBIED_PLAATSEN = [
       'Onafhankelijk verduurzamingsadvies voor mkb-bedrijfspanden in Numansdorp, bij bedrijventerrein Middelsluis-Noord.',
     intro:
       'Numansdorp werd in 1642 gesticht rond de haven en is vooral bekend van Fort Buitensluis: een negentiende-eeuws fort dat ooit de vaarroute tussen Volkerak en Hollands Diep bewaakte en sinds 2015 opengesteld is voor bezoekers. Bedrijfspanden liggen hier vooral op en rond bedrijventerrein Middelsluis-Noord, vlot bereikbaar via de N487 naar de A29.',
-    feit: 'Een dorp met zowel een eigen bedrijventerrein als een herkenbaar historisch landmark — en met circa een kwartier rijden een van de iets verder gelegen kernen vanaf Oud-Beijerland.',
+    feit: 'Een dorp met zowel een eigen bedrijventerrein als een herkenbaar historisch landmark. Met circa een kwartier rijden vanaf Oud-Beijerland is het een van de iets verder gelegen kernen.',
     bedrijventerrein: 'bedrijventerrein Middelsluis-Noord',
     faq: [
       {

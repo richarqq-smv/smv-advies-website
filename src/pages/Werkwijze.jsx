@@ -38,7 +38,7 @@ const WAT_U_KRIJGT = [
     icon: Prohibit,
     title: 'Wat kan wachten',
     description:
-      'Ook duidelijkheid over maatregelen die u beter nog niet uitvoert — zodat u niet investeert in de verkeerde volgorde.',
+      'Ook duidelijkheid over maatregelen die u beter nog niet uitvoert, zodat u niet investeert in de verkeerde volgorde.',
   },
 ]
 
@@ -53,7 +53,7 @@ export default function Werkwijze() {
 
       <PageHero
         title="Van eerste kennismaking tot concreet resultaat"
-        description="Vier stappen, van eerste kennismaking tot rapport — hieronder ziet u wat elke stap inhoudt en hoelang die duurt."
+        description="Vier stappen, van eerste kennismaking tot rapport. Hieronder ziet u wat elke stap inhoudt en hoelang die duurt."
       />
 
       <HowItWorks />
@@ -99,11 +99,11 @@ export default function Werkwijze() {
             hebben geen belang bij een bepaalde uitvoerder of een bepaald product.
           </p>
           <p className="mt-5 text-base leading-relaxed text-foreground-muted">
-            We stellen ook geen meerjarenonderhoudsplan (MJOP) op — dat is een ander document, voor
+            We stellen ook geen meerjarenonderhoudsplan (MJOP) op. Dat is een ander document, voor
             een andere vraag. Een MJOP plant onderhoud en vervanging van bouwdelen en installaties over
             meerdere jaren. Ons advies kijkt specifiek naar verduurzamingsmaatregelen zoals energie,
             isolatie en installaties, en hoe die zich verhouden tot onderhoud dat al gepland staat.
-            Heeft u al een MJOP? Dan sluit dit advies erop aan in plaats van het te vervangen — zie ook{' '}
+            Heeft u al een MJOP? Dan sluit dit advies erop aan in plaats van het te vervangen. Zie ook{' '}
             <Link to={ROUTES.faq} className={LINK_CLASSNAME}>
               de FAQ
             </Link>

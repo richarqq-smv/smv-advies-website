@@ -28,7 +28,7 @@ export const PACKAGE_DETAILS = {
       'U vraagt het Basis Pakket aan.',
       'U levert de gevraagde gegevens en foto’s van uw pand aan.',
       'SMV Advies stelt op basis daarvan het QuickScan-rapport op.',
-      'U ontvangt het rapport — wilt u een grondiger, op locatie onderbouwd plan, dan is het Premium Pakket de logische vervolgstap.',
+      'U ontvangt het rapport. Wilt u een grondiger, op locatie onderbouwd plan, dan is het Premium Pakket de logische vervolgstap.',
     ],
   },
   premium: {
@@ -46,19 +46,19 @@ export const PACKAGE_DETAILS = {
       'U vraagt het Premium Pakket aan.',
       'SMV Advies plant een locatiebezoek in.',
       'Tijdens de opname worden pand en installaties geïnventariseerd.',
-      'U ontvangt het analyserapport met stappenplan — wilt u de uitvoering ook begeleid hebben, dan is het Gold Pakket de logische vervolgstap.',
+      'U ontvangt het analyserapport met stappenplan. Wilt u de uitvoering ook begeleid hebben, dan is het Gold Pakket de logische vervolgstap.',
     ],
   },
   gold: {
     voorWie:
-      'Voor ondernemers die niet alleen willen weten wát er moet gebeuren, maar het traject daarna ook begeleid willen hebben — binnen een vooraf afgebakende scope.',
+      'Voor ondernemers die niet alleen willen weten wát er moet gebeuren, maar het traject daarna ook begeleid willen hebben, binnen een vooraf afgebakende scope.',
     watJeOntvangt: [
       'Alles uit het Premium Pakket.',
       'Begeleiding bij maximaal 3 geselecteerde maatregelen.',
       'Het opvragen en vergelijken van offertes bij maximaal 3 aanbieders per maatregel, in 1 offerteronde.',
       'Aanwezigheid bij een startoverleg met de gekozen uitvoerder, en in totaal 3 klantcontactmomenten.',
       'Ondersteuning bij de EIA/ISDE-aanvraag.',
-      'Eén visuele opleveringscheck op basis van beschikbare documenten — geen technische keuring, geen bouwkundige inspectie en geen garantie op uitvoeringskwaliteit.',
+      'Eén visuele opleveringscheck op basis van beschikbare documenten. Dit is geen technische keuring, geen bouwkundige inspectie en geen garantie op uitvoeringskwaliteit.',
       'Begeleiding tot maximaal 12 maanden na start; werkzaamheden buiten deze scope zijn meerwerk.',
     ],
     hoeHetProcesVerloopt: [

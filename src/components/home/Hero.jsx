@@ -36,8 +36,8 @@ export function Hero() {
           <div className="lg:col-span-5">
             <p className="max-w-[46ch] text-lg leading-relaxed text-foreground sm:text-xl">
               Eerst weten wat verstandig is, daarna pas investeren. Wij kijken naar energie,
-              onderhoud en het juiste investeringsmoment — zodat u weet wat nu moet, wat kan
-              wachten, en wat eerst onderzocht moet worden.
+              onderhoud en het juiste investeringsmoment. Zo weet u wat nu moet, wat kan
+              wachten en wat eerst onderzocht moet worden.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button to={ROUTES.contact} onClick={() => trackEvent('cta_click', { cta: 'contact', location: 'hero' })}>

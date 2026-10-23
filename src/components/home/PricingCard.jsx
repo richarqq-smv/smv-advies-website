@@ -28,7 +28,7 @@ export function PricingCard({ pkg, delay = 0 }) {
       <h3 className={cn('text-3xl', featured ? 'text-white' : 'text-primary')}>{pkg.name}</h3>
       <p className={cn('mt-1 text-base', featured ? 'text-white/80' : 'text-foreground-muted')}>
         {pkg.badge ? <strong className="font-semibold text-accent-light">{pkg.badge}. </strong> : null}
-        {pkg.mindset ? `${pkg.mindset} — ` : null}
+        {pkg.mindset ? `${pkg.mindset}: ` : null}
         {pkg.subtitle}
       </p>
 

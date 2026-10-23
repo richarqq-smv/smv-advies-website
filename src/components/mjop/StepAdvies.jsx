@@ -243,7 +243,7 @@ export function StepAdvies({ building, insights, onExport, onSend, sendStatus, o
           <p className="font-semibold text-primary">Telefonisch adviesgesprek</p>
           <p className="mt-1 leading-relaxed text-foreground-muted">
             Heeft u vragen over uw bedrijfspand of wilt u de uitkomsten van deze MJOP bespreken? Rond hieronder uw
-            account/dossier af — daar kunt u eenvoudig een telefonisch adviesgesprek van ongeveer 20-30 minuten
+            account/dossier af. Daar kunt u eenvoudig een telefonisch adviesgesprek van ongeveer 20-30 minuten
             inplannen.
           </p>
         </div>

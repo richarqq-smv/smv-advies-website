@@ -89,24 +89,24 @@ export const RC_REFERENTIEWAARDEN = {
  * "richting") in plaats van als een foutief precieze waarde.
  */
 export const RC_HINT_GEVEL = {
-  geen: 'Rc ≈ 0,2-0,4 — vergelijkbaar met een ongeïsoleerde spouwmuur',
-  matig: 'Rc typisch < 1,0 — merkbaar onder standaard na-isolatieniveau (1,3+)',
-  redelijk: 'Rc typisch 0,8-1,3 — richting standaard na-isolatieniveau',
-  goed: 'Rc ≈ 1,3-1,5 of hoger — standaard na-isolatieniveau',
+  geen: 'Rc ≈ 0,2-0,4 (vergelijkbaar met een ongeïsoleerde spouwmuur)',
+  matig: 'Rc typisch < 1,0 (merkbaar onder standaard na-isolatieniveau van 1,3+)',
+  redelijk: 'Rc typisch 0,8-1,3 (richting standaard na-isolatieniveau)',
+  goed: 'Rc ≈ 1,3-1,5 of hoger (standaard na-isolatieniveau)',
 }
 
 export const RC_HINT_DAK = {
-  geen: 'Rc ≈ 0,15-0,3 — vergelijkbaar met een ongeïsoleerd dak',
-  matig: 'Rc typisch < 2,5 — merkbaar onder standaard na-isolatieniveau (2,5+)',
-  redelijk: 'Rc typisch 1,5-2,5 — richting standaard na-isolatieniveau',
-  goed: 'Rc ≈ 2,5-6,0 — standaard na-isolatieniveau',
+  geen: 'Rc ≈ 0,15-0,3 (vergelijkbaar met een ongeïsoleerd dak)',
+  matig: 'Rc typisch < 2,5 (merkbaar onder standaard na-isolatieniveau van 2,5+)',
+  redelijk: 'Rc typisch 1,5-2,5 (richting standaard na-isolatieniveau)',
+  goed: 'Rc ≈ 2,5-6,0 (standaard na-isolatieniveau)',
 }
 
 export const RC_HINT_VLOER = {
-  geen: 'Rc ≈ 0,15-0,2 — vergelijkbaar met een ongeïsoleerde vloer',
-  matig: 'Rc typisch < 2,5 — merkbaar onder standaard na-isolatieniveau (2,5+)',
-  redelijk: 'Rc typisch 1,5-2,5 — richting standaard na-isolatieniveau',
-  goed: 'Rc ≈ 2,5-3,5 — standaard na-isolatieniveau',
+  geen: 'Rc ≈ 0,15-0,2 (vergelijkbaar met een ongeïsoleerde vloer)',
+  matig: 'Rc typisch < 2,5 (merkbaar onder standaard na-isolatieniveau van 2,5+)',
+  redelijk: 'Rc typisch 1,5-2,5 (richting standaard na-isolatieniveau)',
+  goed: 'Rc ≈ 2,5-3,5 (standaard na-isolatieniveau)',
 }
 
 // HR-glas (tussen verouderd dubbel en HR++) is een erkende Nederlandse
@@ -114,11 +114,11 @@ export const RC_HINT_VLOER = {
 // gebruiker aangeleverde tabel maar is dezelfde soort algemene, stabiele
 // richtwaarde als de rest van deze sectie.
 export const U_HINT_BEGLAZING = {
-  enkel: 'U ≈ 5,1 — hoogste warmteverlies van alle glastypen',
+  enkel: 'U ≈ 5,1 (hoogste warmteverlies van alle glastypen)',
   dubbel: 'U ≈ 2,8-3,0 (verouderd dubbel glas)',
   hr: 'U ≈ 1,6-2,0 (HR-glas, tussen verouderd dubbel en HR++)',
-  hrpp: 'U ≈ 1,1-1,2 — bij nieuwbouw-gemiddelde (≤ 1,65)',
-  triple: 'U ≈ 0,6-0,8 — ruim onder nieuwbouw-gemiddelde',
+  hrpp: 'U ≈ 1,1-1,2 (rond nieuwbouw-gemiddelde, ≤ 1,65)',
+  triple: 'U ≈ 0,6-0,8 (ruim onder nieuwbouw-gemiddelde)',
 }
 
 // Statusbanden voor de score, aflopend gesorteerd op minimumscore.
@@ -138,7 +138,7 @@ export const SCORE_BANDS = [
   {
     min: 41,
     band: 3,
-    status: 'Gemiddeld — ruimte voor verbetering',
+    status: 'Gemiddeld, met ruimte voor verbetering',
     desc: 'Er is duidelijk winst te behalen. Een paar gerichte ingrepen leveren merkbaar comfort en besparing op.',
   },
   {
@@ -150,7 +150,7 @@ export const SCORE_BANDS = [
   {
     min: 0,
     band: 5,
-    status: 'Veel energieverlies — grote kans op besparing',
+    status: 'Veel energieverlies, grote kans op besparing',
     desc: 'Dit pand verbruikt vermoedelijk aanzienlijk meer energie dan nodig. De maatregelen hieronder bieden de grootste besparingskansen.',
   },
 ]

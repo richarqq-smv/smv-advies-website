@@ -79,7 +79,7 @@ export default function Contact() {
         <Container className="max-w-xl">
           <h2 className="text-xl font-semibold text-primary">Liever uw vraag opschrijven dan bellen?</h2>
           <p className="mt-2 text-sm leading-relaxed text-foreground-muted">
-            Kan ook. Vul het formulier in, dan reageren we er per e-mail op — {COMPANY.responseTime.toLowerCase()}.
+            Kan ook. Vul het formulier in, dan reageren we er per e-mail op: {COMPANY.responseTime.toLowerCase()}.
           </p>
           <div className="mt-6">
             <ContactForm />

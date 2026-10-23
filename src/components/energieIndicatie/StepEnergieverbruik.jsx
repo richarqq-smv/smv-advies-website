@@ -9,12 +9,12 @@ export function StepEnergieverbruik({ values, setValue, onNext, onBack }) {
       <StepHead
         eyebrow="Stap 3 van 4"
         title="Energieverbruik"
-        description="Optioneel, maar maakt de indicatie preciezer. Vul in wat u weet — de rest schatten we op basis van uw pand."
+        description="Optioneel, maar maakt de indicatie preciezer. Vul in wat u weet, de rest schatten we op basis van uw pand."
       />
 
       <div className="mb-8 flex items-start gap-2.5 rounded-lg bg-accent/8 px-4 py-3.5 text-sm text-primary">
         <Info size={18} weight="fill" className="mt-0.5 shrink-0 text-accent" />
-        <p>Geen idee van uw verbruik? Geen probleem — sla deze stap gerust over. We schatten uw verbruik dan op basis van uw pand.</p>
+        <p>Geen idee van uw verbruik? Geen probleem, sla deze stap gerust over. We schatten uw verbruik dan op basis van uw pand.</p>
       </div>
 
       <div className="mb-8 grid gap-6 sm:grid-cols-2">
@@ -47,7 +47,7 @@ export function StepEnergieverbruik({ values, setValue, onNext, onBack }) {
           placeholder="Bijv. 850"
           value={values.energiekosten}
           onChange={(v) => setValue('energiekosten', v)}
-          hint="Weet u uw verbruik niet, maar wel ongeveer uw energiekosten? Vul dan alleen dit veld in — de rest rekenen we voor u uit."
+          hint="Weet u uw verbruik niet, maar wel ongeveer uw energiekosten? Vul dan alleen dit veld in. De rest rekenen we voor u uit."
         />
       </div>
 

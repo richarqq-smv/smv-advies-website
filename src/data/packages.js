@@ -86,7 +86,7 @@ export const PACKAGES = [
       'Offertes bij maximaal 3 aanbieders per maatregel, in 1 offerteronde',
       '3 klantcontactmomenten en 1 startoverleg met de uitvoerder',
       'Ondersteuning bij de EIA/ISDE-aanvraag',
-      '1 visuele opleveringscheck (op basis van beschikbare documenten — geen technische keuring, geen bouwkundige inspectie, geen garantie op uitvoeringskwaliteit)',
+      '1 visuele opleveringscheck (op basis van beschikbare documenten; geen technische keuring, geen bouwkundige inspectie, geen garantie op uitvoeringskwaliteit)',
       'Begeleiding tot maximaal 12 maanden na start',
     ],
     // Alleen op Gold van toepassing (het enige pakket met een vooraf
