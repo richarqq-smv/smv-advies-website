@@ -76,4 +76,4 @@ Search Console laat zien dat het gelukt is.
 | Indexering aanvragen voor `/contact` | URL-inspectie | Aangevraagd 22-10 (in prioriteitswachtrij); nog niet geïndexeerd |
 | Indexering aanvragen voor `/werkwijze` | URL-inspectie | Aangevraagd 22-10 (in prioriteitswachtrij); nog niet geïndexeerd |
 | Indexering aanvragen voor `/energie-indicatie` | URL-inspectie | Aangevraagd 22-10 (in prioriteitswachtrij); nog niet geïndexeerd |
-| Google Bedrijfsprofiel aanmaken | business.google.com | Nog niet gedaan (Richard wil eerst nadenken) |
+| Google Bedrijfsprofiel aanmaken | business.google.com | Nog niet gedaan (later, ivm tijd). Alle gegevens staan klaar in `bedrijfsprofiel.md` |
