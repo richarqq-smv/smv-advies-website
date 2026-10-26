@@ -114,7 +114,9 @@ function escapeHtml(str) {
 function buildHead(template, url, seo) {
   const fullTitle = seo?.title ? `${seo.title} | ${SITE_NAME}` : SITE_NAME
   const description = seo?.description || ''
-  const robots = seo?.noindex ? 'noindex, nofollow' : 'index, follow'
+  // Geen <Seo> gerenderd (seo === null), bv. een route achter
+  // RequireAuth zonder ingelogde gebruiker: niet indexeren.
+  const robots = !seo || seo.noindex ? 'noindex, nofollow' : 'index, follow'
   // `url` is null for the 404 fallback page (see main()) — it's served by
   // GitHub Pages for every unmatched path, not one specific URL, so it must
   // not claim any single path as its canonical.
