@@ -66,14 +66,14 @@ uitvoering, geen energiecontracten).
 
 ## Openstaande acties voor Richard
 
-Stand 22 oktober 2026. De wekelijkse check werkt deze lijst bij en haalt een punt pas weg als
+Stand 26 oktober 2026. De wekelijkse check werkt deze lijst bij en haalt een punt pas weg als
 Search Console laat zien dat het gelukt is.
 
-| Actie | Waar | Stand 22-10-2026 |
+| Actie | Waar | Stand 26-10-2026 |
 | --- | --- | --- |
-| `sitemap.xml` opnieuw indienen | Search Console → Sitemaps | Gedaan: ingediend 22-10 06:15 UTC, door Google opgehaald 06:15:59 UTC, 40 URL's gemeld |
-| Indexering aanvragen voor `/pakketten` | URL-inspectie | Aangevraagd 22-10 (in prioriteitswachtrij); nog niet geïndexeerd |
-| Indexering aanvragen voor `/contact` | URL-inspectie | Aangevraagd 22-10 (in prioriteitswachtrij); nog niet geïndexeerd |
-| Indexering aanvragen voor `/werkwijze` | URL-inspectie | Aangevraagd 22-10 (in prioriteitswachtrij); nog niet geïndexeerd |
-| Indexering aanvragen voor `/energie-indicatie` | URL-inspectie | Aangevraagd 22-10 (in prioriteitswachtrij); nog niet geïndexeerd |
+| `sitemap.xml` opnieuw indienen | Search Console → Sitemaps | Gedaan: 22-10 opgehaald, 40 URL's, 0 fouten |
+| Indexering aanvragen voor `/pakketten`, `/contact`, `/werkwijze`, `/energie-indicatie` | URL-inspectie | Gelukt: alle vier geïndexeerd (22 van 40 pagina's geïndexeerd) |
+| Indexering aanvragen voor `/faq` | URL-inspectie | Open: onbekend bij Google |
+| Indexering aanvragen voor `/blog`, `/werkgebied`, `/cases` | URL-inspectie | Open: ontdekt, niet geïndexeerd |
+| Indexering aanvragen voor `/blog/warmtepomp-in-het-mkb`, `/blog/laadpalen-op-uw-bedrijfsterrein`, `/blog/verborgen-energieverspillers` | URL-inspectie | Open: onbekend bij Google |
 | Google Bedrijfsprofiel aanmaken | business.google.com | Nog niet gedaan (Richard wil eerst nadenken) |
