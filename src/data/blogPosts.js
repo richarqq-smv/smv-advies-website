@@ -412,6 +412,9 @@ export const BLOG_POSTS = [
     slug: 'warmtepomp-bedrijfspand-verstandige-keuze',
     category: 'Installaties',
     title: 'Een warmtepomp in een bedrijfspand: wanneer is het een verstandige keuze?',
+    seoTitle: 'Warmtepomp in een bedrijfspand: wel verstandig?',
+    seoDescription:
+      'Een warmtepomp is niet voor elk bedrijfspand de juiste keuze. De warmtevraag, het gebouw en het gebruik bepalen of het verstandig is.',
     excerpt:
       'Een warmtepomp is niet voor elk bedrijfspand automatisch de juiste keuze. Waarom de warmtevraag, het gebouw, de bestaande installatie en het gebruik van het pand bepalen of een warmtepomp verstandig is.',
     date: '17 september 2026',
@@ -515,6 +518,9 @@ export const BLOG_POSTS = [
     slug: 'verduurzamen-bedrijfspand-waar-begin-je',
     category: 'Aanpak',
     title: 'Verduurzamen van een bedrijfspand: waar begin je als ondernemer?',
+    seoTitle: 'Bedrijfspand verduurzamen: waar begin je?',
+    seoDescription:
+      'Verduurzamen van een bedrijfspand: waar begin je, en is het verplicht? Een praktische aanpak in zeven stappen, van energiegebruik tot planning.',
     excerpt:
       'Verduurzamen van een bedrijfspand roept al snel de vraag op waar u moet beginnen. Een praktische aanpak in zeven stappen, van inzicht in het energiegebruik tot een realistische planning voor de komende jaren.',
     date: '13 september 2026',
@@ -526,6 +532,14 @@ export const BLOG_POSTS = [
         type: 'p',
         parts: [
           'U weet dat u iets met verduurzaming van uw bedrijfspand wilt doen, maar waar begint u? Voor veel ondernemers is dat juist het lastige deel: er zijn veel mogelijke maatregelen, en iedere leverancier vertelt vanuit zijn eigen vakgebied wat interessant is. Zonnepanelen, isolatie, een warmtepomp, verlichting, ventilatie of een nieuwe installatie: het kan allemaal relevant zijn, maar dat betekent niet dat alles tegelijk moet gebeuren. Een goede aanpak begint daarom niet met een maatregel. Die begint met inzicht.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'Is verduurzamen van uw bedrijfspand verplicht? Dat hangt af van het energieverbruik van het pand. Meer daarover leest u in ons artikel over ',
+          { text: 'de energiebesparingsplicht', to: ROUTES.blogPost('energiebesparingsplicht-voor-uw-bedrijfspand') },
+          '.',
         ],
       },
       { type: 'h2', text: '1. Kijk eerst naar hoe u het pand gebruikt' },

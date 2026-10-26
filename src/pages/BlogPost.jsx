@@ -118,8 +118,8 @@ export default function BlogPost() {
   return (
     <>
       <Seo
-        title={post.title}
-        description={post.excerpt}
+        title={post.seoTitle ?? post.title}
+        description={post.seoDescription ?? post.excerpt}
         noindex={!isGepubliceerd(post)}
         structuredData={[
           getBreadcrumbSchema([
