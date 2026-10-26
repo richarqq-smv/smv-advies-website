@@ -1,0 +1,1237 @@
+{
+  "periode": {
+    "start": "2026-09-26",
+    "eind": "2026-10-23"
+  },
+  "totaal": {
+    "clicks": 6,
+    "impressions": 370,
+    "ctr": 0.016216216216216217,
+    "position": 32.983783783783785
+  },
+  "queries": [
+    {
+      "keys": [
+        "ambitie bedrijfspand duurzaam"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 26.8
+    },
+    {
+      "keys": [
+        "bedrijfshal isoleren"
+      ],
+      "clicks": 0,
+      "impressions": 10,
+      "ctr": 0,
+      "position": 2.3
+    },
+    {
+      "keys": [
+        "bedrijfshal verduurzamen"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 86.5
+    },
+    {
+      "keys": [
+        "bedrijfspand isoleren"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 84
+    },
+    {
+      "keys": [
+        "bedrijfspand verduurzamen"
+      ],
+      "clicks": 0,
+      "impressions": 26,
+      "ctr": 0,
+      "position": 88.5
+    },
+    {
+      "keys": [
+        "bedrijfsruimte elektra aanpassen"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 89
+    },
+    {
+      "keys": [
+        "beheer energieopwekkende bedrijfsmiddelen"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 24
+    },
+    {
+      "keys": [
+        "binnenklimaat bedrijfspand verbeteren"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 86.5
+    },
+    {
+      "keys": [
+        "duurzaamheidseisen bedrijfspanden"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 63.333333333333336
+    },
+    {
+      "keys": [
+        "duurzame oplossingen voor onderhoud bedrijfspanden"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 1
+    },
+    {
+      "keys": [
+        "energie advies bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 77
+    },
+    {
+      "keys": [
+        "hoe kunnen verlichting, klimaat, zonwering, toegangscontrole en energiebeheer in een bedrijfspand centraal worden aangestuurd?"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 5
+    },
+    {
+      "keys": [
+        "hoe onderhoud je een bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 38
+    },
+    {
+      "keys": [
+        "ik wil een duurzaam verwarmingssysteem laten installeren in ons bedrijfspand wat zijn mijn opties"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 11
+    },
+    {
+      "keys": [
+        "moet de vloer van mijn bedrijfspand volledig worden geïsoleerd"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 5
+    },
+    {
+      "keys": [
+        "onafhankelijk verduurzamingsadvies"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 14
+    },
+    {
+      "keys": [
+        "pand verduurzamen"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 92
+    },
+    {
+      "keys": [
+        "s m v"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 29
+    },
+    {
+      "keys": [
+        "smv"
+      ],
+      "clicks": 0,
+      "impressions": 23,
+      "ctr": 0,
+      "position": 39.34782608695652
+    },
+    {
+      "keys": [
+        "ventilatie bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 36
+    },
+    {
+      "keys": [
+        "verduurzamen bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 54,
+      "ctr": 0,
+      "position": 27.72222222222222
+    },
+    {
+      "keys": [
+        "verduurzamen bedrijfspand installaties"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 81
+    },
+    {
+      "keys": [
+        "verduurzamen bedrijfspand verplicht"
+      ],
+      "clicks": 0,
+      "impressions": 10,
+      "ctr": 0,
+      "position": 20.4
+    },
+    {
+      "keys": [
+        "verduurzamen kantoorpanden"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 81
+    },
+    {
+      "keys": [
+        "verduurzaming bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 11,
+      "ctr": 0,
+      "position": 28.454545454545453
+    },
+    {
+      "keys": [
+        "verduurzaming pand"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 88.8
+    },
+    {
+      "keys": [
+        "verduurzamingsadvies"
+      ],
+      "clicks": 0,
+      "impressions": 7,
+      "ctr": 0,
+      "position": 20.142857142857142
+    },
+    {
+      "keys": [
+        "verduurzamingsadvies bedrijfsgebouw"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 25
+    },
+    {
+      "keys": [
+        "verwarming bedrijfsruimte"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 96
+    },
+    {
+      "keys": [
+        "vloerisolatie bedrijfshal"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 3
+    },
+    {
+      "keys": [
+        "wanneer is een luchtverwarmer de beste keuze voor je bedrijfspand?"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 9
+    },
+    {
+      "keys": [
+        "wanneer is verduurzamingsadvies interessant"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 70
+    },
+    {
+      "keys": [
+        "warmtepomp bedrijfshal"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 72.66666666666667
+    },
+    {
+      "keys": [
+        "warmtepomp bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 16,
+      "ctr": 0,
+      "position": 85
+    },
+    {
+      "keys": [
+        "warmtepomp bedrijfspand kosten"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 79
+    },
+    {
+      "keys": [
+        "warmtepomp kantoor"
+      ],
+      "clicks": 0,
+      "impressions": 29,
+      "ctr": 0,
+      "position": 34.793103448275865
+    },
+    {
+      "keys": [
+        "warmtepomp magazijn"
+      ],
+      "clicks": 0,
+      "impressions": 7,
+      "ctr": 0,
+      "position": 21
+    },
+    {
+      "keys": [
+        "warmtepompen bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 70
+    },
+    {
+      "keys": [
+        "wat is verduurzamingsadvies"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 40.333333333333336
+    },
+    {
+      "keys": [
+        "we gaan een bedrijfspand renoveren. welke slimme gebouwtechniek moeten we nu meenemen om later energie, comfort en beheer te verbeteren?"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 7
+    },
+    {
+      "keys": [
+        "wel"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 1
+    },
+    {
+      "keys": [
+        "welke is de beste?"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 1
+    },
+    {
+      "keys": [
+        "zakelijk vastgoed verduurzamen"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 80
+    }
+  ],
+  "paginas": [
+    {
+      "keys": [
+        "https://smv-advies.nl/"
+      ],
+      "clicks": 4,
+      "impressions": 86,
+      "ctr": 0.046511627906976744,
+      "position": 15.372093023255815
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/over"
+      ],
+      "clicks": 2,
+      "impressions": 46,
+      "ctr": 0.043478260869565216,
+      "position": 3.5652173913043477
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/voorwaarden"
+      ],
+      "clicks": 1,
+      "impressions": 24,
+      "ctr": 0.041666666666666664,
+      "position": 2.791666666666667
+    },
+    {
+      "keys": [
+        "http://smv-advies.nl/"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 1
+    },
+    {
+      "keys": [
+        "http://www.smv-advies.nl/privacy"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 1
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/blog/bedrijfspand-isoleren-of-installatie-eerst"
+      ],
+      "clicks": 0,
+      "impressions": 20,
+      "ctr": 0,
+      "position": 11
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/blog/bouwkundige-beoordeling-voor-verduurzaming"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 8
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/blog/energiebesparingsplicht-voor-uw-bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 9.166666666666666
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/blog/led-verlichting-snelste-stap"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 47
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 154,
+      "ctr": 0,
+      "position": 43.72727272727273
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/blog/warmtepomp-bedrijfspand-verstandige-keuze"
+      ],
+      "clicks": 0,
+      "impressions": 78,
+      "ctr": 0,
+      "position": 47.743589743589745
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/energie-indicatie"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 8
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/klaaswaal"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 8
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/trustpilot"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 1
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/werkwijze"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 5
+    }
+  ],
+  "query_pagina": [
+    {
+      "keys": [
+        "ambitie bedrijfspand duurzaam",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 26.8
+    },
+    {
+      "keys": [
+        "bedrijfshal isoleren",
+        "https://smv-advies.nl/blog/bedrijfspand-isoleren-of-installatie-eerst"
+      ],
+      "clicks": 0,
+      "impressions": 10,
+      "ctr": 0,
+      "position": 2.3
+    },
+    {
+      "keys": [
+        "bedrijfshal verduurzamen",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 86.5
+    },
+    {
+      "keys": [
+        "bedrijfspand isoleren",
+        "https://smv-advies.nl/blog/bedrijfspand-isoleren-of-installatie-eerst"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 84
+    },
+    {
+      "keys": [
+        "bedrijfspand verduurzamen",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 26,
+      "ctr": 0,
+      "position": 88.5
+    },
+    {
+      "keys": [
+        "bedrijfsruimte elektra aanpassen",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 89
+    },
+    {
+      "keys": [
+        "beheer energieopwekkende bedrijfsmiddelen",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 24
+    },
+    {
+      "keys": [
+        "binnenklimaat bedrijfspand verbeteren",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 86.5
+    },
+    {
+      "keys": [
+        "duurzaamheidseisen bedrijfspanden",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 63.333333333333336
+    },
+    {
+      "keys": [
+        "duurzame oplossingen voor onderhoud bedrijfspanden",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 1
+    },
+    {
+      "keys": [
+        "energie advies bedrijfspand",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 77
+    },
+    {
+      "keys": [
+        "hoe kunnen verlichting, klimaat, zonwering, toegangscontrole en energiebeheer in een bedrijfspand centraal worden aangestuurd?",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 5
+    },
+    {
+      "keys": [
+        "hoe onderhoud je een bedrijfspand",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 38
+    },
+    {
+      "keys": [
+        "ik wil een duurzaam verwarmingssysteem laten installeren in ons bedrijfspand wat zijn mijn opties",
+        "https://smv-advies.nl/blog/warmtepomp-bedrijfspand-verstandige-keuze"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 11
+    },
+    {
+      "keys": [
+        "moet de vloer van mijn bedrijfspand volledig worden geïsoleerd",
+        "https://smv-advies.nl/blog/bedrijfspand-isoleren-of-installatie-eerst"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 5
+    },
+    {
+      "keys": [
+        "onafhankelijk verduurzamingsadvies",
+        "https://smv-advies.nl/"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 14
+    },
+    {
+      "keys": [
+        "pand verduurzamen",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 92
+    },
+    {
+      "keys": [
+        "s m v",
+        "https://smv-advies.nl/"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 29
+    },
+    {
+      "keys": [
+        "smv",
+        "https://smv-advies.nl/"
+      ],
+      "clicks": 0,
+      "impressions": 23,
+      "ctr": 0,
+      "position": 39.34782608695652
+    },
+    {
+      "keys": [
+        "ventilatie bedrijfspand",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 36
+    },
+    {
+      "keys": [
+        "verduurzamen bedrijfspand",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 54,
+      "ctr": 0,
+      "position": 27.72222222222222
+    },
+    {
+      "keys": [
+        "verduurzamen bedrijfspand installaties",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 81
+    },
+    {
+      "keys": [
+        "verduurzamen bedrijfspand verplicht",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 10,
+      "ctr": 0,
+      "position": 20.4
+    },
+    {
+      "keys": [
+        "verduurzamen kantoorpanden",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 81
+    },
+    {
+      "keys": [
+        "verduurzaming bedrijfspand",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 11,
+      "ctr": 0,
+      "position": 28.454545454545453
+    },
+    {
+      "keys": [
+        "verduurzaming pand",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 88.8
+    },
+    {
+      "keys": [
+        "verduurzamingsadvies",
+        "https://smv-advies.nl/"
+      ],
+      "clicks": 0,
+      "impressions": 7,
+      "ctr": 0,
+      "position": 20.142857142857142
+    },
+    {
+      "keys": [
+        "verduurzamingsadvies bedrijfsgebouw",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 25
+    },
+    {
+      "keys": [
+        "verwarming bedrijfsruimte",
+        "https://smv-advies.nl/blog/warmtepomp-bedrijfspand-verstandige-keuze"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 96
+    },
+    {
+      "keys": [
+        "vloerisolatie bedrijfshal",
+        "https://smv-advies.nl/blog/bedrijfspand-isoleren-of-installatie-eerst"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 3
+    },
+    {
+      "keys": [
+        "wanneer is een luchtverwarmer de beste keuze voor je bedrijfspand?",
+        "https://smv-advies.nl/blog/warmtepomp-bedrijfspand-verstandige-keuze"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 9
+    },
+    {
+      "keys": [
+        "wanneer is verduurzamingsadvies interessant",
+        "https://smv-advies.nl/blog/bedrijfspand-isoleren-of-installatie-eerst"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 70
+    },
+    {
+      "keys": [
+        "warmtepomp bedrijfshal",
+        "https://smv-advies.nl/blog/warmtepomp-bedrijfspand-verstandige-keuze"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 72.66666666666667
+    },
+    {
+      "keys": [
+        "warmtepomp bedrijfspand",
+        "https://smv-advies.nl/blog/warmtepomp-bedrijfspand-verstandige-keuze"
+      ],
+      "clicks": 0,
+      "impressions": 16,
+      "ctr": 0,
+      "position": 85
+    },
+    {
+      "keys": [
+        "warmtepomp bedrijfspand kosten",
+        "https://smv-advies.nl/blog/warmtepomp-bedrijfspand-verstandige-keuze"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 79
+    },
+    {
+      "keys": [
+        "warmtepomp kantoor",
+        "https://smv-advies.nl/blog/warmtepomp-bedrijfspand-verstandige-keuze"
+      ],
+      "clicks": 0,
+      "impressions": 29,
+      "ctr": 0,
+      "position": 34.793103448275865
+    },
+    {
+      "keys": [
+        "warmtepomp magazijn",
+        "https://smv-advies.nl/blog/warmtepomp-bedrijfspand-verstandige-keuze"
+      ],
+      "clicks": 0,
+      "impressions": 7,
+      "ctr": 0,
+      "position": 21
+    },
+    {
+      "keys": [
+        "warmtepompen bedrijfspand",
+        "https://smv-advies.nl/blog/warmtepomp-bedrijfspand-verstandige-keuze"
+      ],
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 70
+    },
+    {
+      "keys": [
+        "wat is verduurzamingsadvies",
+        "https://smv-advies.nl/"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 40.333333333333336
+    },
+    {
+      "keys": [
+        "we gaan een bedrijfspand renoveren. welke slimme gebouwtechniek moeten we nu meenemen om later energie, comfort en beheer te verbeteren?",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 7
+    },
+    {
+      "keys": [
+        "wel",
+        "https://smv-advies.nl/over"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 1
+    },
+    {
+      "keys": [
+        "wel",
+        "https://smv-advies.nl/voorwaarden"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 2
+    },
+    {
+      "keys": [
+        "welke is de beste?",
+        "https://smv-advies.nl/over"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 1
+    },
+    {
+      "keys": [
+        "zakelijk vastgoed verduurzamen",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 80
+    }
+  ],
+  "sitemaps": {
+    "sitemap": [
+      {
+        "path": "https://smv-advies.nl/sitemap.xml",
+        "lastSubmitted": "2026-10-22T06:15:42.893Z",
+        "isPending": false,
+        "isSitemapsIndex": false,
+        "type": "sitemap",
+        "lastDownloaded": "2026-10-22T06:15:59.821Z",
+        "warnings": "0",
+        "errors": "0",
+        "contents": [
+          {
+            "type": "web",
+            "submitted": "40",
+            "indexed": "0"
+          }
+        ]
+      }
+    ]
+  },
+  "inspectie": [
+    {
+      "url": "https://smv-advies.nl/",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-10-22T08:13:36Z"
+    },
+    {
+      "url": "https://smv-advies.nl/pakketten",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-10-22T06:29:19Z"
+    },
+    {
+      "url": "https://smv-advies.nl/energie-indicatie",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-10-22T06:30:30Z"
+    },
+    {
+      "url": "https://smv-advies.nl/over",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-10-21T12:44:06Z"
+    },
+    {
+      "url": "https://smv-advies.nl/werkwijze",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-10-22T06:30:30Z"
+    },
+    {
+      "url": "https://smv-advies.nl/werkgebied",
+      "verdict": "NEUTRAL",
+      "coverage": "Discovered - currently not indexed",
+      "last": null
+    },
+    {
+      "url": "https://smv-advies.nl/oud-beijerland",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-10-22T09:50:30Z"
+    },
+    {
+      "url": "https://smv-advies.nl/heinenoord",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-10-22T07:54:35Z"
+    },
+    {
+      "url": "https://smv-advies.nl/puttershoek",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-10-22T07:58:02Z"
+    },
+    {
+      "url": "https://smv-advies.nl/maasdam",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-10-22T10:40:15Z"
+    },
+    {
+      "url": "https://smv-advies.nl/zuid-beijerland",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-10-22T06:56:52Z"
+    },
+    {
+      "url": "https://smv-advies.nl/mijnsheerenland",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-10-22T07:39:08Z"
+    },
+    {
+      "url": "https://smv-advies.nl/s-gravendeel",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-10-22T08:45:21Z"
+    },
+    {
+      "url": "https://smv-advies.nl/klaaswaal",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-10-22T07:29:59Z"
+    },
+    {
+      "url": "https://smv-advies.nl/strijen",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-10-22T09:10:10Z"
+    },
+    {
+      "url": "https://smv-advies.nl/numansdorp",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-10-22T07:33:33Z"
+    },
+    {
+      "url": "https://smv-advies.nl/cases",
+      "verdict": "NEUTRAL",
+      "coverage": "Discovered - currently not indexed",
+      "last": null
+    },
+    {
+      "url": "https://smv-advies.nl/blog",
+      "verdict": "NEUTRAL",
+      "coverage": "Discovered - currently not indexed",
+      "last": null
+    },
+    {
+      "url": "https://smv-advies.nl/blog/bouwkundige-beoordeling-voor-verduurzaming",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-10-15T10:37:55Z"
+    },
+    {
+      "url": "https://smv-advies.nl/blog/verduurzamingsmaatregelen-bedrijfspand",
+      "verdict": "NEUTRAL",
+      "coverage": "Discovered - currently not indexed",
+      "last": null
+    },
+    {
+      "url": "https://smv-advies.nl/blog/warmtepomp-bedrijfspand-verstandige-keuze",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-09-30T00:31:50Z"
+    },
+    {
+      "url": "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-09-30T00:37:10Z"
+    },
+    {
+      "url": "https://smv-advies.nl/blog/bedrijfspand-isoleren-of-installatie-eerst",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-09-30T02:22:30Z"
+    },
+    {
+      "url": "https://smv-advies.nl/blog/ventilatie-in-uw-bedrijfspand",
+      "verdict": "NEUTRAL",
+      "coverage": "Discovered - currently not indexed",
+      "last": null
+    },
+    {
+      "url": "https://smv-advies.nl/blog/energiebesparingsplicht-voor-uw-bedrijfspand",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-09-06T18:47:19Z"
+    },
+    {
+      "url": "https://smv-advies.nl/blog/batterijopslag-voor-uw-bedrijfspand",
+      "verdict": "NEUTRAL",
+      "coverage": "Discovered - currently not indexed",
+      "last": null
+    },
+    {
+      "url": "https://smv-advies.nl/blog/laadpalen-op-uw-bedrijfsterrein",
+      "verdict": "NEUTRAL",
+      "coverage": "URL is unknown to Google",
+      "last": null
+    },
+    {
+      "url": "https://smv-advies.nl/blog/zonnepanelen-op-uw-bedrijfspand",
+      "verdict": "NEUTRAL",
+      "coverage": "Discovered - currently not indexed",
+      "last": null
+    },
+    {
+      "url": "https://smv-advies.nl/blog/energielabel-c-verplicht-bedrijfspand",
+      "verdict": "NEUTRAL",
+      "coverage": "Discovered - currently not indexed",
+      "last": null
+    },
+    {
+      "url": "https://smv-advies.nl/blog/netcongestie-hoeksche-waard",
+      "verdict": "NEUTRAL",
+      "coverage": "Discovered - currently not indexed",
+      "last": null
+    },
+    {
+      "url": "https://smv-advies.nl/blog/dakisolatie-voor-uw-bedrijfspand",
+      "verdict": "NEUTRAL",
+      "coverage": "Discovered - currently not indexed",
+      "last": null
+    },
+    {
+      "url": "https://smv-advies.nl/blog/eia-isde-sde-subsidies",
+      "verdict": "NEUTRAL",
+      "coverage": "Discovered - currently not indexed",
+      "last": null
+    },
+    {
+      "url": "https://smv-advies.nl/blog/warmtepomp-in-het-mkb",
+      "verdict": "NEUTRAL",
+      "coverage": "URL is unknown to Google",
+      "last": null
+    },
+    {
+      "url": "https://smv-advies.nl/blog/led-verlichting-snelste-stap",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-09-06T13:13:56Z"
+    },
+    {
+      "url": "https://smv-advies.nl/blog/verborgen-energieverspillers",
+      "verdict": "NEUTRAL",
+      "coverage": "URL is unknown to Google",
+      "last": null
+    },
+    {
+      "url": "https://smv-advies.nl/faq",
+      "verdict": "NEUTRAL",
+      "coverage": "URL is unknown to Google",
+      "last": null
+    },
+    {
+      "url": "https://smv-advies.nl/trustpilot",
+      "verdict": "NEUTRAL",
+      "coverage": "Discovered - currently not indexed",
+      "last": null
+    },
+    {
+      "url": "https://smv-advies.nl/contact",
+      "verdict": "PASS",
+      "coverage": "Submitted and indexed",
+      "last": "2026-10-22T06:30:30Z"
+    },
+    {
+      "url": "https://smv-advies.nl/privacy",
+      "verdict": "NEUTRAL",
+      "coverage": "Discovered - currently not indexed",
+      "last": null
+    }
+  ]
+}
