@@ -76,4 +76,4 @@ Search Console laat zien dat het gelukt is.
 | Indexering aanvragen voor `/faq` | URL-inspectie | Open: onbekend bij Google |
 | Indexering aanvragen voor `/blog`, `/werkgebied`, `/cases` | URL-inspectie | Open: ontdekt, niet geïndexeerd |
 | Indexering aanvragen voor `/blog/warmtepomp-in-het-mkb`, `/blog/laadpalen-op-uw-bedrijfsterrein`, `/blog/verborgen-energieverspillers` | URL-inspectie | Open: onbekend bij Google |
-| Google Bedrijfsprofiel aanmaken | business.google.com | Nog niet gedaan (Richard wil eerst nadenken) |
+| Google Bedrijfsprofiel aanmaken | business.google.com | Nog niet gedaan (later, ivm tijd). Alle gegevens staan klaar in `bedrijfsprofiel.md` |
