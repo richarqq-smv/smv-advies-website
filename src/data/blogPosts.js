@@ -13,6 +13,9 @@ export const BLOG_POSTS = [
     slug: 'mjop-en-verduurzamingsadvies-verschil',
     category: 'Aanpak',
     title: 'MJOP en verduurzamingsadvies voor uw bedrijfspand: wat is het verschil?',
+    seoTitle: 'MJOP en verduurzamingsadvies: het verschil',
+    seoDescription:
+      'Een MJOP en een verduurzamingsadvies beantwoorden een andere vraag. Wat een MJOP wel en niet doet, en hoe het zich verhoudt tot verduurzaming van uw pand.',
     excerpt:
       'Een meerjarenonderhoudsplan en een verduurzamingsadvies worden vaak met elkaar verward, maar beantwoorden een andere vraag. Wat een MJOP wel en niet doet, en hoe dit zich verhoudt tot verduurzaming van uw bedrijfspand.',
     date: '12 november 2026',
@@ -101,6 +104,9 @@ export const BLOG_POSTS = [
     slug: 'veelgemaakte-fouten-verduurzamen-bedrijfspand',
     category: 'Inzicht',
     title: '7 veelgemaakte fouten bij het verduurzamen van een bedrijfspand',
+    seoTitle: '7 fouten bij het verduurzamen van uw pand',
+    seoDescription:
+      'Verduurzamen van een bedrijfspand gaat vaak mis door de volgorde, niet door de techniek. Zeven veelgemaakte fouten en hoe u ze voorkomt.',
     excerpt:
       'Verduurzamen van een bedrijfspand gaat vaak mis door de volgorde, niet door de techniek. Zeven fouten die ondernemers in de praktijk het vaakst maken, en hoe u ze voorkomt.',
     date: '29 oktober 2026',
@@ -200,6 +206,9 @@ export const BLOG_POSTS = [
     slug: 'bouwkundige-beoordeling-voor-verduurzaming',
     category: 'Aanpak',
     title: 'Waarom een bouwkundige beoordeling vóór verduurzaming het verschil maakt',
+    seoTitle: 'Bouwkundige beoordeling vóór verduurzaming',
+    seoDescription:
+      'Een installatie kiezen zonder de bouwkundige staat van uw pand te kennen, is gokken. Wat een bouwkundige beoordeling inhoudt en waarom die eerst komt.',
     excerpt:
       'Een installatie kiezen zonder de bouwkundige staat van uw pand te kennen, is gokken met een investering. Wat een bouwkundige beoordeling inhoudt, en waarom dit vóór verduurzaming een logische stap is.',
     date: '15 oktober 2026',
@@ -292,6 +301,9 @@ export const BLOG_POSTS = [
     slug: 'verduurzamingsmaatregelen-bedrijfspand',
     category: 'Inzicht',
     title: 'Welke verduurzamingsmaatregelen leveren bij een bedrijfspand echt iets op?',
+    seoTitle: 'Welke verduurzamingsmaatregelen lonen?',
+    seoDescription:
+      'Isolatie, zonnepanelen, een warmtepomp: de lijst is lang. Zo bepaalt u welke verduurzamingsmaatregelen voor uw bedrijfspand echt iets opleveren.',
     excerpt:
       'Isolatie, zonnepanelen, een warmtepomp: de lijst met mogelijke verduurzamingsmaatregelen is lang. Hoe u bepaalt welke maatregelen voor uw eigen bedrijfspand daadwerkelijk iets opleveren.',
     date: '21 september 2026',
@@ -749,6 +761,9 @@ export const BLOG_POSTS = [
     slug: 'ventilatie-in-uw-bedrijfspand',
     category: 'Installaties',
     title: 'Ventilatie in uw bedrijfspand: wettelijke eisen en besparingsmogelijkheden',
+    seoTitle: 'Ventilatie bedrijfspand: eisen en besparing',
+    seoDescription:
+      'Ventilatie is in vrijwel elk bedrijfspand wettelijk verplicht. Wat de eisen inhouden, en waar de belangrijkste besparingsmogelijkheden zitten.',
     excerpt:
       'Ventilatie is wettelijk verplicht in vrijwel elk bedrijfspand, maar wordt zelden als verduurzamingsmaatregel gezien. Wat de eisen aan ventilatie inhouden, en waar de belangrijkste besparingsmogelijkheden zitten.',
     date: '4 september 2026',
@@ -823,6 +838,9 @@ export const BLOG_POSTS = [
     slug: 'energiebesparingsplicht-voor-uw-bedrijfspand',
     category: 'Wetgeving',
     title: 'Energiebesparingsplicht voor uw bedrijfspand: wat moet u weten?',
+    seoTitle: 'Energiebesparingsplicht: wat moet u weten?',
+    seoDescription:
+      'Vanaf een bepaald energieverbruik moet uw bedrijfspand energiebesparende maatregelen nemen, niet alleen kantoren. Wat de plicht voor uw pand inhoudt.',
     excerpt:
       'Vanaf een bepaald energieverbruik moet uw bedrijfspand energiebesparende maatregelen nemen. Die verplichting geldt voor veel meer bedrijfspanden dan alleen kantoren. Wat de energiebesparingsplicht inhoudt en wat dit voor uw pand kan betekenen.',
     date: '3 september 2026',
@@ -908,6 +926,9 @@ export const BLOG_POSTS = [
     slug: 'batterijopslag-voor-uw-bedrijfspand',
     category: 'Installaties',
     title: 'Batterijopslag voor uw bedrijfspand: wanneer is dit relevant?',
+    seoTitle: 'Batterijopslag bedrijfspand: wanneer relevant?',
+    seoDescription:
+      'Een batterij maakt zelf opgewekte stroom later bruikbaar, maar past niet bij elk bedrijfspand. Wanneer het relevant is en welke EIA- of subsidieroute er is.',
     excerpt:
       'Een batterij kan zelf opgewekte stroom bruikbaar maken op het moment dat u die nodig heeft, maar is niet voor elk bedrijfspand een logische stap. Wanneer het relevant wordt, en via welke route dit fiscaal of met subsidie kan worden ondersteund.',
     date: '2 september 2026',
@@ -984,6 +1005,9 @@ export const BLOG_POSTS = [
     slug: 'laadpalen-op-uw-bedrijfsterrein',
     category: 'Installaties',
     title: 'Laadpalen op uw bedrijfsterrein: waar u rekening mee moet houden',
+    seoTitle: 'Laadpalen op het bedrijfsterrein: let hierop',
+    seoDescription:
+      'Laadpalen voor bedrijfsauto’s zijn een logische stap, maar de subsidies zijn veranderd en de netcapaciteit telt zwaar mee. De belangrijkste aandachtspunten.',
     excerpt:
       'Laadpalen voor elektrische bedrijfsauto’s zijn een logische verduurzamingsstap, maar de subsidiemogelijkheden zijn recent veranderd en de netcapaciteit speelt een grotere rol dan u misschien verwacht. Een overzicht van de belangrijkste aandachtspunten.',
     date: '1 september 2026',
@@ -1051,6 +1075,9 @@ export const BLOG_POSTS = [
     slug: 'zonnepanelen-op-uw-bedrijfspand',
     category: 'Installaties',
     title: 'Zonnepanelen op uw bedrijfspand: waar u rekening mee moet houden',
+    seoTitle: 'Zonnepanelen op uw bedrijfspand: let hierop',
+    seoDescription:
+      'Vergunning, het einde van de salderingsregeling, netcongestie en de fiscale kant: waar u op let voordat u zonnepanelen op uw bedrijfspand laat plaatsen.',
     excerpt:
       'Voordat u zonnepanelen laat plaatsen op uw bedrijfspand, spelen vergunning, de aflopende salderingsregeling, netcongestie en de fiscale kant allemaal een rol. Een overzicht van de belangrijkste aandachtspunten.',
     date: '31 augustus 2026',
@@ -1132,6 +1159,9 @@ export const BLOG_POSTS = [
     slug: 'energielabel-c-verplicht-bedrijfspand',
     category: 'Wetgeving',
     title: 'Energielabel C verplicht voor uw bedrijfspand: wat betekent dit?',
+    seoTitle: 'Energielabel C verplicht: wat betekent dit?',
+    seoDescription:
+      'Sinds 2023 moet een kantoorpand minimaal energielabel C hebben, anders geldt een gebruiksverbod. Voor welke panden dit geldt en welke uitzonderingen er zijn.',
     excerpt:
       'Sinds 2023 moet een kantoorpand minimaal energielabel C hebben, anders geldt een gebruiksverbod. Dit artikel legt uit voor welke panden dit geldt en welke uitzonderingen er zijn.',
     date: '30 augustus 2026',
@@ -1292,6 +1322,7 @@ export const BLOG_POSTS = [
     slug: 'netcongestie-hoeksche-waard',
     category: 'Energienet',
     title: 'Netcongestie in de Hoeksche Waard: wat betekent dit voor uw bedrijfspand?',
+    seoTitle: 'Netcongestie Hoeksche Waard: wat betekent het?',
     excerpt:
       'Het stroomnet in de Hoeksche Waard zit vol. Wat betekent netcongestie concreet voor uw bedrijfspand, en wat kunt u er zelf aan doen?',
     date: '20 augustus 2026',
@@ -1499,6 +1530,7 @@ export const BLOG_POSTS = [
     slug: 'dakisolatie-voor-uw-bedrijfspand',
     category: 'Isolatie',
     title: 'Dakisolatie voor uw bedrijfspand: waar het echt verschil maakt',
+    seoTitle: 'Dakisolatie voor uw bedrijfspand',
     excerpt:
       'Het dak is vaak de grootste warmteverliezer van een bedrijfspand. Hoe u kansen herkent, wat het oplevert en waar u op moet letten.',
     date: '18 juli 2026',
@@ -1604,6 +1636,7 @@ export const BLOG_POSTS = [
     slug: 'eia-isde-sde-subsidies',
     category: 'Subsidies',
     title: 'EIA, ISDE en SDE++: welke subsidie past bij uw verduurzaming?',
+    seoTitle: 'EIA, ISDE en SDE++: welke subsidie past?',
     excerpt:
       'Subsidies kunnen de terugverdientijd van maatregelen fors verkorten. Een overzicht van de belangrijkste regelingen en wanneer ze van toepassing zijn.',
     date: '4 juli 2026',
@@ -1745,6 +1778,7 @@ export const BLOG_POSTS = [
     slug: 'warmtepomp-in-het-mkb',
     category: 'Installaties',
     title: 'De warmtepomp in het mkb: wanneer is het de juiste stap?',
+    seoTitle: 'Warmtepomp in het mkb: wanneer de juiste stap?',
     excerpt:
       'Een warmtepomp is duurzaam, maar alleen slim als uw pand er klaar voor is. Lees wanneer het werkt en wat u vooraf moet regelen.',
     date: '20 juni 2026',
@@ -1825,6 +1859,7 @@ export const BLOG_POSTS = [
     slug: 'led-verlichting-snelste-stap',
     category: 'Efficiëntie',
     title: 'LED-verlichting: de snelste verduurzamingsstap die er is',
+    seoTitle: 'LED-verlichting: de snelste verduurzamingsstap',
     excerpt: 'Verlichting is zichtbaar, meetbaar en snel terug te verdienen. Waarom LED voor veel bedrijven de ideale eerste stap is.',
     date: '5 juni 2026',
     isoDate: '2026-06-05',
