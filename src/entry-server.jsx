@@ -3,7 +3,7 @@ import { renderToPipeableStream } from 'react-dom/server'
 import { StaticRouter } from 'react-router-dom'
 import App from './App.jsx'
 import { AuthProvider } from './lib/auth/AuthProvider.jsx'
-import { getLastSeo } from './components/seo/seoRegistry'
+import { getLastSeo, setLastSeo } from './components/seo/seoRegistry'
 
 /**
  * Build-time-only entry point used by scripts/prerender.mjs to render each
@@ -20,6 +20,11 @@ import { getLastSeo } from './components/seo/seoRegistry'
  * lazy import before collecting the HTML.
  */
 export function render(url) {
+  // Reset per route: een pagina die zelf geen <Seo> rendert (bv. achter
+  // RequireAuth, die zonder ingelogde gebruiker niets toont) erfde anders
+  // de titel en robots van de vorige route. /MJOP-Tool kreeg zo
+  // "Algemene voorwaarden" + "index, follow".
+  setLastSeo(null)
   return new Promise((resolve, reject) => {
     let html = ''
     const { pipe } = renderToPipeableStream(
