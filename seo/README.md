@@ -66,14 +66,15 @@ uitvoering, geen energiecontracten).
 
 ## Openstaande acties voor Richard
 
-Stand 26 oktober 2026. De wekelijkse check werkt deze lijst bij en haalt een punt pas weg als
+Stand 2 november 2026. De wekelijkse check werkt deze lijst bij en haalt een punt pas weg als
 Search Console laat zien dat het gelukt is.
 
-| Actie | Waar | Stand 26-10-2026 |
+| Actie | Waar | Stand 02-11-2026 |
 | --- | --- | --- |
-| `sitemap.xml` opnieuw indienen | Search Console → Sitemaps | Gedaan: 22-10 opgehaald, 40 URL's, 0 fouten |
-| Indexering aanvragen voor `/pakketten`, `/contact`, `/werkwijze`, `/energie-indicatie` | URL-inspectie | Gelukt: alle vier geïndexeerd (22 van 40 pagina's geïndexeerd) |
-| Indexering aanvragen voor `/faq` | URL-inspectie | Open: onbekend bij Google |
-| Indexering aanvragen voor `/blog`, `/werkgebied`, `/cases` | URL-inspectie | Open: ontdekt, niet geïndexeerd |
-| Indexering aanvragen voor `/blog/warmtepomp-in-het-mkb`, `/blog/laadpalen-op-uw-bedrijfsterrein`, `/blog/verborgen-energieverspillers` | URL-inspectie | Open: onbekend bij Google |
+| `sitemap.xml` opnieuw indienen | Search Console → Sitemaps | Nu opnieuw nodig: er is een 41e URL bijgekomen (`/blog/veelgemaakte-fouten-verduurzamen-bedrijfspand`). Laatst opgehaald 28-10 (40 URL's, 0 fouten) |
+| Indexering aanvragen voor `/pakketten`, `/contact`, `/werkwijze`, `/energie-indicatie` | URL-inspectie | Gelukt (23 van 40 pagina's geïndexeerd) |
+| Indexering aanvragen voor `/blog`, `/faq`, `/werkgebied`, `/cases` | URL-inspectie | Open: `/blog` onbekend bij Google; `/faq`, `/werkgebied`, `/cases` ontdekt, niet geïndexeerd |
+| Indexering aanvragen voor `/blog/warmtepomp-in-het-mkb`, `/blog/dakisolatie-voor-uw-bedrijfspand`, `/blog/ventilatie-in-uw-bedrijfspand`, `/blog/batterijopslag-voor-uw-bedrijfspand` | URL-inspectie | Open: onbekend bij Google |
+| Indexering aanvragen voor `/blog/verborgen-energieverspillers`, `/blog/laadpalen-op-uw-bedrijfsterrein` | URL-inspectie | Open: ontdekt, niet geïndexeerd |
+| Indexering aanvragen voor `/blog/veelgemaakte-fouten-verduurzamen-bedrijfspand` | URL-inspectie | Nieuw artikel (29-10), pas na merge van de sitemap-fix en opnieuw indienen |
 | Google Bedrijfsprofiel aanmaken | business.google.com | Nog niet gedaan (later, ivm tijd). Alle gegevens staan klaar in `bedrijfsprofiel.md` |

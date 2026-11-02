@@ -664,6 +664,9 @@ export const BLOG_POSTS = [
     slug: 'bedrijfspand-isoleren-of-installatie-eerst',
     category: 'Aanpak',
     title: 'Moet ik mijn bedrijfspand eerst isoleren of eerst de installatie aanpakken?',
+    seoTitle: 'Eerst isoleren of eerst de installatie?',
+    seoDescription:
+      'Isoleren of eerst de installatie aanpakken? Voor een bedrijfspand verschilt de juiste volgorde per pand. Zo bepaalt u die voor uw eigen situatie.',
     excerpt:
       'Isoleren of eerst de verwarmingsinstallatie aanpakken: voor een bedrijfspand bestaat daar geen vast antwoord op. Waarom de juiste volgorde per pand verschilt, en hoe u die voor uw eigen situatie bepaalt.',
     date: '8 september 2026',
