@@ -1159,9 +1159,9 @@ export const BLOG_POSTS = [
     slug: 'energielabel-c-verplicht-bedrijfspand',
     category: 'Wetgeving',
     title: 'Energielabel C verplicht voor uw bedrijfspand: wat betekent dit?',
-    seoTitle: 'Energielabel C verplicht: wat betekent dit?',
+    seoTitle: 'Energielabel C verplicht voor bedrijven?',
     seoDescription:
-      'Sinds 2023 moet een kantoorpand minimaal energielabel C hebben, anders geldt een gebruiksverbod. Voor welke panden dit geldt en welke uitzonderingen er zijn.',
+      'Is energielabel C verplicht voor bedrijven? Alleen voor kantoorpanden vanaf 100 m² waar kantoor minstens de helft is. Zo zit het met de uitzonderingen.',
     excerpt:
       'Sinds 2023 moet een kantoorpand minimaal energielabel C hebben, anders geldt een gebruiksverbod. Dit artikel legt uit voor welke panden dit geldt en welke uitzonderingen er zijn.',
     date: '30 augustus 2026',
@@ -1173,6 +1173,12 @@ export const BLOG_POSTS = [
         type: 'p',
         parts: [
           'Sinds 1 januari 2023 moet een kantoorpand minimaal energielabel C hebben. Voldoet uw pand daar niet aan, dan mag het niet langer als kantoor worden gebruikt. In dit artikel leest u wat de verplichting precies inhoudt, voor welke panden dit geldt, welke uitzonderingen er zijn, en wat u kunt doen als uw bedrijfspand nog niet aan de eisen voldoet.',
+        ],
+      },
+      {
+        type: 'p',
+        parts: [
+          'Is energielabel C verplicht voor alle bedrijven? Nee. De verplichting geldt voor gebouwen met een kantoorfunctie van minimaal 100 vierkante meter gebruiksoppervlak, waarbij het kantoor minimaal de helft van het totale pand beslaat. Voor andere bedrijfspanden, zoals een werkplaats of loods zonder grote kantoorfunctie, geldt deze eis dus niet.',
         ],
       },
       { type: 'h2', text: 'Wat is de energielabel C-verplichting?' },

@@ -66,14 +66,15 @@ uitvoering, geen energiecontracten).
 
 ## Openstaande acties voor Richard
 
-Stand 26 oktober 2026. De wekelijkse check werkt deze lijst bij en haalt een punt pas weg als
+Stand 23 november 2026. De wekelijkse check werkt deze lijst bij en haalt een punt pas weg als
 Search Console laat zien dat het gelukt is.
 
-| Actie | Waar | Stand 26-10-2026 |
+| Actie | Waar | Stand 23-11-2026 |
 | --- | --- | --- |
-| `sitemap.xml` opnieuw indienen | Search Console → Sitemaps | Gedaan: 22-10 opgehaald, 40 URL's, 0 fouten |
-| Indexering aanvragen voor `/pakketten`, `/contact`, `/werkwijze`, `/energie-indicatie` | URL-inspectie | Gelukt: alle vier geïndexeerd (22 van 40 pagina's geïndexeerd) |
-| Indexering aanvragen voor `/faq` | URL-inspectie | Open: onbekend bij Google |
-| Indexering aanvragen voor `/blog`, `/werkgebied`, `/cases` | URL-inspectie | Open: ontdekt, niet geïndexeerd |
-| Indexering aanvragen voor `/blog/warmtepomp-in-het-mkb`, `/blog/laadpalen-op-uw-bedrijfsterrein`, `/blog/verborgen-energieverspillers` | URL-inspectie | Open: onbekend bij Google |
-| Google Bedrijfsprofiel aanmaken | business.google.com | Nog niet gedaan (later, ivm tijd). Alle gegevens staan klaar in `bedrijfsprofiel.md` |
+| Pull request van 23 november (`seo/weekcheck-2026-11-23`) mergen en de oudere weekcheck-pull requests (#12, #13, #14) sluiten | GitHub | Open: er is sinds 26-10 niets gemerged, dus de sitemapreparatie en de energielabel-tekst staan nog steeds niet live. Deze pull request bevat beide; #12 en #13 korten ook de titel van het isolatie-artikel in, die in #11 bewust ongewijzigd bleef |
+| `sitemap.xml` opnieuw indienen | Search Console → Sitemaps | Na de merge nodig: 42 URL's (2 nieuwe artikelen). Laatst opgehaald 14-11 (40 URL's, 0 fouten) |
+| Indexering aanvragen voor `/blog/veelgemaakte-fouten-verduurzamen-bedrijfspand` en `/blog/mjop-en-verduurzamingsadvies-verschil` | URL-inspectie | Na merge en opnieuw indienen. Nu: onbekend bij Google |
+| Indexering aanvragen voor `/pakketten`, `/contact`, `/werkwijze`, `/energie-indicatie`, `/blog`, `/trustpilot` | URL-inspectie | Gelukt (29 van 40 pagina's geïndexeerd) |
+| Indexering aanvragen voor `/faq`, `/werkgebied`, `/cases` | URL-inspectie | Open: `/faq` en `/werkgebied` gevonden, niet geïndexeerd; `/cases` onbekend bij Google. Geen van drieën ooit gecrawld |
+| Indexering aanvragen voor `/blog/warmtepomp-in-het-mkb`, `/blog/verborgen-energieverspillers`, `/blog/laadpalen-op-uw-bedrijfsterrein`, `/blog/ventilatie-in-uw-bedrijfspand`, `/blog/batterijopslag-voor-uw-bedrijfspand`, `/blog/zonnepanelen-op-uw-bedrijfspand`, `/blog/eia-isde-sde-subsidies`, `/blog/verduurzamingsmaatregelen-bedrijfspand` | URL-inspectie | Open: alle acht gevonden, niet geïndexeerd |
+| Google Bedrijfsprofiel aanmaken | business.google.com | Nog niet gedaan (later, ivm tijd). Alle gegevens staan klaar in `bedrijfsprofiel.md`. Extra reden: voor "smv" (52 vertoningen) toont Google vooral `/contact` en `/privacy` |
