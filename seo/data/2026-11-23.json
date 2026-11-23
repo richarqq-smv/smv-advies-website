@@ -1,0 +1,859 @@
+{
+  "periode": {
+    "startDate": "2026-10-24",
+    "endDate": "2026-11-20",
+    "opgehaald": "2026-11-23"
+  },
+  "opmerking": "Ruwe Search Console-cijfers (searchAnalytics, sitemaps, URL-inspectie met languageCode nl). inspectie bevat de 40 URLs uit dist/sitemap.xml (main) plus de 2 artikelen die daar nog ontbreken (inSitemap:false).",
+  "totaal": {
+    "clicks": 1,
+    "impressions": 142,
+    "ctr": 0.0070422535211267607,
+    "position": 18.338028169014084
+  },
+  "queries": [
+    {
+      "keys": [
+        "bouwkundige installatie"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 14
+    },
+    {
+      "keys": [
+        "energie c"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 38
+    },
+    {
+      "keys": [
+        "energiebesparende maatregelen voor retailpanden"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 99.5
+    },
+    {
+      "keys": [
+        "energieklasse c"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 29
+    },
+    {
+      "keys": [
+        "energielabel bedrijven verplicht"
+      ],
+      "clicks": 0,
+      "impressions": 11,
+      "ctr": 0,
+      "position": 20.09090909090909
+    },
+    {
+      "keys": [
+        "energielabel c bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 96
+    },
+    {
+      "keys": [
+        "energielabel c bedrijfspand raamfolie"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 61.5
+    },
+    {
+      "keys": [
+        "energielabel c bedrijven"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 57.333333333333336
+    },
+    {
+      "keys": [
+        "energielabel c voor kantoren, wat houdt het in"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 39.4
+    },
+    {
+      "keys": [
+        "energielabel kantoor verplicht"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 95
+    },
+    {
+      "keys": [
+        "label-c verplichting"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 27
+    },
+    {
+      "keys": [
+        "netcongestie lansingerland"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 23
+    },
+    {
+      "keys": [
+        "smv"
+      ],
+      "clicks": 0,
+      "impressions": 52,
+      "ctr": 0,
+      "position": 10.057692307692308
+    },
+    {
+      "keys": [
+        "smv betekenis"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 11
+    },
+    {
+      "keys": [
+        "smv chambers"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 1
+    },
+    {
+      "keys": [
+        "verwarmingsadvies bedrijfshal"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 25
+    },
+    {
+      "keys": [
+        "verwarmingsplan bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 5.5
+    }
+  ],
+  "paginas": [
+    {
+      "keys": [
+        "https://smv-advies.nl/"
+      ],
+      "clicks": 1,
+      "impressions": 37,
+      "ctr": 0.027027027027027029,
+      "position": 10.72972972972973
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/blog"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 9.3333333333333339
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/blog/bouwkundige-beoordeling-voor-verduurzaming"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 10.6
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/blog/energiebesparingsplicht-voor-uw-bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 71
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/blog/energielabel-c-verplicht-bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 31,
+      "ctr": 0,
+      "position": 42.548387096774192
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/blog/netcongestie-hoeksche-waard"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 11.5
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 9,
+      "ctr": 0,
+      "position": 17.222222222222221
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/blog/warmtepomp-bedrijfspand-verstandige-keuze"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 15
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/contact"
+      ],
+      "clicks": 0,
+      "impressions": 29,
+      "ctr": 0,
+      "position": 8.6206896551724128
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/maasdam"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 6
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/oud-beijerland"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 5.25
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/over"
+      ],
+      "clicks": 0,
+      "impressions": 11,
+      "ctr": 0,
+      "position": 4.2727272727272734
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/pakketten"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 7.333333333333333
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/privacy"
+      ],
+      "clicks": 0,
+      "impressions": 26,
+      "ctr": 0,
+      "position": 6.9615384615384617
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/puttershoek"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 45
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/s-gravendeel"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 5
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/trustpilot"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 6
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/voorwaarden"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 2
+    },
+    {
+      "keys": [
+        "https://smv-advies.nl/werkwijze"
+      ],
+      "clicks": 0,
+      "impressions": 9,
+      "ctr": 0,
+      "position": 16
+    }
+  ],
+  "query_pagina": [
+    {
+      "keys": [
+        "bouwkundige installatie",
+        "https://smv-advies.nl/blog/bouwkundige-beoordeling-voor-verduurzaming"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 14
+    },
+    {
+      "keys": [
+        "energie c",
+        "https://smv-advies.nl/blog/energielabel-c-verplicht-bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 38
+    },
+    {
+      "keys": [
+        "energiebesparende maatregelen voor retailpanden",
+        "https://smv-advies.nl/blog/energiebesparingsplicht-voor-uw-bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 99.5
+    },
+    {
+      "keys": [
+        "energieklasse c",
+        "https://smv-advies.nl/blog/energielabel-c-verplicht-bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 29
+    },
+    {
+      "keys": [
+        "energielabel bedrijven verplicht",
+        "https://smv-advies.nl/blog/energielabel-c-verplicht-bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 11,
+      "ctr": 0,
+      "position": 20.09090909090909
+    },
+    {
+      "keys": [
+        "energielabel c bedrijfspand",
+        "https://smv-advies.nl/blog/energielabel-c-verplicht-bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 96
+    },
+    {
+      "keys": [
+        "energielabel c bedrijfspand raamfolie",
+        "https://smv-advies.nl/blog/energielabel-c-verplicht-bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 61.5
+    },
+    {
+      "keys": [
+        "energielabel c bedrijven",
+        "https://smv-advies.nl/blog/energielabel-c-verplicht-bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 57.333333333333336
+    },
+    {
+      "keys": [
+        "energielabel c voor kantoren, wat houdt het in",
+        "https://smv-advies.nl/blog/energielabel-c-verplicht-bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 39.4
+    },
+    {
+      "keys": [
+        "energielabel kantoor verplicht",
+        "https://smv-advies.nl/blog/energielabel-c-verplicht-bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 95
+    },
+    {
+      "keys": [
+        "label-c verplichting",
+        "https://smv-advies.nl/blog/energielabel-c-verplicht-bedrijfspand"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 27
+    },
+    {
+      "keys": [
+        "netcongestie lansingerland",
+        "https://smv-advies.nl/blog/netcongestie-hoeksche-waard"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 23
+    },
+    {
+      "keys": [
+        "smv",
+        "https://smv-advies.nl/"
+      ],
+      "clicks": 0,
+      "impressions": 19,
+      "ctr": 0,
+      "position": 15.631578947368421
+    },
+    {
+      "keys": [
+        "smv",
+        "https://smv-advies.nl/contact"
+      ],
+      "clicks": 0,
+      "impressions": 24,
+      "ctr": 0,
+      "position": 9.0416666666666661
+    },
+    {
+      "keys": [
+        "smv",
+        "https://smv-advies.nl/privacy"
+      ],
+      "clicks": 0,
+      "impressions": 23,
+      "ctr": 0,
+      "position": 7.3478260869565215
+    },
+    {
+      "keys": [
+        "smv",
+        "https://smv-advies.nl/werkwijze"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 28
+    },
+    {
+      "keys": [
+        "smv betekenis",
+        "https://smv-advies.nl/"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 11
+    },
+    {
+      "keys": [
+        "smv chambers",
+        "https://smv-advies.nl/privacy"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 1
+    },
+    {
+      "keys": [
+        "verwarmingsadvies bedrijfshal",
+        "https://smv-advies.nl/blog/warmtepomp-bedrijfspand-verstandige-keuze"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 25
+    },
+    {
+      "keys": [
+        "verwarmingsplan bedrijfspand",
+        "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 5.5
+    }
+  ],
+  "sitemaps": [
+    {
+      "path": "https://smv-advies.nl/sitemap.xml",
+      "lastSubmitted": "2026-10-22T06:15:42.893Z",
+      "isPending": false,
+      "isSitemapsIndex": false,
+      "type": "sitemap",
+      "lastDownloaded": "2026-11-14T02:52:45.397Z",
+      "warnings": "0",
+      "errors": "0",
+      "contents": [
+        {
+          "type": "web",
+          "submitted": "40",
+          "indexed": "0"
+        }
+      ]
+    }
+  ],
+  "inspectie": {
+    "/": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-11-19T16:29:19Z",
+      "googleCanonical": "https://smv-advies.nl/",
+      "inSitemap": true
+    },
+    "/pakketten": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-11-15T23:51:03Z",
+      "googleCanonical": "https://smv-advies.nl/pakketten",
+      "inSitemap": true
+    },
+    "/energie-indicatie": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-11-14T22:30:13Z",
+      "googleCanonical": "https://smv-advies.nl/energie-indicatie",
+      "inSitemap": true
+    },
+    "/over": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-11-15T17:00:43Z",
+      "googleCanonical": "https://smv-advies.nl/over",
+      "inSitemap": true
+    },
+    "/werkwijze": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-11-16T17:30:55Z",
+      "googleCanonical": "https://smv-advies.nl/werkwijze",
+      "inSitemap": true
+    },
+    "/werkgebied": {
+      "coverageState": "Gevonden - momenteel niet geïndexeerd",
+      "verdict": "NEUTRAL",
+      "lastCrawlTime": null,
+      "googleCanonical": null,
+      "inSitemap": true
+    },
+    "/oud-beijerland": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-10-22T09:50:30Z",
+      "googleCanonical": "https://smv-advies.nl/oud-beijerland",
+      "inSitemap": true
+    },
+    "/heinenoord": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-10-22T07:54:35Z",
+      "googleCanonical": "https://smv-advies.nl/heinenoord",
+      "inSitemap": true
+    },
+    "/puttershoek": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-10-22T07:58:02Z",
+      "googleCanonical": "https://smv-advies.nl/puttershoek",
+      "inSitemap": true
+    },
+    "/maasdam": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-10-22T10:40:15Z",
+      "googleCanonical": "https://smv-advies.nl/maasdam",
+      "inSitemap": true
+    },
+    "/zuid-beijerland": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-10-22T06:56:52Z",
+      "googleCanonical": "https://smv-advies.nl/zuid-beijerland",
+      "inSitemap": true
+    },
+    "/mijnsheerenland": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-10-22T07:39:08Z",
+      "googleCanonical": "https://smv-advies.nl/mijnsheerenland",
+      "inSitemap": true
+    },
+    "/s-gravendeel": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-10-22T08:45:21Z",
+      "googleCanonical": "https://smv-advies.nl/s-gravendeel",
+      "inSitemap": true
+    },
+    "/klaaswaal": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-10-22T07:29:59Z",
+      "googleCanonical": "https://smv-advies.nl/klaaswaal",
+      "inSitemap": true
+    },
+    "/strijen": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-10-22T09:10:10Z",
+      "googleCanonical": "https://smv-advies.nl/strijen",
+      "inSitemap": true
+    },
+    "/numansdorp": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-10-22T07:33:33Z",
+      "googleCanonical": "https://smv-advies.nl/numansdorp",
+      "inSitemap": true
+    },
+    "/cases": {
+      "coverageState": "URL is onbekend bij Google",
+      "verdict": "NEUTRAL",
+      "lastCrawlTime": null,
+      "googleCanonical": null,
+      "inSitemap": true
+    },
+    "/blog": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-11-03T19:41:00Z",
+      "googleCanonical": "https://smv-advies.nl/blog",
+      "inSitemap": true
+    },
+    "/blog/bouwkundige-beoordeling-voor-verduurzaming": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-10-15T10:37:55Z",
+      "googleCanonical": "https://smv-advies.nl/blog/bouwkundige-beoordeling-voor-verduurzaming",
+      "inSitemap": true
+    },
+    "/blog/verduurzamingsmaatregelen-bedrijfspand": {
+      "coverageState": "Gevonden - momenteel niet geïndexeerd",
+      "verdict": "NEUTRAL",
+      "lastCrawlTime": null,
+      "googleCanonical": null,
+      "inSitemap": true
+    },
+    "/blog/warmtepomp-bedrijfspand-verstandige-keuze": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-09-30T00:31:50Z",
+      "googleCanonical": "https://smv-advies.nl/blog/warmtepomp-bedrijfspand-verstandige-keuze",
+      "inSitemap": true
+    },
+    "/blog/verduurzamen-bedrijfspand-waar-begin-je": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-09-30T00:37:10Z",
+      "googleCanonical": "https://smv-advies.nl/blog/verduurzamen-bedrijfspand-waar-begin-je",
+      "inSitemap": true
+    },
+    "/blog/bedrijfspand-isoleren-of-installatie-eerst": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-09-30T02:22:30Z",
+      "googleCanonical": "https://smv-advies.nl/blog/bedrijfspand-isoleren-of-installatie-eerst",
+      "inSitemap": true
+    },
+    "/blog/ventilatie-in-uw-bedrijfspand": {
+      "coverageState": "Gevonden - momenteel niet geïndexeerd",
+      "verdict": "NEUTRAL",
+      "lastCrawlTime": null,
+      "googleCanonical": null,
+      "inSitemap": true
+    },
+    "/blog/energiebesparingsplicht-voor-uw-bedrijfspand": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-11-16T13:49:08Z",
+      "googleCanonical": "https://smv-advies.nl/blog/energiebesparingsplicht-voor-uw-bedrijfspand",
+      "inSitemap": true
+    },
+    "/blog/batterijopslag-voor-uw-bedrijfspand": {
+      "coverageState": "Gevonden - momenteel niet geïndexeerd",
+      "verdict": "NEUTRAL",
+      "lastCrawlTime": null,
+      "googleCanonical": null,
+      "inSitemap": true
+    },
+    "/blog/laadpalen-op-uw-bedrijfsterrein": {
+      "coverageState": "Gevonden - momenteel niet geïndexeerd",
+      "verdict": "NEUTRAL",
+      "lastCrawlTime": null,
+      "googleCanonical": null,
+      "inSitemap": true
+    },
+    "/blog/zonnepanelen-op-uw-bedrijfspand": {
+      "coverageState": "Gevonden - momenteel niet geïndexeerd",
+      "verdict": "NEUTRAL",
+      "lastCrawlTime": null,
+      "googleCanonical": null,
+      "inSitemap": true
+    },
+    "/blog/energielabel-c-verplicht-bedrijfspand": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-11-04T01:58:52Z",
+      "googleCanonical": "https://smv-advies.nl/blog/energielabel-c-verplicht-bedrijfspand",
+      "inSitemap": true
+    },
+    "/blog/netcongestie-hoeksche-waard": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-11-08T17:28:07Z",
+      "googleCanonical": "https://smv-advies.nl/blog/netcongestie-hoeksche-waard",
+      "inSitemap": true
+    },
+    "/blog/dakisolatie-voor-uw-bedrijfspand": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-11-04T03:35:09Z",
+      "googleCanonical": "https://smv-advies.nl/blog/dakisolatie-voor-uw-bedrijfspand",
+      "inSitemap": true
+    },
+    "/blog/eia-isde-sde-subsidies": {
+      "coverageState": "Gevonden - momenteel niet geïndexeerd",
+      "verdict": "NEUTRAL",
+      "lastCrawlTime": null,
+      "googleCanonical": null,
+      "inSitemap": true
+    },
+    "/blog/warmtepomp-in-het-mkb": {
+      "coverageState": "Gevonden - momenteel niet geïndexeerd",
+      "verdict": "NEUTRAL",
+      "lastCrawlTime": null,
+      "googleCanonical": null,
+      "inSitemap": true
+    },
+    "/blog/led-verlichting-snelste-stap": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-11-16T12:36:54Z",
+      "googleCanonical": "https://smv-advies.nl/blog/led-verlichting-snelste-stap",
+      "inSitemap": true
+    },
+    "/blog/verborgen-energieverspillers": {
+      "coverageState": "Gevonden - momenteel niet geïndexeerd",
+      "verdict": "NEUTRAL",
+      "lastCrawlTime": null,
+      "googleCanonical": null,
+      "inSitemap": true
+    },
+    "/faq": {
+      "coverageState": "Gevonden - momenteel niet geïndexeerd",
+      "verdict": "NEUTRAL",
+      "lastCrawlTime": null,
+      "googleCanonical": null,
+      "inSitemap": true
+    },
+    "/trustpilot": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-11-09T06:59:53Z",
+      "googleCanonical": "https://smv-advies.nl/trustpilot",
+      "inSitemap": true
+    },
+    "/contact": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-11-16T10:31:54Z",
+      "googleCanonical": "https://smv-advies.nl/contact",
+      "inSitemap": true
+    },
+    "/privacy": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-11-04T04:52:04Z",
+      "googleCanonical": "https://smv-advies.nl/privacy",
+      "inSitemap": true
+    },
+    "/voorwaarden": {
+      "coverageState": "Ingediend en geïndexeerd",
+      "verdict": "PASS",
+      "lastCrawlTime": "2026-11-14T22:26:56Z",
+      "googleCanonical": "https://smv-advies.nl/voorwaarden",
+      "inSitemap": true
+    },
+    "/blog/veelgemaakte-fouten-verduurzamen-bedrijfspand": {
+      "coverageState": "URL is onbekend bij Google",
+      "verdict": "NEUTRAL",
+      "lastCrawlTime": null,
+      "googleCanonical": null,
+      "inSitemap": false
+    },
+    "/blog/mjop-en-verduurzamingsadvies-verschil": {
+      "coverageState": "URL is onbekend bij Google",
+      "verdict": "NEUTRAL",
+      "lastCrawlTime": null,
+      "googleCanonical": null,
+      "inSitemap": false
+    }
+  }
+}
